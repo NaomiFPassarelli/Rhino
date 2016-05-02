@@ -1,0 +1,38 @@
+﻿    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#FilterAsientos').CreateCommonGrid({
+            url: '@Url.Action("GetAsientosFilterCuenta")',
+                serializeGridData: function (postData) {
+                    
+                    data = {
+                        id: '@ViewBag.IdCuenta' != '' ? '@ViewBag.IdCuenta' : 0,
+                        start: '@ViewBag.start' != '' ? '@ViewBag.start' : null,
+                        end: '@ViewBag.end' != '' ? '@ViewBag.end' : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'NumeroReferencia', 'Leyenda','Tipo Op.','Nro. Comprobante', 'Fecha', 'Debe', 'Haber','Nro de cheque'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'NumeroReferencia', index: 'NumeroReferencia', width: 10, align: "center", sortable: true },
+                    { name: 'Leyenda', index: 'Leyenda', width: 20, align: "center", sortable: true },
+                    { name: 'TipoOperacion', index: 'TipoOperacion', width: 20, align: "center", sortable: true },
+                    { name: 'ComprobanteAsociado', index: 'ComprobanteAsociado', width: 20, align: "center", sortable: true },
+                    { name: 'Fecha', index: 'Fecha', width: 10, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Debe', index: 'Debe', width: 15, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Haber', index: 'Haber', width: 15, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'NumeroCheque', index: 'NumeroCheque', width: 15, align: "center", sortable: true }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                pager: '#FilterAsientos_pager',
+                rowList: [15, 20, 25],
+                rowNum: 15
+            });
+        $('#FilterAsientos').trigger("reloadGrid");
+    });
+    </script>

@@ -1,0 +1,125 @@
+﻿@{
+    ViewBag.Title = "Sumas Y Saldos";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Sumas Y Saldos";
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Cuenta..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <div class="col-md-6 place-left">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridSumasYSaldosArbol"></table>
+    <div id="GridSumasYSaldosArbol_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        SumasYSaldosArbol.init();
+    });
+
+    var SumasYSaldosArbol = {
+        
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                SumasYSaldosArbol.LoadData();
+            });
+            $('#BtnExportXLS').click(SumasYSaldosArbol.ExportToExcel);
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#SumasYSaldosArbol', ["NombreCuenta", "Codigo"]);
+
+            /* Armo la grilla */
+            $('#GridSumasYSaldosArbol').CreateCommonGrid({
+                url: '@Url.Action("GetSumasYSaldosArbol")',
+                serializeGridData: function (postData) {
+                    dates = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, dates));
+                },
+                colNames: ['', 'Codigo', 'Nombre', 'Saldo Anterior', 'Debe', 'Haber', 'Saldo', 'Saldo Actual',''],
+                colModel: [
+                    { name: 'CuentaId', index: 'CuentaId', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Codigo', index: 'Codigo', width: 20, align: "center", sortable: true },
+                    { name: 'NombreCuenta', index: 'NombreCuenta', width: 50, align: "center", sortable: true },
+                    { name: 'SaldoAnterior', index: 'SaldoAnterior', width: 30, align: "center", sortable: true, formatter: SumasYSaldosArbol.FormatCurrency },
+                    { name: 'Debe', index: 'Debe', width: 30, align: "center", sortable: true, formatter: SumasYSaldosArbol.FormatCurrency },
+                    { name: 'Haber', index: 'Haber', width: 30, align: "center", sortable: true, formatter: SumasYSaldosArbol.FormatCurrency },
+                    { name: 'Saldo', index: 'Saldo', width: 30, align: "center", sortable: true, formatter: SumasYSaldosArbol.FormatCurrency },
+                    { name: 'SaldoActual', index: 'SaldoActual', width: 30, align: "center", sortable: true, formatter: SumasYSaldosArbol.FormatCurrency },
+                    { name: 'Numero', index: 'Numero', width: 20, align: "center", sortable: true, hidden:true }
+                ],
+                sortname: 'Codigo',
+                sortorder: "asc",
+                pager: '#GridSumasYSaldosArbol_pager',
+                rowList: [15, 20, 25],
+                rowNum: 15,
+                treeGrid: true,
+                treeGridModel: 'adjacency',
+                ExpandColumn: 'NombreCuenta',
+                height:700
+            });
+            $('#GridSumasYSaldosArbol').trigger("reloadGrid");
+        },
+
+        FormatCurrency: function(cellvalue, options, rowObject) {
+            if (rowObject.Numero > 0) {
+                return $.formatCurrency(cellvalue);
+            } else {
+                return "";
+            }
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridSumasYSaldosArbol', 'Sumas Y Saldos Arbol');
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridSumasYSaldosArbol").setGridParam({ datatype: 'json' });
+            $('#GridSumasYSaldosArbol').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        LoadData: function () {
+            SumasYSaldosArbol.CompletarFiltros();
+            valid = SumasYSaldosArbol.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            SumasYSaldosArbol.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        }
+
+    }
+    </script>
+}

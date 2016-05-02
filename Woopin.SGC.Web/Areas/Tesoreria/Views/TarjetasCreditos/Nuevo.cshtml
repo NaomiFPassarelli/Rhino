@@ -1,0 +1,64 @@
+﻿@model Woopin.SGC.Model.Tesoreria.TarjetaCredito
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Numero"))
+                    { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Numero, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CuentaBancaria.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.CuentaBancaria.Id, new SelectList(ViewBag.CuentasBancarias, "Id", "Nombre"), "Elegir un Cuenta Bancaria", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CuentaBancaria.Id, null, new { @class = "help-block" })
+
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Crear Tarjeta
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#CuentaBancaria_Id').attr('data-val-required', 'Es necesario una cuenta bancaria');
+        $('form').reParseForm();
+        $('#Numero').mask('9999-9999-9999-9999');
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    data.TarjetaCredito["CuentaBancaria.Nombre"] = data.TarjetaCredito.CuentaBancaria.Nombre;
+                    $('#GridTarjetas').jqGrid('addRowData', 'Id', data.TarjetaCredito);
+                    $('#GridTarjetas').trigger("reloadGrid");
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>

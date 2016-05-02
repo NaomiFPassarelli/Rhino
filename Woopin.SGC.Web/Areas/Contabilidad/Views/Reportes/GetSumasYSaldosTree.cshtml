@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Woopin.SGC.Model.Contabilidad.SumaSaldo>
+@{
+    ViewBag.Title = "GetSumasYSaldosTree";
+    Layout = null;
+}
+
+@{
+    var grupos = Model.OrderBy(c => c.Rubro).GroupBy(c => c.Rubro);
+}
+<ul>
+    @foreach (var grupo in grupos)
+    {
+        <li class="jstree-open">
+            @{
+        var headGrupo = grupo.Where(c => c.Corriente == 0).SingleOrDefault();
+        var subgrupos = grupo.Where(c => c.Corriente != 0).GroupBy(c => c.Corriente);
+            }
+            @headGrupo.Codigo - @headGrupo.NombreCuenta
+            <ul>
+                @foreach (var subgrupo in subgrupos)
+                {
+                    <li class="jstree-open">
+                        @{
+                    var headSubGrupo = subgrupo.Where(c => c.SubRubro == 0).SingleOrDefault();
+                    var rubros = subgrupo.Where(c => c.SubRubro != 0).GroupBy(c => c.SubRubro);
+                        }
+                        @headSubGrupo.Codigo - @headSubGrupo.NombreCuenta
+                        <ul>
+                            @foreach (var rubro in rubros)
+                            {
+                                <li>
+                                    @{
+                                var headRubro = rubro.Where(c => c.Numero == 0).SingleOrDefault();
+                                    }
+                                    @headRubro.Codigo - @headRubro.NombreCuenta
+                                    <ul>
+                                        @foreach (var cuenta in rubro.Where(c => c.Numero != 0).OrderBy(c => c.Numero))
+                                        {
+                                            <li data-jstree='{"icon":"fa fa-book i-blue"}' class="sumaysaldo">@cuenta.Codigo - @cuenta.NombreCuenta <br />  Debe: @cuenta.Debe - Haber: @cuenta.Haber - Saldo Cuenta: @cuenta.Saldo - Saldo Anterior: @cuenta.SaldoAnterior </li>
+                                        }
+</ul>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </li>
+    }
+</ul>
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/bundles/jqueryui")
+<script type="text/javascript">
+    debugger;
+
+    var SumasYSaldosTreeCuenta = {
+        init: function () {
+            debugger;
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+        }
+    }
+
+    $(document).ready(function () {
+        SumasYSaldosTreeCuenta.init();
+    });
+
+</script>

@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Listado";
+    ViewBag.SectionIcon = "users";
+    ViewBag.SectionTitle = "Listado de Usuarios";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Usuario" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Usuario
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Deshabilitar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Deshabilitar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar usuarios..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridUsuarios"></table>
+    <div id="GridUsuarios_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoUsuarios = {
+            OnClickEliminar: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el usuario seleccionado?",
+                            function () { ListadoUsuarios.Eliminar(Id) });
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridUsuarios', 'Listado de Usuarios');
+            },
+
+            Eliminar: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("EliminarUsuario")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridUsuarios').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridUsuarios');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea deshabilitar los usuarios seleccionados?",
+                            function () { ListadoUsuarios.Eliminar(SelectedIds) });
+                } else {
+                    $.WarningDialog("No hay usuarios seleccionados!");
+                }
+
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridUsuarios');
+                ListadoUsuarios.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridUsuarios").setGridParam({ datatype: 'json' });
+                $('#GridUsuarios').setGridParam({ page: 1 }).trigger("reloadGrid");
+            }
+        }
+
+    $(document).ready(function () {
+        /* Binding del boton de Refresh */
+        $('#BtnRefresh').bind('click', ListadoUsuarios.Refresh);
+
+        /* Binding de los checkbox, contador de seleccionados */
+        $.SetupSelectCount('GridUsuarios');
+        /* Eliminar Seleccionados */
+        $('#BtnDeleteSelected').click(ListadoUsuarios.OnClickEliminarSeleccionados);
+
+        /* Deshabilita el usuario */
+        $(document).on('click', ".BtnDeshabilitar", ListadoUsuarios.OnClickEliminar);
+
+        /* Buscador de arriba */
+        $.SetupSearchTextbox('#GridUsuarios', ["NombreCompleto", "Username"]);
+
+        /* Armo la grilla del ABM */
+        $('#GridUsuarios').CreateCommonGrid({
+            url: '@Url.Action("GetAllUsuariosByOrganizacion")',
+            colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', 'Username', 'Ultimo Acceso',''],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                { name: 'NombreCompleto', index: 'NombreCompleto', width: 30, align: "center", sortable: true },
+                { name: 'Username', index: 'Username', width: 25, align: "center", sortable: true },
+                { name: 'LastLogin', index: 'LastLogin', width: 20, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: Usuarios_Actions, align: "center" }
+            ],
+            sortname: 'NombreCompleto',
+            sortorder: "asc",
+            pager: '#GridUsuarios_pager'
+        });
+    });
+    </script>
+}

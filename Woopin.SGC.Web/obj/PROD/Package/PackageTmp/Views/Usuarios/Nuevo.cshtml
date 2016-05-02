@@ -1,0 +1,80 @@
+﻿@model Woopin.SGC.Model.Common.Usuario
+@{
+    ViewBag.Title = "Alta de Usuario";
+    ViewBag.SectionIcon = "user";
+    ViewBag.SectionTitle = "Crear Usuario";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="form-group ">
+            @Html.LabelFor(model => model.NombreCompleto, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NombreCompleto, new { @class = "textinput", placeholder = "Nombre Completo" })
+                @Html.ValidationMessageFor(model => model.NombreCompleto, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Username, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Username, new { @class = "textinput", placeholder = "Nombre de Usuario" })
+                @Html.ValidationMessageFor(model => model.Username, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group ">
+            @Html.LabelFor(model => model.Password, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Password, new { @class = "textinput", placeholder = "Contraseña (max. 10)" })
+                @Html.ValidationMessageFor(model => model.Password, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Email, new { @class = "textinput", placeholder = "Email de acceso al outlook" })
+                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-right"  id="BtnSubmit"><i class="fa fa-plus-circle i-green" ></i> Crear Usuario</a>
+            </div>
+        </div>
+
+    </fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            CreacionUsuario.init();
+        });
+
+        var CreacionUsuario = {
+
+            init:function(){
+                $('#BtnSubmit').FormSubmit({
+                    enter: true,
+                    success: function (data) {
+                        if (data.Success) {
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")';
+                        }
+                        else {
+                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        }
+                    }
+                });
+                $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de usuario. Si presiona Aceptar, todos los cambios realizados se perderan.');
+            }
+
+        }
+    </script>
+}

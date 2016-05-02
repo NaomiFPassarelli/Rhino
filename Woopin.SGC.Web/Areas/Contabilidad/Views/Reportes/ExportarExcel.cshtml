@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Woopin.SGC.Model.Contabilidad.SumaSaldo>
+@{
+    Layout = null;
+}
+<table>
+    <tr><td colspan="8" style="text-align:right;">Fecha: @DateTime.Now.ToString("dd/MM/yyyy")</td></tr>
+    <tr><td colspan="8" style="text-align:center;">Sumas y Saldos</td></tr>
+    <tr><td colspan="8"></td></tr>
+    <tr><td colspan="4" style="text-align:center;">Codigo Cuenta</td><td colspan="4" style="text-align:center;">Nombre Cuenta</td><td colspan="1" style="text-align:center;">Debe</td><td colspan="1" style="text-align:center;">Haber</td><td colspan="1" style="text-align:center;">Saldo</td><td colspan="1" style="text-align:center;">Saldo total de la Cuenta</td></tr>
+    
+    @{
+        var grupos = Model.OrderBy(c => c.Rubro).GroupBy(c => c.Rubro);
+    }
+    @foreach (var grupo in grupos)
+    {
+        var headGrupo = grupo.Where(c => c.Corriente == 0).SingleOrDefault();
+        var subgrupos = grupo.Where(c => c.Corriente != 0).GroupBy(c => c.Corriente);
+        <tr>
+            <td colspan="4">@headGrupo.Codigo</td>
+            <td colspan="4">@headGrupo.NombreCuenta</td>
+            <td colspan="4">@headGrupo.Debe</td>
+            <td colspan="4">@headGrupo.Haber</td>
+            <td colspan="4">@headGrupo.Saldo</td>
+            <td colspan="4">@headGrupo.CuentaSaldo</td>
+        </tr>
+        foreach (var subgrupo in subgrupos)
+        {
+            var headSubGrupo = subgrupo.Where(c => c.SubRubro == 0).SingleOrDefault();
+            var rubros = subgrupo.Where(c => c.SubRubro != 0).GroupBy(c => c.SubRubro);
+            <tr>
+                <td colspan="1"></td>
+                <td colspan="3">@headSubGrupo.Codigo</td>
+                <td colspan="1"></td>
+                <td colspan="3">@headSubGrupo.NombreCuenta</td>
+            </tr>
+            foreach (var rubro in rubros)
+            {
+                var headRubro = rubro.Where(c => c.Numero == 0).SingleOrDefault();
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">@headRubro.Codigo</td>
+                    <td colspan="2"></td>
+                    <td colspan="2">@headRubro.NombreCuenta</td>
+                </tr>
+                foreach (var cuenta in rubro.Where(c => c.Numero != 0).OrderBy(c => c.Numero))
+                {
+                    <tr>
+                        <td colspan="3"></td>
+                        <td colspan="1">@cuenta.Codigo</td>
+                        <td colspan="3"></td>
+                        <td colspan="1">@cuenta.NombreCuenta</td>
+                        <td colspan="1" style="text-align:right;">@cuenta.Debe</td>
+                        <td colspan="1" style="text-align:right;">@cuenta.Haber</td>
+                        <td colspan="1" style="text-align:right;">@cuenta.Saldo</td>
+                        <td colspan="1" style="text-align:right;">@cuenta.CuentaSaldo</td>
+                    </tr>
+                }
+            }
+        }
+    }
+</table>
+

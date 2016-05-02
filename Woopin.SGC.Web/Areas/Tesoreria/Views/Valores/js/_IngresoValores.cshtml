@@ -1,0 +1,405 @@
+﻿@using Woopin.SGC.Model.Tesoreria
+<script type="text/javascript">
+
+
+    var IngresoValores = {
+
+        Grid: null,
+
+        GridIdCount: 1,
+
+        TotalInput: null,
+
+        Init: function (GridId, TotalInputId) {
+            IngresoValores.Grid = $(GridId);
+            IngresoValores.Grid.CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', '', '', 'Tipo de Valor', 'N° Referencia', 'Descripción', 'N° Valor', 'Fecha', 'Importe'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'IdEntidadExt', index: 'IdEntidadExt', width: 0, sortable: false, hidden: true },
+                    { name: 'ValorId', index: 'ValorId', width: 0, sortable: false, hidden: true },
+                    { name: 'Actions', index: 'Actions', width: 10, sortable: false, formatter: IngresoValores.GridActions, align: "center" },
+                    { name: 'TipoValor', index: 'TipoValor', width: 10, sortable: true, align: "center" },
+                    { name: 'IdReferencia', index: 'IdReferencia', width: 10, sortable: true, align: "center" },
+                    { name: 'Descripcion', index: 'Descripcion', width: 10, sortable: true, align: "center" },
+                    { name: 'NumeroOperacion', index: 'NumeroOperacion', width: 10, sortable: true, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 10, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' }, align: "center" },
+                    { name: 'Importe', index: 'Importe', width: 20, align: "center", sortable: true, formatter: $.formatCurrency, align: "center" }
+                ],
+                sortname: 'Id',
+                sortorder: "desc",
+                pager: GridId + '_pager',
+                rowList: [5, 10, 15],
+                rowNum: 5
+            });
+            IngresoValores.Grid.trigger("reloadGrid");
+            IngresoValores.Grid.parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            IngresoValores.TotalInput = $(TotalInputId);
+            $(document).on('click', '.BtnIngresoValorEliminar', IngresoValores.OnClickEliminarValor)
+
+        },
+
+        InitDetalle: function (GridId) {
+            IngresoValores.Grid = $(GridId);
+            IngresoValores.Grid.CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', '', 'Tipo de Valor', 'N° Referencia', 'Descripción', 'N° Valor', 'Fecha', 'Importe'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'IdEntidadExt', index: 'IdEntidadExt', width: 0, sortable: false, hidden: true },
+                    { name: 'Actions', index: 'Actions', width: 10, sortable: false, formatter: IngresoValores.DetailGridActions, align: "center" },
+                    { name: 'Valor.TipoValor.Data', index: 'Valor.TipoValor.Data', width: 10, sortable: true, align: "center" },
+                    { name: 'NumeroReferencia', index: 'NumeroReferencia', width: 10, sortable: true, align: "center",formatter: formatterNumberToString },
+                    { name: 'Descripcion', index: 'Descripcion', width: 20, sortable: true, align: "center" },
+                    { name: 'NumeroOperacion', index: 'NumeroOperacion', width: 15, sortable: true, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 15, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' }, align: "center" },
+                    { name: 'Importe', index: 'Importe', width: 20, align: "center", sortable: true, formatter: $.formatCurrency, align: "center" }
+                ],
+                sortname: 'Id',
+                sortorder: "desc",
+                pager: GridId + '_pager',
+                rowList: [5, 10, 15],
+                rowNum: 5,
+                ondblClickRow: IngresoValores.DoubleClick,
+                rowattr: function (rd) { return { 'class': 'is-default' }; },
+            });
+            IngresoValores.Grid.parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            $(document).on('click', '.BtnCanjeCheques', IngresoValores.CanjearCheque);
+            
+        },
+
+        ClearValores: function(){
+            IngresoValores.Grid.jqGrid("clearGridData", true).trigger("reloadGrid");
+            IngresoValores.CalcularTotales();
+            // AFUTURO: Avisar al servidor y eliminar los borradores.
+        },
+
+        DetailGridActions: function (cell, options, row) {
+            
+            tipoValor = row.Valor != null ? row.Valor.TipoValor.Data : row["Valor.TipoValor.Data"];
+            var btns = "";
+            if (tipoValor == '@TipoValor.ChequePropio' && (_IV_statusComprobante == undefined || _IV_statusComprobante != "Anulada")) {
+                btns += '<a class="boton boton-i BtnCanjeCheques" title="Canjear cheque propio" data-id="' + row.NumeroReferencia + '"><i class="fa fa-exchange i-blue"></i></a>'
+            }
+            return btns;
+        },
+
+        CanjearCheque: function () {
+            var Id = $(this).data('id');
+            if ($('#CanjeCheque-dialog').length == 0) {
+                $('body').append('<div id="CanjeCheque-dialog"></div>');
+            }
+            $('#CanjeCheque-dialog').OpenFormDialog(
+                    '@Url.Action("CanjeChequePropio", "Valores", new { Area = "Tesoreria" })/' + Id,
+                    '<i class="fa fa-exchange"></i> Canjear Cheque',
+                { width: 800 });
+        },
+
+        DoubleClick: function (id, iRow, iCol, e) {
+            row = $(IngresoValores.Grid).jqGrid('getRowData', id);
+            tipoValor = $(IngresoValores.Grid).jqGrid("getCell", row.Id, "Valor.TipoValor.Data");
+            numeroReferencia = $(IngresoValores.Grid).jqGrid("getCell", row.Id, "NumeroReferencia");
+            switch (tipoValor) {
+                case '@TipoValor.Cheque':
+                    var opt = {
+                        width: 900, height: 600,
+                        openCallback: function () {
+                            $('#GridCheque').resizeGrid('GridCheque_Container');
+                        }
+                    };
+                    $('#listadoValores-detalle-dialog').OpenFormDialog('@Url.Action("DetalleCheque", "Valores", new { Area = "Tesoreria"})?Id=' + numeroReferencia + '&opensDialog=true', 'Detalle Cheque N°' + numeroReferencia, opt);
+                    break;
+                case '@TipoValor.ChequePropio':
+                    var opt = {
+                        width: 900, height: 600,
+                        openCallback: function () {
+                            $('#GridChequePropio').resizeGrid('GridChequePropio_Container');
+                        }
+                    };
+                    $('#listadoValores-detalle-dialog').OpenFormDialog('@Url.Action("DetalleChequePropio", "Valores", new { Area = "Tesoreria" })?Id=' + numeroReferencia + '&opensDialog=true', 'Detalle Cheque PropioN°' + numeroReferencia, opt);
+                    break;
+                case '@TipoValor.Transferencia':
+                    var opt = {
+                        width: 900, height: 600,
+                        openCallback: function () {
+                            $('#GridTransferencia').resizeGrid('GridTransferencia_Container');
+                        }
+                    };
+                    $('#listadoValores-detalle-dialog').OpenFormDialog('@Url.Action("DetalleTransferencia", "Valores", new { Area = "Tesoreria" })?Id=' + numeroReferencia + '&opensDialog=true', 'Detalle Transferencia N°' + numeroReferencia, opt);
+                    break;
+                case '@TipoValor.TarjetaCredito':
+                    var opt = {
+                        width: 600, height: 600,
+                        openCallback: function () {
+                            $('#GridCancelaciones').resizeGrid('GridCancelaciones_Container');
+                        }
+                    };
+                    $('#listadoValores-detalle-dialog').OpenDetailDialog('@Url.Action("Detalle", "PagosTarjetas", new { Area = "Tesoreria" })?Id=' + numeroReferencia, 'Detalle Extendido de Pago con Tarjeta N°' + numeroReferencia, opt);
+                    break;
+                case '@TipoValor.Retencion':
+                    var opt = {
+                        width: 900, height: 600,
+                        openCallback: function () {
+                            $('#GridRetencion').resizeGrid('GridRetencion_Container');
+                        }
+                    };
+                    $('#listadoValores-detalle-dialog').OpenFormDialog('@Url.Action("DetalleRetencion", "Valores", new { Area = "Tesoreria" })?Id=' + numeroReferencia + '&opensDialog=true', 'Detalle Retencion N°' + numeroReferencia, opt);
+                    break;
+                default: break;
+            }
+        },
+
+        GridActions: function (cellvalue, options, rowObject) {
+            var btns = "";
+            btns += '<a class="boton boton-i BtnIngresoValorEliminar" title="Eliminar Valor"><i class="fa fa-trash-o i-red"></i></a>'
+            return btns;
+        },
+
+        EliminarValor: function (Id) {
+            IngresoValores.Grid.jqGrid('delRowData', Id);
+            IngresoValores.CalcularTotales();
+        },
+
+        OnClickEliminarValor: function () {
+            var Id = $(this).closest('tr').attr('id');
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el valor ingresado?",
+                        function () { IngresoValores.EliminarValor(Id) });
+        },
+
+        Nuevo: function (IdValor, Tipo) {
+            switch (Tipo) {
+                case '@TipoValor.Efectivo':
+                    IngresoValores.NuevoEfectivo(IdValor);
+                    break;
+                case '@TipoValor.Cheque':
+                    IngresoValores.NuevoCheque(IdValor);
+                    break;
+                case '@TipoValor.ChequePropio':
+                    IngresoValores.NuevoChequePropio(IdValor);
+                    break;
+                case '@TipoValor.Transferencia':
+                    IngresoValores.NuevaTransferencia(IdValor);
+                    break;
+                case '@TipoValor.TarjetaCredito':
+                    IngresoValores.NuevoPagoTarjeta(IdValor);
+                    break;
+                case '@TipoValor.Retencion':
+                    IngresoValores.NuevaRetencion(IdValor);
+                    break;
+                default: break;
+            }
+        },
+
+        NuevoCheque: function (IdValor) {
+            if (typeof $('#ClienteID').val() == "undefined") {
+                $.WarningDialog('No puede entregar un Cheque de Terceros a un proveedor!');
+                return;
+            }
+            $('#IngresoValores-dialog').OpenFormDialog(
+                    '@Url.Action("NuevoCheque", "Valores", new { Area = "Tesoreria" })?IdCliente=' + $("#ClienteID").val() + '&IdValor=' + IdValor + '&Callback=IngresoValores.OnSuccessNuevoCheque',
+                    '<i class="fa fa-cc"></i> Nuevo Cheque',
+                { width: 800 });
+        },
+
+        OnSuccessNuevoCheque: function (Cheque, IdValor) {
+            debugger;
+            var Item = {
+                Id: IngresoValores.GridIdCount,
+                TipoValor: 'Cheque',
+                IdReferencia: Cheque.Id,
+                Descripcion: Cheque.Banco.Nombre + ' - ' + Cheque.NumeroCuenta,
+                NumeroOperacion: Cheque.Numero,
+                Fecha: Cheque.Fecha,
+                Importe: Cheque.Importe,
+                ValorId: IdValor
+            }
+            IngresoValores.Grid.jqGrid('addRowData', Item.Id, Item);
+            IngresoValores.OnSuccessIngresoValor();
+        },
+
+        NuevaRetencion: function (IdValor) {
+            if ($("#ProveedorID").val() != null && typeof $("#ProveedorID").val() !== "undefined") {
+                var entidad = 'IdProveedor=' + $("#ProveedorID").val();
+            } else {
+                var entidad = 'IdCliente=' + $("#ClienteID").val();
+            }
+            $('#IngresoValores-dialog').OpenFormDialog(
+                    '@Url.Action("NuevaRetencion", "Valores", new { Area = "Tesoreria" })?' + entidad + '&IdValor=' + IdValor + '&Callback=IngresoValores.OnSuccessNuevaRetencion',
+                    '<i class="fa fa-cubes"></i> Nueva Retención',
+                { width: 800 });
+        },
+
+        OnSuccessNuevaRetencion: function (ComprobanteRetencion, IdValor) {
+            debugger;
+            var Item = {
+                Id: IngresoValores.GridIdCount,
+                TipoValor: 'Retencion',
+                IdReferencia: ComprobanteRetencion.Id,
+                Descripcion: ComprobanteRetencion.Retencion.Abreviatura + ' - ' + ComprobanteRetencion.Retencion.Descripcion,
+                NumeroOperacion: ComprobanteRetencion.Numero,
+                Fecha: ComprobanteRetencion.Fecha,
+                Importe: ComprobanteRetencion.Total,
+                ValorId: IdValor,
+                IdEntidadExt: ComprobanteRetencion.Retencion.Id
+            }
+            IngresoValores.Grid.jqGrid('addRowData', Item.Id, Item);
+            IngresoValores.OnSuccessIngresoValor();
+        },
+
+        NuevoChequePropio: function (IdValor) {
+            if (typeof $('#ProveedorID').val() == "undefined") {
+                $.WarningDialog('No se puede recibir un Cheque Propio de un cliente!');
+                return;
+            }
+            $('#IngresoValores-dialog').OpenFormDialog(
+                    '@Url.Action("NuevoChequePropio", "Valores", new { Area = "Tesoreria" })?IdProveedor=' + $("#ProveedorID").val() + '&IdValor=' + IdValor + '&Callback=IngresoValores.OnSuccessNuevoChequePropio',
+                    '<i class="fa fa-cc"></i> Nuevo Cheque Propio',
+                { width: 800 });
+        },
+
+        OnSuccessNuevoChequePropio: function (Cheque, IdValor) {
+            debugger;
+            var Item = {
+                Id: IngresoValores.GridIdCount,
+                TipoValor: 'Cheque Propio',
+                IdReferencia: Cheque.Id,
+                Descripcion: Cheque.CuentaBancaria.Banco.Nombre + ' - ' + Cheque.CuentaBancaria.Nombre,
+                NumeroOperacion: Cheque.Numero,
+                Fecha: Cheque.Fecha,
+                Importe: Cheque.Importe,
+                ValorId: IdValor,
+                IdEntidadExt: Cheque.CuentaBancaria.Id
+            }
+            IngresoValores.Grid.jqGrid('addRowData', Item.Id, Item);
+            IngresoValores.OnSuccessIngresoValor();
+        },
+
+        NuevoPagoTarjeta: function (IdValor) {
+            if (typeof $('#ProveedorID').val() == "undefined") {
+                $.WarningDialog('No se puede recibir un Pago con Tarjeta de un cliente!');
+                return;
+            }
+            $('#IngresoValores-dialog').OpenFormDialog(
+                    '@Url.Action("NuevoPagoTarjeta", "Valores", new { Area = "Tesoreria" })?IdProveedor=' + $("#ProveedorID").val() + '&IdValor=' + IdValor + '&Callback=IngresoValores.OnSuccessNuevoPagoTarjeta',
+                    '<i class="fa fa-cc-visa"></i> Nuevo Pago con Tarjeta de Credito',
+                { width: 800 });
+        },
+
+        OnSuccessNuevoPagoTarjeta: function (PagoTarjeta, IdValor) {
+            debugger;
+            var Item = {
+                Id: IngresoValores.GridIdCount,
+                TipoValor: 'Tarjeta De Credito',
+                IdReferencia: PagoTarjeta.Id,
+                Descripcion: PagoTarjeta.Tarjeta.Numero + '-' + PagoTarjeta.Tarjeta.CuentaBancaria.Banco.Nombre,
+                NumeroOperacion: PagoTarjeta.Numero,
+                Fecha: PagoTarjeta.Fecha,
+                Importe: PagoTarjeta.Total,
+                ValorId: IdValor,
+                IdEntidadExt: PagoTarjeta.Tarjeta.Id
+            }
+            IngresoValores.Grid.jqGrid('addRowData', Item.Id, Item);
+            IngresoValores.OnSuccessIngresoValor();
+        },
+
+        NuevoEfectivo: function (IdValor) {
+            $('#IngresoValores-dialog').OpenFormDialog(
+                    '@Url.Action("NuevoEfectivo", "Valores", new { Area = "Tesoreria" })?IdValor=' + IdValor + '&Callback=IngresoValores.OnSuccessNuevoEfectivo',
+                    '<i class="fa fa-cc"></i> Nuevo Efectivo',
+                { width: 800 });
+        },
+
+        OnSuccessNuevoEfectivo: function (Efectivo, IdValor) {
+            debugger;
+            var Item = {
+                Id: IngresoValores.GridIdCount,
+                TipoValor: 'Efectivo',
+                IdReferencia: '',
+                Descripcion: Efectivo.Moneda,
+                NumeroOperacion: '',
+                Fecha: Efectivo.Fecha,
+                Importe: Efectivo.Importe,
+                ValorId: IdValor,
+                IdEntidadExt: Efectivo.IdEntidadExt // Id de la caja elegida.
+            }
+            IngresoValores.Grid.jqGrid('addRowData', Item.Id, Item);
+            IngresoValores.OnSuccessIngresoValor();
+        },
+
+        NuevaTransferencia: function (IdValor) {
+            if ($("#ProveedorID").val() != null && typeof $("#ProveedorID").val() !== "undefined") {
+                var entidad = 'IdProveedor=' + $("#ProveedorID").val();
+            }else{
+                var entidad = 'IdCliente=' + $("#ClienteID").val();
+            }
+            $('#IngresoValores-dialog').OpenFormDialog(
+                    '@Url.Action("NuevaTransferencia", "Valores", new { Area = "Tesoreria" })?' + entidad + '&IdValor=' + IdValor + '&Callback=IngresoValores.OnSuccessNuevaTransferencia',
+                    '<i class="fa fa-exchange"></i> Nueva Transferencia',
+                { width: 800 });
+        },
+
+        OnSuccessNuevaTransferencia: function (Transferencia, IdValor) {
+            debugger;
+            var Item = {
+                Id: IngresoValores.GridIdCount,
+                TipoValor: 'Transferencia',
+                IdReferencia: Transferencia.Id,
+                Descripcion: Transferencia.CuentaBancaria.Banco.Nombre + ' - ' + Transferencia.CuentaBancaria.Nombre,
+                NumeroOperacion: Transferencia.Numero,
+                Fecha: Transferencia.Fecha,
+                Importe: Transferencia.Importe,
+                ValorId: IdValor,
+                IdEntidadExt: Transferencia.CuentaBancaria.Id
+            }
+            IngresoValores.Grid.jqGrid('addRowData', Item.Id, Item);
+            IngresoValores.OnSuccessIngresoValor();
+        },
+
+        OnSuccessIngresoValor: function(){
+            IngresoValores.GridIdCount++;
+            $('#IngresoValores-dialog').dialog("close");
+            IngresoValores.CalcularTotales();
+        },
+
+        CalcularTotales: function(){
+            var valores = IngresoValores.Grid.jqGrid('getGridParam', 'data')
+            var totalValores = 0;
+            $.each(valores, function (i, valor) {
+                totalValores += $.unformatCurrency(parseFloat(valor.Importe));
+            });
+            IngresoValores.TotalInput.val($.formatCurrency(totalValores));
+            return totalValores;
+        },
+
+        GetValores: function (NoValoresErrorMsg) {
+            var Valores = IngresoValores.Grid.jqGrid('getGridParam', 'data');
+            if (Valores.length == 0) {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                {
+                    $('#BtnSubmit').removeAttr('disabled');
+                }
+                $.WarningDialog(NoValoresErrorMsg);
+                return;
+            }
+            var result = new Array();
+            for (var i = 0; i < Valores.length; i++) {
+                var Fecha = typeof Valores[i].Fecha == "string" && Valores[i].Fecha.indexOf('Date(') >= 0 ?
+                                new Date(parseInt(Valores[i].Fecha.slice(6, -2), 10)) : Valores[i].Fecha;
+                var Item = {
+                    Id: 0,
+                    Valor: { Id: Valores[i].ValorId },
+                    TipoValor: Valores[i].TipoValor,
+                    NumeroReferencia: Valores[i].IdReferencia,
+                    Descripcion: Valores[i].Descripcion,
+                    NumeroOperacion: Valores[i].NumeroOperacion,
+                    Fecha: Fecha,
+                    Importe: Valores[i].Importe,
+                    IdEntidadExt: Valores[i].IdEntidadExt
+                }
+                result.push(Item);
+            }
+            return result;
+        }
+    }
+</script>

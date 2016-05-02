@@ -1,0 +1,117 @@
+﻿@model Woopin.SGC.Model.Contabilidad.Asiento
+@using Woopin.SGC.Common.HtmlHelper
+@using Woopin.SGC.Common.HtmlModel
+@{
+    if (ViewBag.OpensDialog)
+    {
+        Layout = null;
+    }
+    ViewBag.Title = "Detalle Asiento ";
+    ViewBag.SectionIcon = "book";
+    ViewBag.SectionTitle = "Detalle del Asiento: " + Model.Leyenda;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        @if (!ViewBag.OpensDialog)
+        {
+            <div class="" style="float:left;">
+                <div class="col-md-12">
+                    <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+                </div>
+            </div>
+        }
+        
+        @if (!ViewBag.OpensDialog && Model.TipoOperacion != null && Model.ComprobanteAsociado > 0)
+        {
+            <a class="boton boton-i BtnComprobanteAsociado" style="float: right; border-bottom-color: #2F97BD; " title="ComprobanteAsociado" data-id="@Model.Id" data-oper="@Model.TipoOperacion" data-compasoc="@Model.ComprobanteAsociado">
+                <i class="fa fa-search i-blue" style="padding: 2px 5px 0px 5px; color: #666666;">
+                    <br /><span style="color: #666666; font-size: 12px; padding: 0px; margin: 0px;">Ver Comprobante</span>
+                </i>
+            </a>
+        }
+
+        @if (!ViewBag.OpensDialog && Model.Manualizado)
+        {
+            <a class="boton boton-i BtnEliminar" style="float: right; border-bottom-color: #bd362f; " title="Eliminar" data-id="@Model.Id">
+                <i class="fa fa-trash-o" style="padding: 2px 5px 0px 5px; color: #666666;">
+                    <br /><span style="color: #666666; font-size: 12px; padding: 0px; margin: 0px;">Anular</span>
+                </i>
+            </a>
+        }
+
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@string.Format("{0:dd/MM/yyyy}", Model.Fecha)">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.NumeroReferencia, new { @class = "col-md-6 horizontal-label readonly-label" })
+                    <div class="col-md-6 input-container">
+                        @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput", @id = "NumeroReferencia", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    
+                    @Html.LabelFor(model => model.Ejercicio, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" type="text" value="@Model.Ejercicio.Nombre">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                @if (!ViewBag.OpensDialog)
+                {
+                    <div class="col-md-7">
+                        @Html.LabelFor(model => model.Leyenda, new { @class = "col-md-3 horizontal-label readonly-label" })
+                        <div class="col-md-9 input-container">
+                            @Html.TextBoxFor(model => model.Leyenda, new { @class = "textinput", @readonly = "readonly" })                           
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                }
+                else
+                {
+                    <div class="col-md-7">
+                        @Html.LabelFor(model => model.Leyenda, new { @class = "col-md-3 horizontal-label readonly-label" })
+                        <div class="col-md-9 input-container">
+                            @Html.TextBoxFor(model => model.Leyenda, new { @class = "textinput", @readonly = "readonly" })
+                        </div>
+                    </div>
+                }
+                <div class="col-md-5">
+                    <label class="col-md-4 horizontal-label readonly-label">Total</label>
+                    <div class="col-md-8 input-container">
+                        @{
+                            var Total = Model.Items.Sum(x => x.Debe);
+                        }
+                        <input type="text" class = "textinput" readonly="readonly" value="@Total.ToString("C")"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+
+<div class="col-md-12 table-container detalles" id="GridDetallesAsiento_Container">
+    <table id="GridDetallesAsiento" class="col-md-12"></table>
+    <div id="GridDetallesAsiento_pager"></div>
+</div>
+
+
+<div class="clearfix"></div>
+@section Scripts{
+    @Html.Partial("js/_Detalle");
+}
+@if(ViewBag.OpensDialog)
+{
+    Html.RenderPartial("js/_Detalle");
+}

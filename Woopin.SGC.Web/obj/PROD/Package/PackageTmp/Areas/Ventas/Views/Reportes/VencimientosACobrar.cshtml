@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Comprobantes Ventas";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Vencimientos a Cobrar";
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridVencimientosACobrar"></table>
+    <div id="GridVencimientosACobrar_pager"></div>
+</div>
+<div id="VencimientosACobrar-detalle-dialog"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            VencimientosACobrar.init();
+        });
+
+        var VencimientosACobrar = {
+
+            init: function () {
+                $('#BtnExportXLS').click(VencimientosACobrar.ExportToExcel);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridVencimientosACobrar', ["Fecha", "Comprobante"]);
+                $('#BtnRefresh').bind('click',VencimientosACobrar.ReloadGrid);
+                /* Armo la grilla del ABM */
+                $('#GridVencimientosACobrar').CreateCommonGrid({
+                    url: '@Url.Action("GetAllVencimientosACobrar")',
+                    colNames: ['', 'Cliente', 'Tipo de Comprobante', 'Numero de Comprobante', 'Fecha', 'Fecha de Vencimiento', 'Importe','Contacto de Cobro', 'Observación', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Cliente', index: 'Cliente', width: 25, align: "center", sortable: true },
+                        { name: 'TipoComprobante', index: 'TipoComprobante', width: 25, align: "center", sortable: true },
+                        { name: 'Comprobante', index: 'Comprobante', width: 25, align: "center", sortable: true },
+                        { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'FechaVencimiento', index: 'FechaVencimiento', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Importe', index: 'Importe', width: 25, align: "center", sortable: true, formatter: $.formatCurrency, summaryType: 'sum', summaryTpl: '<b>Total: {0}</b>' },
+                        { name: 'ContactoCobro', index: 'ContactoCobro', width: 25, align: "center", sortable: true },
+                        { name: 'Observacion', index: 'Observacion', width: 25, align: "center", sortable: true, editable: true, edittype: 'text' },
+                        { name: 'Acciones', index: 'Acciones', width: 25, align: "center", sortable: true, formatter: VencimientosACobrar.AccionesFormatter }
+                    ],
+                    sortname: 'FechaVencimiento',
+                    sortorder: "asc",
+                    pager: '#GridVencimientosACobrar_pager',
+                    rowList: [50, 100, 200],
+                    rowNum: 50,
+                    grouping: true,
+                    groupingView: {
+                        groupField: ['Cliente'],
+                        groupColumnShow: [false],
+                        groupText: ['<b>{0} - {1} Factura(s)</b>'],
+                        groupSummary: [true],
+                        groupDataSorted: true
+                    },
+                    height: 700,
+                    cellEdit: true,
+                    cellsubmit: 'clientArray',
+                    afterSaveCell: function (rowId, cellname, value, iRow, iCol) {
+                        VencimientosACobrar.SaveObservacion(rowId, cellname, value, iRow, iCol);
+                    }
+                });
+                $('#GridVencimientosACobrar').trigger("reloadGrid");
+                $(document).on('click', '.BtnVerDialog', VencimientosACobrar.VerDetalleDialog);
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridVencimientosACobrar', 'Vencimientos a Cobrar');
+            },
+
+            ReloadGrid: function () {
+                $('#SelectCount').html('0');
+                $("#GridVencimientosACobrar").setGridParam({ datatype: 'json' });
+                $('#GridVencimientosACobrar').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            SaveObservacion: function (rowId, cellname, value, iRow, iCol) {
+                
+                var params = {
+                    url: '@Url.Action("Editar", "ComprobantesVentas")',
+                    data: {
+                        IdComprobante: rowId,
+                        Observacion: value
+                    },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+
+                        }
+                        else {
+                            $.WarningDialog('No se pudo modificar');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            VerDetalleDialog: function () {
+                var IdEntidad = $(this).data('id');
+                var RowId = $(this).closest('tr').attr('id');
+                var row = $("#GridVencimientosACobrar").getRowData(RowId);
+                var opt = {
+                    width: 950, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesVenta').resizeGrid('GridDetallesVenta_Container');
+
+                    }
+                };
+                $('#VencimientosACobrar-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","ComprobantesVentas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.Letra + row.Numero, opt);
+            },
+
+            AccionesFormatter: function (cellvalue, options, rowObject) {
+                var ret = '';
+                
+                var url = '@Url.Action("Detalle", "ComprobantesVentas")/' + rowObject.Id;
+                ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+                ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+                return ret;
+            }
+
+        }
+
+    </script>
+}

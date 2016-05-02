@@ -1,0 +1,240 @@
+﻿@{
+    ViewBag.Title = "Reporte de Articulos";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Ventas de Articulos por Mes";
+}
+<div class="action-bar row" style="margin-bottom:5px;">
+    <div class="col-md-4" style="padding-left:0px;">
+        <div class="col-md-12 input-container" style="padding-left:0px;">
+            <div class="row">
+                <input type="number" id="ClienteID" name="ClienteID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Cliente_Id" name="Cliente.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Cliente_Id" data-input="ClienteID" title="Limpiar" style="margin: 4px 0px; padding: 2px 3px !important;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Ventas por Articulo
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Articulo..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridVentasArticulos"></table>
+    <div id="GridVentasArticulos_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        VentasArticulos.init();
+    });
+
+    var VentasArticulos = {
+
+        init: function () {
+            $('#BtnExportXLS').click(VentasArticulos.ExportToExcel);
+
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click',VentasArticulos.LoadData);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridVentasArticulos', ["Descripcion"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridVentasArticulos').CreateCommonGrid({
+                url: '@Url.Action("GetAllVentasArticulos")',
+                serializeGridData: function (postData) {
+                    data = {
+                        IdCliente: $('#ClienteID').val() != '' ? $('#ClienteID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'Descripcion del Articulo', 'Cantidad', 'Total', 'MonthGroup', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Descripcion', index: 'Descripcion', width: 25, align: "center", sortable: true },
+                    { name: 'Cantidad', index: 'Cantidad', width: 25, align: "center", sortable: true, summaryType: 'sum', summaryTpl: '<b>Total: {0}</b>' },
+                    { name: 'Total', index: 'Total', width: 25, align: "center", sortable: true, formatter: $.formatCurrency, summaryType: 'sum', summaryTpl: '<b>Total: {0}</b>' },
+                    { name: 'MonthGroup', index: 'MonthGroup', width: 25, align: "center", sortable: true, sorttype: function (cell, row) { return row.MonthCode}},
+                    { name: 'MonthCode', index: 'MonthGroup', width: 25, align: "center", sortable: true, hidden: true }
+                ],
+                sortname: 'MonthCode',
+                sortorder: "desc",
+                pager: '#GridVentasArticulos_pager',
+                rowList: [30, 60, 90],
+                rowNum: 30,
+                grouping: true,
+                groupingView: {
+                    groupField: ['MonthGroup'],
+                    groupColumnShow: [false],
+                    groupText: ['<b>{0} - {1} Articulo(s) vendidos(s)</b>'],
+                    groupSummary: [true],
+                    groupOrder: 'desc'
+                },
+                height:700
+            });
+            $('#GridVentasArticulos').trigger("reloadGrid");
+
+            $('#Cliente_Id').select2(
+               {
+                   placeholder: "Seleccione Un Cliente",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetClientesCombo", "Clientes")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#ClienteID').change(VentasArticulos.OnClienteChange);
+            $(document).on('click', '.BtnVerDialog', VentasArticulos.VerDetalleDialog);
+            $('#Cliente_Id').on("select2-selecting", VentasArticulos.OnClienteSelected);
+            $('#BtnLoadData').click(VentasArticulos.LoadData);
+
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                VentasArticulos.ClearSelect2(IdClear, IdClearInput);
+            });
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        OnClienteSelected: function (e) {
+            $('#ClienteID').val(e.val)
+        },
+
+        VerDetalleDialog: function () {
+            var IdEntidad = $(this).data('id');
+            var RowId = $(this).closest('tr').attr('id');
+            var row = $("#GridVentasArticulos").getRowData(RowId);
+            if ($(this).data('entidad') == 'ComprobanteVenta') {
+                var opt = {
+                    width: 850, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesVenta').resizeGrid('GridDetallesVenta_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","ComprobantesVentas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.LetraNumero, opt);
+            }
+            else {
+                var opt = {
+                    width: 900, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesCobranza').resizeGrid('GridDetallesCobranza_Container');
+                        $('#GridCobrosCobranza').resizeGrid('GridCobrosCobranza_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","Cobranzas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Cobranza ' + row.LetraNumero, opt);
+            }
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridVentasArticulos', 'Listado de Ventas por Articulo');
+        },
+
+
+
+        LoadData: function () {
+            VentasArticulos.CompletarFiltros();
+            valid = VentasArticulos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            VentasArticulos.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#ClienteID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return $.WarningDialog('El N° de Cliente no es correcto');
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        OnClienteChange: function () {
+            var Id = $('#ClienteID').val();
+            if (Id == "") { return; }
+            valid = VentasArticulos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetCliente", "Clientes")',
+                data: { IdCliente: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $('#Cliente_Id').select2('data', { id: Id, text: ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')' });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Cliente no existe');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridVentasArticulos").setGridParam({ datatype: 'json' });
+            $('#GridVentasArticulos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '';
+            if (rowObject.Entidad == 'ComprobanteVenta') {
+                url = '@Url.Action("Detalle","ComprobantesVentas")/' + rowObject.NroReferencia;
+            }
+            else {
+                url = '@Url.Action("Detalle","Cobranzas")/' + rowObject.NroReferencia;
+            }
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.NroReferencia + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.NroReferencia + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        }
+    }
+    </script>
+}

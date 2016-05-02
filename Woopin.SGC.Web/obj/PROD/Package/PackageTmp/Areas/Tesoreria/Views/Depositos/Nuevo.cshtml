@@ -1,0 +1,349 @@
+﻿@model Woopin.SGC.Model.Tesoreria.Deposito
+
+@{
+    ViewBag.Title = "Nuevo Deposito";
+    ViewBag.SectionIcon = "check-square-o";
+    ViewBag.SectionTitle = "Nuevo Deposito";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div>
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check-circle-o i-green"></i> Crear Deposito</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Cuenta, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="text" id="CuentaID" name="CuentaID" class="col-md-2" style="margin-top: 7px;" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Cuenta_Id" name="Cuenta.Id" class="selectinput" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.FechaDeposito, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="FechaDeposito" name="FechaDeposito" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                        @Html.ValidationMessageFor(model => model.FechaDeposito, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.FechaAcreditacion, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="FechaAcreditacion" name="FechaAcreditacion" type="text" >
+                        @Html.ValidationMessageFor(model => model.FechaAcreditacion, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Concepto, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Concepto, new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.Concepto, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.NumeroBoleta, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container" >
+                        @Html.TextBoxFor(model => model.NumeroBoleta, new { @class = "textinput", @id = "NumeroBoleta" })
+                        @Html.ValidationMessageFor(model => model.NumeroBoleta, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Total, new { @class = "textinput", @id = "Total", @readonly="readonly" })
+                        @Html.ValidationMessageFor(model => model.Total, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="row">
+    <a class="boton place-right" id="agregarCheques">
+        <i class="fa fa-plus-circle i-green"></i>Agregar Cheques
+    </a>
+</div>
+
+<div class="table-container" id="GridCheques_Container">
+    <table id="GridCheques"></table>
+    <div id="GridCheques_pager"></div>
+</div>
+
+
+<div id="ChequesADepositar-dialog"></div>
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante de Deposito. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        Deposito.init();
+    });
+    var rowIdAnt;
+    var rowIdAct;
+    var Deposito = {
+        IdsGridRestricta: new Array(),
+
+        init: function () {
+            // Saca la validacion del Total
+            $('#Total').attr("data-val", false);
+            $('#comprobante-header').removeData('unobtrusiveValidation');
+            $('#comprobante-header').removeData('validator');
+            $.validator.unobtrusive.parse('#comprobante-header');
+
+            $('#CuentaID').change(Deposito.OnCuentaChange);
+            $('#Cuenta_Id').select2(
+               {
+                   placeholder: "Seleccione Un Cuenta",
+                   ajax: {
+                       url: "@Url.Action("GetComboCuentaBancaria", "CuentasBancarias")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#Cuenta_Id').on("select2-selecting", Deposito.OnCuentaSelected);
+            $("#FechaAcreditacion").datepicker({ dateFormat: 'dd/mm/yy' });
+            $("#FechaDeposito").datepicker({ dateFormat: 'dd/mm/yy' });
+            $("#FechaAcreditacion").on('change', Deposito.OnChangeFechaAcreditacion);
+            $(document).on('click', '.BtnEliminar', Deposito.OnEliminarChequeClick);
+            //Grilla de los comprobantes elegidos a abonar despues del popup
+            $('#GridCheques').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', 'Fecha', 'Cliente', 'Numero', 'Importe'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Actions', index: 'Actions', width: 50, sortable: false, formatter: ABM_Eliminar, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 200, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Cliente.RazonSocial', index: 'Cliente.RazonSocial', width: 200, align: "center", sortable: true },
+                    { name: 'Numero', index: 'Numero', width: 200, align: "center", sortable: true },
+                    { name: 'Importe', index: 'Importe', width: 200, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                pager: '#GridCheques_pager',
+                rowList: [5, 10, 15],
+                rowNum: 5,
+                cellEdit: true,
+                cellsubmit: 'clientArray',
+                afterEditCell: function (rowId, cellname, value, iRow, iCol) {
+                    Deposito.AfterEditCell(rowIdAnt, rowId, cellname, value, iRow, iCol);
+                },
+                afterSaveCell: Deposito.CalcularTotal
+            });
+            $('#GridCheques').trigger("reloadGrid");
+            $('#agregarCheques').on("click", Deposito.ValidarHayCheques);
+            $("#GridCheques").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            $('#BtnSubmit').on('click', Deposito.Save);
+        },
+
+        ValidateImporteChange: function (value, colname) {
+            var num = new Number(value);
+            if (isNaN(num)) {
+                return [false, 'El valor ingresado no es un número'];
+            }
+            var rowData = $('#GridCheques').getRowData(rowIdAct);
+            // Validacion de Salida del Importe
+            var maximoImporte = $.unformatCurrency(rowData.Total) - $.unformatCurrency(rowData.TotalPagado);
+            if (value > maximoImporte) {
+                return [false, 'El importe es mayor a lo que se debe pagar de la factura' + $.formatCurrency(maximoImporte)];
+            }
+            return [true];
+        },
+
+        OnEliminarChequeClick: function () {
+            var Id = $(this).closest('tr').attr('id');
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el cheque?",
+                    function () { Deposito.EliminarCheque(Id) });
+        },
+
+        EliminarCheque: function (Id) {
+            $('#GridCheques').jqGrid('delRowData', Id);
+            $('#SelectCount').html('0');
+            Deposito.CalcularTotal();
+            indexDeleted = Deposito.IdsGridRestricta.indexOf(Id);
+            Deposito.IdsGridRestricta.splice(indexDeleted, 1);
+        },
+
+        AfterEditCell: function (rowIdAnt, rowId, cellname, value, iRow, iCol) {
+            if (rowIdAnt == undefined) {
+                rowIdAnt = rowId;
+            }
+            rowIdAct = rowIdAnt;
+            rowIdAnt = rowId;
+            Deposito.CalcularTotal();
+        },
+
+        CalcularTotal: function () {
+            var comprobantes = $("#GridCheques").jqGrid('getGridParam', 'data')
+            var totalACancelar = 0;
+            $.each(comprobantes, function (i, comp) {
+                totalACancelar += $.unformatCurrency(Number(comp.Importe));
+            });
+            $('#Total').val($.formatCurrency(totalACancelar));
+            return totalACancelar;
+        },
+
+        OnCuentaChange: function () {
+            var Id = $('#CuentaID').val();
+            if (!$.isNumeric(Id)) {
+                return $.WarningDialog('El N° de Cuenta no es numerico');
+            }
+            var params = {
+                url: '@Url.Action("GetCuentaBancaria", "CuentasBancarias")',
+                data: { Id: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        var Cuenta = ret.Data.Banco.Nombre + '(' + ret.Data.Numero + ')';
+                        $('#Cuenta_Id').select2('data', { id: Id, text: Cuenta });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('La Cuenta no existe!', 'error');
+                        $('#Cuenta_Id').select2('data', null);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnCuentaSelected: function (e) {
+            $('#CuentaID').val(e.val)
+        },
+
+        OnAgregarCheques: function (e) {
+            $('#ChequesADepositar-dialog').OpenFormDialog(
+                    '@Url.Action("ChequesEnCartera")',
+                '<i class="fa fa-folder-o"></i> Cheques a Depositar',
+            { width: 800 });
+        },
+
+        ValidarHayCheques: function () {
+           
+            var postParams = {
+                url: '@Url.Action("GetAllChequesEnCartera")',
+                success: function (ret) {
+                    if (ret.Data.length == 0) {
+                        $.WarningDialog('No hay cheques en cartera para depositar!', 'info');
+                    }
+                    else {
+                        Deposito.OnAgregarCheques();
+                    }
+                }
+            }
+            $.AjaxPost(postParams);
+        },
+
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
+
+            $('#BtnSubmit').attr('disabled', 'disabled');
+            if (!$('#comprobante-header').valid())
+            {
+                $('#BtnSubmit').removeAttr('disabled');
+                return;
+            }
+            var eDeposito = $('#comprobante-header').serializeFormJSON();
+            var comprobantesGrid = $('#GridCheques').jqGrid('getGridParam', 'data');
+            if (comprobantesGrid.length == 0) {
+                $('#BtnSubmit').removeAttr('disabled');
+                $.WarningDialog('Es necesario que agregue al menos un cheque.');
+                return;
+            }
+            eDeposito.Cheques = new Array();
+            for (var i = 0; i < comprobantesGrid.length; i++) {
+                var item = {
+                    Cheque: { Id: comprobantesGrid[i].Id }
+                };
+                eDeposito.Cheques.push(item);
+            }
+
+            var postParams = {
+                url: "@Url.Action("Nuevo")",
+                data: { Deposito: eDeposito },
+                success: function (data) {
+                    if (data.Success) {
+                        if (data.NumeroRef != null) {
+                            $.WarningDialog('El N° de Deposito ha sido tomado, su nuevo N° es ' + data.NumeroRef,null, Deposito.OnFinishSave(data.Deposito));
+                        }
+                        else {
+                            Deposito.OnFinishSave(data.Deposito);
+                        }
+                    }
+                    else {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(postParams);
+        },
+
+        OnChangeFechaAcreditacion: function () {
+            start = $('#FechaDeposito').val();
+            end = $('#FechaAcreditacion').val();
+            Deposito.ValidateFechaStartEnd(start, end);
+        },
+
+        ValidateFechaStartEnd: function (Start, End) {
+            FechaDeposito = $('#FechaDeposito').val();
+            dayStart = $.unformatCurrency(((Start).split("/"))[0]) + 2;
+            monthStart = ((Start).split("/"))[1];
+            yearStart = ((Start).split("/"))[2];
+            FechaAcreditacion = $('#FechaAcreditacion').val();
+            dayEnd = $.unformatCurrency(((End).split("/"))[0]) + 2;
+            //TODO chequear que no sea fin de mes al menos
+            monthEnd = ((End).split("/"))[1];
+            yearEnd = ((End).split("/"))[2];
+            if (yearEnd > yearStart) { return; }
+            if (yearEnd == yearStart) {
+                if (monthEnd > monthStart) { return; }
+                if (monthEnd == monthStart) {
+                    if (dayEnd >= dayStart) { return; } else {
+                        $('#FechaAcreditacion').val('');
+                        return $.WarningDialog('La Fecha de Acreditacion debe ser mayor o igual a la Fecha de Deposito');
+                    }
+                } else {
+                    $('#FechaAcreditacion').val('');
+                    return $.WarningDialog('La Fecha de Acreditacion debe ser mayor o igual a la Fecha de Deposito');
+                }
+            } else {
+                $('#FechaAcreditacion').val('');
+                return $.WarningDialog('La Fecha de Acreditacion debe ser mayor o igual a la Fecha de Deposito');
+            }
+        },
+
+        OnFinishSave: function (Deposito) {
+            window.onbeforeunload = null;
+            $.ShowLoader();
+            window.location = '@Url.Action("Detalle")/' + Deposito.Id;
+        }
+    }
+
+    </script>
+}

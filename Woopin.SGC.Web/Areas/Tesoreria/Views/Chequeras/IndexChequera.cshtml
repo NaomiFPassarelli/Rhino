@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "Chequera";
+    ViewBag.SectionIcon = "cc-visa";
+    ViewBag.SectionTitle = "Listado de Cheques ";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnDelete" title="Anular Cheque">
+        <i class="fa fa-trash-o i-red"></i>  Anular Cheque
+    </a>
+    @*<a class="boton place-left" id="BtnDeleteSelected" title="Anular Cheque">
+        <i class="fa fa-trash-o i-red"></i>  Anular Cheque
+    </a>*@
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Cheque..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridChequesPropios"></table>
+    <div id="GridChequesPropios_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoChequesPropios = {
+
+            Anular: function() {
+                $('#create-dialog').OpenFormDialog("@Html.Raw(Url.Action("AnularCheques", new { IdChequera = @Model.Id, IdCuentaBancaria = @Model.CuentaBancaria.Id }))", '<i class="fa fa-cc-visa"></i> Anular Cheque', null);
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridChequesPropios');
+                ListadoChequesPropios.ReloadGrid();
+            },
+
+            ReloadGrid:function () {
+                $("#GridChequesPropios").setGridParam({ datatype: 'json' });
+                $('#GridChequesPropios').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridChequesPropios', 'Listado de Cheques');
+            },
+
+            
+            init: function () {
+                /* Binding del boton de crear*/
+                $('#BtnDelete').bind('click', ListadoChequesPropios.Anular);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoChequesPropios.Refresh);
+                $('#BtnExportXLS').click(ListadoChequesPropios.ExportToExcel);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridChequesPropios');
+                
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridChequesPropios', ["Numero"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridChequesPropios').CreateCommonGrid({
+                    url: '@Url.Action("GetAllChequesInChequera", new { IdChequera = @Model.Id })',
+                    colNames: ['', 'Numero', 'Proveedor', 'Importe', 'Fecha'/*, ''*/],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Numero', index: 'Numero', width: 30, align: "center", sortable: true },
+                        { name: 'Proveedor.RazonSocial', index: 'Proveedor.RazonSocial', width: 30, align: "center", sortable: true },
+                        { name: 'Importe', index: 'Importe', width: 30, align: "center", sortable: true },
+                        { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } }
+                        //{ name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ListadoChequesPropios.FormatterAnularChequePropio, align: "center" }
+                    ],
+                    sortname: 'Numero',
+                    sortorder: "asc",
+                    pager: '#GridChequesPropios_pager'
+                });
+                $('#GridChequesPropios').trigger("reloadGrid");
+            }
+        }
+    $(document).ready(function () {
+        ListadoChequesPropios.init();
+    });
+    </script>
+}

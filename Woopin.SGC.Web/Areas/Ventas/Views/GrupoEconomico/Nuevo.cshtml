@@ -1,0 +1,55 @@
+﻿@model Woopin.SGC.Model.Ventas.GrupoEconomico
+
+@{
+    ViewBag.Title = "Nuevo Grupo Economico";
+    ViewBag.SectionIcon = "group";
+    ViewBag.SectionTitle = "Nuevo Grupo Economico";
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Nombre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Nombre, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Crear Grupo
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    $('#GridGrupoEconomico').jqGrid('addRowData', 'Id', data.GrupoEconomico);
+                    $('#GridGrupoEconomico').trigger("reloadGrid");
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>

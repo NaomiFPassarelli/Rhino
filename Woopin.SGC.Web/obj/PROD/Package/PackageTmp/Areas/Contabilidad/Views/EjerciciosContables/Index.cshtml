@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "Ejercicios Contables";
+    ViewBag.SectionIcon = "circle-o-notch";
+    ViewBag.SectionTitle = "Listado de Ejercicios Contables";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Ejercicio Contable">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Ejercicio Contable
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Ejercicio..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridEjercicios"></table>
+    <div id="GridEjercicios_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoEjercicios = {
+
+            init: function () {
+                /* Binding del boton de crear*/
+                $('#BtnCreate').bind('click', ListadoEjercicios.NuevoEjercicio);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoEjercicios.Refresh);
+                /* Exportar a excel grilla */
+                $('#BtnExportXLS').click(ListadoEjercicios.ExportToExcel);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridEjercicios');
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoEjercicios.OnClickEliminarEjercicio);
+                /* Editar de la grilla */
+                $(document).on('click', '.BtnEditar', ListadoEjercicios.EditEjercicio);
+                /* Cambia el estado del ejercicio*/
+                $(document).on('click', '.ChangeCerrado', ListadoEjercicios.OnClickEstadoEjercicio);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridEjercicios', ["Nombre", "Inicio", "Fin"]);
+                /* Armo la grilla del ABM */
+                $('#GridEjercicios').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre del Ejercicio','Fecha Inicio', 'Fecha Fin','Estado', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                        { name: 'Inicio', index: 'Inicio', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Final', index: 'Final', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Cerrado', index: 'Cerrado', width: 30, align: "center", sortable: true, formatter: ListadoEjercicios.EstadoFormatter },
+                        { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ListadoEjercicios.ActionFormatter, align: "center" }
+                    ],
+                    sortname: 'Descripcion',
+                    sortorder: "asc",
+                    pager: '#GridEjercicios_pager',
+                });
+                $('#GridEjercicios').trigger("reloadGrid");
+            },
+
+            NuevoEjercicio: function () {
+                $('#create-dialog').OpenFormDialog('@Url.Action("Nuevo")', '<i class="fa fa-circle-o-notch"></i> Crear Ejercicio Contable', null);
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridEjercicios', 'Listado de Ejercicios Contables');
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridEjercicios');
+                ListadoEjercicios.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridEjercicios").setGridParam({ datatype: 'json' });
+                $('#GridEjercicios').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            EditEjercicio: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-circle-o-notch"></i> Editar Ejercicio Contable', null);
+            },
+
+            OnClickEliminarEjercicio:function(){
+                var Id = $(this).closest('tr').attr('id');
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Ejercicio Contable?",
+                        function () { ListadoEjercicios.EliminarEjercicio(Id) });
+            },
+
+            EliminarEjercicio: function (Id) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: Id },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $('#GridEjercicios').jqGrid('delRowData', Id);
+                        }
+                        $('#SelectCount').html('0');
+                        //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                        $("#GridEjercicios").jqGrid("clearGridData", true);
+                        ListadoEjercicios.ReloadGrid();
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEstadoEjercicio: function () {
+                var Estado = $(this);
+                ConfirmationDialog.Show("Esta seguro que desea cambiar el estado del ejercicio contable?",
+                        function () { ListadoEjercicios.ChangeEstadoEjercicio(Estado) });
+            },
+
+            ChangeEstadoEjercicio: function (Estado) {
+                var Cerrado = Estado.hasClass('label-danger');
+                var Id = Estado.data("id");
+                var params = {
+                    url: '@Url.Action("CambiarCerrado")',
+                    data: { Id: Id, Cerrado: Cerrado },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            if (Cerrado) {
+                                // Paso a Abierto
+                                Estado.removeClass('label-danger').addClass('label-success').html('Abierto');
+                            }
+                            else {
+                                Estado.removeClass('label-success').addClass('label-danger').html('Cerrado');
+                            }
+
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            ActionFormatter: function ( cellvalue, options, rowObject)
+            {
+                var html = '<a class="boton boton-i" title="Detalle" target="_blank" href="@Url.Action("Detalle")/' + rowObject.Id + '"><i class="fa fa-search i-green"></i></a>';
+                html += '<a class="boton boton-i BtnEditar" title="Editar"><i class="fa fa-edit i-blue"></i></a>';
+                html += '<a class="boton boton-i BtnEliminar" title="Eliminar"><i class="fa fa-trash-o i-red"></i></a>';
+                return html;
+            },
+
+            EstadoFormatter: function (cellvalue, options, rowObject) {
+                if (cellvalue) {
+                    return '<span class="label label-danger ChangeCerrado" data-id="' + rowObject.Id + '" style="cursor:pointer;">Cerrado</span>';
+                }
+                else {
+                    return '<span class="label label-success ChangeCerrado" data-id="' + rowObject.Id + '" style="cursor:pointer;">Abierto</span>';
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            ListadoEjercicios.init();
+        });
+    </script>
+}

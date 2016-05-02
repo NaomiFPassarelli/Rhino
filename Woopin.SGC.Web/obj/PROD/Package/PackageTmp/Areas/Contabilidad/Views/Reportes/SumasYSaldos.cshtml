@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "Reportes";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Sumas Y Saldos";
+}
+<div class="action-bar row" style="margin:1% 0">
+    <div class="col-md-6 place-left">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Sumas Y Saldos
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Cuenta..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+
+</div>
+<div class="table-container">
+    <table id="GridSumasYSaldos"></table>
+    <div id="GridSumasYSaldos_pager"></div>
+</div>
+<div id="listadoSumasYSaldos-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        SumasYSaldos.init();
+    });
+
+    var SumasYSaldos = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', SumasYSaldos.LoadData);
+            $('#BtnExportXLS').click(SumasYSaldos.ExportToExcel);
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridSumasYSaldos', ["NombreCuenta", "Codigo"]);
+
+            /* Armo la grilla */
+            $('#GridSumasYSaldos').CreateCommonGrid({
+                url: '@Url.Action("GetAllSumasYSaldos")',
+                serializeGridData: function (postData) {
+                    data = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', '', 'Codigo', 'Nombre', 'Saldo Anterior', 'Debe', 'Haber', 'Saldo', 'Saldo Actual', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'CuentaId', index: 'CuentaId', width: 0, sortable: false, hidden: true },
+                    { name: 'Codigo', index: 'Codigo', width: 80, align: "center", sortable: true },
+                    { name: 'NombreCuenta', index: 'NombreCuenta', width: 230, align: "center", sortable: true },
+                    { name: 'SaldoAnterior', index: 'SaldoAnterior', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Debe', index: 'Debe', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Haber', index: 'Haber', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Saldo', index: 'Saldo', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'SaldoActual', index: 'SaldoActual', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Acciones', index: 'Acciones', width: 100, align: "center", sortable: true, formatter: SumasYSaldos.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                pager: '#GridSumasYSaldos_pager',
+                rowList: [15, 20, 25],
+                rowNum: 15,
+                shrinkToFit: false,
+                footerrow: true,
+                userDataOnFooter: true
+            });
+            $('#GridSumasYSaldos').trigger("reloadGrid");
+            $('#BtnLoadData').click(SumasYSaldos.LoadData);
+            $(document).on('click', '.BtnVerDialog', SumasYSaldos.VerDetalleDialog);
+        },
+
+        VerDetalleDialog: function () {
+            var RowId = $(this).closest('tr').attr('id');
+            var row = $("#GridSumasYSaldos").getRowData(RowId);
+            var opt = {
+                width: 900, height: 700,
+                openCallback: function () {
+                    $('#FilterAsientos').resizeGrid('FilterAsientos_Container');
+                }
+            };
+
+            $('#listadoSumasYSaldos-detalle-dialog').OpenDetailDialog('@Url.Action("LibroMayor", "Asientos")?CuentaId=' + row.CuentaId + '&start=' + $('#datestart').val() + '&end=' + $('#dateend').val() + '&opensDialog=true', 'Libro Mayor ', opt);
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridSumasYSaldos', 'Sumas Y Saldos');
+        },
+
+        LoadData: function () {
+            SumasYSaldos.CompletarFiltros();
+            valid = SumasYSaldos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            SumasYSaldos.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        ReloadGrid: function () {
+            $("#GridSumasYSaldos").setGridParam({ datatype: 'json' });
+            $('#GridSumasYSaldos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '@Url.Action("LibroMayor", "Asientos")?CuentaId=' + rowObject.CuentaId + '&start=' + $('#datestart').val() + '&end=' + $('#dateend').val();
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Libro Mayor" target="_blank" data-Id="' + rowObject.CuentaId + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Libro Mayor Dialogo" data-Id="' + rowObject.CuentaId + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        }
+
+    }
+    </script>
+}

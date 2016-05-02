@@ -1,0 +1,149 @@
+﻿@{
+    ViewBag.Title = "Monedas";
+    ViewBag.SectionIcon = "money";
+    ViewBag.SectionTitle = "Listado de Monedas";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Moneda">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Moneda
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar monedas..."/>
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridMonedas"></table>
+    <div id="GridMonedas_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoMonedas = {
+
+            init:function(){
+
+                /* Binding del boton de crear*/
+                $('#BtnCreate').bind('click', ListadoMonedas.NuevaMoneda);
+
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoMonedas.Refresh);
+
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridMonedas');
+                /* Binding del Boton para setear la moneda predeterminada */
+                $.SetupSetDefaulter('@Url.Action("SetDefault")')
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoMonedas.OnClickEliminarSeleccionados);
+
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoMonedas.OnClickEliminar);
+                /* Editar de la grilla */
+                $(document).on('click', '.BtnEditar', ListadoMonedas.Editar);
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridMonedas', ["Nombre", "Abreviatura", "CodigoAfip"]);
+
+                $('#BtnExportXLS').click(ListadoMonedas.ExportToExcel);
+
+                /* Armo la grilla del ABM */
+                $('#GridMonedas').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', 'Abreviatura', 'Codigo Afip', '<span class="is-default"><i class="fa fa-star"></i></span>', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                        { name: 'Abreviatura', index: 'Abreviatura', width: 25, align: "center", sortable: true },
+                        { name: 'CodigoAfip', index: 'CodigoAfip', width: 20, align: "center", sortable: true },
+                        { name: 'Predeterminado', index: 'Predeterminado', width: 5, align: "center", sortable: true, formatter: DefaultStarFormatter },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Nombre',
+                    sortorder: "asc",
+                    pager: '#GridMonedas_pager'
+                });
+                $('#GridMonedas').trigger("reloadGrid");
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridMonedas');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar las monedas seleccionadas?",
+                        function () { ListadoMonedas.EliminarMonedas(SelectedIds) });
+
+                } else {
+                    $.WarningDialog("No hay Monedas seleccionadas!");
+                }
+            },
+
+            EliminarMonedas: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridMonedas').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                            //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                            $("#GridMonedas").jqGrid("clearGridData", true);
+                            ListadoMonedas.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminar: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar la moneda seleccionada?",
+                    function () { ListadoMonedas.EliminarMonedas(Id) });
+            },
+
+            NuevaMoneda: function () {
+                $('#create-dialog').OpenFormDialog('@Url.Action("Nueva")', '<i class="fa fa-money"></i> Crear Moneda', null);
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridMonedas');
+                ListadoMonedas.ReloadGrid();
+            },
+
+            ReloadGrid:function () {
+                $("#GridMonedas").setGridParam({ datatype: 'json' });
+                $('#GridMonedas').setGridParam({page:1}).trigger("reloadGrid");
+            },
+
+            Editar:function () {
+                var Id = $(this).closest('tr').attr('id');
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-money"></i> Editar Moneda',null);
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridMonedas', 'Listado de Monedas');
+            }
+        }
+        $(document).ready(function () {
+            ListadoMonedas.init();
+        });
+    </script>
+}

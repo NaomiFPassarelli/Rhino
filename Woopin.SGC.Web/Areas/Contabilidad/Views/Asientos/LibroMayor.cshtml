@@ -1,0 +1,323 @@
+﻿@using Woopin.SGC.Model.Contabilidad
+@{
+    if (ViewBag.OpensDialog)
+    {
+        Layout = null;
+    }
+    ViewBag.Title = "Asientos";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Libro Mayor de Asientos";
+}
+@if (!ViewBag.OpensDialog) {
+    <div class="action-bar row">
+        <div class="col-md-4">
+            <div class="row">
+                <input id="CuentaID"  class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Cuenta_Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Cuenta_Id" data-input="CuentaID" title="Limpiar" style="margin: 3px 0px; padding: 2px 2px !important">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 place-left">
+            Desde
+            <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+            al
+            <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+        </div>
+        <div class="col-md-4 place-left detail-summary bordered-container">
+            <table class="table-header" id="HeaderAsientos">
+                <tr>
+                    <td class="col-md-6">Saldo Anterior</td>
+                    <td class="col-md-6" id="SaldoAnterior">0</td>
+                </tr>
+                <tr>
+                    <td class="col-md-6">Debe</td>
+                    <td class="col-md-6" id="Debe">0</td>
+                </tr>
+                <tr>
+                    <td class="col-md-6">Haber</td>
+                    <td class="col-md-6" id="Haber">0</td>
+                </tr>
+                <tr>
+                    <td class="col-md-6">Saldo</td>
+                    <td class="col-md-6" id="Saldo">0</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="action-bar row">
+        <a class="boton place-left" id="BtnCreate" title="Crear Asiento" href="@Url.Action("Nuevo")">
+            <i class="fa fa-plus-circle i-green"></i>  Crear Asiento
+        </a>
+        <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+            <i class="fa fa-search i-blue"></i>  Cargar Libro
+        </a>
+        <div class="place-right search-box">
+            <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Registro..." />
+            <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+            <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+        </div>
+        <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+            <i class="fa fa-refresh i-blue"></i>
+        </a>
+        <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+            <span class="icon-xls"></span>
+        </a>
+
+    </div>
+
+}
+<div class="table-container col-md-12" id="FilterAsientos_Container">
+    <table id="FilterAsientos"></table>
+    <div id="FilterAsientos_pager"></div>
+</div>
+<div id="asiento-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        FilterAsientos.init();
+    });
+
+    var FilterAsientos = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                FilterAsientos.LoadData();
+            });
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#FilterAsientos', ["Fecha","Leyenda"]);
+            $('#Cuenta_Id').select2(
+               {
+                   placeholder: "Seleccione Una Cuenta",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetCuentasCombo", "Cuentas")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#CuentaID').change(FilterAsientos.OnCuentaChange);
+            @if(ViewBag.IdCuenta != 0)
+            {
+                @: $('#CuentaID').val(@ViewBag.IdCuenta);
+                            @: $('#CuentaID').trigger('change');
+                        }
+            @if(ViewBag.start != "")
+            {
+                @: $('#datestart').val("@ViewBag.start");
+                        }
+            @if(ViewBag.end != "")
+            {
+                @: $('#dateend').val("@ViewBag.end");
+                        }
+            @if ((ViewBag.start != "" || ViewBag.end != "") && ViewBag.IdCuenta != 0)
+            {
+                @:FilterAsientos.LoadData();
+                            @:FilterAsientos.CleanUrl();
+                        }
+            /* Armo la grilla */
+            $('#FilterAsientos').CreateCommonGrid({
+                url: '@Url.Action("GetAsientosFilterCuenta")',
+                serializeGridData: function (postData) {
+                    
+                    data = {
+                        id: $('#CuentaID').val() != '' ? $('#CuentaID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'NumeroReferencia', 'Leyenda', 'Tipo Op.', 'Nro. Comprobante', 'Fecha', 'Debe', 'Haber', 'Nro de cheque', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'NumeroReferencia', index: 'NumeroReferencia', width: 20, align: "center", sortable: true },
+                    { name: 'Leyenda', index: 'Leyenda', width: 20, align: "center", sortable: true },
+                    { name: 'TipoOperacion', index: 'TipoOperacion', width: 20, align: "center", sortable: true,formatter: FilterAsientos.TipoOperacionFormatter },
+                    { name: 'ComprobanteAsociado', index: 'ComprobanteAsociado', width: 20, align: "center", sortable: true },
+                    { name: 'Fecha', index: 'Fecha', width: 20, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Debe', index: 'Debe', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Haber', index: 'Haber', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'NumeroCheque', index: 'NumeroCheque', width: 15, align: "center", sortable: true, formatter: formatterNumberToString },
+                    { name: 'Acciones', index: 'Acciones', width: 10, align: "center", sortable: true, formatter: FilterAsientos.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                pager: '#FilterAsientos_pager',
+                rowList: [15, 20, 25],
+                rowNum: 15
+            });
+            $('#FilterAsientos').trigger("reloadGrid");
+
+            $(document).on('click', '.BtnVerDialog', FilterAsientos.VerDetalleDialog);
+            $('#Cuenta_Id').on("select2-selecting", FilterAsientos.OnCuentaSelected);
+            $('#BtnLoadData').click(FilterAsientos.LoadData);
+
+            $('#BtnExportXLS').click(FilterAsientos.ExportToExcel);
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                FilterAsientos.ClearSelect2(IdClear, IdClearInput);
+            });
+
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        ExportToExcel: function () {
+            var headerTable = $('#HeaderAsientos')[0].innerHTML;
+            var asientosTable = JQGridExportExcel.GridToHtmlTable('FilterAsientos');
+            $.ExportTableToExcel(headerTable + asientosTable, 'Libro Mayor');
+        },
+
+        OnCuentaSelected: function (e) {
+            $('#CuentaID').val(e.val)
+        },
+
+        VerDetalleDialog: function () {
+            var IdEntidad = $(this).data('id');
+            var RowId = $(this).closest('tr').attr('id');
+            var row = $("#FilterAsientos").getRowData(RowId);
+            var opt = {
+                width: 1000, height: 600,
+                openCallback: function () {
+                    $('#GridDetallesAsiento').resizeGrid('GridDetallesAsiento_Container');
+                }
+            };
+            $('#asiento-detalle-dialog').OpenFormDialog('@Url.Action("Detalle")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Asiento ', opt);
+        },
+
+        LoadData: function () {
+            FilterAsientos.CompletarFiltros();
+            valid = FilterAsientos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var Id = $('#CuentaID').val();
+            var params = {
+                url: '@Url.Action("GetAsientosHeaderFilterCuenta")',
+                data: {
+                    id: Id,
+                    start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                    end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                },
+                success: function (ret) {
+                    if (ret.Data != null) {
+                        $('#Saldo').html($.formatCurrency(Math.abs(ret.Data.Saldo)));
+                        $('#Debe').html($.formatCurrency(ret.Data.Debe));
+                        $('#Haber').html($.formatCurrency(ret.Data.Haber));
+                        $('#SaldoAnterior').html($.formatCurrency(Math.abs(ret.Data.SaldoAnterior)));
+                        FilterAsientos.ReloadGrid();
+                    }
+                }
+            }
+            $.AjaxPost(params);
+
+        },
+
+        OnCuentaChange: function () {
+            var Id = $('#CuentaID').val();
+            if (Id == "") { return; }
+            valid = FilterAsientos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetCuenta", "Cuentas")',
+                data: { IdCuenta: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $('#Cuenta_Id').select2('data', { id: Id, text: ret.Data.Nombre + '(' + ret.Data.Codigo + ')' });
+                    }
+                    else {
+                        $.WarningDialog('Cuenta no existe');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#CuentaID').val();
+            if (Id == "") {
+                return { success: false, message: 'Debe seleccionar una cuenta' };
+            } else if (Id != "" && (!$.isNumeric(Id) && Id <= 0)) {
+                return { success: false, message: 'El N° de Cuenta no es correcto' };
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CleanUrl: function(){
+            urlir = window.location.href.split('?')[0];
+            window.history.pushState({ path: urlir }, '', urlir);
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#FilterAsientos").setGridParam({ datatype: 'json' });
+            $('#FilterAsientos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '';
+            url = '@Url.Action("Detalle")/' + rowObject.NumeroReferencia;
+
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.NumeroReferencia + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.NumeroReferencia + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        TipoOperacionFormatter: function (cellvalue) {
+            switch (cellvalue.toString()) {
+                case '@((int)TipoOperacion.CZ)':
+                    return '@TipoOperacion.CZ';
+                case '@((int)TipoOperacion.FV)':
+                    return '@TipoOperacion.FV';
+                case '@((int)TipoOperacion.DEP)':
+                    return '@TipoOperacion.DEP';
+                case '@((int)TipoOperacion.MOVF)':
+                    return '@TipoOperacion.MOVF';
+                case '@((int)TipoOperacion.OC)':
+                    return '@TipoOperacion.OC';
+                case '@((int)TipoOperacion.OE)':
+                    return '@TipoOperacion.OE';
+                case '@((int)TipoOperacion.OP)':
+                    return '@TipoOperacion.OP';
+                case '@((int)TipoOperacion.CTC)':
+                    return '@TipoOperacion.CTC';
+                default:
+                    return '';
+            }
+        }
+    }
+    </script>
+}
+@if (ViewBag.OpensDialog)
+{
+    Html.RenderPartial("js/_LibroMayor");
+}

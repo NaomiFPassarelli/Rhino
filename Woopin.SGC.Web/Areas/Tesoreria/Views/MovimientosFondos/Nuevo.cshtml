@@ -1,0 +1,259 @@
+﻿@using Woopin.SGC.Model.Negocio
+@model Woopin.SGC.Model.Tesoreria.MovimientoFondo
+
+@{
+    ViewBag.Title = "Nuevo Movimiento de Fondo";
+    ViewBag.SectionIcon = "exchange";
+    ViewBag.SectionTitle = "Nuevo Movimiento de Fondo";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Movimiento de Fondo</a>
+                <a class="boton place-left " id="BtnSubmitAndBack"><i class="fa fa-plus-circle i-green"></i> Crear y Volver</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Movimiento", new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input type="hidden" id="Movimiento_Id" name="Movimiento.Id" class="selectinput" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Numero De Cuenta", new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input type="hidden" id="CuentaBancaria_Id" name="CuentaBancaria.Id" class="selectinput" />
+                @Html.ValidationMessageFor(model => model.CuentaBancaria.Id, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group transferencia-input" style="display:none;">
+            @Html.Label("Numero de Cuenta destino", new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input id="CuentaDestino_Id" name="CuentaDestino.Id" class="selectinput" data-val="true" data-val-required="es requerido" />
+                @Html.ValidationMessageFor(model => model.CuentaDestino.Id, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="deposito-input extraccion-input" style="display:none;" >
+            <div class=" form-group">
+            @Html.Label("Caja Destino", new { @class = "col-md-2 horizontal-label extraccion-input" })
+            @Html.Label("Caja Origen", new { @class = "col-md-2 horizontal-label deposito-input" })
+            <div class="col-md-6 input-container">
+                <input type="hidden" id="Caja_Id" name="Caja.Id" class="selectinput" />
+                @Html.ValidationMessageFor(model => model.Caja.Id, null, new { @class = "help-block" })
+            </div>
+        </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Concepto, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Concepto, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Concepto, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Fecha, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.EditorFor(model => model.Fecha, new { @class = "textinput", @Value = DateTime.Now.ToString("dd/MM/yyyy") })
+                @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Importe, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.EditorFor(model => model.Importe, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Importe, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="deposito-input transferencia-input" style="display:none;">
+            <div class="form-group">
+                @Html.Label("Fecha Acreditacion", new { @class = "col-md-2 horizontal-label", @id = "acredita" })
+                <div class="col-md-6 input-container">
+                    @Html.EditorFor(model => model.FechaAcredita, new { @class = "textinput datepicker-input" })
+                    @Html.ValidationMessageFor(model => model.FechaAcredita, null, new { @class = "help-block" })
+                </div>
+            </div>
+        </div>
+</fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion del Movimiento de Fondo. Si presiona Aceptar, todos los cambios realizados se perderan.');
+
+    var MovFondosCtrl = {
+
+        init: function () {
+            $('#Importe').attr('data-val-number', 'El importe debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales ');
+            $('#CuentaDestino_Id').attr('data-val-required', 'La cuenta bancaria es necesaria');
+            $('form').reParseForm();
+            $('#Fecha,#FechaAcredita').datepicker({ dateFormat: 'dd/mm/yy' });
+            LoadValidationExtensions();
+            MovFondosCtrl.setupCajaSelect2();
+            MovFondosCtrl.setupCuentasSelect2();
+            MovFondosCtrl.setupTiposSelect2();
+            $('#Movimiento_Id').on('change', MovFondosCtrl.OnTipoChange);
+            $('#BtnSubmitAndBack').FormSubmit({
+                enter: true,
+                success: MovFondosCtrl.SaveAndStay
+            });
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: MovFondosCtrl.Save
+            });
+            MovFondosCtrl.ControlarCajaUnica()
+        },
+
+        setupCajaSelect2: function () {
+            $('#Caja_Id').prepend('<option></option>');
+            $('#Caja_Id').select2(
+            {
+                placeholder: "Seleccione la caja",
+                minimumInputLength: 0,
+                ajax: {
+                    url: "@Url.Action("GetCombo", "Cajas")",
+                    dataType: 'json',
+                    params: { type: "POST" },
+                    data: function (t, p) {
+                        return { page: 0 };
+                    },
+                    results: function (data, page) {
+                        return { results: data.Data.Items };
+                    }
+                }
+            });
+        },
+
+        ControlarCajaUnica: function (element, callback) {
+            var params = {
+                url: '@Url.Action("GetCombo", "Cajas")',
+                data: function (t, p) {
+                    return { page: 0 };
+                },
+                success: function (ret) {
+                    if (ret.Success && ret.Data.Items.length == 1) {
+                        var data = {
+                            id: ret.Data.Items[0].id,
+                            text: ret.Data.Items[0].text
+                        }
+                        $('#Caja_Id').select2('data', data);
+                        $('#Caja_Id').select2('readonly', true);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnTipoChange: function (e) {
+            var movType = $(this).select2('data').id.toString();
+            $('.deposito-input').hide();
+            $('.extraccion-input').hide();
+            $('.transferencia-input').hide();
+            $('.deposito-input input').data('val', 'false');
+            $('.extraccion-input input').data('val', 'false');
+            $('.transferencia-input input').data('val', 'false');
+
+            switch(movType)
+            {
+                case '@ValoresHelper.Deposito':
+                    $('.deposito-input').show();
+                    $('.deposito-input input').data('val', 'true');
+                    break;
+                case '@ValoresHelper.Extraccion':
+                    $('.extraccion-input').show();
+                    $('.extraccion-input input').data('val', 'true');
+                    break;
+                case '@ValoresHelper.Transferencia':
+                    $('.transferencia-input').show();
+                    $('.transferencia-input input').data('val', 'true');
+                    break;
+                default:
+                    $('#Alert-Container').NewAlert('error', 'Ha ocurrido un error en la seleccion de movimiento!, contacte al administrador!');
+                    break;
+
+            }
+            $('form').reParseForm();
+        },
+
+        setupCuentasSelect2: function () {
+
+            $('#CuentaBancaria_Id,#CuentaDestino_Id').prepend('<option></option>');
+            $('#CuentaBancaria_Id,#CuentaDestino_Id').select2(
+                {
+                    placeholder: "Seleccione la cuenta bancaria",
+                    minimumInputLength: 0,
+                    ajax: {
+                        url: "@Url.Action("GetComboCuentaBancaria","CuentasBancarias")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { page: 0 };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+            },
+
+            setupTiposSelect2: function () {
+                $('#Movimiento_Id').prepend('<option></option>');
+                $('#Movimiento_Id').select2(
+                    {
+                        placeholder: "Seleccione el movimiento",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetComboMovimiento")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { page: 0 };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+            },
+
+            SaveAndStay: function (data) {
+                if (data.Success) {
+                    $('form').ClearForm();
+                    $('#Alert-Container').NewAlert('success', 'Se ha realizado el movimiento con exito! ');
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage,data.Errors));
+                }
+            },
+
+            Save: function (data) {
+                if (data.Success) {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Index")'
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            MovFondosCtrl.init();        
+        });
+
+</script>
+}

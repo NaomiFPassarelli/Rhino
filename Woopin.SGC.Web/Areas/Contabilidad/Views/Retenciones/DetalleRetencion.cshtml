@@ -1,0 +1,90 @@
+﻿@using Woopin.SGC.Web.HtmlHelper
+@model Woopin.SGC.Model.Tesoreria.ComprobanteRetencion
+
+@{
+    if (ViewBag.OpensDialog)
+    {
+        Layout = null;
+    }
+    ViewBag.Title = "Detalle Retencion " + Model.Id;
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Detalle Retencion " + Model.Id;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        @if (!ViewBag.OpensDialog)
+{
+    <div class="" style="float:left;">
+        <div class="col-md-12">
+            <a class="boton place-left" onclick="javascript: window.history.back()"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+        </div>
+    </div>
+}
+        @Html.etiquetaStatus(@Model.Estado.ToString(), (bool)ViewBag.OpensDialog)
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Cliente, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Cliente.RazonSocial, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Proveedor, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Proveedor.RazonSocial, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-5 horizontal-label" })
+                    <div class="col-md-7 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@Model.Fecha.ToString("dd/MM/yyyy")">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-md-12">
+                
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Retencion, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Retencion.Descripcion, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Total, new { @class = "col-md-6 horizontal-label" })
+                    <div class="col-md-6 input-container">
+                        @Html.TextBoxFor(model => model.Total, new { @class = "textinput", @readonly = "readonly", @Value = Model.Total.ToString("C") })
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Numero, new { @class = "col-md-5 horizontal-label" })
+                    <div class="col-md-7 input-container">
+                        @Html.TextBoxFor(model => model.Numero, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </fieldset>
+}
+<div class="col-md-12 table-container detalles" id="GridDetallesRetencion_Container">
+    <table id="GridDetallesRetencion"></table>
+    <div id="GridDetallesRetencion_pager"></div>
+</div>
+
+<div class="clearfix"></div>
+@section Scripts{
+    @Html.Partial("js/_DetalleRetencion");
+}
+@if (ViewBag.OpensDialog)
+{
+    Html.RenderPartial("js/_DetalleRetencion");
+}

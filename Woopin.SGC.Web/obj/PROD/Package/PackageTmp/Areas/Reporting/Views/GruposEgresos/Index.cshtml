@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Grupos Egresos";
+    ViewBag.SectionIcon = "street-view";
+    ViewBag.SectionTitle = "Listado de Grupos Egresos";
+}
+
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnCreate" title="Crear Grupo" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Grupo
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Grupos Egresos..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <div class="col-md-6 place-left">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridGruposEgresos"></table>
+    <div id="GridGruposEgresos_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+        var ListadoGruposEgresos = {
+
+            init: function () {
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoGruposEgresos.ReloadGrid);
+
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoGruposEgresos.OnClickEliminar);
+                /* Editar de la grilla */
+                $(document).on('click', '.BtnEditar', ListadoGruposEgresos.EditarGrupoEgreso);
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridGruposEgresos', ["Descripcion"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridGruposEgresos').CreateCommonGrid({
+                    url: '@Url.Action("GetAllTree")',
+                    serializeGridData: function (postData) {
+                        dates = {
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                        }
+                        return JSON.stringify($.extend(postData, dates));
+                    },
+                    colNames: ['', 'Dentro De', 'Descripcion', 'Descripcion del Rubro', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'DescripcionPadre', index: 'DescripcionPadre', width: 25, align: "center", sortable: true },
+                        { name: 'Descripcion', index: 'Descripcion', width: 30, align: "center", sortable: true },
+                        { name: 'DescripcionRubro', index: 'DescripcionRubro', width: 30, align: "center", sortable: true },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Descripcion',
+                    sortorder: "asc",
+                    pager: '#GridGruposEgresos_pager',
+                    rowList: [15, 20, 25],
+                    rowNum: 15,
+                    treeGrid: true,
+                    treeGridModel: 'adjacency',
+                    ExpandColumn: 'Descripcion',
+                    height: 700
+                });
+                $('#GridGruposEgresos').trigger("reloadGrid");
+
+                $('#BtnExportXLS').click(ListadoGruposEgresos.ExportToExcel);
+            },
+
+            ReloadGrid: function () {
+                $("#GridGruposEgresos").setGridParam({ datatype: 'json' });
+                $('#GridGruposEgresos').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            EliminarGruposEgresos: function (Id) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Id: Id },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                            $("#GridGruposEgresos").jqGrid("clearGridData", true);
+                            ListadoGruposEgresos.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminar: function () {
+                var Id = $(this).closest('tr').attr('id');
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Grupo Egreso seleccionado (tenga en cuenta que puede estar eliminando a todos los items asociados)?",
+                    function () { ListadoGruposEgresos.EliminarGruposEgresos(Id) });
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridGruposEgresos', 'Listado de Grupos de Egreso');
+            },
+
+            EditarGrupoEgreso: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $.ShowLoader();
+                window.location = '@Url.Action("Editar")/' + Id;
+            }
+
+
+
+        }
+        $(document).ready(function () {
+            ListadoGruposEgresos.init();
+        });
+    </script>
+}

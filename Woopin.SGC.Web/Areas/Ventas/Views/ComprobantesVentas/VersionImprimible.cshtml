@@ -1,0 +1,184 @@
+﻿@model Woopin.SGC.Model.Ventas.ComprobanteVenta
+@using Woopin.SGC.Common.Helpers           
+@using Woopin.SGC.Model.Negocio
+@{
+    Layout = null;
+    var tipo = "";
+    switch (Model.Tipo.Id)
+    {
+        case ComprobanteVentaHelper.NotaCredito:
+        case ComprobanteVentaHelper.FENotaCreditoA:
+        case ComprobanteVentaHelper.FENotaCreditoB:
+        case ComprobanteVentaHelper.FENotaCreditoC:
+            tipo = "Nota de Crédito";
+            break;
+        case ComprobanteVentaHelper.NotaDebito:
+        case ComprobanteVentaHelper.FENotaDebitoA:
+        case ComprobanteVentaHelper.FENotaDebitoB:
+        case ComprobanteVentaHelper.FENotaDebitoC:
+            tipo = "Nota de Débito";
+            break;
+
+        case ComprobanteVentaHelper.Factura:
+        case ComprobanteVentaHelper.FEFacturaA:
+        case ComprobanteVentaHelper.FEFacturaB:
+        case ComprobanteVentaHelper.FEFacturaC:
+            tipo = "Factura";
+            break;
+            
+        default:
+            tipo = "Factura";
+            break;
+    }
+    var logoUrl = ViewBag.BaseLogoOrg;
+    var cbUrl = ViewBag.BaseURL + ViewBag.BarCode;
+}
+<div style="width: 790px; background-color: #ffffff;padding-left:4px;">
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;">
+        <tr>
+            <td>
+                <div style="padding: 20px; width: 350px; float: left; position: relative; min-height: 1px; padding-right: 15px; padding-left: 15px; border: 2px solid #000; ">
+                    <img src="@logoUrl" />
+                    <div style="padding-left:120px;">
+						<div style="padding-top:7px;">@Model.Organizacion.RazonSocial</div>
+                        <div style="padding-top:7px;">Ingeniero @* TODO Hacer que venga de la organizacion, Solo Ruben!*@</div>
+                        <div style="padding-top:7px;">@Model.Organizacion.Domicilio</div>
+                        <div style="padding-top:7px;">@Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre</div>
+                        <div style="padding-top:7px;">Tel.: @Model.Organizacion.Telefono</div>
+                        <div style="font-weight:bold;padding-top:7px;">@Model.Organizacion.Categoria.Data</div>
+                    </div>
+                </div>
+                <div style="float: left; position: relative; min-height: 1px;width: 60px;margin-top: -25px;min-height: 70px; ">
+                    <table style="padding-right: 15px; padding-left: 15px;  border: 1px solid #000;width: 80px;">
+                        <tr>
+                            <td>
+                                <div style="font-size: 40px; text-align: center;">@Model.Letra</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @{
+                                    var nroAfip = Convert.ToInt32(Model.Tipo.AfipData).ToString("00");
+                                }
+                                <div style="font-size: 10px; text-align: center;">Cod. @nroAfip</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="padding: 20px; width: 350px; float: left; position: relative; min-height: 1px; padding-right: 15px; padding-left: 15px; border: 2px solid #000; ">
+                    <div style="padding-top:7px;font-size: 25px; font-weight: 600;">@tipo.ToUpper()</div>
+                    <div style="padding-top:7px;font-size: 25px; font-weight: 600;">N° @Model.Numero</div>
+                    <div style="padding-top:15px;">Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</div>
+                    <div style="padding-top: 7px;">C.U.I.T.: @Model.Organizacion.CUIT</div>
+                    <div style="padding-top:7px;">Ingresos Brutos: @Model.Organizacion.IngresosBrutos</div>
+                    <div style="padding-top:7px;">Inicio de Actividades: @Model.Talonario.InicioActividad.Value.ToString("dd/MM/yyyy")</div>
+                    <div style="clear: both;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="width: 790px;border:1px solid #000;height: 100px;margin-left:2px;">
+        <tr>
+            <td>
+                <div style="width: 400px; float: left; position: relative; min-height: 100px; padding: 10px;height:100px; ">
+                    <div style="font-size: 13px;font-weight: 600; margin-top: 10px;"><strong>Señores</strong> @Model.Cliente.RazonSocial</div>
+                    <div style="font-size: 13px;padding-top: 7px;"><strong>Domicilio</strong> @Model.Cliente.Direccion @Model.Cliente.Numero - @Model.Cliente.Localidad</div>
+                    <div style="font-size: 13px;padding-top: 7px;"><strong>I.V.A.</strong> @Model.Cliente.CategoriaIva.Nombre</div>
+                    <div style="font-size: 13px;padding-top: 7px;"><strong>Condición de venta</strong> @Model.CondicionVenta.Data</div>
+                </div>
+                <div style="margin-left: 8%; width: 300px; float: left; position: relative; height: 100px; padding-right: 15px; padding-left: 15px; ">
+                    <div style="padding-top:40px;">
+                        <div><strong>C.U.I.T.</strong> @Model.Cliente.CUIT</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="padding: 10px; height: 500px;width: 790px; border: 1px solid #000;margin-left:2px;">
+        <tr style="border: 1px solid #000;height:20px;font-size:16px;">
+            <td style="font-weight: bold; height:20px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Cantidad</td>
+            <td style="font-weight: bold;height:20px; width: 370px;padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descripción</td>
+            <td style="font-weight: bold;height:20px; padding-right: 15px; padding-left: 15px; width: 130px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Precio Unit.</td>
+            <td style="font-weight: bold;height:20px; padding-right: 15px; padding-left: 15px; width: 70px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">% Dto.</td>
+            <td style="font-weight: bold;height:20px; padding-right: 15px; padding-left: 15px; width: 110px;border-bottom: 1px solid #000;background-color:#f3f3f3;">Total</td>
+        </tr>
+        @foreach (var item in Model.Detalle)
+        {
+            <tr style="margin-top: 10px;border: 1px solid #000;font-size:13px;">
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Cantidad.ToString("0.00") @item.Articulo.UnidadMedida.Data</td>
+                <td style="width: 370px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Descripcion</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;">@item.PrecioUnitario.ToString("C")</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 40px;border-right: 1px solid #000;">@if (item.Descuento.HasValue) { @Html.Raw(item.Descuento.Value.ToString()); }</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 120px;">@item.Total.ToString("C")</td>
+            </tr>
+        }
+        @foreach (var item in Model.Observaciones)
+        {
+            <tr style="margin-top: 10px;border: 1px solid #000;">
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                <td style="width: 370px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Descripcion</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 150px;border-right: 1px solid #000;"></td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 40px;border-right: 1px solid #000;"></td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;"></td>
+            </tr>
+        }
+        @for (var i = 0; i < 20 - Model.Observaciones.Count - Model.Detalle.Count; i++)
+        {
+            <tr style="margin-top: 10px;border: 1px solid #000;">
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                <td style="width: 370px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;"></td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;"></td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 40px;border-right: 1px solid #000;"></td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 120px;"></td>
+            </tr>
+        }
+
+    </table>
+    <table style="width: 790px;border:1px solid #000;height: 50px;margin-left:2px;padding:5px;">
+        <tr>
+            <td>
+                <div style="width: 400px; float: left; position: relative;height:50px;padding:10px;font-size:14px;">
+                 @CurrencyHelper.ToLetras(Model.Total) PESOS
+                @*Cheques a la orden de @Model.Organizacion.RazonSocial.<br />
+                    No se aceptan cheques de terceros TODO Leyenda desde talonario/organizacion *@ 
+                </div>
+                <div style="width: 350px; float: left; position: relative;height:50px;padding:7px;">
+                    @if (ViewBag.BarCode != null)
+                    {
+                        <img src="@cbUrl" style="width:300px;height:30px;" />
+                    }
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="padding: 10px; height: 80px;width: 790px; border: 1px solid #000;margin-left:2px;">
+        <tr style="border: 1px solid #000;height:15px;">
+            <td style="font-weight: bold; height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Subtotal</td>
+            <td style="font-weight: bold;height:15px; width: 170px;padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
+            <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Subtotal</td>
+            <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">I.V.A. Insc 21%</td>
+            <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;background-color:#f3f3f3;">Total</td>
+        </tr>
+        <tr style="border: 1px solid #000;height:20px;">
+            <td style="height:20px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.Subtotal.ToStringArCurrency()</td>
+            <td style="height:20px; width: 170px;padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;border-bottom: 1px solid #000;"></td>
+            <td style="height:20px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.Subtotal.ToStringArCurrency()</td>
+            <td style="height:20px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.IVA21.ToStringArCurrency()</td>
+            <td style="height:20px; padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;">@Model.Total.ToStringArCurrency()</td>
+        </tr>
+    </table>
+    <table style="width: 790px;border:1px solid #000;height: 100px;margin-left:2px;">
+        <tr>
+            <td>
+                <div style="width: 200px;float: right; position: relative;padding-top:40px;font-size:14px;">
+                    <div>CAE @Model.CAE</div>
+                    @if (Model.VencimientoCAE.HasValue)
+                    {
+                        <div>Vto. CAE @Model.VencimientoCAE.Value.ToString("dd/MM/yyyy")</div>
+                    }
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+

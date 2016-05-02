@@ -1,0 +1,181 @@
+﻿@model Woopin.SGC.Model.Compras.Proveedor
+
+@{
+    ViewBag.Title = "Nuevo Proveedor";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Nuevo Proveedor";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Proveedor</a>
+                <a class="boton place-left " id="BtnSubmitAndBack"><i class="fa fa-plus-circle i-green"></i> Crear y Volver</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("RazonSocial"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.RazonSocial, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.RazonSocial, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.RazonSocial, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("CUIT"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.CUIT, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CUIT, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CUIT, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("CategoriaIva"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.CategoriaIva, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.CategoriaIva.Id, (IEnumerable<SelectListItem>)ViewBag.CategoriasIva, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CategoriaIva, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Direccion"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Direccion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Direccion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Direccion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.Numero, new { @class = "col-md-6 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.Numero, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+                </div>
+            </div>
+            <div class="col-md-2" style="padding:0;">
+                @Html.LabelFor(model => model.Departamento, new { @class = "col-md-7 horizontal-label" })
+                <div class="col-md-5 input-container">
+                    @Html.TextBoxFor(model => model.Departamento, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.Departamento, null, new { @class = "help-block" })
+                </div>
+            </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Piso, new { @class = "col-md-6 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.Piso, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.Piso, null, new { @class = "help-block" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("CodigoPostal"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.CodigoPostal, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.CodigoPostal, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CodigoPostal, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Localidad"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Localidad, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Localidad, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Localidad, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Localizacion"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Localizacion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Localizacion.Id, (IEnumerable<SelectListItem>)ViewBag.Localizaciones, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Localizacion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Telefono"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Telefono, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.Telefono, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Telefono, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Email"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Email, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Email, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CondicionCompra, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.CondicionCompra.Id, (IEnumerable<SelectListItem>)ViewBag.Condiciones, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CondicionCompra, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Interno, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="textinput" id="Interno" name="Interno" type="checkbox" value="true">
+                @Html.ValidationMessageFor(model => model.Interno, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de Proveedor. Si presiona Aceptar, todos los cambios realizados se perderan.');
+        $(document).ready(function () {
+            $('#CUIT').mask('99-99999999-9');
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        window.onbeforeunload = null;
+                        $.ShowLoader();
+                        window.location = '@Url.Action("Index")'
+                    }
+                    else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+            $('#BtnSubmitAndBack').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        $('form').ClearForm();
+                        $('#Alert-Container').NewAlert('success', 'Se ha creado el proveedor con exito! ');
+                    }
+                    else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+        });
+
+    </script>
+}

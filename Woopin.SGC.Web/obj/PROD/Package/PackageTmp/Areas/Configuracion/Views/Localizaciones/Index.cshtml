@@ -1,0 +1,147 @@
+﻿@{
+    ViewBag.Title = "Localizaciones";
+    ViewBag.SectionIcon = "map-marker";
+    ViewBag.SectionTitle = "Listado de Localizaciones";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Localizacion">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Localizacion
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar localizaciones..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridLocalizaciones"></table>
+    <div id="GridLocalizaciones_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoLocalizaciones = {
+
+            init: function () {
+                /* Binding del boton de crear*/
+                $('#BtnCreate').bind('click', ListadoLocalizaciones.NuevaLocalizacion);
+
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoLocalizaciones.Refresh);
+
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridLocalizaciones');
+                /* Binding del Boton para setear la moneda predeterminada */
+                $.SetupSetDefaulter('@Url.Action("SetDefault")')
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoLocalizaciones.OnClickEliminarSeleccionados);
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoLocalizaciones.OnClickEliminar);
+                /* Editar de la grilla */
+                $(document).on('click', '.BtnEditar', ListadoLocalizaciones.EditarLocalizacion);
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridLocalizaciones', ["Nombre", "Provincia", "Pais"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridLocalizaciones').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', 'Provincia', 'Pais', '<span class="is-default"><i class="fa fa-star"></i></span>', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                        { name: 'Provincia', index: 'Provincia', width: 25, align: "center", sortable: true },
+                        { name: 'Pais.Data', index: 'Pais.Data', width: 20, align: "center", sortable: true },
+                        { name: 'Predeterminado', index: 'Predeterminado', width: 5, align: "center", sortable: true, formatter: DefaultStarFormatter },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Nombre',
+                    sortorder: "asc",
+                    pager: '#GridLocalizaciones_pager'
+                });
+                $('#GridLocalizaciones').trigger("reloadGrid");
+
+                $('#BtnExportXLS').click(ListadoLocalizaciones.ExportToExcel);
+            },
+
+            NuevaLocalizacion: function () {
+                $('#create-dialog').OpenFormDialog('@Url.Action("Nueva")', '<i class="fa fa-map-marker"></i> Crear Localizacion', null);
+            },
+            
+            Refresh: function () {
+                ClearSelectedRows('GridLocalizaciones');
+                ListadoLocalizaciones.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridLocalizaciones").setGridParam({ datatype: 'json' });
+                $('#GridLocalizaciones').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridLocalizaciones');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar las localizaciones seleccionadas?",
+                        function () { ListadoLocalizaciones.EliminarLocalizaciones(SelectedIds) });
+
+                } else {
+                    $.WarningDialog("No hay Localizaciones seleccionadas!");
+                }
+            },
+
+            EliminarLocalizaciones: function(SelectedIds){
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridLocalizaciones').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                            //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                            $("#GridLocalizaciones").jqGrid("clearGridData", true);
+                            ListadoLocalizaciones.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminar: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar la localizacion seleccionada?",
+                    function () { ListadoLocalizaciones.EliminarLocalizaciones(Id) });
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridLocalizaciones', 'Listado de Localizaciones');
+            },
+
+            EditarLocalizacion: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-map-marker"></i> Editar Localizacion', null);
+            }
+        }
+        $(document).ready(function () {
+            ListadoLocalizaciones.init();        
+        });
+    </script>
+}

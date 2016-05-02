@@ -1,0 +1,161 @@
+﻿@model Woopin.SGC.Model.Common.Organizacion
+
+@{
+    ViewBag.Title = "Nueva Organización";
+    ViewBag.SectionIcon = "building-o";
+    ViewBag.SectionTitle = "Nueva Organización";
+}
+@using (Html.BeginForm("Nuevo", "Organizaciones", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Organización</a>
+                <a class="boton place-left " id="BtnSubmitAndBack"><i class="fa fa-plus-circle i-green"></i> Crear y Volver</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.RazonSocial, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.RazonSocial, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.RazonSocial, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NombreFantasia, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NombreFantasia, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.NombreFantasia, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CUIT, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CUIT, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CUIT, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IngresosBrutos, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.IngresosBrutos, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.IngresosBrutos, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Categoria, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Categoria.Id, (IEnumerable<SelectListItem>)ViewBag.Categorias, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Categoria, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Domicilio, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Domicilio, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Domicilio, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodigoPostal, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.CodigoPostal, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CodigoPostal, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Provincia, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Provincia.Id, (IEnumerable<SelectListItem>)ViewBag.Localizaciones, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Provincia, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Telefono, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Telefono, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Telefono, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Email, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Actividad, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Actividad.Id, (IEnumerable<SelectListItem>)ViewBag.Actividades, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Actividad, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        @*TODO ver de poner un aviso de que hasta 4MB se puede*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.ImagePath, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input id="ImagePath" type="file" name="ImagePath" />                
+                @Html.ValidationMessageFor(model => model.ImagePath, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+
+    <script type="text/javascript">
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de Organización. Si presiona Aceptar, todos los cambios realizados se perderan.');
+        $(document).ready(function () {
+            $('#CUIT').mask('99-99999999-9');
+            
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        window.onbeforeunload = null;
+                        $.ShowLoader();
+                        window.location = '@Url.Action("Index")'
+                    }
+                    else {
+                        $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+            $('#BtnSubmitAndBack').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        $('form').ClearForm();
+                        $('#Alert-Container').NewAlert('success', 'Se ha creado la organización con exito! ');
+                    }
+                    else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+        });
+
+    </script>
+}

@@ -1,0 +1,188 @@
+﻿@{
+    ViewBag.Title = "Pagos con Tarjetas de Credito";
+    ViewBag.SectionIcon = "cc-visa";
+    ViewBag.SectionTitle = "Pagos con Tarjetas de Credito";
+}
+<div class="action-bar row">
+    <div class="col-md-6">
+        @Html.Label("Filtrar por Tarjeta", new { @class = "col-md-4 horizontal-label" })
+        <div class="col-md-6 input-container">
+            @Html.DropDownList("TarjetaId", new SelectList(ViewBag.Tarjetas, "Id", "Numero"), "Elegir una Tarjeta", new { @class = "textinput" })
+        </div>
+    </div>
+    <div class="action-bar row" style="margin:1% 0">
+        <div class="col-md-6 place-left">
+            Desde
+            <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+            al
+            <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+        </div>
+    </div>
+</div>
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Pago..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+    <select id="FilterType" class="place-right" style="margin-top: 4px;margin-right: 10px;">
+        <option value="0">Todos</option>
+        <option value="1">Pendientes</option>
+        <option value="2">Canceladas</option>
+    </select>
+</div>
+<div class="table-container">
+    <table id="GridPagosTarjetas"></table>
+    <div id="GridPagosTarjetas_pager"></div>
+</div>
+<div id="detalle-dialog"></div>
+<div id="cancelacion-dialog"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            PagosTarjetas.init();
+        });
+        var PagosTarjetas = {
+            init: function () {
+                $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+                $('#BtnExportXLS').click(PagosTarjetas.ExportToExcel);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').click(PagosTarjetas.LoadData);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridPagosTarjetas');
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridPagosTarjetas', ["Numero"]);
+
+                $(document).on('click', '.verDetalle', PagosTarjetas.AbrirDetalle);
+                $(document).on('click', '.cancelarDeuda', PagosTarjetas.CancelarDeuda);
+                /* Armo la grilla del ABM */
+                @if (ViewBag.statusType != "")
+                {
+                    @: $('#FilterType option').each(function (ind, elem) {
+                        @:if("@ViewBag.statusType" == $(elem).html()){
+                            @:$(elem).attr('selected', 'selected');}});
+                }
+                @if(ViewBag.start != "")
+                    {
+                        @: $('#datestart').val("@ViewBag.start");
+                    }
+                @if(ViewBag.end != "")
+                    {
+                        @: $('#dateend').val("@ViewBag.end");
+                    }
+                @if (ViewBag.start != "" || ViewBag.end != "" || ViewBag.statusType != 0)
+                    {
+                        @:PagosTarjetas.LoadData();
+                        @:PagosTarjetas.CleanUrl();
+                    }
+                $('#GridPagosTarjetas').CreateCommonGrid({
+                    url: '@Url.Action("GetAllPagosByDates")',
+                    serializeGridData: function (postData) {
+                        dates = {
+                            id: $('#TarjetaId').val() != '' ? $('#TarjetaId').val() : 0,
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                            filter: $('#FilterType').val()
+                        }
+                        return JSON.stringify($.extend(postData, dates));
+                    },
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Detalle','Fecha', 'Total', 'Total Cancelado', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Detalle', index: 'Detalle', width: 30, align: "center", sortable: true },
+                        { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Total', index: 'Total', width: 30, align: "center", sortable: true },
+                        { name: 'TotalCancelado', index: 'TotalCancelado', width: 30, align: "center", sortable: true },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: PagosTarjetas.ActionFormatter, align: "center" }
+                    ],
+                    sortname: 'Fecha',
+                    sortorder: "desc",
+                    pager: '#GridPagosTarjetas_pager'
+                });
+                $('#GridPagosTarjetas').trigger("reloadGrid");
+            },
+
+            ActionFormatter: function (cellvalue, options, rowObject) {
+                
+                var ret = '';
+                ret += '<a class="boton boton-i verDetalle" title="Detalle Extendido" data-Id="' + rowObject.Id + '"><i class="fa fa-search-plus i-blue"></i></a>';
+                if (rowObject.Total > rowObject.TotalCancelado && rowObject.Estado != -1)
+                {
+                    ret += '<a class="boton boton-i cancelarDeuda" title="Cancelar Deuda" data-Id="' + rowObject.Id + '"><i class="fa fa-calculator i-green"></i></a>';
+                }
+                return ret;
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridPagosTarjetas', 'Listado de Pagos con Tarjeta');
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridPagosTarjetas');
+                PagosTarjetas.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridPagosTarjetas").setGridParam({ datatype: 'json' });
+                $('#GridPagosTarjetas').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            AbrirDetalle: function(){
+                var Id = $(this).data('id');
+                var opt = {
+                    width: 600, height: 600,
+                    openCallback: function () {
+                        $('#GridCancelaciones').resizeGrid('GridCancelaciones_Container');
+                    }
+                };
+                $('#detalle-dialog').OpenDetailDialog('@Url.Action("Detalle")?Id=' + Id, 'Detalle Extendido de Pago con Tarjeta N°' + Id, opt);
+            },
+
+            CancelarDeuda: function(){
+                var Id = $(this).data('id');
+                var opt = {
+                    width: 600, height: 600
+                };
+                $('#cancelacion-dialog').OpenDetailDialog('@Url.Action("CancelarDeudas")?Id=' + Id, 'Cancelación de deuda de Pago con Tarjeta N°' + Id, opt);
+            },
+
+            LoadData: function () {
+                PagosTarjetas.CompletarFiltros();
+                valid = PagosTarjetas.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                PagosTarjetas.ReloadGrid();
+            },
+
+            ValidateFilters: function () {
+                var Id = $('#TarjetaId').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return { success: false, message: 'La Tarjeta no es valida' };
+                }
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+            },
+
+            CleanUrl: function () {
+                urlir = window.location.href.split('?')[0];
+                window.history.pushState({ path: urlir }, '', urlir);
+            }
+        }
+    </script>
+}

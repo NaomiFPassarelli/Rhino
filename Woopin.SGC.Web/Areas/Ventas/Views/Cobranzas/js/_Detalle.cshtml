@@ -1,0 +1,82 @@
+﻿@using Woopin.SGC.Model.Ventas
+@using Woopin.SGC.Common.Json;
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+@Scripts.Render("~/bundles/jqueryui")
+@Html.Partial("~/Areas/Tesoreria/Views/Valores/js/_IngresoValores.cshtml");
+<script type="text/javascript">
+    var DetalleCobranza = {
+        init: function () {
+            $('#GridDetallesCobranza').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', 'Fecha', 'Número de Comprobante','', 'Total', 'Total Abonado', 'Importe Pagado'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'ComprobanteVenta.Id', index: 'ComprobanteVenta.Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'ComprobanteVenta.Fecha', index: 'ComprobanteVenta.Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'ComprobanteVenta.Numero', index: 'ComprobanteVenta.Numero', width: 30, align: "center", sortable: true, formatter: DetalleCobranza.formatterFacturaLetraNumero },
+                    { name: 'ComprobanteVenta.Letra', index: 'ComprobanteVenta.Letra', width: 0, sortable: false, hidden: true },
+                    { name: 'ComprobanteVenta.Total', index: 'ComprobanteVenta.Total', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Cobrado', index: 'Cobrado', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Importe', index: 'Importe', width: 20, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Numero',
+                sortorder: "asc",
+                pager: '#GridDetallesCobranza_pager',
+                rowList: [5, 10, 15],
+                rowNum: 5,
+                data: @Html.Raw(JsonHelper.ToJson(Model.Comprobantes))
+            });
+            $('#GridDetallesCobranza').trigger("reloadGrid");
+            $("#GridDetallesCobranza").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            IngresoValores.InitDetalle('#GridCobrosCobranza');
+            IngresoValores.Grid.jqGrid("setGridParam", {
+                data:@Html.Raw(JsonHelper.ToJson(((Cobranza)Model).Valores.Select(x => x.Valor)))
+                });
+            IngresoValores.Grid.trigger("reloadGrid");
+            $(document).on('click', '.BtnEliminar', DetalleCobranza.AnularCobranza);
+        },
+
+        AnularCobranza: function () {
+            
+            var Id = $('.BtnEliminar').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea cancelar la Cobranza?",
+                                    function () {  DetalleCobranza.EliminarCobranza(Id) });
+        },
+
+        EliminarCobranza: function (Id) {
+            var params = {
+                url: '@Url.Action("AnularCobranza")',
+                data: { IdCobranza: Id },
+                success: function (ret) {
+                    
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success",function(){
+                            @if (!ViewBag.OpensDialog)
+                            {
+                                @:$.ShowLoader();
+                                @:window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        formatterFacturaLetraNumero: function(cellvalue, options, rowObject) {
+            if(rowObject.ComprobanteVenta === undefined)
+                return rowObject["ComprobanteVenta.Letra"] + rowObject["ComprobanteVenta.Numero"];
+            else
+                return rowObject.ComprobanteVenta.Letra + rowObject.ComprobanteVenta.Numero;
+        }
+    }
+    $(document).ready(function () {
+        DetalleCobranza.init();
+    });
+</script>

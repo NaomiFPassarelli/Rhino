@@ -1,0 +1,108 @@
+﻿@{
+    ViewBag.Title = "Comprobantes Compras";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Vencimientos a Pagar";
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridVencimientosAPagar"></table>
+    <div id="GridVencimientosAPagar_pager"></div>
+</div>
+<div id="VencimientosAPagar-detalle-dialog"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            VencimientosAPagar.init();
+        });
+
+        var VencimientosAPagar = {
+
+            init: function () {
+                $('#BtnExportXLS').click(VencimientosAPagar.ExportToExcel);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridVencimientosAPagar', ["Fecha", "Comprobante"]);
+                $('#BtnRefresh').bind('click',VencimientosAPagar.ReloadGrid);
+                /* Armo la grilla del ABM */
+                $('#GridVencimientosAPagar').CreateCommonGrid({
+                    url: '@Url.Action("GetAllVencimientosAPagar")',
+                    colNames: ['', 'Proveedor', 'Tipo de Comprobante', 'Numero de Comprobante', 'Fecha', 'Fecha de Vencimiento', 'Importe', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Proveedor', index: 'Proveedor', width: 25, align: "center", sortable: true },
+                        { name: 'TipoComprobante', index: 'TipoComprobante', width: 25, align: "center", sortable: true },
+                        { name: 'Comprobante', index: 'Comprobante', width: 25, align: "center", sortable: true },
+                        { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'FechaVencimiento', index: 'FechaVencimiento', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Importe', index: 'Importe', width: 25, align: "center", sortable: true, formatter: $.formatCurrency, summaryType: 'sum', summaryTpl: '<b>Total: {0}</b>' },
+                        { name: 'Acciones', index: 'Acciones', width: 25, align: "center", sortable: true, formatter: VencimientosAPagar.AccionesFormatter }
+                    ],
+                    sortname: 'Proveedor',
+                    sortorder: "asc",
+                    pager: '#GridVencimientosAPagar_pager',
+                    rowList: [50, 100, 200],
+                    rowNum: 50,
+                    grouping: true,
+                    groupingView: {
+                        groupField: ['Proveedor'],
+                        groupColumnShow: [false],
+                        groupText: ['<b>{0} - {1} Factura(s)</b>'],
+                        groupSummary: [true],
+                    },
+                    height:700
+                });
+                $('#GridVencimientosAPagar').trigger("reloadGrid");
+                $(document).on('click', '.BtnVerDialog', VencimientosAPagar.VerDetalleDialog);
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridVencimientosAPagar', 'Vencimientos a Pagar');
+            },
+
+            ReloadGrid: function () {
+                $('#SelectCount').html('0');
+                $("#GridVencimientosAPagar").setGridParam({ datatype: 'json' });
+                $('#GridVencimientosAPagar').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            VerDetalleDialog: function () {
+                var IdEntidad = $(this).data('id');
+                var RowId = $(this).closest('tr').attr('id');
+                var row = $("#GridVencimientosAPagar").getRowData(RowId);
+                var opt = {
+                    width: 950, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesCompra').resizeGrid('GridDetallesCompra_Container');
+
+                    }
+                };
+                $('#VencimientosAPagar-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","ComprobantesCompras")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.Comprobante, opt);
+            },
+
+            AccionesFormatter: function (cellvalue, options, rowObject) {
+                var ret = '';
+                
+                var url = '@Url.Action("Detalle", "ComprobantesCompras")/' + rowObject.Id;
+                ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+                ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+                return ret;
+            }
+
+        }
+
+    </script>
+}

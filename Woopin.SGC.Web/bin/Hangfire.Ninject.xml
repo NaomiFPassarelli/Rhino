@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Hangfire.Ninject</name>
+    </assembly>
+    <members>
+        <member name="M:Hangfire.NinjectBootstrapperConfigurationExtensions.UseNinjectActivator(Hangfire.IBootstrapperConfiguration,Ninject.IKernel)">
+            <summary>
+            Tells bootstrapper to use the specified Ninject
+            kernel as a global job activator.
+            </summary>
+            <param name="configuration">Configuration</param>
+            <param name="kernel">Ninject kernel that will be used to activate jobs</param>
+        </member>
+        <member name="T:Hangfire.NinjectJobActivator">
+            <summary>
+            HangFire Job Activator based on Ninject IoC Container.
+            </summary>
+        </member>
+        <member name="M:Hangfire.NinjectJobActivator.#ctor(Ninject.IKernel)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Hangfire.NinjectJobActivator"/>
+            class with a given Ninject Kernel.
+            </summary>
+            <param name="kernel">Kernel that will be used to create instance
+            of classes during job activation process.</param>
+        </member>
+        <member name="M:Hangfire.NinjectJobActivator.ActivateJob(System.Type)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

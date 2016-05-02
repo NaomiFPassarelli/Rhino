@@ -1,0 +1,7 @@
+﻿.error-background {text-align: center;font-family: "Century Gothic"; font-size: 2em;margin:0px; background: url(../images/error-bg.png); display: block; text-decoration: none;color:#E54242; min-height:100%}
+.wrapper p {color:#666; font-size: medium;}
+.wrapper a { font-size: medium;}
+.wrapper a.btnBack{background: linear-gradient(to bottom, #666666 0%,#666666 100%); padding: 15px 20px; border-radius: 1em; color:#ffffff; margin:3px;}
+.wrapper .img-error{text-align: center;}
+.wrapper{text-align: center;}
+.wrapper .description p{margin-bottom:30px;}

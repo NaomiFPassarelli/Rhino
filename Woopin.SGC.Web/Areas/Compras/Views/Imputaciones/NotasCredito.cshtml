@@ -1,0 +1,127 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="NotasCredito_Container" style="margin-top:50px;">
+        <table id="GridNotasCredito"></table>
+        <div id="GridNotasCredito_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var SelectedRows = new Array();
+    var NotasCredito = {
+        OnSave: function () {
+            if (Imputacion.IdsGridRestricta.indexOf(SelectedRows.toString()) < 0 )//solo si cambio
+            {
+                var selected = $('#GridNotasCredito').jqGrid('getRowData', SelectedRows);
+                var LetraNumero = selected.Letra + selected.Numero;
+                var TotalSaldado = selected.TotalPagado;
+                var Total = selected.Total;
+                var TotalASaldar = ($.unformatCurrency(Total) - $.unformatCurrency(TotalSaldado)).toFixedNumber(2);
+                $('#Imputacion_Numero').val(LetraNumero);
+                $('#Imputacion_TotalSaldado').val($.unformatCurrency(TotalSaldado));
+                $('#Imputacion_TotalASaldar').val($.parseCurrency(TotalASaldar));
+                $('#Imputacion_Total').val($.unformatCurrency(Total));
+                Imputacion.IdsGridRestricta = [];
+                Imputacion.IdsGridRestricta.push(SelectedRows);
+                Imputacion.OnNCSeleccionado();
+            }
+
+            NotasCredito.CloseDialog();
+
+        },
+
+        HoldSelectedIds: function () {
+            //buscar number y seleccionar ese id o con la grid restricta
+            CheckPage = $('#GridNotasCredito .SelectCheckboxes');
+            for (var countBox = 0; countBox < CheckPage.length ; countBox++) {
+                if (SelectedRows.indexOf($(CheckPage[countBox]).val()) >= 0) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridNotasCredito').resizeGrid('NotasCredito_Container');
+        },
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        OnCheckboxChange: function () {
+            $('.SelectCheckboxes').attr('checked', false);
+            $(this).attr('checked', true);
+            SelectedRows = [];
+            SelectedRows.push($(this).val());
+        },
+
+        init: function () {
+            if (SelectedRows == "" || SelectedRows == []) {
+                SelectedRows = Imputacion.IdsGridRestricta;
+            }
+
+            $('#BtnSave').click(NotasCredito.OnSave);
+            $('#BtnCancel').click(NotasCredito.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridNotasCredito', ["Numero", "Fecha"]);
+
+            $('#GridNotasCredito').CreateCommonGrid({
+                url: '@Url.Action("GetAllByProvFilterNC", "ComprobantesCompras")',
+                serializeGridData: function (postData) {
+                    data = {
+                        IdProveedor: '@ViewBag.IdProveedor',
+                        Tipo: '@ViewBag.Tipo',
+                        NoTipo: '@ViewBag.NoTipo',
+                        Pagada: '@ViewBag.Pagada'
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', '', '', 'Fecha', 'Letra', 'Número de Comprobante', 'Total', 'Total Abonado'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: RadioFormatter, formatoptions: { SelectedRows: SelectedRows }, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 100, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Letra', index: 'Letra', width: 100, align: "center", sortable: true },
+                    { name: 'Numero', index: 'Numero', width: 150, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'TotalPagado', index: 'TotalPagado', width: 150, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridNotasCredito_pager',
+                loadComplete: NotasCredito.HoldSelectedIds,
+                onPaging: NotasCredito.HoldSelectedIds,
+                rowList: [5, 10, 20],
+                rowNum: 5
+            });
+            $('#GridNotasCredito').trigger("reloadGrid");
+            $(document).off('change', '#GridNotasCredito .SelectCheckboxes');
+            $(document).on('change','#GridNotasCredito .SelectCheckboxes', NotasCredito.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        NotasCredito.init();
+    });
+
+</script>

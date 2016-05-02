@@ -1,0 +1,92 @@
+﻿@model Woopin.SGC.Model.Tesoreria.ChequePropio
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        @Html.Hidden("Numero Desde", (int)ViewBag.NumeroDesde)
+        @Html.Hidden("Numero Hasta", (int)ViewBag.NumeroHasta)
+        @Html.Hidden("CuentaBancaria_Id", (int)Model.CuentaBancaria.Id)
+        <div class="form-group">
+            @Html.LabelFor(model => model.CuentaBancaria.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CuentaBancaria.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CuentaBancaria.Nombre, null, new { @class = "help-block" })
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Numero, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnAnularCheque" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Anular Cheque
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+@Scripts.Render("~/bundles/jqueryui")
+<script type="text/javascript">
+    var AnularCheques = {
+
+        ChequeoNumeros: function () {
+            
+            if ($('#Numero').val() != "" && ( $('#Numero').val() < $('#Numero_Desde').val() || $('#Numero').val() > $('#Numero_Hasta').val())) {
+                return $('#Alert-Dialog-Container').NewAlert('error', 'Es necesario que el numero de Cheque pertenezca a la Chequera');
+            }
+            AnularCheques.Save();
+        },
+
+
+        Save: function(){    
+            if ($('#BtnAnularCheque').attr('disabled') == "disabled" || $('#BtnAnularCheque').attr('disabled') == true)
+                return;
+
+            $('#BtnAnularCheque').attr('disabled', 'disabled');
+            var cp = $('form').serializeFormJSON();
+            cp["CuentaBancaria.Id"] = cp.CuentaBancaria_Id;
+            
+            var postParams = {
+                url: "@Url.Action("AnularCheques")",
+                data: { cp: cp },
+                success: function (data) {
+                    if (data.Success) {
+                        
+                        data.ChequePropio["CuentaBancaria.Nombre"] = data.ChequePropio.CuentaBancaria.Nombre;
+                        data.ChequePropio["Proveedor.RazonSocial"] = "";
+                        data.ChequePropio["Importe"] = data.ChequePropio.Importe;
+                        data.ChequePropio["Fecha"] = new Date();
+
+                        $('#GridChequesPropios').jqGrid('addRowData', 'Id', data.ChequePropio);
+                        $('#GridChequesPropios').trigger("reloadGrid");
+                        _OpenDialog.dialog('close');
+                    } else {
+                        $('#BtnAnularCheque').removeAttr('disabled');
+                        $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            }
+            $.AjaxPost(postParams);
+        }
+
+    }
+    $(document).ready(function () {
+        $('#BtnAnularCheque').click(AnularCheques.ChequeoNumeros);
+    });
+</script>

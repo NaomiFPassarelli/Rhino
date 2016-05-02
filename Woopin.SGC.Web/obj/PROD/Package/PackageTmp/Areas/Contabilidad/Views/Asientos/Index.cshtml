@@ -1,0 +1,145 @@
+﻿@{
+    ViewBag.Title = "Asientos";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Listado de Asientos";
+}
+<div class="action-bar row" style="margin:1% 0">
+    <div class="col-md-6 place-left">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnCreate" title="Crear Asiento" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Asiento
+    </a>
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Asiento
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Asiento..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+
+</div>
+<div class="table-container">
+    <table id="FilterAsientos"></table>
+    <div id="FilterAsientos_pager"></div>
+</div>
+<div id="asiento-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        FilterAsientos.init();
+    });
+
+    var FilterAsientos = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                FilterAsientos.LoadData();
+            });
+            $('#BtnExportXLS').click(FilterAsientos.ExportToExcel);
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#FilterAsientos', ["Fecha"]);
+
+            /* Armo la grilla */
+            $('#FilterAsientos').CreateCommonGrid({
+                url: '@Url.Action("GetAsientosFilter")',
+                serializeGridData: function (postData) {
+                    data = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'Numero de Referencia', 'Leyenda', 'Fecha', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'NumeroReferencia', index: 'NumeroReferencia', width: 20, align: "center", sortable: true },
+                    { name: 'Leyenda', index: 'Leyenda', width: 20, align: "center", sortable: true },
+                    { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Acciones', index: 'Acciones', width: 10, align: "center", sortable: true, formatter: FilterAsientos.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                pager: '#FilterAsientos_pager',
+                rowList: [15, 20, 25],
+                rowNum: 15
+            });
+            $('#FilterAsientos').trigger("reloadGrid");
+
+            $(document).on('click', '.BtnVerDialog', FilterAsientos.VerDetalleDialog);
+            $('#BtnLoadData').click(FilterAsientos.LoadData);
+        },
+
+        VerDetalleDialog: function () {
+            var IdEntidad = $(this).data('id');
+            var RowId = $(this).closest('tr').attr('id');
+            var row = $("#FilterAsientos").getRowData(RowId);
+            var opt = {
+                width: 850, height: 600,
+                openCallback: function () {
+                    $('#GridDetallesAsiento').resizeGrid('GridDetallesAsiento_Container');
+                }
+            };
+            $('#asiento-detalle-dialog').OpenFormDialog('@Url.Action("Detalle")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Asiento ' + row.Leyenda, opt);
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('FilterAsientos', 'Listado de Asientos');
+        },
+
+        LoadData: function () {
+            FilterAsientos.CompletarFiltros();
+            valid = FilterAsientos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            FilterAsientos.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#FilterAsientos").setGridParam({ datatype: 'json' });
+            $('#FilterAsientos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '';
+            url = '@Url.Action("Detalle")/' + rowObject.NumeroReferencia;
+
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.NumeroReferencia + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.NumeroReferencia + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        }
+    }
+    </script>
+}

@@ -1,0 +1,115 @@
+﻿@model Woopin.SGC.Model.Contabilidad.Cuenta
+
+@{
+    ViewBag.Title = "Nueva Localizacion";
+    ViewBag.SectionIcon = "map-marker";
+    ViewBag.SectionTitle = "Nueva Localizacion";
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Dialog-Alert-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Rubro"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Rubro, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Rubro, (IEnumerable<SelectListItem>)ViewBag.Rubros,"Seleccionar un Rubro", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Rubro, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Corriente"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Corriente, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <select id="Corriente" name="Corriente" class="text-input"></select>
+                @Html.ValidationMessageFor(model => model.Corriente, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("SubRubro"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.SubRubro, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <select id="SubRubro" name="SubRubro"></select>
+                @Html.ValidationMessageFor(model => model.SubRubro, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Nombre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Nombre, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Crear Cuenta
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#Rubro').attr('data-val-required', 'Es necesario una cuenta bancaria');
+        $('form').reParseForm();
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    PlanCuentas.LoadJsTree();
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Dialog-Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+        $('#Rubro').change(function () {
+            var params = {
+                url: '@Url.Action("GetCorrientes")',
+                data: { Rubro: $('#Rubro').val() },
+                success: function (ret) {
+                    $('#Corriente').html('');
+                    var opt = '<option value="0">Elegir un SubGrupo</option>';
+                    $('#Corriente').append(opt);
+                    $.each(ret, function (i, v) {
+                        var opt = '<option value="' + v.Corriente + '">' + v.Nombre + '</option>';
+                        $('#Corriente').append(opt);
+                    });
+                }
+            }
+            $.AjaxPost(params);
+        });
+
+        $('#Corriente').change(function () {
+            var params = {
+                url: '@Url.Action("GetSubRubros")',
+                data: { Rubro: $('#Rubro').val(), Corriente: $('#Corriente').val()},
+                success: function (ret) {
+                    $('#SubRubro').html('');
+                    var opt = '<option value="0">Elegir un SubRubro</option>';
+                    $('#SubRubro').append(opt);
+                    $.each(ret, function (i, v) {
+                        var opt = '<option value="' + v.SubRubro + '">' + v.Nombre + '</option>';
+                        $('#SubRubro').append(opt);
+                    });
+                }
+            }
+            $.AjaxPost(params);
+        });
+    });
+</script>

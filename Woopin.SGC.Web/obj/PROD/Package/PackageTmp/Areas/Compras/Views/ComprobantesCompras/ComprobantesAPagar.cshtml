@@ -1,0 +1,138 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="ComprobantesAPagar_Container" style="margin-top:50px;">
+        <table id="GridComprobantesAPagar"></table>
+        <div id="GridComprobantesAPagar_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var ComprobantesAPagar = {
+        SelectedRows: new Array(),
+
+        OnSave: function () {
+            // Solo cuando se guarda se actualiza el array de seleccionados
+            OrdenPago.IdsGridRestricta = new Array();
+            OrdenPago.IdsGridRestricta = OrdenPago.IdsGridRestricta.concat(ComprobantesAPagar.SelectedRows);
+
+            // Arrays que contienen la data, los ids no seleccionados y los que ya fueron agregados para no pisar el importe.
+            var agregarComprobantesGridData = $("#GridComprobantesAPagar").jqGrid('getGridParam', 'data');
+            var IdsNotSelected = Object.keys($('#GridComprobantesAPagar').jqGrid('getGridParam', '_index')).diff(OrdenPago.IdsGridRestricta);
+            var alreadyAdded = new Array();
+            $.each($('#GridDetallesOrden').jqGrid('getGridParam', 'data'), function (i, comp) {
+                alreadyAdded.push(comp.Id);
+            });
+
+
+            // Agrego solo los nuevos
+            $(agregarComprobantesGridData).each(function (indexAddComprobante, ComprobanteRow) {
+                if ($.inArray(ComprobanteRow.Id.toString(), OrdenPago.IdsGridRestricta) >= 0 &&
+                    $.inArray(ComprobanteRow.Id, alreadyAdded) == -1)
+                {
+                    ComprobanteRow.Importe = (ComprobanteRow.Total - ComprobanteRow.TotalPagado).toFixedNumber(2);
+                    $('#GridDetallesOrden').jqGrid('addRowData', ComprobanteRow.Id, ComprobanteRow);
+                }
+            });
+
+            // Borro los Ids que no esten seleccionados.
+            $.each(IdsNotSelected, function (index, value) {
+                $('#GridDetallesOrden').jqGrid('delRowData', value);
+            });
+
+            ComprobantesAPagar.CloseDialog();
+            OrdenPago.CalcularTotal();
+        },
+
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        HoldSelectedIds: function(){
+            //Seleccionar de la pagina Nueva los que ya estaban seleccionados
+            CheckPage = $('#GridComprobantesAPagar .SelectCheckboxes');
+            for (var countBox = 0; countBox <= CheckPage.length ; countBox++) {
+                if (ComprobantesAPagar.SelectedRows.indexOf($(CheckPage[countBox]).val()) >= 0) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridComprobantesAPagar').resizeGrid('ComprobantesAPagar_Container');
+        },
+
+        OnCheckboxChange: function () {
+            if ($(this).is(":checked")) {
+                ComprobantesAPagar.SelectedRows.push($(this).val());
+            }
+            else {
+                var indexDel = ComprobantesAPagar.SelectedRows.indexOf($(this).val());
+                ComprobantesAPagar.SelectedRows.splice(indexDel, 1);
+            }
+        },
+
+        init: function () {
+            // Si Cancela quedan en el array
+            ComprobantesAPagar.SelectedRows = new Array();
+            ComprobantesAPagar.SelectedRows = ComprobantesAPagar.SelectedRows.concat(OrdenPago.IdsGridRestricta);
+
+
+            $('#BtnSave').click(ComprobantesAPagar.OnSave);
+            $('#BtnCancel').click(ComprobantesAPagar.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridComprobantesAPagar', ["Numero", "Fecha"]);
+
+            //Grilla de todos los comprobantes - Los que aparecen en el popup
+
+            $('#GridComprobantesAPagar').CreateCommonGrid({
+                url: '@Url.Action("GetAllAPagarByProv", "ComprobantesCompras", new { IdProveedor = @ViewBag.IdProveedor })',
+                colNames: ['', '', '', 'Fecha', 'Número de Comprobante', 'Total', 'Total Abonado'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: OrdenPago.IdsGridRestricta }, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 114, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Numero', index: 'Numero', width: 250, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'TotalPagado', index: 'TotalPagado', width: 150, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                height: 200,
+                pager: '#GridComprobantesAPagar_pager',
+                loadComplete: ComprobantesAPagar.HoldSelectedIds,
+                onPaging: ComprobantesAPagar.HoldSelectedIds,
+                rowList: [5, 10, 15],
+                rowNum: 5
+            });
+            $('#GridComprobantesAPagar').trigger("reloadGrid");
+            $(document).off('change', '#GridComprobantesAPagar .SelectCheckboxes');
+            $(document).on('change','#GridComprobantesAPagar .SelectCheckboxes', ComprobantesAPagar.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        ComprobantesAPagar.init();
+    });
+
+</script>

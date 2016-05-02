@@ -1,0 +1,115 @@
+﻿@using Woopin.SGC.Model.Contabilidad
+@using Woopin.SGC.Common.Json;
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+@Scripts.Render("~/bundles/select2")
+@Styles.Render("~/Scripts/select2/select2.css")
+@Styles.Render("~/Content/themes/base/css")
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+<script type="text/javascript">
+    var AsientoDetalle = {
+        AnularAsiento: function(){
+            
+            //var Id = $(this).closest('tr').attr('id');
+            var Id = $('.BtnEliminar').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea anular el asiento?",
+                                    function () {  AsientoDetalle.EliminarAsiento(Id) });
+        },
+
+        EliminarAsiento: function (Id) {
+            var params = {
+                url: '@Url.Action("Anular")',
+                data: { IdAsiento: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                                                                                                                                                                                                                                                                                                                                                                                                                            @:window.location.pathname = "@Url.Action("Index", "Asientos", new { Area = "Contabilidad" })"
+                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+
+        DetailGridActions: function (cell, options, row) {
+            var ret = '';
+            if (row.ChequePropio != null) {
+                var url = '@Url.Action("DetalleChequePropio", "Valores", new { Area = "Tesoreria" })/' + row.ChequePropio.Id;
+                ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Cheque emitido en nueva ventana" target="_blank" data-Id="' + row.ChequePropio.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            }
+            return ret;
+        },
+
+        ComprobanteAsociado: function(){
+            TipoOperacion = $(this).attr('data-oper');
+            ComprobanteAsociado = $(this).attr('data-compasoc');
+            if(ComprobanteAsociado > 0 && TipoOperacion != null){
+                switch(TipoOperacion)
+                {
+                    case "@TipoOperacion.FV":
+                        window.location = '@Url.Action("Detalle", "ComprobantesVentas", new { Area = "Ventas"})/' + ComprobanteAsociado;
+                        break;
+                    case "@TipoOperacion.CZ":
+                        window.location = '@Url.Action("Detalle", "Cobranzas", new { Area = "Ventas" })/' + ComprobanteAsociado;
+                        break;
+                    case "@TipoOperacion.OC":
+                        window.location = '@Url.Action("Detalle", "ComprobantesCompras", new { Area = "Compras" })/' + ComprobanteAsociado;
+                        break;
+                    case "@TipoOperacion.OP":
+                        window.location = '@Url.Action("Detalle", "OrdenesPagos", new { Area = "Compras" })/' + ComprobanteAsociado;
+                        break;
+                    case "@TipoOperacion.OE":
+                        window.location = '@Url.Action("Detalle", "OtrosEgresos", new { Area = "Compras" })/' + ComprobanteAsociado;
+                        break;
+                    case "@TipoOperacion.MOVF":
+                        window.location = '@Url.Action("Index", "MovimientosFondos", new { Area = "Tesoreria" })';
+                        break;
+                    case "@TipoOperacion.DEP":
+                        window.location = '@Url.Action("Detalle", "Depositos", new { Area = "Tesoreria" })/' + ComprobanteAsociado;
+                        break;
+                    case "@TipoOperacion.CTC":
+                        window.location = '@Url.Action("Detalle", "PagosTarjetas", new { Area = "Tesoreria" })/' + ComprobanteAsociado;
+                        break;
+                }
+            }
+
+        }
+
+    }
+
+    $(document).ready(function () {
+        $('#GridDetallesAsiento').CreateCommonGrid({
+            datatype: 'local',
+            colNames: ['', '', 'Cuenta', 'Debe', 'Haber', '' ],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'CuentaId', index: 'CuentaId', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'Cuenta.Nombre', index: 'Cuenta.Nombre', width: 20, align: "center", sortable: true },
+                { name: 'Debe', index: 'Debe', width: 20, align: "center", sortable: true,formatter: $.formatCurrency },
+                { name: 'Haber', index: 'Haber', width: 20, align: "center", sortable: true,formatter: $.formatCurrency },
+                { name: 'Actions', index: 'Actions', width: 10, sortable: false, formatter: AsientoDetalle.DetailGridActions, align: "center" },
+            ],
+            sortname: 'Fecha',
+            sortorder: "asc",
+            pager: '#GridDetallesAsiento_pager',
+            data: @Html.Raw(JsonHelper.ToJson(Model.Items)),
+            rowList: [5, 10, 15],
+            rowNum: 5
+        });
+        $('#GridDetallesAsiento').trigger("reloadGrid");
+        $("#GridDetallesAsiento").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+        $(document).on('click', '.BtnEliminar', AsientoDetalle.AnularAsiento);
+        $(document).on('click', '.BtnComprobanteAsociado', AsientoDetalle.ComprobanteAsociado);
+        $(document).on('click', '.BtnVerChequePropio', AsientoDetalle.VerChequePropio);
+
+    });
+</script>

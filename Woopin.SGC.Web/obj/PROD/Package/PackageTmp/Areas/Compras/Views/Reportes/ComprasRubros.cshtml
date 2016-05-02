@@ -1,0 +1,235 @@
+﻿@{
+    ViewBag.Title = "Rubros de Gastos por Mes";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Rubros de Gastos por Mes";
+}
+<div class="action-bar row" style="margin-bottom:5px;">
+    <div class="col-md-4" style="padding-left:0px;">
+        <div class="col-md-12 input-container" style="padding-left:0px;">
+            <div class="row">
+                <input type="number" id="ProveedorID" name="ProveedorID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Proveedor_Id" name="Proveedor.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Proveedor_Id" data-input="ProveedorID" title="Limpiar" style="margin: 4px 0px; padding: 2px 3px !important;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Ventas por Rubros
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Rubro..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridComprasRubros"></table>
+    <div id="GridComprasRubros_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ComprasRubros.init();
+    });
+
+    var ComprasRubros = {
+
+        init: function () {
+            $('#BtnExportXLS').click(ComprasRubros.ExportToExcel);
+
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', ComprasRubros.LoadData);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridComprasRubros', ["Descripcion"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridComprasRubros').CreateCommonGrid({
+                url: '@Url.Action("GetAllComprasRubros")',
+                serializeGridData: function (postData) {
+                    data = {
+                        IdProveedor: $('#ProveedorID').val() != '' ? $('#ProveedorID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'Descripcion del Rubro', 'Total', 'MonthGroup',''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Descripcion', index: 'Descripcion', width: 25, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 25, align: "center", sortable: true, formatter: $.formatCurrency, summaryType: 'sum', summaryTpl: '<b>Total: {0}</b>' },
+                    { name: 'MonthGroup', index: 'MonthGroup', width: 25, align: "center", sortable: true, sorttype: function (cell, row) { return row.MonthCode}},
+                    { name: 'MonthCode', index: 'MonthGroup', width: 25, align: "center", sortable: true, hidden: true },
+                ],
+                sortname: 'MonthCode',
+                sortorder: "desc",
+                pager: '#GridComprasRubros_pager',
+                rowList: [30, 60, 90],
+                rowNum: 30,
+                grouping: true,
+                groupingView: {
+                    groupField: ['MonthGroup'],
+                    groupColumnShow: [false],
+                    groupText: ['<b>{0} - {1} Rubros(s) utilizados(s)</b>'],
+                    groupSummary: [true],
+                    groupOrder: 'desc'
+                },
+                height:700
+            });
+            $('#GridComprasRubros').trigger("reloadGrid");
+
+            $('#Proveedor_Id').select2(
+               {
+                   placeholder: "Seleccione Un Proveedor",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetProveedoresCombo", "Proveedores")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#ProveedorID').change(ComprasRubros.OnProveedorChange);
+            $(document).on('click', '.BtnVerDialog', ComprasRubros.VerDetalleDialog);
+            $('#Proveedor_Id').on("select2-selecting", ComprasRubros.OnProveedorSelected);
+            $('#BtnLoadData').click(ComprasRubros.LoadData);
+
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                ComprasRubros.ClearSelect2(IdClear, IdClearInput);
+            });
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        OnProveedorSelected: function (e) {
+            $('#ProveedorID').val(e.val)
+        },
+
+        VerDetalleDialog: function () {
+            var IdEntidad = $(this).data('id');
+            var RowId = $(this).closest('tr').attr('id');
+            var row = $("#GridComprasRubros").getRowData(RowId);
+            if ($(this).data('entidad') == 'ComprobanteVenta') {
+                var opt = {
+                    width: 850, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesVenta').resizeGrid('GridDetallesVenta_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","ComprobantesVentas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.LetraNumero, opt);
+            }
+            else {
+                var opt = {
+                    width: 900, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesCobranza').resizeGrid('GridDetallesCobranza_Container');
+                        $('#GridCobrosCobranza').resizeGrid('GridCobrosCobranza_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","Cobranzas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Cobranza ' + row.LetraNumero, opt);
+            }
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridComprasRubros', 'Listado de Ventas de Rubro');
+        },
+
+
+
+        LoadData: function () {
+            ComprasRubros.CompletarFiltros();
+            valid = ComprasRubros.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ComprasRubros.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        OnProveedorChange: function () {
+            var Id = $('#ProveedorID').val();
+            if (Id == "") { return; }
+            valid = ComprasRubros.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetProveedor", "Proveedores")',
+                data: { IdProveedor: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $('#Proveedor_Id').select2('data', { id: Id, text: ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')' });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Proveedor no existe');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridComprasRubros").setGridParam({ datatype: 'json' });
+            $('#GridComprasRubros').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '';
+            if (rowObject.Entidad == 'ComprobanteVenta') {
+                url = '@Url.Action("Detalle","ComprobantesVentas")/' + rowObject.NroReferencia;
+            }
+            else {
+                url = '@Url.Action("Detalle","Cobranzas")/' + rowObject.NroReferencia;
+            }
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.NroReferencia + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.NroReferencia + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        }
+    }
+    </script>
+}

@@ -1,0 +1,81 @@
+﻿@model Woopin.SGC.Model.Tesoreria.PagoTarjeta
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        @Html.Hidden("Proveedor.Id", (int)ViewBag.IdProveedor)
+        <div class="form-group">
+            @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Numero, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Tarjeta.Numero, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Tarjeta.Id, (IEnumerable<SelectListItem>)ViewBag.TarjetasCombos, " Seleccione una Tarjeta ", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Tarjeta.Id, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="NuevaPagoTarjeta_Fecha" name="Fecha" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Total, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Total, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Cuotas, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Cuotas, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Cuotas, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmitPagoTarjeta" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        $("#NuevaPagoTarjeta_Fecha").datepicker({ dateFormat: 'dd/mm/yy' });
+        $('#BtnSubmitPagoTarjeta').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    @ViewBag.Callback@Html.Raw("(data.PagoTarjeta," + ViewBag.Valor.Id.ToString() + ")");
+                }
+                else {
+
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+
+        $('#Tarjeta_Id').attr('data-val-required', 'Es necesaria una Tarjeta');
+        $('form').reParseForm();
+    });
+</script>

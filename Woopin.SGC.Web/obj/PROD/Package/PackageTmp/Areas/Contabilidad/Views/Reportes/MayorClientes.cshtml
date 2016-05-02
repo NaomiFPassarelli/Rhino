@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "Reportes";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Mayor de Clientes";
+}
+<div class="action-bar row" style="margin:1% 0">
+    <div class="col-md-6 place-left">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Mayor de Clientes
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar cliente..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+
+</div>
+<div class="table-container">
+    <table id="GridMayorClientes"></table>
+    <div id="GridMayorClientes_pager"></div>
+</div>
+<div id="asiento-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        MayorClientes.init();
+    });
+
+    var MayorClientes = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', MayorClientes.ReloadGrid);
+            $('#BtnExportXLS').click(MayorClientes.ExportToExcel);
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridMayorClientes', ["NombreCuenta"]);
+
+            /* Armo la grilla */
+            $('#GridMayorClientes').CreateCommonGrid({
+                url: '@Url.Action("GetAllMayorClientes")',
+                serializeGridData: function (postData) {
+                    data = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'Codigo Cuenta', 'Nombre Cuenta', 'Saldo Actual', 'Debe', 'Haber', 'Saldo'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Codigo', index: 'Codigo', width: 100, align: "center", sortable: true },
+                    { name: 'NombreCuenta', index: 'NombreCuenta', width: 250, align: "center", sortable: true },
+                    { name: 'SaldoActual', index: 'SaldoActual', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Debe', index: 'Debe', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Haber', index: 'Haber', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Saldo', index: 'Saldo', width: 100, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'NombreCuenta',
+                sortorder: "asc",
+                pager: '#GridMayorClientes_pager',
+                rowList: [40, 80, 120],
+                rowNum: 40,
+                shrinkToFit: false,
+                footerrow: true,
+                userDataOnFooter: true,
+                height:700
+            });
+            $('#GridMayorClientes').trigger("reloadGrid");
+            $('#BtnLoadData').click(MayorClientes.LoadData);
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridMayorClientes', 'Mayor de Proveedores');
+        },
+
+        LoadData: function () {
+            MayorClientes.CompletarFiltros();
+            valid = MayorClientes.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            MayorClientes.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        ReloadGrid: function () {
+            $("#GridMayorClientes").setGridParam({ datatype: 'json' });
+            $('#GridMayorClientes').setGridParam({ page: 1 }).trigger("reloadGrid");
+        }
+    }
+    </script>
+}

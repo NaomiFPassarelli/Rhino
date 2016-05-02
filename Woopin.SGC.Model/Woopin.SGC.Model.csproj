@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{18216B6B-29B8-48A8-A2AA-444E068ABCB8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Woopin.SGC.Model</RootNamespace>
+    <AssemblyName>Woopin.SGC.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DESA|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'QA|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PROD|AnyCPU'">
+    <OutputPath>bin\PROD\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DataAnnotationsExtensions">
+      <HintPath>..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DataAnnotationsExtensions.ClientValidation">
+      <HintPath>..\packages\DataAnnotationsExtensions.MVC3.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.ClientValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.40804.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebActivator">
+      <HintPath>..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
+    <Compile Include="Common\CuentaCorrienteItem.cs" />
+    <Compile Include="Common\Dashboard.cs" />
+    <Compile Include="Common\Enums.cs" />
+    <Compile Include="Common\ISecuredEntity.cs" />
+    <Compile Include="Common\JobHeader.cs" />
+    <Compile Include="Common\Log.cs" />
+    <Compile Include="Common\Notificacion.cs" />
+    <Compile Include="Common\Organizacion.cs" />
+    <Compile Include="Common\ReporteCitiItem.cs" />
+    <Compile Include="Common\SystemConfig.cs" />
+    <Compile Include="Common\UsuarioOrganizacion.cs" />
+    <Compile Include="Compras\ImputacionCompra.cs" />
+    <Compile Include="Compras\ComprasCuentaCorriente.cs" />
+    <Compile Include="Compras\ComprobanteCompra.cs" />
+    <Compile Include="Compras\ReporteComprasRubros.cs" />
+    <Compile Include="Compras\ReporteCompra.cs" />
+    <Compile Include="Contabilidad\SumaSaldo.cs" />
+    <Compile Include="Contabilidad\LibroIVA.cs" />
+    <Compile Include="Compras\OtroEgresoPago.cs" />
+    <Compile Include="Compras\OtroEgresoItem.cs" />
+    <Compile Include="Compras\DetalleComprobanteCompra.cs" />
+    <Compile Include="Compras\OrdenPago.cs" />
+    <Compile Include="Compras\OrdenPagoComprobanteItem.cs" />
+    <Compile Include="Compras\OrdenPagoValorItem.cs" />
+    <Compile Include="Compras\OtroEgreso.cs" />
+    <Compile Include="Compras\RubroCompra.cs" />
+    <Compile Include="Contabilidad\BloqueoContable.cs" />
+    <Compile Include="Contabilidad\LibroMayorHeader.cs" />
+    <Compile Include="Contabilidad\LibroMayor.cs" />
+    <Compile Include="Contabilidad\Asiento.cs" />
+    <Compile Include="Contabilidad\AsientoItem.cs" />
+    <Compile Include="Contabilidad\MayorItem.cs" />
+    <Compile Include="Contabilidad\Retencion.cs" />
+    <Compile Include="Exceptions\SecurityException.cs" />
+    <Compile Include="Exceptions\ValidationException.cs" />
+    <Compile Include="Exceptions\BusinessException.cs" />
+    <Compile Include="Negocio\AsientosHelper.cs" />
+    <Compile Include="Negocio\CobranzaHelper.cs" />
+    <Compile Include="Negocio\EntidadHelper.cs" />
+    <Compile Include="Negocio\InstalacionHelper.cs" />
+    <Compile Include="Negocio\OrdenPagoHelper.cs" />
+    <Compile Include="Negocio\ComprobanteCompraHelper.cs" />
+    <Compile Include="Negocio\ComprobanteHelper.cs" />
+    <Compile Include="Negocio\ComprobanteVentaHelper.cs" />
+    <Compile Include="Negocio\CuentaContableHelper.cs" />
+    <Compile Include="Negocio\ValoresHelper.cs" />
+    <Compile Include="Reporting\GrupoEgreso.cs" />
+    <Compile Include="Reporting\GrupoIngreso.cs" />
+    <Compile Include="Sueldos\AdicionalAdicionales.cs" />
+    <Compile Include="Sueldos\Adicional.cs" />
+    <Compile Include="Sueldos\Recibo.cs" />
+    <Compile Include="Sueldos\Empleado.cs" />
+    <Compile Include="Stock\Articulo.cs" />
+    <Compile Include="Stock\EgresoStock.cs" />
+    <Compile Include="Stock\IngresoStock.cs" />
+    <Compile Include="Stock\RubroArticulo.cs" />
+    <Compile Include="Tesoreria\Chequera.cs" />
+    <Compile Include="Ventas\ImputacionVenta.cs" />
+    <Compile Include="Ventas\ObservComprobanteVenta.cs" />
+    <Compile Include="Ventas\ListaPreciosItem.cs" />
+    <Compile Include="Tesoreria\Caja.cs" />
+    <Compile Include="Tesoreria\Banco.cs" />
+    <Compile Include="Common\CategoriaIVA.cs" />
+    <Compile Include="Common\Combo.cs" />
+    <Compile Include="Common\ComboItem.cs" />
+    <Compile Include="Common\Localizacion.cs" />
+    <Compile Include="Common\Moneda.cs" />
+    <Compile Include="Common\PagingRequest.cs" />
+    <Compile Include="Common\PagingResponse.cs" />
+    <Compile Include="Common\Sucursal.cs" />
+    <Compile Include="Common\Usuario.cs" />
+    <Compile Include="Tesoreria\CancelacionTarjeta.cs" />
+    <Compile Include="Tesoreria\ComprobanteRetencionReporte.cs" />
+    <Compile Include="Tesoreria\ComprobanteRetencion.cs" />
+    <Compile Include="Tesoreria\DepositoItem.cs" />
+    <Compile Include="Tesoreria\Deposito.cs" />
+    <Compile Include="Tesoreria\PagoTarjeta.cs" />
+    <Compile Include="Tesoreria\ReporteTesoreria.cs" />
+    <Compile Include="Tesoreria\TarjetaCredito.cs" />
+    <Compile Include="Tesoreria\Transferencia.cs" />
+    <Compile Include="Tesoreria\ChequePropio.cs" />
+    <Compile Include="Tesoreria\Cheque.cs" />
+    <Compile Include="Tesoreria\CuentaBancaria.cs" />
+    <Compile Include="Compras\Proveedor.cs" />
+    <Compile Include="Contabilidad\Cuenta.cs" />
+    <Compile Include="Contabilidad\Ejercicio.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tesoreria\HistorialCuentaBancaria.cs" />
+    <Compile Include="Tesoreria\HistorialCaja.cs" />
+    <Compile Include="Tesoreria\MovimientoFondo.cs" />
+    <Compile Include="Tesoreria\Valor.cs" />
+    <Compile Include="Tesoreria\ValorIngresado.cs" />
+    <Compile Include="Ventas\Cliente.cs" />
+    <Compile Include="Ventas\Cobranza.cs" />
+    <Compile Include="Ventas\CobranzaComprobanteItem.cs" />
+    <Compile Include="Ventas\CobranzaValorItem.cs" />
+    <Compile Include="Ventas\ComprobanteVenta.cs" />
+    <Compile Include="Ventas\DetalleComprobanteVenta.cs" />
+    <Compile Include="Ventas\ReporteAcumulado.cs" />
+    <Compile Include="Ventas\ReporteVenta.cs" />
+    <Compile Include="Ventas\ReporteVentasServicios.cs" />
+    <Compile Include="Ventas\GrupoEconomico.cs" />
+    <Compile Include="Ventas\Talonario.cs" />
+    <Compile Include="Ventas\VentasCuentaCorriente.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Woopin.SGC.Common\Woopin.SGC.Common.csproj">
+      <Project>{9ca0881b-f044-483c-a594-82d0158832f7}</Project>
+      <Name>Woopin.SGC.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

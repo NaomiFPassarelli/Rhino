@@ -1,0 +1,68 @@
+﻿@using Woopin.SGC.Model.Compras
+@using Woopin.SGC.Common.Json;
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+@Scripts.Render("~/bundles/jqueryui")
+@Html.Partial("~/Areas/Tesoreria/Views/Valores/js/_IngresoValores.cshtml");
+<script type="text/javascript">
+    var DetalleOrdenPago = {
+        AnularComprobante: function () {
+            var Id = $('.BtnEliminar').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea anular el egreso?",
+                                    function () { DetalleOrdenPago.EliminarComprobante(Id) });
+        },
+
+        EliminarComprobante: function (Id) {
+            var params = {
+                url: '@Url.Action("AnularOE")',
+                data: { IdOE: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                            @:window.location.reload();
+                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        init: function () {
+            $(document).on('click', '.BtnEliminar', DetalleOrdenPago.AnularComprobante);
+            $('#GridDetallesOtroEgreso').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', 'Descripcion', 'Total'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'RubroCompra_Id', index: 'RubroCompra_Id', width: 0, sortable: false, hidden: true },
+                    { name: 'Descripcion', index: 'IVA', width: 20, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true,formatter: $.formatCurrency}
+                ],
+                sortname: 'Descripcion',
+                sortorder: "asc",
+                data: @Html.Raw(JsonHelper.ToJson(Model.Detalle)),
+                pager: '#GridDetallesOtroEgreso_pager',
+                rowList: [5, 10, 15],
+                rowNum: 5
+            });
+            $('#GridDetallesOtroEgreso').trigger("reloadGrid");
+            $("#GridDetallesOtroEgreso").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            IngresoValores.InitDetalle('#GridPagosOtrosEgresos');
+            IngresoValores.Grid.jqGrid("setGridParam", {
+                data:@Html.Raw(JsonHelper.ToJson(((OtroEgreso)Model).Pagos.Select(x => x.Valor)))
+                });
+            IngresoValores.Grid.trigger("reloadGrid");
+        }
+    }
+    $(document).ready(function () {
+        DetalleOrdenPago.init();
+    });
+</script>

@@ -1,0 +1,104 @@
+﻿@model Woopin.SGC.Model.Tesoreria.Cheque
+
+@{
+    Layout = null;
+    var IsReadonlyBancos = ViewBag.Bancos.Count == 1;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        @Html.Hidden("Cliente.Id", (int)ViewBag.IdCliente)
+        <div class="form-group ">
+            @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Numero, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Banco.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Banco.Id, new SelectList(ViewBag.Bancos, "Id", "Nombre"), "Elegir un banco", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Banco.Id, null, new { @class = "help-block" })
+                @if (IsReadonlyBancos)
+                {
+                    @Html.Hidden("Banco.Id", (string)ViewBag.BancoUnica.ToString())
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumeroCuenta, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NumeroCuenta, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.NumeroCuenta, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="NuevoCheque_Fecha" name="Fecha" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.FechaVencimiento, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="NuevoCheque_FechaVencimiento" name="FechaVencimiento" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.FechaVencimiento, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Importe, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Importe, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Importe, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Propio, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="textinput" id="Propio" name="Propio" type="checkbox" value="true">
+                @Html.ValidationMessageFor(model => model.Propio, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmitCheque" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        @if (IsReadonlyBancos)
+        {
+            @:$($("select#Banco_Id option")[1]).attr("selected", "selected");
+            @:$("select#Banco_Id").attr("disabled", "disabled");
+        }
+        $("#NuevoCheque_Fecha").datepicker({ dateFormat: 'dd/mm/yy' });
+        //$("#NuevoCheque_Fecha, #NuevoCheque_FechaVencimiento").datepicker({ dateFormat: 'dd/mm/yy' });
+        $('#BtnSubmitCheque').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    @ViewBag.Callback@Html.Raw("(data.Cheque," + ViewBag.Valor.Id.ToString() + ")");
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+        $('#Banco_Id').attr('data-val-required', 'Es necesaria un Banco');
+        $('form').reParseForm();
+    });
+</script>

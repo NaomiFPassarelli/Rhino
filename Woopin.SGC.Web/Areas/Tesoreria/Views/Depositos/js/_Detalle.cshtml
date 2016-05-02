@@ -1,0 +1,29 @@
+﻿@using Woopin.SGC.Common.Json;
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+@Styles.Render("~/Content/themes/base/css")
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+<script type="text/javascript">
+        var ComprobanteDetalleId = 0;
+        $(document).ready(function () {
+            $('#GridDetallesDeposito').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['',  'Fecha', 'Cliente', 'Numero', 'Importe'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Cheque.Fecha', index: 'Fecha', width: 210, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Cheque.Cliente.RazonSocial', index: 'Cliente.RazonSocial', width: 215, align: "center", sortable: true },
+                    { name: 'Cheque.Numero', index: 'Numero', width: 210, align: "center", sortable: true },
+                    { name: 'Cheque.Importe', index: 'Importe', width: 215, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                data: @Html.Raw(JsonHelper.ToJson(Model.Cheques)),
+                pager: '#GridDetallesDeposito_pager'
+            });
+            $("#GridDetallesDeposito").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+        });
+
+</script>

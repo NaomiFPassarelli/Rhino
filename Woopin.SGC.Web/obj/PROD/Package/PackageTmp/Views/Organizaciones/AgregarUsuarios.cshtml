@@ -1,0 +1,115 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;" id="AgregarUsuarios_Searchbox">
+        <input type="search" name="TbxSearch" id="AU_TbxSearch" placeholder="Buscar Usuario..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="AU_BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="AU_BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="AgregarUsuarios_Container" style="margin-top:50px;">
+        <table id="GridAgregarUsuarios"></table>
+        <div id="GridAgregarUsuarios_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var AgregarUsuarios = {
+
+        SelectedRows: [],
+
+        OnSave: function () {
+            // Arrays que contienen la data, los ids no seleccionados y los que ya fueron agregados para no pisar el importe.
+            var usuariosData = $("#GridAgregarUsuarios").jqGrid('getGridParam', 'data');
+
+            // Agrego solo los nuevos
+            var params = {
+                url: '@Url.Action("AgregarUsuarios")',
+                data: { Ids: AgregarUsuarios.SelectedRows, IdOrganizacion: '@ViewBag.IdOrganizacion' },
+                success: function (ret) {
+                    if (ret.Success) {
+                        AdministrarUsuarios.ReloadGrid();
+                        AgregarUsuarios.CloseDialog();
+                    }
+                    else {
+                        $.WarningDialog('Ocurrio un error al querer agregar a los usuarios de la organización, vuelva a intentarlo.', 'error');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        HoldSelectedIds: function(){
+            //Seleccionar de la pagina Nueva los que ya estaban seleccionados
+            CheckPage = $('#GridAgregarUsuarios .SelectCheckboxes');
+            for (var countBox = 0; countBox <= CheckPage.length ; countBox++) {
+                if (AgregarUsuarios.SelectedRows.indexOf($(CheckPage[countBox]).val()) >= 0) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridAgregarUsuarios').resizeGrid('AgregarUsuarios_Container');
+        },
+
+        OnCheckboxChange: function () {
+            if ($(this).is(":checked")) {
+                AgregarUsuarios.SelectedRows.push($(this).val());
+            }
+            else {
+                var indexDel = AgregarUsuarios.SelectedRows.indexOf($(this).val());
+                AgregarUsuarios.SelectedRows.splice(indexDel, 1);
+            }
+        },
+
+        init: function () {
+            $('#BtnSave').click(AgregarUsuarios.OnSave);
+            $('#BtnCancel').click(AgregarUsuarios.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridAgregarUsuarios', ["NombreCompleto"], 'AU');
+
+            $('#GridAgregarUsuarios').CreateCommonGrid({
+                url: '@Url.Action("GetAllAAgregar", new { IdOrganizacion = ViewBag.IdOrganizacion })',
+                colNames: ['', '', 'Nombre Completo'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'NombreCompleto', index: 'NombreCompleto', width: 0, sortable: false }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridAgregarUsuarios_pager',
+                loadComplete: AgregarUsuarios.HoldSelectedIds,
+                onPaging: AgregarUsuarios.HoldSelectedIds,
+                rowList: [15, 30, 50],
+                rowNum: 15
+            });
+            $('#GridAgregarUsuarios').trigger("reloadGrid");
+            $(document).off('change', '#GridAgregarUsuarios .SelectCheckboxes');
+            $(document).on('change','#GridAgregarUsuarios .SelectCheckboxes', AgregarUsuarios.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        AgregarUsuarios.init();
+    });
+
+</script>

@@ -1,0 +1,371 @@
+﻿@{
+    ViewBag.Title = "Transferencias";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Listado de Transferencias";
+}
+<div class="plusButton">
+    <i class="fa fa-plus-square i-blue">
+        <span>Mostrar Filtros</span>
+    </i>
+</div>
+<div class="minusButton">
+    <i class="fa fa-minus-square i-blue">
+        <span>Ocultar Filtros</span>
+    </i>
+</div>
+<div class="action-bar row filterCollection">
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Cuenta Bancaria</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="CuentaBancariaID" name="CuentaBancariaID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="CuentaBancaria_Id" name="CuentaBancaria.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="CuentaBancaria_Id" data-input="CuentaBancariaID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Cliente</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="ClienteID" name="ClienteID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="Cliente_Id" name="Cliente.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Cliente_Id" data-input="ClienteID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Proveedor</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="ProveedorID" name="ProveedorID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="Proveedor_Id" name="Proveedor.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Proveedor_Id" data-input="ProveedorID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+        
+    </div>
+
+
+
+</div>
+<div class="action-bar row" style="margin-top:20px;">
+    
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Transferencia..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+    <div class="col-md-3">
+        <a class="boton place-right" id="btnFilterTransferencia" style="margin-top: 2px;">Filtrar <i class="fa fa-filter i-blue"></i></a>
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridTransferencias"></table>
+    <div id="GridTransferencias_pager"></div>
+</div>
+<div id="listadoTransferencias-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ListadoTransferencias.init();
+    });
+    var ListadoTransferencias = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                ListadoTransferencias.LoadData();
+            });
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridTransferencias', ["Fecha", "CuentaBancaria.Nombre", "Cliente.RazonSocial", "Proveedor.RazonSocial"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridTransferencias').CreateCommonGrid({
+                url: '@Url.Action("GetTransferenciaFilter")',
+                serializeGridData: function (postData) {
+                    dates = {
+                        IdCuentaBancaria: $('#CuentaBancariaID').val() != '' ? $('#CuentaBancariaID').val() : 0,
+                        IdProveedor: $('#ProveedorID').val() != '' ? $('#ProveedorID').val() : 0,
+                        IdCliente: $('#ClienteID').val() != '' ? $('#ClienteID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, dates));
+                },
+                colNames: ['', 'Fecha', 'Cuenta Bancaria', 'Cliente', 'Proveedor', 'Importe',  ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Fecha', index: 'FechaCreacion', width: 200, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'CuentaBancaria.Nombre', index: 'CuentaBancaria.Nombre', width: 200, align: "center", sortable: true },
+                    { name: 'Cliente.RazonSocial', index: 'Cliente.RazonSocial', width: 200, align: "center", sortable: true },
+                    { name: 'Proveedor.RazonSocial', index: 'Proveedor.RazonSocial', width: 200, align: "center", sortable: true },
+                    { name: 'Importe', index: 'Importe', width: 200, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Acciones', index: 'Acciones', width: 100, align: "center", sortable: true, formatter: ListadoTransferencias.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                pager: '#GridTransferencias_pager',
+                rowList: [20, 40, 60],
+                rowNum: 20
+            });
+            $('#GridTransferencias').trigger("reloadGrid");
+            $('#CuentaBancaria_Id').select2(
+               {
+                   placeholder: "Seleccione Una Cuenta Bancaria",
+                   ajax: {
+                       url: "@Url.Action("GetComboCuentaBancaria", "CuentasBancarias")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#CuentaBancaria_Id').on("select2-selecting", ListadoTransferencias.OnCuentaBancariaSelected);
+            $('#CuentaBancariaID').change(ListadoTransferencias.OnCuentaBancariaChange);
+            $('#Cliente_Id').select2(
+               {
+                   placeholder: "Seleccione Un Cliente",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetClientesCombo", "Clientes", new { Area = "Ventas" })",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+               }
+            });
+            $('#Cliente_Id').on("select2-selecting", ListadoTransferencias.OnClienteSelected);
+            $('#ClienteID').change(ListadoTransferencias.OnClienteChange);
+            $('#Proveedor_Id').select2(
+                   {
+                       placeholder: "Seleccione Un Proveedor",
+                       minimumInputLength: 2,
+                       ajax: {
+                           url: "@Url.Action("GetProveedoresCombo", "Proveedores", new { Area = "Compras" })",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+            });
+            $('#Proveedor_Id').on("select2-selecting", ListadoTransferencias.OnProveedorSelected);
+            $('#ProveedorID').change(ListadoTransferencias.OnProveedorChange);
+            $('#btnFilterTransferencia').click(ListadoTransferencias.LoadData);
+            $(document).on('click', '.BtnVerDialog', ListadoTransferencias.VerDetalleDialog);
+            $('#BtnExportXLS').click(ListadoTransferencias.ExportToExcel);
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                ListadoTransferencias.ClearSelect2(IdClear, IdClearInput);
+            });
+            $('.plusButton').click(ListadoTransferencias.ClickPlusButton);
+            $('.minusButton').click(ListadoTransferencias.ClickMinusButton);
+        },
+
+        ClickPlusButton: function () {
+            $(this).attr('style', 'display:none');
+            $('.filterCollection').attr('style', 'display:block');
+            $('.minusButton').attr('style', 'display:block');
+        },
+
+        ClickMinusButton: function () {
+            $(this).attr('style', 'display:none');
+            $('.filterCollection').attr('style', 'display:none');
+            $('.plusButton').attr('style', 'display:block');
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridTransferencias', 'Listado de Transferencias');
+        },
+
+        VerDetalleDialog: function () {
+            var RowId = $(this).closest('tr').attr('id');
+            var opt = {
+                width: 900, height: 600,
+                openCallback: function () {
+                    $('#GridTransferencia').resizeGrid('GridTransferencia_Container');
+                }
+            };
+            $('#listadoTransferencias-detalle-dialog').OpenFormDialog('@Url.Action("DetalleTransferencia")?Id=' + $(this).data('id') + '&opensDialog=true', 'Detalle Transferencia N°' + RowId, opt);
+        },
+
+        OnCuentaBancariaChange: function () {
+                var Id = $('#CuentaBancariaID').val();
+                if (Id == "") { return; }
+                valid = ListadoTransferencias.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetCuentaBancaria", "CuentasBancarias" )',
+                    data: { Id: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            var CuentaBancaria = ret.Data.Nombre + '(' + ret.Data.Numero + ')';
+                            $('#CuentaBancaria_Id').select2('data', { id: Id, text: CuentaBancaria });
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('La Cuenta Bancaria no existe!', 'error');
+                            $('#CuentaBancaria_Id').select2('data', null);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+        OnCuentaBancariaSelected: function (e) {
+            $('#CuentaBancariaID').val(e.val)
+        },
+
+        OnClienteChange: function () {
+            var Id = $('#ClienteID').val();
+            if (Id == "") { return; }
+            valid = ListadoTransferencias.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetCliente", "Clientes", new {Area = "Ventas"} )',
+                data: { IdCliente: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        var Cliente = ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')';
+                        $('#Cliente_Id').select2('data', { id: Id, text: Cliente });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Cliente no existe!', 'error');
+                        $('#Cliente_Id').select2('data', null);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnClienteSelected: function (e) {
+            $('#ClienteID').val(e.val)
+        },
+
+        OnProveedorChange: function () {
+            var Id = $('#ProveedorID').val();
+            if (Id == "") { return; }
+            valid = ListadoTransferencias.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetProveedor", "Proveedores", new { Area = "Compras" })',
+                data: { IdProveedor: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        var Proveedor = ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')';
+                        $('#Proveedor_Id').select2('data', { id: Id, text: Proveedor });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Proveedor no existe!', 'error');
+                        $('#Proveedor_Id').select2('data', null);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnProveedorSelected: function (e) {
+            $('#ProveedorID').val(e.val)
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridTransferencias").setGridParam({ datatype: 'json' });
+            $('#GridTransferencias').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '@Url.Action("DetalleTransferencia")/' + rowObject.Id;
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        },
+
+        LoadData: function () {
+            ListadoTransferencias.CompletarFiltros();
+            valid = ListadoTransferencias.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ListadoTransferencias.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            var IdProveedor = $('#ProveedorID').val();
+            if (IdProveedor != "" && (!$.isNumeric(IdProveedor) || IdProveedor <= 0)) {
+                return { success: false, message: 'El N° de Proveedor no es correcto' };
+            }
+            var IdCliente = $('#ClienteID').val();
+            if (IdCliente != "" && (!$.isNumeric(IdCliente) || IdCliente <= 0)) {
+                return { success: false, message: 'El N° de Cliente no es correcto' };
+            }
+            var IdCuentaBancaria = $('#CuentaBancariaID').val();
+            if (IdCuentaBancaria != "" && (!$.isNumeric(IdCuentaBancaria) || IdCuentaBancaria <= 0)) {
+                return { success: false, message: 'El N° de Cuenta Bancaria no es correcto' };
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        }
+    }
+    </script>
+}

@@ -1,0 +1,250 @@
+﻿@{
+    ViewBag.Title = "Imputaciones";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Listado de Imputaciones";
+}
+<div class="action-bar row" style="margin-bottom:20px;">
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Cliente</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="ClienteID" name="ClienteID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Cliente_Id" name="Cliente.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Cliente_Id" data-input="ClienteID" title="Limpiar" style="margin:2px 0px;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a class="boton place-left" id="btnFilterByCliente" style="margin-top: 2px;">Filtrar <i class="fa fa-filter i-blue"></i></a>
+        </div>
+    </div>
+</div>
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnCreate" title="Crear Imputacion" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Imputacion
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Imputacion..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridImputaciones"></table>
+    <div id="GridImputaciones_pager"></div>
+</div>
+<div id="listadoimputaciones-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ListadoImputaciones.init();
+    });
+    var ListadoImputaciones = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                ListadoImputaciones.LoadData();
+            });
+
+            $('#BtnExportXLS').click(ListadoImputaciones.ExportToExcel);
+
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridImputaciones', ["ComprobanteADescontar.Numero", "NotaCredito.Numero", "NotaCredito.Cliente.RazonSocial"]);
+
+            $('#Cliente_Id').select2(
+               {
+                   width:'100%',
+                   placeholder: "Seleccione Un Cliente",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetClientesCombo", "Clientes")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#Cliente_Id').on("select2-selecting", ListadoImputaciones.OnClienteSelected);
+            $('#btnFilterByCliente').click(ListadoImputaciones.LoadData);
+            $(document).on('click', '.BtnVerDialog', ListadoImputaciones.VerDetalleDialog);
+
+            $('#ClienteID').change(ListadoImputaciones.OnClienteChange);
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                ListadoImputaciones.ClearSelect2(IdClear, IdClearInput);
+            });
+            /* Armo la grilla del ABM */
+            $('#GridImputaciones').CreateCommonGrid({
+                url: '@Url.Action("GetAllByCliente")',
+                serializeGridData: function (postData) {
+                    dates = {
+                        IdCliente: $('#ClienteID').val() != '' ? $('#ClienteID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, dates));
+                },
+                colNames: ['', 'Cliente', 'Numero de NC','', 'Numero de Comprobante','', 'Importe', 'Fecha', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'NotaCredito.Cliente.RazonSocial', index: 'NotaCredito.Cliente.RazonSocial', width: 25, align: "center", sortable: true },
+                    { name: 'NotaCredito.Numero', index: 'NotaCredito.Numero', width: 25, align: "center", sortable: true, formatter: ListadoImputaciones.formatterLetraYNumNC },
+                    { name: 'NotaCredito.Letra', index: 'NotaCredito.Numero', hidden: true },
+                    { name: 'ComprobanteADescontar.Numero', index: 'ComprobanteADescontar.Numero', width: 25, align: "center", sortable: true, formatter: ListadoImputaciones.formatterLetraYNumCD },
+                    { name: 'ComprobanteADescontar.Letra', index: 'ComprobanteADescontar.Letra', hidden: true },
+                    { name: 'Importe', index: 'Importe', width: 25, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Acciones', index: 'Acciones', width: 25, align: "center", sortable: true, formatter: ListadoImputaciones.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                pager: '#GridImputaciones_pager',
+                rowList: [20, 40, 60],
+                rowNum: 20
+            });
+            $('#GridImputaciones').trigger("reloadGrid");
+            $(document).on('click', '.BtnEliminar', ListadoImputaciones.OnAnularClick);
+        },
+
+        OnAnularClick: function () {
+            var Id = $(this).closest('tr').attr('id');
+            ConfirmationDialog.Show("Esta seguro que desea eliminar la imputacion?",
+                                    function () { ListadoImputaciones.AnularImputacion(Id) });
+        },
+
+        AnularImputacion: function (Id) {
+            var params = {
+                url: '@Url.Action("AnularImputacion")',
+                data: { IdImputacion: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        ListadoImputaciones.ReloadGrid();
+                    }
+                    else {
+                        $.WarningDialog('No se pudo Anular la imputación, vuelva a intentarlo!');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            ret += '<a class="boton boton-i BtnEliminar" title="Anular Imputacion" data-Id="' + rowObject.Id + '"><i class="fa fa-trash-o i-red"></i></a>';
+            return ret;
+        },
+
+        CleanUrl: function () {
+            urlir = window.location.href.split('?')[0];
+            window.history.pushState({ path: urlir }, '', urlir);
+        },
+
+        LoadData: function () {
+            ListadoImputaciones.CompletarFiltros();
+            valid = ListadoImputaciones.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ListadoImputaciones.ReloadGrid();
+        },
+
+        formatterLetraYNumNC: function (cellvalue, options, rowObject) {
+            if (typeof (rowObject['NotaCredito.Numero']) != "undefined") {
+                return rowObject['NotaCredito.Letra'] + rowObject['NotaCredito.Numero'];
+            } else {
+                return rowObject.NotaCredito.Letra + rowObject.NotaCredito.Numero;
+            }
+        },
+
+        formatterLetraYNumCD: function (cellvalue, options, rowObject) {
+            if (typeof (rowObject['ComprobanteADescontar.Numero']) != "undefined") {
+                return rowObject['ComprobanteADescontar.Letra'] + rowObject['ComprobanteADescontar.Numero'];
+            } else {
+                return rowObject.ComprobanteADescontar.Letra + rowObject.ComprobanteADescontar.Numero;
+            }
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#ClienteID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return { success: false, message: 'El N° de Cliente no es correcto' };
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        ExportToExcel:function () {
+            JQGridExportExcel.Export('GridImputaciones', 'Listado de Imputaciones');
+        },
+
+        OnClienteChange: function () {
+            var Id = $('#ClienteID').val();
+            if (Id == "") { return; }
+            valid = ListadoImputaciones.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetCliente", "Clientes")',
+                data: { IdCliente: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $('#Cliente_Id').select2('data', { id: Id, text: ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')' });
+                    }
+                    else {
+                        $.WarningDialog('Cliente no existe');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnClienteSelected: function (e) {
+            $('#ClienteID').val(e.val)
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridImputaciones").setGridParam({ datatype: 'json' });
+            $('#GridImputaciones').setGridParam({ page: 1 }).trigger("reloadGrid");
+        }
+    }
+</script>
+}

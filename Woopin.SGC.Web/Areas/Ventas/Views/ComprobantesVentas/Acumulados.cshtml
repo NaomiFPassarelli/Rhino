@@ -1,0 +1,357 @@
+﻿@{
+    ViewBag.Title = "Acumulados";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Acumulados";
+}
+<div class="action-bar row" style="margin-bottom:5px;">
+    <div class="col-md-4" style="padding-left:0px;">
+        <div class="col-md-12 input-container" style="padding-left:0px;">
+            <div class="row">
+                <input type="number" id="ClienteID" name="ClienteID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Cliente_Id" name="Cliente.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Cliente_Id" data-input="ClienteID" title="Limpiar" style="margin: 4px 0px; padding: 2px 3px !important;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+            <div class="row">
+                <input type="number" id="ArticuloID" name="ArticuloID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Articulo_Id" name="Articulo.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Articulo_Id" data-input="ArticuloID" title="Limpiar" style="margin: 4px 0px; padding: 2px 3px !important;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+    <div class="col-md-4 place-left detail-summary bordered-container">
+        <span class="row">
+            <label class="col-md-6 text-right">Deuda No Vencida</label>
+            <span class="col-md-6" id="DeudaNoVencida">0</span>
+            <span class="clearfix"></span>
+        </span>
+        <span class="row">
+            <label class="col-md-6 text-right">Deuda Vencida</label>
+            <span class="col-md-6" id="DeudaVencida">0</span>
+            <span class="clearfix"></span>
+        </span>
+        <span class="row">
+            <label class="col-md-6 text-right">Saldo</label>
+            <span class="col-md-6" id="Saldo">0</span>
+            <span class="clearfix"></span>
+        </span>
+    </div>
+</div>
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnCreate" title="Crear Comprobane" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Comprobante
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+    <select id="FilterType" class="place-right" style="margin-top: 4px;margin-right: 10px;">
+        <option value="0">Todos</option>
+        <option value="1">Pendientes</option>
+        <option value="2">Vencidos</option>
+    </select>
+</div>
+<div class="table-container">
+    <table id="GridAcumuladoVentas"></table>
+    <div id="GridAcumuladoVentas_pager"></div>
+</div>
+<div id="cuentacorriente-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        AcumuladoVentas.init();
+    });
+
+    var AcumuladoVentas = {
+        headNeedsReload: false,
+
+        init: function () {
+            $('#BtnExportXLS').click(AcumuladoVentas.ExportToExcel);
+
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                AcumuladoVentas.LoadData();
+            });
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridAcumuladoVentas', ["Fecha", "Numero"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridAcumuladoVentas').CreateCommonGrid({
+                datatype: 'json',
+                url: '@Url.Action("GetAllAcumulados")',
+                serializeGridData: function (postData) {
+                    data = {
+                        id: $('#ClienteID').val() != '' ? $('#ClienteID').val() : 0,
+                        idArticulo: $('#ArticuloID').val() != '' ? $('#ArticuloID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                        filter: $('#FilterType').val()
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'Cliente', 'Articulo', 'Comprobante', 'Numero de Comprobante', 'Numero de Referencia', 'Fecha', 'Debe', 'Haber', 'Pendiente', '', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Empresa', index: 'Empresa', width: 25, align: "center", sortable: true },
+                    { name: 'Articulo', index: 'Articulo', width: 25, align: "center", sortable: true },
+                    { name: 'TipoComprobante', index: 'TipoComprobante', width: 25, align: "center", sortable: true },
+                    { name: 'LetraNumero', index: 'LetraNumero', width: 25, align: "center", sortable: true },
+                    { name: 'NroReferencia', index: 'NroReferencia', width: 25, align: "center", sortable: true },
+                    { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Debe', index: 'Debe', width: 25, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Haber', index: 'Haber', width: 25, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Pendiente', index: 'Pendiente', width: 25, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Acciones', index: 'Acciones', width: 25, align: "center", sortable: true, formatter: AcumuladoVentas.AccionesFormatter },
+                    { name: 'Entidad', index: 'Entidad', width: 25, align: "center", hidden: true }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                pager: '#GridAcumuladoVentas_pager',
+                rowList: [20, 40, 60],
+                rowNum: 20,
+                loadCompleteCtm: function () {
+                    if (AcumuladoVentas.headNeedsReload) {
+                        AcumuladoVentas.headNeedsReload = false;
+                        AcumuladoVentas.LoadHeader();
+                    }
+
+                }
+            });
+
+            $('#Cliente_Id').select2(
+               {
+                   placeholder: "Seleccione Un Cliente",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetClientesCombo", "Clientes")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#ClienteID').change(AcumuladoVentas.OnClienteChange);
+
+            $('#Articulo_Id').select2(
+               {
+                   placeholder: "Seleccione Un Articulo",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetArticulos", "Articulos", new { Area = "Stock" } )",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#ArticuloID').change(AcumuladoVentas.OnArticuloChange);
+
+            $(document).on('click', '.BtnVerDialog', AcumuladoVentas.VerDetalleDialog);
+            $('#Cliente_Id').on("select2-selecting", AcumuladoVentas.OnClienteSelected);
+            $('#Articulo_Id').on("select2-selecting", AcumuladoVentas.OnArticuloSelected);
+            $('#BtnLoadData').click(AcumuladoVentas.LoadData);
+
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                AcumuladoVentas.ClearSelect2(IdClear, IdClearInput);
+            });
+
+            AcumuladoVentas.LoadData();
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        OnClienteSelected: function (e) {
+            $('#ClienteID').val(e.val);
+        },
+
+        OnArticuloSelected: function (e) {
+            $('#ArticuloID').val(e.val);
+        },
+
+        VerDetalleDialog: function () {
+            var IdEntidad = $(this).data('id');
+            var RowId = $(this).closest('tr').attr('id');
+            var row = $("#GridAcumuladoVentas").getRowData(RowId);
+            if ($(this).data('entidad') == 'ComprobanteVenta') {
+                var opt = {
+                    width: 850, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesVenta').resizeGrid('GridDetallesVenta_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.LetraNumero, opt);
+            }
+            else {
+                var opt = {
+                    width: 900, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesCobranza').resizeGrid('GridDetallesCobranza_Container');
+                        $('#GridCobrosCobranza').resizeGrid('GridCobrosCobranza_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","Cobranzas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Cobranza ' + row.LetraNumero, opt);
+            }
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridAcumuladoVentas', 'Listado de Cuenta Corriente');
+        },
+
+
+
+        LoadData: function () {
+            AcumuladoVentas.CompletarFiltros();
+            valid = AcumuladoVentas.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            AcumuladoVentas.headNeedsReload = true;
+            AcumuladoVentas.ReloadGrid();
+        },
+
+        LoadHeader: function () {
+            var Id = $('#ClienteID').val();
+            var IdArticulo = $('#ArticuloID').val();
+            var params = {
+                url: '@Url.Action("AcumuladosHead")',
+                data: {
+                    id: Id != "" ? Id : 0,
+                    idArticulo: IdArticulo != "" ? IdArticulo : 0,
+                    start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                    end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                    filter: $('#FilterType').val()
+                },
+                success: function (ret) {
+                    $('#Saldo').html($.formatCurrency(ret.Data.Saldo));
+                    $('#DeudaVencida').html($.formatCurrency(ret.Data.DeudaVencida));
+                    $('#DeudaNoVencida').html($.formatCurrency(ret.Data.DeudaNoVencida));
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#ClienteID').val();
+            var IdArticulo = $('#ArticuloID').val();
+
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return { success: false, message: 'El N° de Cliente no es correcto' };
+            }
+            if (IdArticulo != "" && (!$.isNumeric(IdArticulo) || IdArticulo <= 0)) {
+                return { success: false, message: 'El N° de Articulo no es correcto' };
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        OnClienteChange: function () {
+            var Id = $('#ClienteID').val();
+            if (Id == "") { return; }
+            valid = AcumuladoVentas.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetCliente", "Clientes")',
+                data: { IdCliente: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $('#Cliente_Id').select2('data', { id: Id, text: ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')' });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Cliente no existe');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnArticuloChange: function () {
+            var Id = $('#ArticuloID').val();
+            if (Id == "") { return; }
+            valid = AcumuladoVentas.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetArticulo", "Articulos", new { Area = "Stock" } )',
+                data: { IdArticulo: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $('#Articulo_Id').select2('data', { id: Id, text: ret.Data.Descripcion });
+                    }
+            else {
+                // Not Found
+                $.WarningDialog('El Articulo no existe');
+            }
+        }
+    }
+    $.AjaxPost(params);
+    },
+
+    ReloadGrid: function () {
+        $('#SelectCount').html('0');
+        $("#GridAcumuladoVentas").setGridParam({ datatype: 'json' });
+        $('#GridAcumuladoVentas').setGridParam({ page: 1 }).trigger("reloadGrid");
+    },
+
+    AccionesFormatter: function (cellvalue, options, rowObject) {
+        var ret = '';
+        var url = '';
+        if (rowObject.Entidad == 'ComprobanteVenta') {
+            url = '@Url.Action("Detalle")/' + rowObject.NroReferencia;
+        }
+        else {
+            url = '@Url.Action("Detalle","Cobranzas")/' + rowObject.NroReferencia;
+        }
+        ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.NroReferencia + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+        ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.NroReferencia + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+        return ret;
+    }
+    }
+</script>
+}

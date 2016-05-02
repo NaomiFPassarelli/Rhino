@@ -1,0 +1,139 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="ComprobantesADescontar_Container" style="margin-top:50px;">
+        <table id="GridComprobantesADescontar"></table>
+        <div id="GridComprobantesADescontar_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var ComprobantesADescontar = {
+        SelectedRows: new Array(),
+
+        OnSave: function () {
+            Imputacion.IdsGridRestrictaCD = new Array();
+            Imputacion.IdsGridRestrictaCD = Imputacion.IdsGridRestrictaCD.concat(ComprobantesADescontar.SelectedRows);
+
+            var agregarComprobantesGridData = $("#GridComprobantesADescontar").jqGrid('getGridParam', 'data');
+            var IdsNotSelected = Object.keys($('#GridComprobantesADescontar').jqGrid('getGridParam', '_index')).diff(Imputacion.IdsGridRestrictaCD);
+            var alreadyAdded = new Array();
+            $.each($('#GridCDescontar').jqGrid('getGridParam', 'data'), function (i, comp) {
+                alreadyAdded.push(comp.Id);
+            });
+
+
+            // Agrego solo los nuevos
+            $(agregarComprobantesGridData).each(function (indexAddComprobante, ComprobanteRow) {
+                if ($.inArray(ComprobanteRow.Id.toString(), Imputacion.IdsGridRestrictaCD) >= 0 &&
+                    $.inArray(ComprobanteRow.Id, alreadyAdded) == -1)
+                {
+                    ComprobanteRow.Importe = (ComprobanteRow.Total - ComprobanteRow.TotalCobrado).toFixedNumber(2);
+                    ComprobanteRow.Pendiente = (ComprobanteRow.Total - ComprobanteRow.TotalCobrado).toFixedNumber(2);
+                    $('#GridCDescontar').jqGrid('addRowData', ComprobanteRow.Id, ComprobanteRow);
+                }
+            });
+
+            $.each(IdsNotSelected, function (index, value) {
+                $('#GridCDescontar').jqGrid('delRowData', value);
+            });
+
+            ComprobantesADescontar.CloseDialog();
+            Imputacion.CalcularTotales();
+        },
+
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        HoldSelectedIds: function(){
+            CheckPage = $('#GridComprobantesADescontar .SelectCheckboxes');
+            for (var countBox = 0; countBox <= CheckPage.length ; countBox++) {
+                if (ComprobantesADescontar.SelectedRows.indexOf($(CheckPage[countBox]).val()) >= 0) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridComprobantesADescontar').resizeGrid('ComprobantesADescontar_Container');
+        },
+
+        OnCheckboxChange: function () {
+            if ($(this).is(":checked")) {
+                ComprobantesADescontar.SelectedRows.push($(this).val());
+            }
+            else {
+                var indexDel = ComprobantesADescontar.SelectedRows.indexOf($(this).val());
+                ComprobantesADescontar.SelectedRows.splice(indexDel, 1);
+            }
+        },
+
+        init: function () {
+            ComprobantesADescontar.SelectedRows = new Array();
+            ComprobantesADescontar.SelectedRows = ComprobantesADescontar.SelectedRows.concat(Imputacion.IdsGridRestrictaCD);
+
+            $('#BtnSave').click(ComprobantesADescontar.OnSave);
+            $('#BtnCancel').click(ComprobantesADescontar.CloseDialog);
+
+            $.SetupSearchTextbox('#GridComprobantesADescontar', ["Numero", "Fecha"]);
+
+            $('#GridComprobantesADescontar').CreateCommonGrid({
+                url: '@Url.Action("GetAllByClienteFilterNC","ComprobantesVentas")',
+                serializeGridData: function (postData) {
+                    data = {
+                        IdCliente: '@ViewBag.IdCliente',
+                        Tipo: '@ViewBag.Tipo',
+                        NoTipo: '@ViewBag.NoTipo',
+                        Cobrada: '@ViewBag.Cobrada'
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', '', '', 'Fecha','', 'Número de Comprobante', 'Total', 'Total Abonado'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: Imputacion.IdsGridRestrictaCD }, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 114, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Letra', index: 'Letra', width: 1, align: "center", hidden: true },
+                    { name: 'Numero', index: 'Numero', width: 250, align: "center", sortable: true, formatter: formatterFacturaLetraNumero },
+                    { name: 'Total', index: 'Total', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'TotalCobrado', index: 'TotalCobrado', width: 150, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridComprobantesADescontar_pager',
+                loadComplete: ComprobantesADescontar.HoldSelectedIds,
+                onPaging: ComprobantesADescontar.HoldSelectedIds,
+                rowList: [5, 10, 20],
+                rowNum: 5
+            });
+            $('#GridComprobantesADescontar').trigger("reloadGrid");
+            $(document).off('change', '#GridComprobantesADescontar .SelectCheckboxes');
+            $(document).on('change','#GridComprobantesADescontar .SelectCheckboxes', ComprobantesADescontar.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        ComprobantesADescontar.init();
+    });
+
+</script>

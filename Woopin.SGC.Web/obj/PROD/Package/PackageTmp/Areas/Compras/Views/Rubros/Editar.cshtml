@@ -1,0 +1,57 @@
+﻿@model Woopin.SGC.Model.Compras.RubroCompra
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Cuenta.Id) //Por ser requerido sino rompe el valid
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Descripcion"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Guardar Rubro
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/select2/select2.js")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        var rowData = $('#GridRubros').jqGrid('getRowData', data.Rubro.Id);
+                        rowData.Descripcion = data.Rubro.Descripcion
+                        $('#GridRubros').jqGrid('setRowData', data.Rubro.Id, rowData);
+                        _OpenDialog.dialog('close');
+                    }
+                    else {
+                        $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+
+        });
+    </script>

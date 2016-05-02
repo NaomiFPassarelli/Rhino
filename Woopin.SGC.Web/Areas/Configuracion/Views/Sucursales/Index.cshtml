@@ -1,0 +1,137 @@
+﻿@{
+    ViewBag.Title = "Sucursales";
+    ViewBag.SectionIcon = "building-o";
+    ViewBag.SectionTitle = "Listado de Sucursales";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Sucursal" href="@Url.Action("Nueva")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Sucursal
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar sucursal..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridSucursales"></table>
+    <div id="GridSucursales_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoSucursales = {
+
+            init: function(){
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoSucursales.Refresh);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridSucursales');
+                /* Binding del Boton para setear la moneda predeterminada */
+                $.SetupSetDefaulter('@Url.Action("SetDefault")')
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoSucursales.OnClickEliminarSeleccionados);
+
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoSucursales.OnClickEliminar);
+                /* Editar de grilla */
+                $(document).on('click', '.BtnEditar', ListadoSucursales.Editar);
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridSucursales', ["Nombre", "Direccion", "Localidad"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridSucursales').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', 'Dirección', 'Localidad', '<span class="is-default"><i class="fa fa-star"></i></span>', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                        { name: 'Direccion', index: 'Direccion', width: 25, align: "center", sortable: true },
+                        { name: 'Localidad', index: 'Localidad', width: 20, align: "center", sortable: true },
+                        { name: 'Predeterminado', index: 'Predeterminado', width: 5, align: "center", sortable: true, formatter: DefaultStarFormatter },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Nombre',
+                    sortorder: "asc",
+                    pager: '#GridSucursales_pager'
+                });
+                $('#GridSucursales').trigger("reloadGrid");
+                $('#BtnExportXLS').click(ListadoSucursales.ExportToExcel);
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridSucursales');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar las sucursales seleccionadas?",
+                        function () { ListadoSucursales.EliminarSucursales(SelectedIds) });
+
+                } else {
+                    $.WarningDialog("No hay Sucursales seleccionadas!");
+                }
+            },
+
+            EliminarSucursales: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridSucursales').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminar: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar la sucursal seleccionada?",
+                    function () { ListadoSucursales.EliminarSucursales(Id) });
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridSucursales');
+                ListadoSucursales.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridSucursales").setGridParam({ datatype: 'json' });
+                $('#GridSucursales').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            Editar: function () {
+                $.ShowLoader();
+                var Id = $(this).closest('tr').attr('id');
+                window.location = '@Url.Action("Editar")/' + Id;
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridSucursales', 'Listado de Sucursales');
+            }
+        }
+        $(document).ready(function () {
+            ListadoSucursales.init();
+        });
+    </script>
+}

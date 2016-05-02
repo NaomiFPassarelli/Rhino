@@ -1,0 +1,139 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="ComprobantesACobrar_Container" style="margin-top:50px;">
+        <table id="GridComprobantesACobrar"></table>
+        <div id="GridComprobantesACobrar_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var ComprobantesACobrar = {
+        SelectedRows: new Array(),
+
+        OnSave: function () {
+            // Solo cuando se guarda se actualiza el array de seleccionados
+            Cobranza.IdsGridRestricta = new Array();
+            Cobranza.IdsGridRestricta = Cobranza.IdsGridRestricta.concat(ComprobantesACobrar.SelectedRows);
+
+            // Arrays que contienen la data, los ids no seleccionados y los que ya fueron agregados para no pisar el importe.
+            var agregarComprobantesGridData = $("#GridComprobantesACobrar").jqGrid('getGridParam', 'data');
+            var IdsNotSelected = Object.keys($('#GridComprobantesACobrar').jqGrid('getGridParam', '_index')).diff(Cobranza.IdsGridRestricta);
+            var alreadyAdded = new Array();
+            $.each($('#GridDetallesCobranza').jqGrid('getGridParam', 'data'), function (i, comp) {
+                alreadyAdded.push(comp.Id);
+            });
+
+
+            // Agrego solo los nuevos
+            $(agregarComprobantesGridData).each(function (indexAddComprobante, ComprobanteRow) {
+                if ($.inArray(ComprobanteRow.Id.toString(), Cobranza.IdsGridRestricta) >= 0 &&
+                    $.inArray(ComprobanteRow.Id, alreadyAdded) == -1)
+                {
+                    ComprobanteRow.Importe = (ComprobanteRow.Total - ComprobanteRow.TotalCobrado).toFixedNumber(2);
+                    $('#GridDetallesCobranza').jqGrid('addRowData', ComprobanteRow.Id, ComprobanteRow);
+                }
+            });
+
+            // Borro los Ids que no esten seleccionados.
+            $.each(IdsNotSelected, function (index, value) {
+                $('#GridDetallesCobranza').jqGrid('delRowData', value);
+            });
+
+            ComprobantesACobrar.CloseDialog();
+            Cobranza.CalcularTotal();
+        },
+
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        HoldSelectedIds: function(){
+            //Seleccionar de la pagina Nueva los que ya estaban seleccionados
+            CheckPage = $('#GridComprobantesACobrar .SelectCheckboxes');
+            for (var countBox = 0; countBox <= CheckPage.length ; countBox++) {
+                if (ComprobantesACobrar.SelectedRows.indexOf($(CheckPage[countBox]).val()) >= 0) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridComprobantesACobrar').resizeGrid('ComprobantesACobrar_Container');
+        },
+
+        OnCheckboxChange: function () {
+            if ($(this).is(":checked")) {
+                ComprobantesACobrar.SelectedRows.push($(this).val());
+            }
+            else {
+                var indexDel = ComprobantesACobrar.SelectedRows.indexOf($(this).val());
+                ComprobantesACobrar.SelectedRows.splice(indexDel, 1);
+            }
+        },
+
+        init: function () {
+            // Si Cancela quedan en el array
+            ComprobantesACobrar.SelectedRows = new Array();
+            ComprobantesACobrar.SelectedRows = ComprobantesACobrar.SelectedRows.concat(Cobranza.IdsGridRestricta);
+
+
+            $('#BtnSave').click(ComprobantesACobrar.OnSave);
+            $('#BtnCancel').click(ComprobantesACobrar.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridComprobantesACobrar', ["Numero", "Fecha"]);
+
+            //Grilla de todos los comprobantes - Los que aparecen en el popup
+
+            $('#GridComprobantesACobrar').CreateCommonGrid({
+                url: '@Url.Action("GetAllACobrar", "ComprobantesVentas", new { IdCliente = @ViewBag.IdCliente })',
+                colNames: ['', '', '', 'Fecha','', 'Número de Comprobante', 'Total', 'Total Cobrado'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: Cobranza.IdsGridRestricta }, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 114, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Letra', index: 'Letra', width: 0, sortable: false, hidden: true },
+                    { name: 'Numero', index: 'Numero', width: 250, align: "center", sortable: true, formatter: formatterFacturaLetraNumero },
+                    { name: 'Total', index: 'Total', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'TotalCobrado', index: 'TotalCobrado', width: 150, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                height: 200,
+                pager: '#GridComprobantesACobrar_pager',
+                loadComplete: ComprobantesACobrar.HoldSelectedIds,
+                onPaging: ComprobantesACobrar.HoldSelectedIds,
+                rowList: [5, 10, 15],
+                rowNum: 5
+            });
+            $('#GridComprobantesACobrar').trigger("reloadGrid");
+            $(document).off('change', '#GridComprobantesACobrar .SelectCheckboxes');
+            $(document).on('change','#GridComprobantesACobrar .SelectCheckboxes', ComprobantesACobrar.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        ComprobantesACobrar.init();
+    });
+
+</script>

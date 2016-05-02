@@ -1,0 +1,124 @@
+﻿@using Woopin.SGC.Web.HtmlHelper
+@model Woopin.SGC.Model.Tesoreria.Cheque
+
+@{
+    if (ViewBag.OpensDialog)
+    {
+        Layout = null;
+    }
+    ViewBag.Title = "Detalle Cheque " + Model.Id;
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Detalle Cheque " + Model.Id;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        @if (!ViewBag.OpensDialog)
+        {
+            <div class="" style="float:left;">
+                <div class="col-md-12">
+                    <a class="boton place-left" href='@Url.Action("IndexCheque")'><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+                </div>
+            </div>
+        }
+        @Html.LabelStatus(@Model.Estado.ToString(), (int)@Model.Estado, (bool)ViewBag.OpensDialog)
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Cliente, new { @class = "col-md-3 horizontal-label readonly-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="number" id="ClienteID" name="ClienteID" class="col-md-2" style="margin-top: 7px;padding:0;" readonly value="@Model.Cliente.Id" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="text" id="Cliente_Id" name="Cliente.Id" class="textinput" value="@Model.Cliente.RazonSocial" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@Model.Fecha.ToString("dd/MM/yyyy")">
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="col-md-12">
+
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Banco.Nombre, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Banco.Nombre, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    @{
+                        var fechaEfectivizado = Model.FechaEfectivizado.HasValue ? Model.FechaEfectivizado.Value.ToString("dd/MM/yyyy") : "";
+                    }
+                    @Html.LabelFor(model => model.FechaEfectivizado, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@fechaEfectivizado">
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.NumeroCuenta, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.NumeroCuenta, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Numero, new { @class = "col-md-7 horizontal-label readonly-label" })
+                    <div class="col-md-5 input-container">
+                        @Html.TextBoxFor(model => model.Numero, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Importe, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Importe, new { @class = "textinput", @readonly = "readonly", @Value = Model.Importe.ToString("C") })
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Propio, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        @Html.CheckBoxFor(model => model.Propio, new { @class = "textinput", @disabled = "disabled" })
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.FechaVencimiento, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        <input class="text-box single-line textinput" id="Fecha" name="Fecha" type="text" value="@Model.FechaVencimiento.ToString("dd/MM/yyyy")">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="col-md-12 table-container detalles" id="GridDetallesCheque_Container">
+    <table id="GridDetallesCheque"></table>
+    <div id="GridDetallesCheque_pager"></div>
+</div>
+
+<div class="clearfix"></div>
+@section Scripts{
+    @Html.Partial("js/_DetalleCheque");
+}
+@if (ViewBag.OpensDialog)
+{
+    Html.RenderPartial("js/_DetalleCheque");
+}

@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B2BDCD6A-192E-4D47-95A9-215B26596F70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Woopin.SGC.Repositories</RootNamespace>
+    <AssemblyName>Woopin.SGC.Repositories</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DESA|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'QA|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PROD|AnyCPU'">
+    <OutputPath>bin\PROD\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseSecuredRepository.cs" />
+    <Compile Include="BaseRepository.cs" />
+    <Compile Include="Common\Implementacion\ComboItemRepository.cs" />
+    <Compile Include="Common\Implementacion\OrganizacionRepository.cs" />
+    <Compile Include="Common\Implementacion\ComboRepository.cs" />
+    <Compile Include="Common\Implementacion\CategoriaIVARepository.cs" />
+    <Compile Include="Common\Implementacion\GeneralRepository.cs" />
+    <Compile Include="Common\Implementacion\LogRepository.cs" />
+    <Compile Include="Common\Implementacion\UsuarioOrganizacionRepository.cs" />
+    <Compile Include="Common\Implementacion\UsuarioRepository.cs" />
+    <Compile Include="Common\Implementacion\SucursalRepository.cs" />
+    <Compile Include="Common\Implementacion\MonedaRepository.cs" />
+    <Compile Include="Common\Implementacion\LocalizacionRepository.cs" />
+    <Compile Include="Common\Interface\IComboItemRepository.cs" />
+    <Compile Include="Common\Interface\IOrganizacionRepository.cs" />
+    <Compile Include="Common\Interface\IComboRepository.cs" />
+    <Compile Include="Common\Interface\ICategoriaIVAReository.cs" />
+    <Compile Include="Common\Interface\IGeneralRepository.cs" />
+    <Compile Include="Common\Interface\IMonedaRepository.cs" />
+    <Compile Include="Common\Interface\ILogRepository.cs" />
+    <Compile Include="Common\Interface\IUsuarioOrganizacionRepository.cs" />
+    <Compile Include="Common\Interface\IUsuarioRepository.cs" />
+    <Compile Include="Common\Interface\ISucursalRepository.cs" />
+    <Compile Include="Common\Interface\ILocalizacionRepository.cs" />
+    <Compile Include="Compras\Helpers\OrdenPagoQueryOverHelper.cs" />
+    <Compile Include="Compras\Helpers\OtroEgresoQueryOverHelper.cs" />
+    <Compile Include="Helpers\SecurityQueryOverHelper.cs" />
+    <Compile Include="Compras\Helpers\ProveedorQueryOverHelper.cs" />
+    <Compile Include="Compras\Helpers\ComprasQueryOverHelper.cs" />
+    <Compile Include="Compras\Implementacion\ImputacionCompraRepository.cs" />
+    <Compile Include="Compras\Implementacion\OtroEgresoPagoRepository.cs" />
+    <Compile Include="Compras\Implementacion\OtroEgresoItemRepository.cs" />
+    <Compile Include="Compras\Implementacion\OtroEgresoRepository.cs" />
+    <Compile Include="Compras\Implementacion\OrdenPagoComprobanteItemRepository.cs" />
+    <Compile Include="Compras\Implementacion\OrdenPagoValorItemRepository.cs" />
+    <Compile Include="Compras\Implementacion\OrdenPagoRepository.cs" />
+    <Compile Include="Compras\Implementacion\DetalleComprobanteCompraRepository.cs" />
+    <Compile Include="Compras\Implementacion\ComprobanteCompraRepository.cs" />
+    <Compile Include="Compras\Implementacion\ProveedorRepository.cs" />
+    <Compile Include="Compras\Implementacion\RubroCompraRepository.cs" />
+    <Compile Include="Compras\Interface\IImputacionCompraRepository.cs" />
+    <Compile Include="Compras\Interface\IOtroEgresoPagoRepository.cs" />
+    <Compile Include="Compras\Interface\IOtroEgresoItemRepository.cs" />
+    <Compile Include="Compras\Interface\IOtroEgresoRepository.cs" />
+    <Compile Include="Compras\Interface\IOrdenPagoValorItemRepository.cs" />
+    <Compile Include="Compras\Interface\IOrdenPagoComprobanteItemRepository.cs" />
+    <Compile Include="Compras\Interface\IOrdenPagoRepository.cs" />
+    <Compile Include="Compras\Interface\IDetalleComprobanteCompraRepository.cs" />
+    <Compile Include="Compras\Interface\IComprobanteCompraRepository.cs" />
+    <Compile Include="Compras\Interface\IProveedorRepository.cs" />
+    <Compile Include="Compras\Interface\IRubroCompraRepository.cs" />
+    <Compile Include="Contabilidad\Helper\ContabilidadQueryOverHelper.cs" />
+    <Compile Include="Contabilidad\Implementacion\RetencionRepository.cs" />
+    <Compile Include="Contabilidad\Implementacion\BloqueoContableRepository.cs" />
+    <Compile Include="Contabilidad\Implementacion\EjercicioRepository.cs" />
+    <Compile Include="Contabilidad\Implementacion\AsientoItemRepository.cs" />
+    <Compile Include="Contabilidad\Implementacion\AsientoRepository.cs" />
+    <Compile Include="Contabilidad\Implementacion\CuentaRepository.cs" />
+    <Compile Include="Contabilidad\Interface\IRetencionRepository.cs" />
+    <Compile Include="Contabilidad\Interface\IBloqueoContableRepository.cs" />
+    <Compile Include="Contabilidad\Interface\IEjercicioRepository.cs" />
+    <Compile Include="Contabilidad\Interface\IAsientoItemRepository.cs" />
+    <Compile Include="Contabilidad\Interface\IAsientoRepository.cs" />
+    <Compile Include="Contabilidad\Interface\ICuentaRepository.cs" />
+    <Compile Include="HibernateSessionFactory.cs" />
+    <Compile Include="IHibernateSessionFactory.cs" />
+    <Compile Include="IRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reporting\Implementacion\GrupoIngresoRepository.cs" />
+    <Compile Include="Reporting\Implementacion\GrupoEgresoRepository.cs" />
+    <Compile Include="Reporting\Interface\IGrupoEgresoRepository.cs" />
+    <Compile Include="Reporting\Interface\IGrupoIngresoRepository.cs" />
+    <Compile Include="Sueldos\Implementacion\AdicionalAdicionalesRepository.cs" />
+    <Compile Include="Sueldos\Implementacion\AdicionalRepository.cs" />
+    <Compile Include="Sueldos\Implementacion\ReciboRepository.cs" />
+    <Compile Include="Sueldos\Implementacion\EmpleadoRepository.cs" />
+    <Compile Include="Sueldos\Interface\IAdicionalAdicionalesRepository.cs" />
+    <Compile Include="Sueldos\Interface\IAdicionalRepository.cs" />
+    <Compile Include="Sueldos\Interface\IReciboRepository.cs" />
+    <Compile Include="Sueldos\Interface\IEmpleadoRepository.cs" />
+    <Compile Include="Stock\Implementacion\EgresoStockRepository.cs" />
+    <Compile Include="Stock\Implementacion\IngresoStockRepository.cs" />
+    <Compile Include="Stock\Implementacion\RubroArticuloRepository.cs" />
+    <Compile Include="Stock\Interface\IEgresoStockRepository.cs" />
+    <Compile Include="Stock\Interface\IIngresoStockRepository.cs" />
+    <Compile Include="Stock\Interface\IRubroArticuloRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\ChequeraRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IChequeraRepository.cs" />
+    <Compile Include="Ventas\Implementacion\TalonarioRepository.cs" />
+    <Compile Include="Ventas\Implementacion\ImputacionVentaRepository.cs" />
+    <Compile Include="Ventas\Implementacion\ListaPreciosRepository.cs" />
+    <Compile Include="Ventas\Interface\ITalonarioRepository.cs" />
+    <Compile Include="Ventas\Interface\IImputacionVentaRepository.cs" />
+    <Compile Include="Ventas\Interface\IListaPreciosRepository.cs" />
+    <Compile Include="Tesoreria\Helpers\TesoreriaQueryOverHelper.cs" />
+    <Compile Include="Tesoreria\Implementacion\DepositoItemRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\DepositoRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\PagoTarjetaRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\ComprobanteRetencionRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\TarjetaCreditoRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\TransferenciaRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\ChequePropioRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\ChequeRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\HistorialCuentaBancariaRepositoy.cs" />
+    <Compile Include="Tesoreria\Implementacion\HistorialCajaRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\CajaRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\CuentaBancariaRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\BancoRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\MovimientoFondoRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\ValorIngresadoRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\CancelacionTarjetaRepository.cs" />
+    <Compile Include="Tesoreria\Implementacion\ValorRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IDepositoItemRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IDepositoRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IPagoTarjetaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IComprobanteRetencionRepository.cs" />
+    <Compile Include="Tesoreria\Interface\ITarjetaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\ITransferenciaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IChequePropioRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IChequeRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IHistorialCuentaBancariaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IHistorialCajaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\ICajaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IBancoRepository.cs" />
+    <Compile Include="Tesoreria\Interface\ICuentaBancariaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IMovimientoFondoRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IValorIngresadoRepository.cs" />
+    <Compile Include="Tesoreria\Interface\ICancelacionTarjetaRepository.cs" />
+    <Compile Include="Tesoreria\Interface\IValorRepository.cs" />
+    <Compile Include="Ventas\Implementacion\CobranzaRepository.cs" />
+    <Compile Include="Ventas\Implementacion\CobranzaComprobanteItemRepository.cs" />
+    <Compile Include="Ventas\Implementacion\CobranzaValorItemRepository.cs" />
+    <Compile Include="Ventas\Implementacion\DetalleComprobanteVentaRepository.cs" />
+    <Compile Include="Ventas\Implementacion\GrupoEconomicoRepository.cs" />
+    <Compile Include="Ventas\Implementacion\ClienteRepository.cs" />
+    <Compile Include="Ventas\Implementacion\ComprobanteVentaRepository.cs" />
+    <Compile Include="Stock\Implementacion\ArticuloRepository.cs" />
+    <Compile Include="Ventas\Interface\ICobranzaRepository.cs" />
+    <Compile Include="Ventas\Interface\ICobranzaComprobanteItemRepository.cs" />
+    <Compile Include="Ventas\Interface\ICobranzaValorItemRepository.cs" />
+    <Compile Include="Ventas\Interface\IDetalleComprobanteVentaRepository.cs" />
+    <Compile Include="Ventas\Interface\IGrupoEconomicoRepository.cs" />
+    <Compile Include="Ventas\Interface\IClienteRepository.cs" />
+    <Compile Include="Ventas\Interface\IComprobanteVentaRepository.cs" />
+    <Compile Include="Stock\Interface\IArticuloRepository.cs" />
+    <Compile Include="Ventas\VentasQueryOverHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Woopin.SGC.Common.App\Woopin.SGC.CommonApp.csproj">
+      <Project>{5eee9af1-9e31-4b95-afcf-3c4fbebbc784}</Project>
+      <Name>Woopin.SGC.CommonApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Woopin.SGC.Common\Woopin.SGC.Common.csproj">
+      <Project>{9ca0881b-f044-483c-a594-82d0158832f7}</Project>
+      <Name>Woopin.SGC.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Woopin.SGC.Model\Woopin.SGC.Model.csproj">
+      <Project>{18216b6b-29b8-48a8-a2aa-444e068abcb8}</Project>
+      <Name>Woopin.SGC.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Woopin.SGC.NHMapping\Woopin.SGC.NHMapping.csproj">
+      <Project>{2e29be0f-cb6c-4634-a170-556eec344542}</Project>
+      <Name>Woopin.SGC.NHMapping</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

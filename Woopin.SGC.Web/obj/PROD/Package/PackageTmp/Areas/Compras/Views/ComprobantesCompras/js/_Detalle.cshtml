@@ -1,0 +1,100 @@
+﻿@using Woopin.SGC.Common.Json;
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+@Scripts.Render("~/bundles/select2")
+@Styles.Render("~/Scripts/select2/select2.css")
+@Styles.Render("~/Content/themes/base/css")
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+
+<script type="text/javascript">
+    var ComprobanteDetalleId = 0;
+    var DetalleComprobanteCompra = {
+        init: function () {
+            $('#GridDetallesCompra').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', 'Descripcion', 'IVA', '', 'IVA', 'Total'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'RubroCompra_Id', index: 'RubroCompra_Id', width: 0, sortable: false, hidden: true },
+                    { name: 'Descripcion', index: 'IVA', width: 20, align: "center", sortable: true },
+                    { name: 'TipoIva.Data', index: 'TipoIva.Data', width: 20, align: "center", sortable: true },
+                    { name: 'IVA_Id', index: 'IVA', width: 20, align: "center", sortable: true, hidden: true },
+                    { name: 'IVA', index: 'IVA', width: 20, align: "center", sortable: true, formatter: $.formatCurrency},
+                    { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true,formatter: $.formatCurrency}
+                ],
+                sortname: 'Descripcion',
+                sortorder: "asc",
+                data: @Html.Raw(JsonHelper.ToJson(Model.Detalle)),
+                pager: '#GridDetallesCompra_pager',
+                rowList: [5, 10, 15],
+                rowNum: 5
+            });
+            $('#GridDetallesCompra').trigger("reloadGrid");
+            $("#GridDetallesCompra").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            $('#Numero').mask('9999-99999999');
+
+            $(document).on('click', '.BtnEliminarCompleto', DetalleComprobanteCompra.EliminarComprobanteCompleto);
+            $(document).on('click', '.BtnEliminar', DetalleComprobanteCompra.AnularComprobante);
+        },
+
+        AnularComprobante: function () {
+            var Id = $('.BtnEliminar').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea anular el comprobante? (No podrá utilizar el mismo nro de comprobante, para eso debe Eliminar)",
+                                    function () {  DetalleComprobanteCompra.EliminarComprobante(Id) });
+        },
+
+        EliminarComprobanteCompleto: function () {
+            var Id = $('.BtnEliminarCompleto').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el comprobante? (Se habilitará el nro de comprobante eliminado)",
+                                    function () {  DetalleComprobanteCompra.EliminarComprobantePorCompleto(Id) });
+            window.location = '@Url.Action("Index")';
+        },
+
+        EliminarComprobante: function (Id) {
+            var params = {
+                url: '@Url.Action("AnularComprobante")',
+                data: { IdComprobante: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                                                    @:window.location.reload();
+                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        EliminarComprobantePorCompleto: function (Id) {
+            var params = {
+                url: '@Url.Action("EliminarComprobante")',
+                data: { IdComprobante: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                            @:window.location.reload();
+                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        }
+    }
+    $(document).ready(function () {
+        DetalleComprobanteCompra.init();
+    });
+</script>

@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Reportes";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Libro IVA Ventas";
+}
+<div class="action-bar row" style="margin:1% 0">
+    <div class="col-md-6 place-left">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Libro IVA Ventas
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Factura..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+
+</div>
+<div class="table-container">
+    <table id="GridLibroIVAVentas"></table>
+    <div id="GridLibroIVAVentas_pager"></div>
+</div>
+<div id="asiento-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        LibroIVAVentas.init();
+    });
+
+    var LibroIVAVentas = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', LibroIVAVentas.LoadData);
+            $('#BtnExportXLS').click(LibroIVAVentas.ExportToExcel);
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridLibroIVAVentas', ["RazonSocial"]);
+
+            /* Armo la grilla */
+            $('#GridLibroIVAVentas').CreateCommonGrid({
+                url: '@Url.Action("GetAllLibroIVAVentas")',
+                serializeGridData: function (postData) {
+                    data = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'Fecha', 'Razón Social', 'CUIT', 'Comprobante', 'Letra y Numero', 'Importe Exento', 'Importe Gravado', 'IVA 10.5%', 'IVA 21%', 'IVA 27%', 'Total de IVA', 'Total de la Factura'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Fecha', index: 'Fecha', width: 100, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'RazonSocial', index: 'RazonSocial', width: 250, align: "center", sortable: true },
+                    { name: 'CUIT', index: 'CUIT', width: 150, align: "center", sortable: true },
+                    { name: 'Comprobante', index: 'Comprobante', width: 150, align: "center", sortable: true },
+                    { name: 'LetraNumero', index: 'LetraNumero', width: 150, align: "center", sortable: true },
+                    { name: 'ImporteExento', index: 'ImporteExento', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'ImporteGravado', index: 'ImporteGravado', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'ImporteIVA105', index: 'ImporteIVA105', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'ImporteIVA21', index: 'ImporteIVA21', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'ImporteIVA27', index: 'ImporteIVA27', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'IVA', index: 'IVA', width: 100, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Total', index: 'Total', width: 100, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                pager: '#GridLibroIVAVentas_pager',
+                rowList: [25, 50, 75],
+                rowNum: 25,
+                shrinkToFit: false,
+                footerrow: true,
+                userDataOnFooter: true
+            });
+            $('#GridLibroIVAVentas').trigger("reloadGrid");
+            $("#GridLibroIVAVentas").jqGrid('setGroupHeaders', {
+                useColSpanStyle: false,
+                groupHeaders: [
+                  { startColumnName: 'ImporteIVA105', numberOfColumns: 3, titleText: '<em>Tazas de IVAs </em>' }
+                ]
+            });
+            $('.ui-jqgrid .ui-jqgrid-htable th').addClass('no-padding');
+            $('#BtnLoadData').click(LibroIVAVentas.LoadData);
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridLibroIVAVentas', 'Libro IVA Ventas');
+        },
+
+        LoadData: function () {
+            LibroIVAVentas.CompletarFiltros();
+            valid = LibroIVAVentas.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            LibroIVAVentas.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        ReloadGrid: function () {
+            $("#GridLibroIVAVentas").setGridParam({ datatype: 'json' });
+            $('#GridLibroIVAVentas').setGridParam({ page: 1 }).trigger("reloadGrid");
+        }
+    }
+    </script>
+}

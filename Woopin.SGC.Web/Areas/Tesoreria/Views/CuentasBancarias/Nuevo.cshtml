@@ -1,0 +1,94 @@
+﻿@model Woopin.SGC.Model.Tesoreria.CuentaBancaria
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Numero"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Numero, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Nombre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Nombre, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Banco"))
+                                { @Html.Raw("has-error");
+                                }">
+            @Html.LabelFor(model => model.Banco.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Banco.Id, new SelectList(ViewBag.Bancos, "Id", "Nombre"), "Elegir un banco", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Banco.Id, null, new { @class = "help-block" })
+
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Moneda"))
+                                { @Html.Raw("has-error");
+                                }">
+            @Html.LabelFor(model => model.Moneda, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Moneda.Id, new SelectList(ViewBag.Monedas, "Id", "Nombre"), "Elegir una Moneda", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Moneda.Id, null, new { @class = "help-block" })
+
+            </div>
+        </div>
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("EmiteCheques"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.EmiteCheques, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="textinput" id="EmiteCheques" name="EmiteCheques" type="checkbox" value="true" />
+                @Html.ValidationMessageFor(model => model.EmiteCheques, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Crear Cuenta Bancaria
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#Banco_Id').attr('data-val-required', 'Es necesario un banco');
+        $('#Moneda_Id').attr('data-val-required', 'Es necesario una moneda');
+        $('form').reParseForm();
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    data.CuentaBancaria["Banco.Nombre"] = data.CuentaBancaria.Banco.Nombre;
+                    data.CuentaBancaria["Moneda.Nombre"] = data.CuentaBancaria.Moneda.Nombre;
+                    $('#GridCuentasBancarias').jqGrid('addRowData', 'Id', data.CuentaBancaria);
+                    $('#GridCuentasBancarias').trigger("reloadGrid");
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>

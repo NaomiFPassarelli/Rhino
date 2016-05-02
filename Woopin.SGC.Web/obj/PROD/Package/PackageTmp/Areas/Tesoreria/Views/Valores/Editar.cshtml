@@ -1,0 +1,63 @@
+﻿@model Woopin.SGC.Model.Tesoreria.Valor
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.TipoValor.Id)
+    @Html.HiddenFor(model => model.Organizacion.Id)
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Nombre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Nombre, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Moneda"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Moneda, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Moneda.Id, (IEnumerable<SelectListItem>)ViewBag.Monedas, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Moneda, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Guardar Valor
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    var rowData = $('#GridValores').jqGrid('getRowData', data.Valor.Id);
+                    rowData.Nombre = data.Valor.Nombre;
+                    rowData["Moneda.Nombre"] = data.Valor.Moneda.Nombre;
+                    $('#GridValores').jqGrid('setRowData', data.Valor.Id, rowData);
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                }
+            }
+        });
+    });
+</script>

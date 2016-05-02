@@ -1,0 +1,125 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="ComprobantesACobrarNC_Container" style="margin-top:50px;">
+        <table id="GridComprobantesACobrarNC"></table>
+        <div id="GridComprobantesACobrarNC_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var ComprobantesACobrarNC = {
+
+        SelectedComprobante: null,
+
+        OnSave: function () {
+            if (ComprobantesACobrarNC.SelectedComprobante != null) {
+                //poner letra + numero en el input
+                var LetraNumero = ComprobantesACobrarNC.SelectedComprobante.Letra + ComprobantesACobrarNC.SelectedComprobante.Numero;
+                $('#Imputacion_Numero').val(LetraNumero);
+                ComprobanteVenta.ImputaComprobante = ComprobantesACobrarNC.SelectedComprobante;
+            }
+            ComprobantesACobrarNC.CloseDialog();
+        },
+
+        HoldSelectedIds: function () {
+            CheckPage = $('#GridComprobantesACobrarNC .SelectCheckboxes');
+            for (var countBox = 0; countBox < CheckPage.length ; countBox++) {
+                if (ComprobantesACobrarNC.SelectedComprobante != null && ComprobantesACobrarNC.SelectedComprobante.Id == $(CheckPage[countBox]).val()) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridComprobantesACobrarNC').resizeGrid('ComprobantesACobrarNC_Container');
+        },
+
+        CloseDialog: function () {
+            _OpenDialog.dialog("close");
+        },
+
+        OnCheckboxChange: function () {
+            $('.SelectCheckboxes').attr('checked', false);
+            $(this).attr('checked', true);
+            ComprobantesACobrarNC.SelectedComprobante = new Object();
+            ComprobantesACobrarNC.SelectedComprobante.Id = $(this).val();
+            var row = $('#GridComprobantesACobrarNC').getRowData($(this).val());
+            //letra y number
+            ComprobantesACobrarNC.SelectedComprobante.Letra = row.Letra;
+            ComprobantesACobrarNC.SelectedComprobante.Numero = row.Numero;
+        },
+
+        init: function () {
+
+            if (ComprobanteVenta.ImputaComprobante != null) {
+                ComprobantesACobrarNC.SelectedComprobante = new Object();
+                ComprobantesACobrarNC.SelectedComprobante = ComprobanteVenta.ImputaComprobante;
+            }
+            
+            $('#BtnSave').click(ComprobantesACobrarNC.OnSave);
+            $('#BtnCancel').click(ComprobantesACobrarNC.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridComprobantesACobrarNC', ["Numero", "Fecha"]);
+
+            //Grilla de todos los comprobantes - Los que aparecen en el popup
+
+            $('#GridComprobantesACobrarNC').CreateCommonGrid({
+                url: '@Url.Action("GetAllByClienteFilterNC")',
+                serializeGridData: function (postData) {
+                    data = {
+                        IdCliente: '@ViewBag.IdCliente',
+                        Tipo: '@ViewBag.Tipo',
+                        NoTipo: '@ViewBag.NoTipo',
+                        Cobrada: '@ViewBag.Cobrada'
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', '', '', 'Fecha', 'Letra', 'Número de Comprobante', 'Total', 'Total Abonado'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: RadioFormatter, formatoptions: { SelectedRows: ComprobantesACobrarNC.SelectedComprobante }, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 100, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Letra', index: 'Letra', width: 100, align: "center", sortable: true },
+                    { name: 'Numero', index: 'Numero', width: 150, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'TotalCobrado', index: 'TotalCobrado', width: 150, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridComprobantesACobrarNC_pager',
+                loadComplete: ComprobantesACobrarNC.HoldSelectedIds,
+                onPaging: ComprobantesACobrarNC.HoldSelectedIds,
+                rowList: [15, 30, 50],
+                rowNum: 15
+            });
+            $('#GridComprobantesACobrarNC').trigger("reloadGrid");
+            $(document).off('change', '#GridComprobantesACobrarNC .SelectCheckboxes');
+            $(document).on('change', '#GridComprobantesACobrarNC .SelectCheckboxes', ComprobantesACobrarNC.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        ComprobantesACobrarNC.init();
+    });
+
+</script>

@@ -1,0 +1,950 @@
+﻿@using Woopin.SGC.CommonApp.Security
+@using Woopin.SGC.CommonApp.Session
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-type" content="text/plain; charset=UTF-8" />
+    <title>@ViewBag.Title - Gestión Contable</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href='https://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/hoe")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="metro">
+    <div id="hoeapp-wrapper" class="hoe-hide-lpanel" hoe-device-type="desktop">
+        <header id="hoe-header" hoe-lpanel-effect="shrink">
+            <div class="hoe-left-header">
+                <a href="/" style="float:left; margin-left: 10%;"> <span style="font-family: 'Gloria Hallelujah', cursive;font-size: 180%;">Rhino</span> <img src="@Url.Content("~/Images/RhinoFaceTransparent.png")" /> </a>
+                <span class="hoe-sidebar-toggle"><a href="#"></a></span>
+            </div>
+            <div class="hoe-right-header" hoe-position-type="relative">
+                @*<span class="hoe-sidebar-toggle"><a href="#"></a></span>*@
+                <ul class="left-navbar">
+                    <li>
+                        <a class="pull-right current-org" id="BtnChangeOrg" title="Cambiar de Organizacion">
+                            @Security.GetOrganizacion().NombreFantasia
+                        </a>
+                    </li>
+                </ul>
+                <ul class="right-navbar">
+
+                    <li>
+                        <a id="BtnLogOff">
+                            <i class="fa fa-sign-out"></i> Cerrar Sesión
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </header>
+        <div id="hoeapp-container" hoe-color-type="lpanel-bg2" hoe-lpanel-effect="shrink">
+            <aside id="hoe-left-panel" hoe-position-type="absolute">
+                <div class="profile-box">
+                    <div class="media">
+                        <a class="pull-left" href="@Url.Action("Index", "MiCuenta", new { Area = "" })">
+                            <i class="fa fa-user" style="color: #EAEAEA;font-size: 210%;"></i>
+                        </a>
+                        <div class="media-body">
+                            <h5 class="media-heading">Bienvenido <span class="username">@Security.GetUserNombre()</span></h5>
+                            @*<small>Role?r</small>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="nano">
+                    <ul class="nav panel-list nano-content">
+                        <li class="nav-level" style="height: 0px;padding: 0px;"></li>
+                        <li class="active">
+                            <a href="/Home/Index">
+                                <i class="fa fa-tachometer"></i>
+                                <span class="menu-text">Dashboard</span>
+                                <span class="selected"></span>
+                            </a>
+                        </li>
+                        <li class="hoe-has-menu">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-exchange"></i>
+                                <span class="menu-text">Ventas</span>
+                                <span class="selected"></span>
+                            </a>
+                            <ul class="hoe-sub-menu">
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Archivos</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Clientes", new { Area = "Ventas" })">
+                                                <span class="menu-text">Clientes</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Articulos", new { Area = "Stock" })">
+                                                <span class="menu-text">Articulos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "RubroArticulos", new { Area = "Stock" })">
+                                                <span class="menu-text">Rubros de Articulos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "GrupoEconomico", new { Area = "Ventas" })">
+                                                <span class="menu-text">Grupos Economicos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Talonario", new { Area = "Ventas" })">
+                                                <span class="menu-text">Talonarios</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Listado de Precios</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("VerListaCliente", "ListaPrecios", new { Area = "Ventas" })">
+                                                <span class="menu-text">Por Clientes</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("VerListaGrupos", "ListaPrecios", new { Area = "Ventas" })">
+                                                <span class="menu-text">Por Grupos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("VerListaDefault", "ListaPrecios", new { Area = "Ventas" })">
+                                                <span class="menu-text">General</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "ComprobantesVentas", new { Area = "Ventas" })">
+                                        <span class="menu-text">Nuevo Comprobante</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "Cobranzas", new { Area = "Ventas" })">
+                                        <span class="menu-text">Nueva Cobranza</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "Imputaciones", new { Area = "Ventas" })">
+                                        <span class="menu-text">Nueva Imputación</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Consultas</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "ComprobantesVentas", new { Area = "Ventas" })">
+                                                <span class="menu-text">Comprobantes</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("CuentaCorriente", "ComprobantesVentas", new { Area = "Ventas" })">
+                                                <span class="menu-text">Cuenta Corriente</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Cobranzas", new { Area = "Ventas" })">
+                                                <span class="menu-text">Cobranzas</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("PendientesAfip", "ComprobantesVentas", new { Area = "Ventas" })">
+                                                <span class="menu-text">Pendientes de CAE</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Imputaciones", new { Area = "Ventas" })">
+                                                <span class="menu-text">Imputaciones</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Reportes</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("VencimientosACobrar", "Reportes", new { Area = "Ventas" })">
+                                                <span class="menu-text">Vencimientos a Cobrar</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("CobranzasPorSemana", "Reportes", new { Area = "Ventas" })">
+                                                <span class="menu-text">Cobranzas por Semana</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("VentasArticulos", "Reportes", new { Area = "Ventas" })">
+                                                <span class="menu-text">Ventas por Articulo</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("VentasPorCliente", "Reportes", new { Area = "Ventas" })">
+                                                <span class="menu-text">Ventas por Cliente</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Interfaces AFIP</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Citi", "Reportes", new { Area = "Ventas" })">
+                                                <span class="menu-text">Citi Ventas</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                        </li>
+                        <li class="hoe-has-menu">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-truck"></i>
+                                <span class="menu-text">Compras</span>
+                                <span class="selected"></span>
+                            </a>
+                            <ul class="hoe-sub-menu">
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Archivos</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Proveedores", new { Area = "Compras" })">
+                                                <span class="menu-text">Proveedores</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Rubros", new { Area = "Compras" })">
+                                                <span class="menu-text">Rubros</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "ComprobantesCompras", new { Area = "Compras" })">
+                                        <span class="menu-text">Nuevo Comprobante</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "OrdenesPagos", new { Area = "Compras" })">
+                                        <span class="menu-text">Nueva Orden de Pago</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "OtrosEgresos", new { Area = "Compras" })">
+                                        <span class="menu-text">Nuevo Otro Egreso</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "Imputaciones", new { Area = "Compras" })">
+                                        <span class="menu-text">Nueva Imputación</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Consultas</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "ComprobantesCompras", new { Area = "Compras" })">
+                                                <span class="menu-text">Comprobantes</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("CuentaCorriente", "ComprobantesCompras", new { Area = "Compras" })">
+                                                <span class="menu-text">Cuenta Corriente</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "OrdenesPagos", new { Area = "Compras" })">
+                                                <span class="menu-text">Ordenes de Pago</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "OtrosEgresos", new { Area = "Compras" })">
+                                                <span class="menu-text">Otros Egresos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Imputaciones", new { Area = "Compras" })">
+                                                <span class="menu-text">Imputaciones</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="@Url.Action("Acumulados", "ComprobantesCompras", new { Area = "Compras" })">
+                                                <span class="menu-text">Comprobantes Acumulados</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Reportes</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("VencimientosAPagar", "Reportes", new { Area = "Compras" })">
+                                                <span class="menu-text">Vencimientos a Pagar</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("ComprasRubros", "Reportes", new { Area = "Compras" })">
+                                                <span class="menu-text">Compras por Rubro</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Interfaces AFIP</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Citi", "Reportes", new { Area = "Compras" })">
+                                                <span class="menu-text">Citi Compras</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                        </li>
+                        <li class="hoe-has-menu">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-money"></i>
+                                <span class="menu-text">Tesoreria</span>
+                                <span class="selected"></span>
+                            </a>
+                            <ul class="hoe-sub-menu">
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Archivos</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Bancos", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Bancos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "CuentasBancarias", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Cuentas Bancarias</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Cajas", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Cajas</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Valores", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Valores</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "TarjetasCreditos", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Tarjetas de Credito</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Chequeras", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Chequeras</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "MovimientosFondos", new { Area = "Tesoreria" })">
+                                        <span class="menu-text">Nuevo Movimiento de Fondos</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "Depositos", new { Area = "Tesoreria" })">
+                                        <span class="menu-text">Nuevo Deposito de Cheques</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "PagosTarjetas", new { Area = "Tesoreria" })">
+                                        <span class="menu-text">Pagos con Tarjetas</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Consultas</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Cajas", "Historiales", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Historial de Caja</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Cuenta", "Historiales", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Historial de Cuentas Bancarias</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Depositos", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Depositos de Cheques</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("IndexCheque", "Valores", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Cheques de Terceros</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("IndexChequePropio", "Valores", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Cheques Propios</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("IndexTransferencia", "Valores", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Transferencias</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "MovimientosFondos", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Movimientos de fondo</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("IndexRetencion", "Valores", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Retenciones</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Reportes</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Ingresos", "Reportes", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Ingresos por Periodo</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Egresos", "Reportes", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Egresos por Periodo</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("ComprobantesRetenciones", "Reportes", new { Area = "Tesoreria" })">
+                                                <span class="menu-text">Retenciones por Periodo</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                        </li>
+                        <li class="hoe-has-menu">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-calculator"></i>
+                                <span class="menu-text">Contabilidad</span>
+                                <span class="selected"></span>
+                            </a>
+                            <ul class="hoe-sub-menu">
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Archivos</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Cuentas", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Plan de Cuentas</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "EjerciciosContables", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Ejercicios Contables</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Retenciones", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Retenciones</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "Asientos", new { Area = "Contabilidad" })">
+                                        <span class="menu-text">Nuevo Asiento</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Consultas</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Asientos", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Listado de Asientos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("LibroMayor", "Asientos", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Libro Mayor</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Reportes</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("LibroIVACompras", "Reportes", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Libro IVA Compras</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("LibroIVAVentas", "Reportes", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Libro IVA Ventas</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("MayorProveedores", "Reportes", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Mayor de Proveedores</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("MayorClientes", "Reportes", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Mayor de Clientes</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("SumasYSaldos", "Reportes", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Sumas y Saldos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("SumasYSaldosArbol", "Reportes", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Sumas y Saldos en Arbol</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Balance", "Reportes", new { Area = "Contabilidad" })">
+                                                <span class="menu-text">Balance Contable</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="hoe-has-menu">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-line-chart"></i>
+                                <span class="menu-text">Stock</span>
+                                <span class="selected"></span>
+                            </a>
+                            <ul class="hoe-sub-menu">
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "IngresoStock", new { Area = "Stock" })">
+                                        <span class="menu-text">Nuevo Ingreso</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Nuevo", "EgresoStock", new { Area = "Stock" })">
+                                        <span class="menu-text">Nuevo Egreso</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Consultas</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "IngresoStock", new { Area = "Stock" })">
+                                                <span class="menu-text">Ingresos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "EgresoStock", new { Area = "Stock" })">
+                                                <span class="menu-text">Egresos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                            <li class="hoe-has-menu">
+                                <a href="javascript:void(0)">
+                                    <i class="fa fa-male"></i>
+                                    <span class="menu-text">Sueldos</span>
+                                    <span class="selected"></span>
+                                </a>
+                                <ul class="hoe-sub-menu">
+                                    <li class="hoe-has-menu">
+                                        <a href="javascript:void(0)">
+                                            <span class="menu-text">Archivos</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                        <ul class="hoe-sub-menu">
+                                            <li>
+                                                <a href="@Url.Action("Index", "Empleados", new { Area = "Sueldos" })">
+                                                    <span class="menu-text">Empleados</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "Adicionales", new { Area = "Sueldos" })">
+                                                    <span class="menu-text">Adicionales</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Nuevo", "Recibos", new { Area = "Sueldos" })">
+                                            <span class="menu-text">Nuevo Recibo</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                    </li>
+                                    <li class="hoe-has-menu">
+                                        <a href="javascript:void(0)">
+                                            <span class="menu-text">Consultas</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                        <ul class="hoe-sub-menu">
+                                            <li>
+                                                <a href="@Url.Action("Index", "Recibos", new { Area = "Sueldos" })">
+                                                    <span class="menu-text">Recibos</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+
+
+                            <li class="nav-level">Configuración</li>
+
+                            <li class="hoe-has-menu">
+                                <a href="javascript:void(0)">
+                                    <i class="fa fa-cogs"></i>
+                                    <span class="menu-text">Sistema</span>
+                                    <span class="selected"></span>
+                                </a>
+                                <ul class="hoe-sub-menu">
+                                    <li>
+                                        <a href="@Url.Action("Index", "Usuarios", new { Area = "" })">
+                                            <span class="menu-text">Usuarios</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "Sucursales", new { Area = "Configuracion" })">
+                                            <span class="menu-text">Sucursales</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                            @if (Roles.IsUserInRole("Administrador"))
+                            {
+                                <li class="nav-level">Management</li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <i class="fa fa-cog"></i>
+                                        <span class="menu-text">Monitoreo & Control</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("ApplicationLog", "Management", new { Area = "" })">
+                                                <span class="menu-text">Logs de Eventos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("", "Hangfire", new { Area = "" })">
+                                                <span class="menu-text">Hangfire Jobs</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <i class="fa fa-building-o"></i>
+                                        <span class="menu-text">Organizaciones</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Organizaciones", new { Area = "" })">
+                                                <span class="menu-text">Listado en sistema</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <i class="fa fa-sitemap"></i>
+                                        <span class="menu-text">Interfaces</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "WSFEV", new { Area = "AFIP" })">
+                                                <span class="menu-text">AFIP WSFEV1</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <i class="fa fa-cogs"></i>
+                                        <span class="menu-text">Configuración</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Monedas", new { Area = "Configuracion" })">
+                                                <span class="menu-text">Monedas</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Localizaciones", new { Area = "Configuracion" })">
+                                                <span class="menu-text">Localizaciones</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "CategoriasIVA", new { Area = "Configuracion" })">
+                                                <span class="menu-text">Categorias de IVA</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Combos", new { Area = "Configuracion" })">
+                                                <span class="menu-text">Maestros</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+
+                        </ul>
+</div>
+                
+            </aside>
+            <section id="main-content">
+                <div class="grid inner-content">
+                    <div class="container body">
+                        <div class="row section-header hidden-print">
+                            <h2>
+                                <i class="fa fa-@ViewBag.SectionIcon"></i>
+                                @ViewBag.SectionTitle
+                            </h2>
+                        </div>
+                        <div class="container main">
+                            <div id="Alert-Container"></div>
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+                <footer class="hidden-print">
+                    <div class="container copyright">
+                        <p>&copy; @DateTime.Now.Year - Woopin SGContable</p>
+                    </div>
+                </footer>
+            </section>
+
+        </div>
+    </div>
+
+    <div id="FloatingLogo" class="hidden-print">
+        <img src="@Url.Content("~/Images/LogoWoopin.png")" style="float:right;width:180px;" />
+    </div>
+    <div id="LoaderModal">
+        <div id="LoaderMsg">Cargando...</div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+        var MainApp = {
+
+            init: function () {
+                $('#BtnLogOff').click(MainApp.Logout);
+                setInterval(MainApp.KeepSessionAlive, 30000);
+                $('#BtnChangeOrg').dblclick(MainApp.OnChangeOrg);
+                $('#BtnToggleDebugging').click(MainApp.ToggleDebugging);
+                MainApp.SetMenuActive();
+                $(".nano").nanoScroller();
+            },
+
+            Logout: function () {
+                $.AjaxPost({
+                    url: '/Account/LogOff',
+                    success: function () { window.location = '/Home/Index' }
+                });
+            },
+
+            ToggleDebugging: function () {
+                $.AjaxPost({
+                    url: '/Management/ToggleDebugging',
+                    success: function () { $.WarningDialog('debugging toggled', 'success'); }
+                });
+            },
+
+            KeepSessionAlive: function () {
+                $.AjaxPost({
+                    url: '/Home/KeepSessionAlive',
+                    success: function (data) {
+                        if (!data.Success) { window.location = '/Home/Index' }
+                    },
+                    withoutLoader: true
+                });
+            },
+
+            OnChangeOrg: function () {
+                $('#cambiar-org-dialog').OpenFormDialog('@Url.Action("CambiarActual", "Organizaciones", new { Area = ""})', '<i class="fa fa-building"></i> Cambiar de Organización actual', { width: 700 });
+            },
+
+            SetMenuActive: function () {
+                $('#hoe-left-panel li.active').removeClass('active');
+                $('#hoe-left-panel li.hoe-has-menu.opened').removeClass('opened');
+                $('a[href="' + window.location.pathname + '"]').parent('li').addClass('active');
+                $('a[href="' + window.location.pathname + '"]').parents('li.hoe-has-menu').addClass('opened');
+                $('a[href="' + window.location.pathname + '"]').parents('ul.hoe-sub-menu').attr("style", "overflow: hidden; display: block;");
+            }
+
+        }
+        $(document).ready(function () {
+            MainApp.init();
+        });
+
+    </script>
+    @RenderSection("scripts", required: false)
+    <div id="dialog-confirm" style="display:none;"></div>
+    <div id="dialog-warning" style="display:none;"></div>
+    <div id="dialog-warningandcontinue" style="display:none;"></div>
+    <div id="dialog-dump" style="display:none;"></div>
+    <div id="cambiar-org-dialog" style="display:none;"></div>
+    <a id="exportToExcel_dump" style="display:none;"></a>
+    <iframe id="ieexcel" style="display:none"></iframe>
+</body>
+</html>

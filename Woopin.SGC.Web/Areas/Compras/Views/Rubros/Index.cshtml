@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "Rubros de Compra";
+    ViewBag.SectionIcon = "folder-o";
+    ViewBag.SectionTitle = "Listado de Rubros";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Rubro">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Rubro
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Rubro..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridRubros"></table>
+    <div id="GridRubros_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoRubros = {
+
+            init: function () {
+                /* Binding del boton de crear*/
+                $('#BtnCreate').bind('click', ListadoRubros.NuevoRubro);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoRubros.Refresh);
+                /* Exportar a excel grilla */
+                $('#BtnExportXLS').click(ListadoRubros.ExportToExcel);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridRubros');
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoRubros.OnEliminarSeleccionadosClick);
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoRubros.EliminarRubro);
+                /* Editar de la grilla */
+                $(document).on('click', '.BtnEditar', ListadoRubros.EditRubro);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridRubros', ["Descripcion", "Costo"]);
+                /* Armo la grilla del ABM */
+                $('#GridRubros').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Descripcion', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Descripcion', index: 'Descripcion', width: 30, align: "center", sortable: true },
+                        { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Descripcion',
+                    sortorder: "asc",
+                    pager: '#GridRubros_pager'
+                });
+                $('#GridRubros').trigger("reloadGrid");
+            },
+
+            OnEliminarSeleccionadosClick: function () {
+                var SelectedIds = $.GetSelectedRows('GridRubros');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los rubros seleccionados?",
+                        function () { ListadoRubros.EliminarSeleccionados(SelectedIds); });
+                } else {
+                    $.WarningDialog("No hay rubros seleccionados!");
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridRubros').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                            //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                            $("#GridRubros").jqGrid("clearGridData", true);
+                            ListadoRubros.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            NuevoRubro: function () {
+                $('#create-dialog').OpenFormDialog('@Url.Action("Nuevo")', '<i class="fa fa-folder-o"></i> Crear Rubro de Compra', null);
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridRubros', 'Listado de Rubros de Compras');
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridRubros');
+                ListadoRubros.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridRubros").setGridParam({ datatype: 'json' });
+                $('#GridRubros').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            EditRubro: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-folder-o"></i> Editar Rubro de Compra', null);
+            },
+
+            EliminarRubro: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Rubro de Compras seleccionado?",
+                        function () { ListadoRubros.EliminarSeleccionados(Id); });
+            }
+        }
+
+        $(document).ready(function () {
+            ListadoRubros.init();
+        });
+    </script>
+}

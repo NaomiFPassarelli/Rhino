@@ -1,0 +1,135 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Adicional..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los adicionales -->
+    <div class="table-container AllAdicionales" id="AdicionalesDefault_Container" style="margin-top:50px;">
+        <table id="GridAdicionalesDefault"></table>
+        <div id="GridAdicionalesDefault_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var AdicionalesDefault = {
+
+        SelectedRows: null,
+        
+
+        OnSave: function () {
+            if (AdicionalesDefault.SelectedRows != null) {
+                //poner letra + numero en el input
+                //var LetraNumero = AdicionalesDefault.SelectedRows.Letra + AdicionalesDefault.SelectedRows.Numero;
+                //$('#Imputacion_Numero').val(LetraNumero);
+                //ComprobanteCompra.ImputaComprobante = AdicionalesDefault.SelectedRows;
+            }
+            AdicionalesDefault.CloseDialog();
+        },
+
+        HoldSelectedIds: function () {
+            debugger;
+            CheckPage = $('#GridAdicionalesDefault .SelectCheckboxes');
+            for (var countBox = 0; countBox < CheckPage.length ; countBox++) {
+                if (AdicionalesDefault.SelectedRows != null && AdicionalesDefault.SelectedRows.Id == $(CheckPage[countBox]).val()) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridAdicionalesDefault').resizeGrid('AdicionalesDefault_Container');
+        },
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        OnCheckboxChange: function () {
+            debugger;
+            //$('.SelectCheckboxes').attr('checked', false);
+            //$(this).attr('checked', true);
+
+            //if ($(this).attr('checked')) {
+            //    AdicionalesDefault.SelectedRows.Id = $(this).val();
+            //} else {
+            //    var index = AdicionalesDefault.SelectedRows.indexOf($(this).val());
+            //    if (index > -1) {
+            //        AdicionalesDefault.SelectedRows.splice(index, $(this).val().length);
+            //    }
+            //    //AdicionalesDefault.SelectedRows.Id = $(this).val();
+            //}
+
+            if ($(this).is(":checked")) {
+                AdicionalesDefault.SelectedRows.push($(this).val());
+            }
+            else {
+                var indexDel = AdicionalesDefault.SelectedRows.indexOf($(this).val());
+                AdicionalesDefault.SelectedRows.splice(indexDel, $(this).val().length);
+            }
+
+
+            //var row = $('#GridAdicionalesDefault').getRowData($(this).val());
+            //letra y number
+            //AdicionalesDefault.SelectedRows.Letra = row.Letra;
+            //AdicionalesDefault.SelectedRows.Numero = row.Numero;
+        },
+
+        init: function () {
+            //if (ComprobanteCompra.ImputaComprobante != null) {
+            //    AdicionalesDefault.SelectedRows = new Object();
+            //    AdicionalesDefault.SelectedRows = ComprobanteCompra.ImputaComprobante;
+            //}
+            //AdicionalesDefault.SelectedRows = new Object();
+            AdicionalesDefault.SelectedRows = new Array();
+
+            $('#BtnSave').click(AdicionalesDefault.OnSave);
+            $('#BtnCancel').click(AdicionalesDefault.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridAdicionalesDefault', ["Descripcion"]);
+
+            $('#GridAdicionalesDefault').CreateCommonGrid({
+                url: '@Url.Action("GetAll")',
+                colNames: ['', '', 'Descripcion', 'Porcentaje', 'Valor', 'Tipo', 'Suma'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: AdicionalesDefault.SelectedRows }, align: "center" },
+                    { name: 'Descripcion', index: 'Descripcion', width: 20, align: "center", sortable: true },
+                    { name: 'Porcentaje', index: 'Porcentaje', width: 20, align: "center", sortable: true },
+                    { name: 'Valor', index: 'Valor', width: 20, align: "center", sortable: true },
+                    { name: 'TipoLiquidacion', index: 'TipoLiquidacion', width: 0, sortable: false, hidden: true },
+                    { name: 'Suma', index: 'Suma', width: 0, sortable: false, hidden: true }
+                ],
+                sortname: 'Descripcion',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridAdicionalesDefault_pager',
+                loadComplete: AdicionalesDefault.HoldSelectedIds,
+                onPaging: AdicionalesDefault.HoldSelectedIds,
+                rowList: [15, 30, 50],
+                rowNum: 15
+            });
+            $('#GridAdicionalesDefault').trigger("reloadGrid");
+            $(document).off('change', '#GridAdicionalesDefault .SelectCheckboxes');
+            $(document).on('change','#GridAdicionalesDefault .SelectCheckboxes', AdicionalesDefault.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        AdicionalesDefault.init();
+    });
+
+</script>

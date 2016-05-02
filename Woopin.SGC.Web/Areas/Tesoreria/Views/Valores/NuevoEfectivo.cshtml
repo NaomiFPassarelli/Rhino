@@ -1,0 +1,74 @@
+﻿@{
+    Layout = null;
+    var IsReadonlyCajas = ViewBag.Cajas.Count == 1;
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @Id = "NuevoEfectivo" }))
+{
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group">
+            @Html.Label("Importe", new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBox("Importe", null, new { @class = "textinput" })
+                @Html.ValidationMessage("Importe", null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Fecha", new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="NuevoEfectivo_Fecha" name="Fecha" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessage("Fecha", null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Moneda", new { @class = "col-md-4 horizontal-label readonly-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBox("Moneda", (string)@ViewBag.Valor.Moneda.Nombre, new { @class = "textinput", @readonly = "readonly" })
+                @Html.ValidationMessage("Moneda", null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Caja", new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container" >
+                @Html.DropDownList("IdEntidadExt", new SelectList(ViewBag.Cajas, "Id", "Nombre"), "Elegir una Caja", new { @class = "textinput" })
+                @if (IsReadonlyCajas)
+                {
+                    @Html.Hidden("IdEntidadExt", (string) ViewBag.CajaUnica.ToString())
+                }
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmitEfectivo" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        @if (IsReadonlyCajas)
+        {
+            @:$($("select#IdEntidadExt option")[1]).attr("selected", "selected");
+            @:$("select#IdEntidadExt").attr("disabled", "disabled");
+        }
+
+        $("#NuevoEfectivo_Fecha").datepicker({ dateFormat: 'dd/mm/yy' });
+
+        $('#BtnSubmitEfectivo').click(function () {
+            var form = $('#NuevoEfectivo');
+            if (!form.valid()) return;
+            var Efectivo = form.serializeFormJSON();
+            Efectivo.Fecha = $("#NuevoEfectivo_Fecha").datepicker("getDate");
+            @ViewBag.Callback@Html.Raw("(Efectivo," + ViewBag.Valor.Id.ToString() +")");
+        });
+    });
+</script>

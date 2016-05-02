@@ -1,0 +1,74 @@
+﻿@model Woopin.SGC.Model.Common.ComboItem
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Combo.Id)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Data"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Data, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Data, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Data, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("AdditionalData"))
+                            { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.AdditionalData, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.AdditionalData, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.AdditionalData, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("AfipData"))
+                            { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.AfipData, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.AfipData, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.AfipData, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Guardar @Model.Combo.Nombre
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    var rowData = $('#GridComboItems').jqGrid('getRowData', data.ComboItem.Id);
+                    rowData.Data = data.ComboItem.Data;
+                    rowData.Value = data.ComboItem.Value;
+                    rowData.ComboId = data.ComboItem.ComboId;
+                    $('#GridComboItems').jqGrid('setRowData', data.ComboItem.Id, rowData);
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>

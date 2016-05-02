@@ -1,0 +1,141 @@
+﻿@model Woopin.SGC.Model.Common.Organizacion
+@{
+    ViewBag.Title = "Organizaciones";
+    ViewBag.SectionIcon = "cog";
+    ViewBag.SectionTitle = "Listado de Usuarios en " + Model.NombreFantasia;
+}
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnAdd" title="Agregar usuarios">
+        <i class="fa fa-plus-circle i-green"></i>  Agregar
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Sacar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Usuario..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridAdministrar"></table>
+    <div id="GridAdministrar_pager"></div>
+</div>
+<div id="agregarusuarios-dialog"></div>
+@section Scripts{
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+    var AdministrarUsuarios = {
+
+        init: function () {
+            $('#BtnExportXLS').click(AdministrarUsuarios.ExportToExcel);
+            /* Binding de los checkbox, contador de seleccionados */
+            $.SetupSelectCount('GridAdministrar');
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridAdministrar', ["NombreCompleto"]);
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', AdministrarUsuarios.Refresh);
+            /* Eliminar Seleccionados */
+            $('#BtnDeleteSelected').click(AdministrarUsuarios.OnEliminarSeleccionadosClick);
+            /* Eliminar Seleccionados */
+            $('#BtnAdd').click(AdministrarUsuarios.AgregarDialog);
+            /* Eliminar de Grilla */
+            $(document).on('click', '.BtnEliminar', AdministrarUsuarios.EliminarOrganizacion);
+            $(document).on('click', '.BtnEditar', AdministrarUsuarios.EditarPermisos);
+            /* Armo la grilla del ABM */
+            $('#GridAdministrar').CreateCommonGrid({
+                url: '@Url.Action("GetAllUsuariosByOrganizacion", "Usuarios")',
+                colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre Completo', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'NombreCompleto', index: 'NombreCompleto', width: 100, align: "center", sortable: true },
+                    { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: AdministrarUsuarios.FormatActions, align: "center" }
+                ],
+                sortname: 'NombreCompleto',
+                sortorder: "asc",
+                pager: '#GridAdministrar_pager',
+            });
+            $('#GridAdministrar').trigger("reloadGrid");
+        },
+
+        Refresh: function () {
+            ClearSelectedRows('GridAdministrar');
+            AdministrarUsuarios.ReloadGrid();
+        },
+
+        ReloadGrid: function () {
+            $("#GridAdministrar").setGridParam({ datatype: 'json' });
+            $('#GridAdministrar').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        FormatActions: function (cellvalue, options, rowObject) {
+            var btns = '';
+            // TODO - Falta agregar la parte de permisos
+            // btns += '<a class="boton boton-i BtnPermisos" title="Editar permisos"><i class="fa fa-key i-blue"></i></a>'
+            btns += ' <a class="boton boton-i BtnEliminar" title="Remover de la organización"><i class="fa fa-trash-o i-red"></i></a>';
+            return btns;
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridAdministrar', 'Listado de Usuarios en la organización');
+        },
+
+        OnEliminarSeleccionadosClick: function () {
+            var SelectedIds = $.GetSelectedRows('GridAdministrar');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea remover a los Usuarios seleccionadas?",
+                    function () { AdministrarUsuarios.EliminarSeleccionados(SelectedIds) });
+            }
+        },
+
+        EliminarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("RemoverUsuarios")',
+                data: { Ids: SelectedIds, IdOrganizacion: '@Model.Id' },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridAdministrar').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                        else {
+                            $.WarningDialog('Ocurrio un error al querer sacar a los usuarios de la organización, vuelva a intentarlo.','error');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            EliminarOrganizacion: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea remover al usuario?",
+                    function () { AdministrarUsuarios.EliminarSeleccionados(Id) });
+            },
+
+            EditarPermisos: function () {
+
+            },
+
+            AgregarDialog: function () {
+                $('#agregarusuarios-dialog').OpenFormDialog('@Url.Action("AgregarUsuarios",new { IdOrganizacion = Model.Id })', '<i class="fa fa-plus-circle"></i> Agregar Usuarios', {width:700});
+            }
+        }
+
+        $(document).ready(function () {
+            AdministrarUsuarios.init();
+        });
+
+    </script>
+}

@@ -1,0 +1,343 @@
+﻿@model Woopin.SGC.Model.Contabilidad.Asiento
+
+@{
+    ViewBag.Title = "Nuevo Asiento";
+    ViewBag.SectionIcon = "book";
+    ViewBag.SectionTitle = "Nuevo Asiento";
+}
+@using (Html.BeginForm(null,null,FormMethod.Post,new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="">
+            <div class="col-md-12">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check-circle-o i-green"></i> Crear Asiento</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text">
+                        @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.NumeroReferencia, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.NumeroReferencia, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6 ">
+                    @Html.LabelFor(model => model.Ejercicio, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.DropDownListFor(model => model.Ejercicio.Id, (IEnumerable<SelectListItem>)ViewBag.Ejercicios, " Seleccione un Ejercicio Contable", new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.Ejercicio.Id, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Leyenda, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Leyenda, new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.Leyenda, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+
+<div class="col-md-12">
+    <a class="boton place-right" id="agregarItem">
+        <i class="fa fa-plus-circle i-green i-green"></i> Nuevo Renglón
+    </a>
+</div>
+
+<div class="table-container detalles">
+    <table id="GridItems"></table>
+    <div id="GridItems_pager"></div>
+</div>
+
+<div class="comprobante comprobante-right col-md-4" style="margin-top:40px;">
+    <div class="col-md-12 ">
+        @Html.Label("Debe", new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBox("Debe", null, new { @class = "textinput", @id = "Debe", @readonly = "readonly" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.Label("Haber", new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBox("Haber", null, new { @class = "textinput", @id = "Haber", @readonly = "readonly" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="totalSlash"></div>
+        @Html.Label("Saldo", new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBox("Saldo", null, new { @class = "textinput", @id = "Saldo", @readonly = "readonly" })
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion del Asiento. Si presiona Aceptar, todos los cambios realizados se perderan.');
+        $(document).ready(function () {
+            Asiento.init();
+        });
+
+        var rowIdAnt;
+        var rowIdAct;
+
+
+        var AsientoItemId = 0;
+        // Objeto JS asociado a la vista
+        var Asiento = {
+
+            init: function () {
+                Asiento.CargarNumeroAsiento();
+                $('#GridItems').CreateCommonGrid({
+                    datatype: 'local',
+                    colNames: ['', '', '', 'Cuenta', 'Debe', 'Haber' ],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'CuentaId', index: 'CuentaId', width: 0, class: "CuentaId", sortable: false, hidden: true, key: true },
+                        { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: ABM_Eliminar, align: "center" },
+                        { name: 'Cuenta', index: 'Cuenta', width: 20, class: "Cuenta" , align: "center", sortable: true, editable: true, edittype: 'custom', editoptions: { custom_value: Asiento.cuentaValue,custom_element: Asiento.cuentaElement, dataInit: Asiento.SelectCuenta } },
+                        { name: 'Debe', index: 'Debe', width: 20, align: "center", sortable: true, template: GridCurrencyTemplate, editrules: { custom: true, custom_func: Asiento.ValidateImporteChange } },
+                        { name: 'Haber', index: 'Haber', width: 20, align: "center", sortable: true, template: GridCurrencyTemplate, editrules: { custom: true, custom_func: Asiento.ValidateImporteChange } }
+                    ],
+                    sortname: 'Cuenta',
+                    sortorder: "asc",
+                    cellEdit: true,
+                    cellsubmit: 'clientArray',
+                    pager: '#GridItems_pager',
+                    afterEditCell: function (rowId, cellname, value, iRow, iCol) {
+                        Asiento.AfterEditCell(rowIdAnt, rowId, cellname, value, iRow, iCol);
+                    },
+                    afterSaveCell: Asiento.CalcularTotales
+                });
+                $('#GridItems').trigger("reloadGrid");
+                $("#GridItems").parents('div.ui-jqgrid-bdiv').css("max-height", "200px");
+                $("#Fecha").datepicker({ dateFormat: 'dd/mm/yy' });
+                $('#agregarItem').on("click", Asiento.agregarItemAGrilla);
+                $(document).on('click', '.BtnEliminar', Asiento.OnEliminarItemClick);
+                $('#BtnSubmit').on('click', Asiento.Save);
+                $('#Ejercicio_Id').attr('data-val-required', 'Es necesario un ejercicio contable');
+                $('#comprobante-header').reParseForm();
+            },
+
+            cuentaValue: function (element)
+            {
+                $("#GridItems").jqGrid('setCell', rowIdAct, 'CuentaId', $(element).select2('data').id);
+                return $(element).select2('data').text;
+            },
+
+            cuentaElement: function (value, options) {
+                var rowData = $("#GridItems").getRowData(rowIdAct);
+                var el = document.createElement("input");
+                el.type="text";
+                el.value = rowData.CuentaId;
+                $(el).data('text', value);
+                return el;
+            },
+
+            SelectCuenta: function (elem) {
+                $(elem).children('input').width(250).select2({
+                    placeholder: "Seleccione Una Cuenta",
+                    minimumInputLength: 2,
+                    initSelection: function (element, callback) {
+                        var data = {
+                            id: $(element).val(), text: $(element).data('text')
+                        };
+                        callback(data);
+                    },
+                    ajax: {
+                        url: "@Url.Action("GetCuentasCombo", "Cuentas")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { where: t };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+               })
+            },
+
+            ValidateImporteChange: function (value, colname) {
+                var num = new Number(value);
+                if (isNaN(num)) {
+                    return [false, 'El valor ingresado no es un número'];
+                }
+                var rowData = $('#GridItems').getRowData(rowIdAct);
+                // Validacion de Salida del Importe
+                if ((colname == "Debe" && value != 0 && rowData.Haber != 0) || (colname == "Haber" && value != 0 && rowData.Debe != 0)) {
+                    return [false, 'Una fila no puede tener importe tanto en Debe como en Haber'];
+                }
+                return [true];
+            },
+
+            AfterEditCell: function (rowIdAnt, rowId, cellname, value, iRow, iCol) {
+                if (rowIdAnt == undefined) {
+                    rowIdAnt = rowId;
+                }
+                rowIdAct = rowIdAnt;
+                rowIdAnt = rowId;
+                Asiento.CalcularTotales;
+            },
+
+            OnEliminarItemClick: function () {
+                var Id = $(this).closest('tr').attr('id');
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el item del asiento?",
+                        function () { Asiento.EliminarItem(Id) });
+            },
+
+            EliminarItem: function(Id){
+                $('#GridItems').jqGrid('delRowData', Id);
+                Asiento.CalcularTotales();
+            },
+            
+            CargarNumeroAsiento: function(){
+                var parametros = {
+                    url: '@Url.Action("GetProximoAsiento")',
+                    success: function (resp) {
+                        $('#NumeroReferencia').val(resp.Data);
+                    }
+                }
+                $.AjaxPost(parametros);
+            },
+
+            CalcularTotales: function () {
+                var ImporteHaber = 0, ImporteDebe = 0, ImporteSaldo = 0;
+                ValoresDebe = $('#GridItems').jqGrid('getCol', 'Debe');
+                ValoresHaber = $('#GridItems').jqGrid('getCol', 'Haber');
+                $(ValoresDebe).each(function (indexDebe, valorDebe) {
+                    ImporteDebe += $.unformatCurrency(Number(valorDebe));
+                });
+                $(ValoresHaber).each(function (indexHaber, valorHaber) {
+                    ImporteHaber += $.unformatCurrency(Number(valorHaber));
+                });
+                ImporteSaldo = $.unformatCurrency(Number(ImporteDebe)) - $.unformatCurrency(Number(ImporteHaber));
+                $('#Debe').val($.formatCurrency(ImporteDebe));
+                $('#Haber').val($.formatCurrency(ImporteHaber));
+                $('#Saldo').val($.formatCurrency(ImporteSaldo));
+
+            },
+
+            agregarItemAGrilla : function(e) {
+                var item = {
+                        Id: AsientoItemId,
+                        Cuenta: "",
+                        Debe: "",
+                        Haber: ""
+                };
+                $('#GridItems').jqGrid('addRowData', item.Id, item);
+                $('#GridItems').jqGrid('editCell', item.Id + 1, 3, true);
+                AsientoItemId++;
+            },
+
+            ExitEditRows: function () {
+                if ($('#GridItems').jqGrid('getGridParam', 'data').length == 0) return;
+
+                $('#GridItems').jqGrid('editCell', 1, 4, false);
+            },
+
+            Save: function () {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                    return;
+
+                $('#BtnSubmit').attr('disabled', 'disabled');
+                Asiento.ExitEditRows();
+                if ($.unformatCurrency($('#Saldo').val()) != 0)
+                {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return $.WarningDialog('Es necesario que el asiento esté saldado.');
+                }
+
+                if (!$('#comprobante-header').valid())
+                {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return;
+                }
+
+                var AsientoHeader = $('#comprobante-header').serializeFormJSON();
+                var items = $('#GridItems').jqGrid('getGridParam', 'data');
+                
+                if (items.length == 0)
+                {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return $.WarningDialog('Es necesario que agregue al menos un item al asiento.');
+                }
+                AsientoHeader.Items = new Array();
+                for (var i = 0; i < items.length; i++)
+                {
+                    if (items[i].CuentaId == null || items[i].CuentaId == "undefined" || items[i].CuentaId == undefined)
+                    {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        return $.WarningDialog('Es necesario que cada renglón tenga seleccionado una cuenta');
+                    }
+                    if ((items[i].Debe == "" || items[i].Debe == 0) && (items[i].Haber == "" || items[i].Haber == 0))
+                    {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        return $.WarningDialog('El renglon de la cuenta ' + items[i].Cuenta + ' no tiene importe asignado');
+                    }
+                    var item = {
+                        Cuenta: { Id: items[i].CuentaId },
+                        Debe: items[i].Debe,
+                        Haber: items[i].Haber
+                    };
+                    AsientoHeader.Items.push(item);
+                }
+                
+                var postParams = {
+                    url: "@Url.Action("Nuevo", "Asientos")",
+                    data: { Asiento: AsientoHeader },
+                    success: function (data) {
+                        if (data.Success) {
+                            if (data.NuevoNumero == null) {
+                                Asiento.OnFinishSave(data.Asiento);
+                            }
+                            else {
+                                $.WarningDialog('El N° de Asiento ha sido tomado, su nuevo N° es ' + data.NuevoNumero,'warning',
+                                    function () {
+                                        Asiento.OnFinishSave(data.Asiento)
+                                    });
+                            }
+                        }
+                        else {
+                            $('#BtnSubmit').removeAttr('disabled');
+                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        }
+                    }
+                }
+                $.AjaxPost(postParams);
+            },
+
+            OnFinishSave: function (Asiento) {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Detalle")/' + Asiento.Id;
+            }
+        }
+</script>
+}

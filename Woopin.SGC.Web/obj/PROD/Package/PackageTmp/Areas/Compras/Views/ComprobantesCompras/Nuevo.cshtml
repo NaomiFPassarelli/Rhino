@@ -1,0 +1,711 @@
+﻿@model Woopin.SGC.Model.Compras.ComprobanteCompra
+@using Woopin.SGC.Common.HtmlHelper
+@using Woopin.SGC.Common.HtmlModel
+@using Woopin.SGC.Model.Common
+@using Woopin.SGC.Model.Negocio
+@{
+    ViewBag.Title = "Nuevo Comprobante";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Nuevo Comprobante";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="">
+            <div class="col-md-12">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-plus-circle i-green"></i> Crear Comprobante</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-7 ">
+                    @Html.LabelFor(model => model.Proveedor, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="number" id="ProveedorID" name="ProveedorID" class="col-md-2" style="margin-top: 7px;" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Proveedor_Id" name="Proveedor.Id" class="selectinput" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="col-md-12 input-container padding-left-2 font-size-22">
+                        <input type="hidden" id="LetraProveedor" />
+                        @Html.TextBoxFor(model => model.Letra, new { @class = "textinput", @id = "Letra", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Letra, null, new { @class = "help-block", style="font-size:0px;" })
+                    </div>
+                </div>
+
+
+                <div class="col-md-4 ">
+                    <div class="col-md-12 input-container">
+                        @Html.DropDownListFor(model => model.Tipo.Id, (IEnumerable<SelectListItem>)ViewBag.Tipos, " Seleccione un Tipo de Comprobante ", new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.Tipo.Id, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-4 ">
+                    <label class="col-md-6 horizontal-label readonly-label">N° Referencia</label>
+                    <div class="col-md-5 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.NumeroRef.ToString() })
+                    </div>
+                </div>
+
+                <div class="col-md-3 padding-left-2">
+                    @Html.LabelFor(model => model.Proveedor.CUIT, new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
+                    <div class="col-md-9 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Proveedor.CUIT, new { @class = "textinput padding-left-2", @id = "CUIT", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Proveedor.CUIT, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.Proveedor.CategoriaIva, new { @class = "col-md-7 horizontal-label readonly-label" })
+                    <div class="col-md-5 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Proveedor.CategoriaIva, new { @class = "textinput", @id = "Iva", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Proveedor.CategoriaIva, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Numero, new { @class = "textinput", @id = "Numero"})
+                        @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.CondicionCompra, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-7 input-container" style="padding-left: 0px;">
+                        @Html.DropDownListFor(model => model.CondicionCompra.Id, (IEnumerable<SelectListItem>)ViewBag.CondicionesCompra, " Seleccione una condición de compra ", new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.CondicionCompra.Id, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text">
+                        @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.FechaContable, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="FechaContable" name="FechaContable" type="text">
+                        @Html.ValidationMessageFor(model => model.FechaContable, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Observacion, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Observacion, null, new { @class = "textinput" })
+                    </div>
+                </div>
+
+                <div class="col-md-4 Imputacion_Container" style="display:none;">
+                    @Html.Label("Comprobante a Imputar", new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="textinput" id="Imputacion_Numero" name="Imputacion[0].ComprobanteADescontar.Numero" type="text" value="" data-val="false" readonly="readonly">
+                        @Html.ValidationMessageFor(model => model.Imputacion.First().ComprobanteADescontar.Numero, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <a class="boton boton-i BtnClearImputacion Imputacion_Container" style="display: none; margin: 3px 0px; padding: 3px 5px !important;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+                <a id="agregarComprobantes" class="boton boton-i SearchComprobantes Imputacion_Container" style="display:none; margin: 3px 0px; padding: 3px 5px !important;">
+                    <i class="fa fa-search i-blue"></i>
+                </a>
+
+            </div>
+        </div>
+    </fieldset>
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-detalle" }))
+{
+    <fieldset class="form-horizontal">
+        <div class="comprobante detalle">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Detalle.First().RubroCompra, new { @class = " horizontal-label" })
+                    <div class="input-container col-md-12">
+                        <div class="row">
+                            <input type="number" id="RubroCompraID" name="RubroCompraID" class="col-md-2" style="margin-top: 7px;" data-val="true" data-val-required="Es necesario un Rubro" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="RubroCompra_Id" name="RubroCompra.Id" class="selectinput" />
+                                @Html.ValidationMessage("RubroCompra.Id", new { @class = "help-block valid-custom rubrocompra" })
+                            </div>
+                            @Html.ValidationMessage("RubroCompraID", new { @class = "help-block" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.Detalle.First().TipoIva, new { @class = " horizontal-label" })
+                    <div class="input-container">
+                        @Html.DropDownListForWAD(model => model.Detalle.First().TipoIva.Id, (SelectCombo)ViewBag.IVAs, " Seleccione un Tipo de IVA ", "Es necesario un Tipo de IVA", new { @id = "TipoIVA", name = "TipoIVA", @class = "textinput", @required = "required" })
+                        @Html.ValidationMessage("TipoIVA", new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.Detalle.First().Total, new { @class = " horizontal-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.Detalle.First().Total, new { @id = "TotalRubro", @class = "textinput" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.Detalle.First().IVA, new { @class = " horizontal-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.Detalle.First().IVA, new { @id = "IVARubro", @class = "textinput" })
+                    </div>
+                </div>
+                @Html.Hidden("PercepcionIVA")
+                @Html.Hidden("PercepcionIIBB")
+                <div class="col-md-2">
+                    <a class="boton place-left" id="agregarDetalle">
+                        <i class="fa fa-check i-green"></i>Agregar
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-12">
+                @Html.ValidationMessageFor(model => model.Detalle.First().Total, null, new { @class = "help-block" })
+                @Html.ValidationMessageFor(model => model.Detalle.First().IVA, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="table-container detalles">
+    <table id="GridDetallesCompra"></table>
+    <div id="GridDetallesCompra_pager"></div>
+</div>
+
+
+<div class="comprobante comprobante-right col-md-4" style="margin-top:40px;">
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.Subtotal, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.Subtotal, new { @class = "textinput", @id = "Subtotal", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.Subtotal, null, new { @class = "help-block" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA, new { @class = "textinput", @id = "IVA", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.IVA, null, new { @class = "help-block" })
+        </div>
+    </div>
+
+    <div class="col-md-12" style="padding-top:10px;">
+        <div class="totalSlash"></div>
+        @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.Total, new { @class = "textinput", @id = "Total", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.Total, null, new { @class = "help-block" })
+        </div>
+    </div>
+</div>
+<div class="comprobante place-left col-md-4" style="margin-top:40px;">
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA105, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA105, new { @class = "textinput", @id = "IVA105", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.IVA105, null, new { @class = "help-block" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA21, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA21, new { @class = "textinput", @id = "IVA21", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.IVA21, null, new { @class = "help-block" })
+        </div>
+    </div>
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA27, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA27, new { @class = "textinput", @id = "IVA27", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.IVA27, null, new { @class = "help-block" })
+        </div>
+    </div>
+</div>
+<div id="ComprobantesCompraAPagarNC-dialog"></div>
+<div class="clearfix"></div>
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+    var ComprobanteDetalleId = 0;
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        ComprobanteCompra.init();
+    });
+
+    var ComprobanteCompra = {
+
+        ImputaComprobante: null,
+
+        init: function(){
+            $('#GridDetallesCompra').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', '', 'Descripcion', 'IVA', '', '', 'Total', 'IVA', '',''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'RubroCompra_Id', index: 'RubroCompra_Id', width: 0, sortable: false, hidden: true },
+                    { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: ABM_Eliminar, align: "center" },
+                    { name: 'Descripcion', index: 'IVA', width: 20, align: "center", sortable: true },
+                    { name: 'IVAText', index: 'IVA', width: 20, align: "center", sortable: true },
+                    { name: 'IVA_Id', index: 'IVA', width: 20, align: "center", sortable: true, hidden: true },
+                    { name: 'IVA', index: 'IVA', width: 20, align: "center", sortable: true, hidden: true },
+                    { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true },
+                    { name: 'IVARubro', index: 'IVARubro', width: 20, align: "center", sortable: true },
+                    { name: 'PercepcionIVA', index: 'PercepcionIVA', width: 20, align: "center", sortable: true, hidden: true },
+                    { name: 'PercepcionIIBB', index: 'PercepcionIIIBB', width: 20, align: "center", sortable: true, hidden: true }
+                ],
+                sortname: 'Descripcion',
+                sortorder: "asc",
+                pager: '#GridDetallesCompra_pager'
+            });
+            $('#GridDetallesCompra').trigger("reloadGrid");
+            $("#GridDetallesCompra").parents('div.ui-jqgrid-bdiv').css("max-height", "300px");
+            $("#Fecha").datepicker({ dateFormat: 'dd/mm/yy' });
+            $("#FechaContable").datepicker({ dateFormat: 'dd/mm/yy' });
+            $('#agregarDetalle').on("click", ComprobanteCompra.AgregarDetalleAGrilla);
+            $('#agregarComprobantes').on("click", ComprobanteCompra.OnAgregarComprobantes);
+            $(document).on('click', '.BtnEliminar', ComprobanteCompra.OnEliminarDetalleClick);
+            ComprobanteCompra.CambiarErroresForm();
+            $('#ProveedorID').change(ComprobanteCompra.GetProveedorByID);
+            $('#RubroCompraID').change(ComprobanteCompra.GetRubroCompraByID);
+            $('#RubroCompra_Id').prepend('<option></option>');
+            $('#RubroCompra_Id').select2(
+                {
+                    width: '100%',
+                    placeholder: "Seleccione Un Rubro de Compra",
+                    minimumInputLength: 0,
+                    ajax: {
+                        url: "@Url.Action("GetRubrosCombo", "Rubros")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { page: 0, where: t };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+            $('#RubroCompra_Id').on("select2-selecting", ComprobanteCompra.OnSelectRubroCompra);
+            $('#Proveedor_Id').prepend('<option></option>');
+            $('#Proveedor_Id').select2(
+                {
+                    width: '100%',
+                    placeholder: "Seleccione Un Proveedor",
+                    minimumInputLength: 2,
+                    ajax: {
+                        url: "@Url.Action("GetProveedoresCombo", "Proveedores")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { where: t };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+            $('#Proveedor_Id').on("select2-selecting", ComprobanteCompra.OnProveedorSeleccionado);
+            $('#Tipo_Id').change(ComprobanteCompra.OnTipoComprobanteChange);
+            $('#BtnSubmit').on('click', ComprobanteCompra.Save);
+            $('.BtnClearImputacion').on('click', function () {
+                $('#Imputacion_Numero').val("");
+                ComprobanteCompra.IdsGridRestricta = new Array();
+            });
+            $('#TipoIVA').on('change', ComprobanteCompra.TipoIVATotalChange);
+            $('#TotalRubro').on('change', ComprobanteCompra.TipoIVATotalChange);
+            $('#IVARubro').on('change', ComprobanteCompra.IVARubroChange);
+        },
+
+        TipoIVATotalChange: function(){
+            if ($('#TotalRubro').val() != undefined && $('#TotalRubro').val() != "" && $('#TipoIVA').val() != undefined && $('#TipoIVA').val() != "") {
+                tipoiva = $('#TipoIVA').val();
+                ivaselected = $("#TipoIVA option[value=" + tipoiva + "]");
+                ivaVal = $(ivaselected).attr('data-ad');
+                total = $('#TotalRubro').val();
+                if (ivaVal == 0) {
+                    iva = 0;
+                    $('#IVARubro').attr('readonly', true);
+                } else {
+                    $('#IVARubro').attr('readonly', false);
+                    iva = (ivaVal * total) / 100;
+                    iva = parseFloat(iva).toFixed(2);
+                }
+                $('#IVARubro').val(iva);
+            }
+        },
+
+        IVARubroChange: function(){
+            if ($('#TotalRubro').val() != undefined && $('#TotalRubro').val() != "" && $('#TipoIVA').val() != undefined && $('#TipoIVA').val() != "") {
+                tipoiva = $('#TipoIVA').val();
+                ivaselected = $("#TipoIVA option[value=" + tipoiva + "]");
+                ivaVal = $(ivaselected).attr('data-ad');
+                total = $('#TotalRubro').val();
+                iva = (ivaVal * total) / 100;
+                iva = parseFloat(iva).toFixed(2);
+                ivaRubro = $('#IVARubro').val();
+                if (iva != ivaRubro) {
+                    $('#IVARubro').attr('readonly', false);
+                    return $.WarningDialog('El Iva sugerido por el sistema es: ' + iva + ' el iva que usted introdujo es: ' + ivaRubro);
+                }
+            } else {
+                iva = 0;
+                $('#IVARubro').val(iva);
+                $('#IVARubro').attr('readonly', true);
+            }
+        },
+
+        CambiarErroresForm: function(){
+            $('#Tipo_Id').attr('data-val-required', 'Es necesario un tipo');
+            $('#CondicionCompra_Id').attr('data-val-required', 'Es necesario una condición de compra');
+            $('#comprobante-header').reParseForm();
+
+            $('#TotalRubro').attr('data-val-number', 'El Total debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+            $('#IVARubro').attr('data-val-number', 'El Total debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+            $('#comprobante-detalle').reParseForm();
+            
+        },
+
+        OnAgregarComprobantes: function (e) {
+            if($('#Proveedor_Id').val() == ""){
+                $.WarningDialog('Debe seleccionar un Proveedor!')
+            } else {
+                var pagada = '@Html.Raw(( (int) ComprobantesACancelarFilter.Pendientes ).ToString())';
+                $('#ComprobantesCompraAPagarNC-dialog').OpenFormDialog(
+                    '@Url.Action("ComprobantesAPagarNC", "ComprobantesCompras")?IdProveedor=' + $("#ProveedorID").val() + '&NoTipo=' + '@ComprobanteCompraHelper.NotaCredito' + '&Pagada=' + pagada,
+                    '<i class="fa fa-folder-o"></i> Comprobantes (Solo si se Imputa un unico comprobante)',
+                { width: 800 });
+            }
+        },
+
+        GetProveedorByID: function () {
+            var Id = $('#ProveedorID').val();
+            if (Id == "") { return; }
+            valid = ComprobanteCompra.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetProveedor", "Proveedores")',
+                data: { IdProveedor: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        ComprobanteCompra.LoadProveedor(ret.Data);
+                        $('#Proveedor_Id').select2('data', { id: Id, text: ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')' });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('Proveedor no existe, vuelva a intentarlo!');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#ProveedorID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return { success: false, message: 'El N° de Proveedor no es correcto' };
+            } else {
+                return { success: true };
+            }
+        },
+
+        GetRubroCompraByID: function () {
+            var Id = $('#RubroCompraID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return $.WarningDialog('El N° de Rubro no es correcto');
+            }
+            ComprobanteCompra.LoadRubroCompra(Id);
+        },
+
+        OnTipoComprobanteChange: function () {
+            // Si es sin comprobante
+            if ($('#Tipo_Id').val() == '@ComprobanteCompraHelper.SinComprobante') {
+                $('#Letra').val('Z');
+            }
+            else {
+                var LetraProveedor = $('#LetraProveedor').val();
+                $('#Letra').val(LetraProveedor);
+            }
+            // Si es NC
+            if ($('#Tipo_Id').val() == '@ComprobanteCompraHelper.NotaCredito') {
+                $('.Imputacion_Container').show();
+                $('#Imputacion_Numero').attr('data-val', 'true');
+            } else {
+                $('.Imputacion_Container').hide();
+                $('#Imputacion_Numero').attr('data-val', 'false');
+            }
+            // Si es Comprobante Factura - NC - ND
+            switch ($('#Tipo_Id').val()) {
+                case '@ComprobanteCompraHelper.Factura':
+                case '@ComprobanteCompraHelper.NotaCredito':
+                case '@ComprobanteCompraHelper.NotaDebito':
+                case '@ComprobanteCompraHelper.SinComprobante':
+                    $('#Numero').mask('9999-99999999');
+                    break;
+                default:
+                    $('#Numero').unmask('9999-99999999');
+                    break;
+            }
+            $('#comprobante-header').reParseForm();
+        },
+
+        OnEliminarDetalleClick: function () {
+            var Id = $(this).closest('tr').attr('id');
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el detalle?",
+                                    function () { ComprobanteCompra.EliminarDetalle(Id) });
+        },
+
+        EliminarDetalle: function (Id) {
+            $('#GridDetallesCompra').jqGrid('delRowData', Id);
+            $('#SelectCount').html('0');
+            ComprobanteCompra.CalcularTotales();
+        },
+
+        OnSelectRubroCompra: function (e) {
+            ComprobanteCompra.LoadRubroCompra(e.val);
+        },
+
+        LoadRubroCompra: function (IdRubroCompra) {
+            var params = {
+                url: '@Url.Action("GetRubroCompra", "Rubros")',
+                data: { IdRubroCompra: IdRubroCompra },
+                success: function (ret) {
+                    if (ret.Success && ret.Data) {
+                        $('#RubroCompraID').val(ret.Data.Id);
+                        $('#RubroCompra_Id').select2('data', { id: IdRubroCompra, text: ret.Data.Descripcion });
+                        $('#PercepcionIVA').val(ret.Data.PercepcionIVA);
+                        $('#PercepcionIIBB').val(ret.Data.PercepcionIIBB);
+                        if (ret.Data.PercepcionIVA || ret.Data.PercepcionIIBB) {
+                            $('#TipoIVA option[data-ad="0"]').attr('selected', true);
+                            $('#TipoIVA').attr('disabled', 'disabled');
+                        } else {
+                            $('#TipoIVA').removeAttr('disabled');
+                        }
+                    } else {
+                        $.WarningDialog('El rubro no existe, vuelva a intentarlo!');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnProveedorSeleccionado: function (e) {
+            var params = {
+                url: '@Url.Action("GetProveedor", "Proveedores")',
+                data: { IdProveedor: e.val },
+                success: function (ret) {
+                    if (ret.Success) {
+                        ComprobanteCompra.LoadProveedor(ret.Data);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        LoadProveedor: function (Proveedor) {
+            $('#ProveedorID').val(Proveedor.Id);
+            $('#Iva').val(Proveedor.CategoriaIva.Abreviatura);
+            $('#Letra').val(Proveedor.CategoriaIva.LetraCompras.Data);
+            $('#LetraProveedor').val(Proveedor.CategoriaIva.LetraCompras.Data);
+            $('#CUIT').val(Proveedor.CUIT);
+            var Domicilio = DireccionFormatter(null, null, Proveedor);
+            $('#Domicilio').val(Domicilio);
+            $('#CondicionCompra_Id').val(Proveedor.CondicionCompra.Id);
+            ComprobanteCompra.OnTipoComprobanteChange();
+            ComprobanteCompra.CalcularTotales();
+        },
+
+        CalcularTotales: function () {
+            var SubtotalComprobante = 0;
+            var IVA105 = 0;
+            var IVA21 = 0;
+            var IVA27 = 0;
+            var Detalles = $('#GridDetallesCompra').jqGrid('getGridParam', 'data');
+            for (var i = 0; i < Detalles.length; i++) {
+                
+                SubtotalComprobante += parseFloat(Detalles[i].Total);
+                if (Detalles[i].IVA == 27) {
+                    IVA27 += Detalles[i].IVARubro * 1;
+                }
+                else if (Detalles[i].IVA == 21) {
+                    IVA21 += Detalles[i].IVARubro * 1;
+                }
+                else if (Detalles[i].IVA == 10, 5) {
+                    IVA105 += Detalles[i].IVARubro * 1;
+                }
+
+            }
+            SubtotalComprobante = $.parseCurrency(SubtotalComprobante);
+            var LetraComprobante = $('#Letra').val();
+
+            // Si no discrimina IVA
+            if (LetraComprobante == 'Z' || LetraComprobante == 'E') {
+                $('#Subtotal').val(SubtotalComprobante);
+                $('#IVA').val('0');
+                $('#Total').val(SubtotalComprobante);
+            }
+            else {
+                IVA105 = $.parseCurrency(IVA105);
+                IVA21 = $.parseCurrency(IVA21);
+                IVA27 =  $.parseCurrency(IVA27);
+                $('#Subtotal').val(SubtotalComprobante);
+                var IVA = parseFloat(IVA105) + parseFloat(IVA21) + parseFloat(IVA27);
+                $('#IVA').val($.parseCurrency(IVA));
+                $('#IVA21').val(IVA21);
+                $('#IVA27').val(IVA27);
+                $('#IVA105').val(IVA105);
+                var Total = parseFloat(IVA) + parseFloat(SubtotalComprobante);
+                $('#Total').val($.parseCurrency(Total));
+            }
+        },
+
+        AgregarDetalleAGrilla: function (e) {
+            jQuery.extend(jQuery.validator.messages, {
+                required: "Este campo es necesario"
+            });
+            if (!($('#RubroCompra_Id').val() > 0 || $('#RubroCompraID').val() <= 0)) {
+                $('.valid-custom.rubrocompra').removeClass('field-validation-valid');
+                $('.valid-custom.rubrocompra').addClass('field-validation-error');
+                $('.valid-custom.rubrocompra').append("<span for='RubroCompra_Id' generated='true' class=''>Este campo es necesario</span>");
+                return;
+            } else {
+                $('.valid-custom.rubrocompra').removeClass('field-validation-error');
+                $('.valid-custom.rubrocompra').addClass('field-validation-valid');
+                $('.valid-custom.rubrocompra span').remove();
+            }
+            if (!($('#TipoIVA').val() > 0)) {
+                $('#TipoIVA').parent().append("<span class='help-block field-validation-error valid-custom tipoiva' data-valmsg-for='TipoIVA' data-valmsg-replace='true'><span for='TipoIVA' generated='true' class=''>Es Necesario un Tipo de Iva</span></span>");
+                return;
+            } else {
+                $('.valid-custom.tipoiva').remove();
+            }
+            if ($('#comprobante-detalle').valid()) {
+                var Descripcion = $('#RubroCompra_Id').select2('data').text;
+                var detalle = {
+                    Id: ComprobanteDetalleId,
+                    IVAText: $('#TipoIVA option:selected').text(),
+                    IVA_Id: $('#TipoIVA').val(),
+                    IVA: $('#TipoIVA option:selected').data('ad'),
+                    RubroCompra_Id: $('#RubroCompra_Id').val(),
+                    Descripcion: Descripcion,
+                    Total: $('#TotalRubro').val(),
+                    IVARubro: $('#IVARubro').val(),
+                    PercepcionIVA: $('#PercepcionIVA').val(),
+                    PercepcionIIBB: $('#PercepcionIIBB').val()
+                };
+                ComprobanteDetalleId++;
+                $('#GridDetallesCompra').jqGrid('addRowData', detalle.Id, detalle);
+                ComprobanteCompra.CalcularTotales();
+
+                //limpiar form de detalle
+                $('#comprobante-detalle').ClearForm();
+                $('#RubroCompra_Id').select2('data', null);
+            }
+        },
+
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
+
+            $('#BtnSubmit').attr('disabled', 'disabled');
+            if (!$('#comprobante-header').valid())
+            {
+                $('#BtnSubmit').removeAttr('disabled');
+                return;
+            }
+            var Comprobante = $('#comprobante-header').serializeFormJSON();
+            Comprobante["Tipo.Data"] = $('#Tipo_Id :selected').text();
+
+            if (ComprobanteCompra.ImputaComprobante != null) {
+                Comprobante["Imputacion[0].ComprobanteADescontar.Id"] = ComprobanteCompra.ImputaComprobante.Id;
+            }
+
+            var detalles = $('#GridDetallesCompra').jqGrid('getGridParam', 'data');
+            if (detalles.length == 0) {
+                $('#BtnSubmit').removeAttr('disabled');
+                return $.WarningDialog('Es necesario que agregue al menos un item a la factura.');
+            }
+            Comprobante.Detalle = new Array();
+            for (var i = 0; i < detalles.length; i++) {
+                var item = {
+                    RubroCompra: {
+                        Id: detalles[i].RubroCompra_Id,
+                        PercepcionIVA: detalles[i].PercepcionIVA == "true",
+                        PercepcionIIBB: detalles[i].PercepcionIIBB == "true"
+                    },
+                    Descripcion: detalles[i].Descripcion,
+                    TipoIva: { Id: detalles[i].IVA_Id, AdditionalData: detalles[i].IVA },
+                    Total: detalles[i].Total,
+                    IVA: detalles[i].IVARubro
+                };
+                Comprobante.Detalle.push(item);
+
+            }
+            
+            var postParams = {
+                url: "@Url.Action("Nuevo", "ComprobantesCompras")",
+                data: { ComprobanteCompra: Comprobante },
+                success: function (data) {
+                    if (data.Success) {
+                        if (data.NuevoNumero == null && data.NumeroRef == null) {
+                            ComprobanteCompra.OnFinishSave(data.Comprobante);
+                        }
+                        else {
+                            var msg = "";
+                            if (data.NuevoNumero != null) {
+                                msg += '<p>El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                            }
+                            if (data.NumeroRef != null) {
+                                msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                            }
+                            $.WarningDialog(msg, 'warning', function(){
+                                ComprobanteCompra.OnFinishSave(data.Comprobante)
+                            });
+                        }
+                    }
+                    else {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(postParams);
+        },
+
+        OnFinishSave: function (Comprobante) {
+            window.onbeforeunload = null;
+            $.ShowLoader();
+            window.location = '@Url.Action("Detalle")/' + Comprobante.Id;
+        }
+    }
+    </script>
+}

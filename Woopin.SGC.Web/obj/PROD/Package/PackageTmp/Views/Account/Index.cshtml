@@ -1,0 +1,476 @@
+﻿@{
+    ViewBag.Title = "Log in";
+    Layout = null;
+}
+
+@Styles.Render("~/Content/bootstrap.css")
+@Styles.Render("~/Content/font-awesome.css")
+@Scripts.Render("~/Scripts/jquery-1.8.2.js")
+@Scripts.Render("~/Scripts/common.functions.js")
+@Scripts.Render("~/Scripts/ui.functions.js")
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Rhino - Woopin</title>
+    <link href='https://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
+    <style type="text/css" >
+    body, html {
+        width: 100%;
+        height: 100%;
+    }
+
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-weight: 700;
+    }
+
+    .topnav {
+        font-size: 15px;
+    }
+
+    .lead {
+        font-size: 18px;
+        font-weight: 400;
+    }
+
+    .intro-header {
+        padding-top: 50px; /* If you're making other pages, make sure there is 50px of padding to make sure the navbar doesn't overlap content! */
+        padding-bottom: 50px;
+        text-align: center;
+        color: #f8f8f8;
+        background: #8775a7; /* For browsers that do not support gradients */    
+        background: -webkit-linear-gradient(left top, #8775a7, #4F3F6D); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(bottom right, #8775a7, #4F3F6D); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(bottom right, #8775a7, #4F3F6D); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(to bottom right, #8775a7, #4F3F6D); /* Standard syntax (must be last) */
+        background-size: cover;
+    }
+
+    .intro-message {
+        position: relative;
+        padding-top: 10%;
+        padding-bottom: 8%;
+    }
+
+    .intro-message > h1 {
+        margin: 0;
+        text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+        font-size: 8em;
+    }
+
+    .intro-divider {
+        width: 400px;
+        border-top: 1px solid #f8f8f8;
+        border-bottom: 1px solid rgba(0,0,0,0.2);
+    }
+
+    .intro-message > h3 {
+        text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+    }
+
+
+
+    .network-name {
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 2px;
+    }
+
+    .content-section-a {
+        padding: 50px 0;
+    }
+
+    .content-section-b {
+        padding: 50px 0;
+        border-top: 1px solid #e7e7e7;
+        border-bottom: 1px solid #e7e7e7;
+        background-color: rgba(197, 186, 217, 1);
+    }
+
+    .section-heading {
+        margin-bottom: 1%;
+    }
+
+    .section-heading-spacer {
+        float: left;
+        width: 200px;
+        border-top: 3px solid #e7e7e7;
+    }
+
+    .banner {
+        padding: 4% 0;
+        color: #f8f8f8;
+        background: url(../../Images/banner-bg.jpg) no-repeat center center;
+        background-size: cover;
+    }
+
+        .banner h2 {
+            margin: 0;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+            font-size: 3em;
+        }
+
+        .banner ul {
+            margin-bottom: 0;
+        }
+
+    .banner-social-buttons {
+        width: 40%;
+        margin: 3% auto 0% auto;
+    }
+
+    footer {
+        padding: 50px 0;
+        background-color: #f8f8f8;
+    }
+
+    p.copyright {
+        margin: 15px 0 0;
+    }
+
+    .row div img {
+        border-radius: 150px;
+    }
+
+
+    @@media (max-width:767px) {
+        .intro-message {
+            padding-bottom: 15%;
+        }
+
+        .intro-message > h1 {
+            font-size: 3em;
+        }
+
+        ul.intro-social-buttons > li {
+            display: block;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        ul.intro-social-buttons > li:last-child {
+            margin-bottom: 0;
+        }
+
+        .intro-divider {
+            width: 100%;
+        }
+    }
+
+    @@media(max-width:1199px) {
+        ul.banner-social-buttons {
+            float: left;
+            margin-top: 15px;
+        }
+    }
+
+    @@media(max-width:767px) {
+        .banner h2 {
+            margin: 0;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+            font-size: 3em;
+        }
+
+        ul.banner-social-buttons > li {
+            display: block;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        ul.banner-social-buttons > li:last-child {
+            margin-bottom: 0;
+        }
+    }
+    </style>
+
+    <script @*src="~/Scripts/jquery-1.8.2.js"*@ type="text/javascript">
+        $(document).ready(function () {
+
+            //$('#submitButton').click(function () { alert('click');});
+            //$('#submitButton').bind('click', function () { alert('click'); });
+            //$('#submitButton').on('click', function () { alert('click'); });
+
+            $('#submitButton').bind('click', function () {
+                debugger;
+                var params = {
+                    url: '@Url.Action("EnviarMensaje")',
+                    data: {
+                        emailContacto: $('#email').val(),
+                        telefonoContacto: $('#phone').val(),
+                        nombreContacto: $('#name').val(),
+                        mensajeContacto: $('#message').val()
+                    },
+                    success: function (ret) {
+                        $('#email').val("");
+                        $('#phone').val("");
+                        $('#name').val("");
+                        $('#message').val("");
+                    }
+                }
+                $.AjaxPost(params);
+            });
+        });
+    </script>
+
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-47958240-3', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+        <div class="container topnav">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @* TODO *@
+                @*<a class="navbar-brand topnav" href="#">Empezá grátis hoy con Rhino</a>*@
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#about">Conocé más</a>
+                    </li>
+                    <li>
+                        <a href="#contact">Contactate con Woopin</a>
+                    </li>
+                    <li>
+                        <a title="Login" href="@Url.Action("Login")">Ingresá</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="intro-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-message">
+                        <h1 style="font-family: 'Gloria Hallelujah',cursive;">Rhino</h1>
+                        <h2>Tú Sistema de Gestión</h2>
+                        <hr class="intro-divider">
+                        <img src="@Url.Content("~/Images/LogoWoopin.png")" alt="" style="width:15%;">
+                        
+                        @*<ul class="list-inline intro-social-buttons">
+                            <li>
+                                <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                            </li>
+                            <li>
+                                <a href="#" class="btn btn-default btn-lg"><i class="fa fa-linkedin fa-fw"></i> <span class="network-name">Linkedin</span></a>
+                            </li>
+                        </ul>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.intro-header -->
+    <!-- Page Content -->
+    <a name="about"></a>
+    <div class="content-section-a">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Sistema de gestión:</h2>
+                    <p class="lead">Compra - Venta - Contabilidad - Tesorería - Stock - Sueldos</p>
+                    <h2 class="section-heading">Factura Electrónica Integrada:</h2>
+                    <p class="lead">En un simple click tenés tu factura electónica! <br> La podes enviar por email!</p>
+                    <h2 class="section-heading">Online:</h2>
+                    <p class="lead">Contá con tu información siempre, en cualquier momento en donde estes</p>
+
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6" style="margin-top:4%;">
+                    <img class="img-responsive" src="@Url.Content("~/Images/mundo.jpg")" alt="">
+                </div>
+            </div>
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.content-section-a -->
+    <div class="content-section-b">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Interfaces con la AFIP:</h2>
+                    <p class="lead">Citi Compras - Citi Ventas -  entre otros</p>
+                    <h2 class="section-heading">Reportes e Indicadores:</h2>
+                    <p class="lead">Informes completos, Vencimientos, Indicadores minunto a minuto</p>
+                    <h2 class="section-heading">Empezá hoy grátis:</h2>
+                    <p class="lead">Instalación, Implementación, Capacitación y primeros meses de prueba <strong>grátis</strong></p>
+
+                </div>
+                <div class="col-lg-5 col-sm-pull-6  col-sm-6" style="margin-top:4%;">
+                    <img class="img-responsive" src="@Url.Content("~/Images/indicadores.jpg")" alt="">
+                </div>
+            </div>
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.content-section-b -->
+    <div class="content-section-a">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Evolucioná:</h2>
+                    <p class="lead">No te quedes atrás, actualizate !</p>
+                    <h2 class="section-heading">Mantenimiento:</h2>
+                    <p class="lead">Continuamente actualizado gratuitamente, siempre tendrás la última versión</p>
+                    <h2 class="section-heading">Hablá con Profesionales:</h2>
+                    <p class="lead">Para atenderte mejor, serás atendido por profesionales</p>
+
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6" style="margin-top:4%;">
+                    <img class="img-responsive" src="@Url.Content("~/Images/pctablet.jpg")" alt="">
+                </div>
+            </div>
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.content-section-a -->
+    <a name="contact"></a>
+    <div class="banner">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Contactate con Woopin !</h2>
+                    <h3 class="section-subheading text-muted" style="margin-bottom: 3%; color: #f6bf01; font-size: 20px;">Hola ! Estamos aca para ayudarte ! </h3>
+                </div>
+                
+                <div class="col-lg-12">
+                    <form name="sentMessage" id="contactForm" novalidate="">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Nombre *" id="name" required="" data-validation-required-message="Por favor ingresá tú nombre." style="padding: 3%; font-size: 14px; height: auto;">
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control" placeholder="Email *" id="email" required="" data-validation-required-message="Por favor ingresá tú email." style="padding: 3%; font-size: 14px; height: auto;">
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="tel" class="form-control" placeholder="Teléfono *" id="phone" required="" data-validation-required-message="Por favor ingresá tú teléfono." style="padding: 3%; font-size: 14px; height: auto;">
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <textarea class="form-control" placeholder="Mensaje *" id="message" required="" data-validation-required-message="Por favor ingresá tú mensaje." style="height: 34%;padding:3%;"></textarea>
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-lg-12 text-center">
+                                <div id="success"></div>
+                                <a class="btn btn-xl" id="submitButton" style=" color: #fff; background-color: #fec503; border-color: #f6bf01; font-size: 18px;padding: 1% 2%;">
+                                    Enviar Mensaje
+                                </a>
+                                @*<button type="submit" id="submitButton" class="btn btn-xl" style=" color: #fff; background-color: #fec503; border-color: #f6bf01; font-size: 18px;padding: 1% 2%;">Enviar Mensaje</button>*@
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.banner -->
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline" style="float:right;">
+                        <li>
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="#about">Conocé más</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="#contact">Contactate con Woopin</a>
+                        </li>
+                        <li>
+                            <a title="Login" href="@Url.Action("Login")">Ingresá</a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted small">Copyright &copy; Woopin.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+</body>
+</html>
+
+
+
+@section Scripts{
+
+    @*<script src="~/Scripts/jquery-ui-1.8.24.js" type="text/javascript">
+        $(document).ready(function () {
+            $('#submitButton').bind('click', function () {
+                debugger;
+                var params = {
+                    url: '@Url.Action("EnviarMensaje")',
+                    data: {
+                        emailContacto: $('#email').val(),
+                        telefonoContacto: $('#phone').val(),
+                        nombreContacto: $('#name').val(),
+                        mensajeContacto: $('#message').val()
+                    },
+                    success: function (ret) {
+                        $('#email').val("");
+                        $('#phone').val("");
+                        $('#name').val("");
+                        $('#message').val("");
+                    }
+                }
+                $.AjaxPost(params);
+            });
+        });
+</script>*@
+    
+}

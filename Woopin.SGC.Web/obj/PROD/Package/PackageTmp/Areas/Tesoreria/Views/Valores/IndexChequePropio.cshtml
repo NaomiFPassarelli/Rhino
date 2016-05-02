@@ -1,0 +1,299 @@
+﻿@using Woopin.SGC.Model.Tesoreria
+@{
+    ViewBag.Title = "Cheques Propios";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Listado de Cheques Propios";
+    var Entregado = (int)EstadoCheque.Entregado;
+ }
+<div class="action-bar row" style="margin-bottom:20px;">
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Cuenta Bancaria</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="CuentaBancariaID" name="CuentaBancariaID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="CuentaBancaria_Id" name="CuentaBancaria.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="CuentaBancaria_Id" data-input="CuentaBancariaID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Proveedor</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="ProveedorID" name="ProveedorID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="Proveedor_Id" name="Proveedor.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Proveedor_Id" data-input="ProveedorID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a class="boton place-left" id="btnFilterByProveedor" style="margin-top: 2px;">Filtrar <i class="fa fa-filter i-blue"></i></a>
+        </div>
+    </div>
+</div>
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Cheque Propio..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <select id="FilterType" class="place-right" style="margin-top: 4px;margin-right: 10px;">
+        <option value="0">Todos</option>
+        <option value="2">Entregados</option>
+        <option value="6">Pagados</option>
+        <option value="5">Anulados</option>
+    </select>
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridChequesPropios"></table>
+    <div id="GridChequesPropios_pager"></div>
+</div>
+<div id="listadoChequesPropios-detalle-dialog" class="detalle-dialog"></div>
+<div id="listadoChequesPropios-marcarpago"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ListadoChequesPropios.init();
+    });
+    var ListadoChequesPropios = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                ListadoChequesPropios.LoadData();
+            });
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridChequesPropios', ["Fecha", "Proveedor.RazonSocial"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridChequesPropios').CreateCommonGrid({
+                url: '@Url.Action("GetChequePropioFilter")',
+                serializeGridData: function (postData) {
+                    dates = {
+                        IdProveedor: $('#ProveedorID').val() != '' ? $('#ProveedorID').val() : 0,
+                        IdCuenta: $('#CuentaBancariaID').val() != '' ? $('#CuentaBancariaID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                        filter: $('#FilterType').val()
+                    }
+                    return JSON.stringify($.extend(postData, dates));
+                },
+                colNames: ['', 'Cuenta Bancaria', 'Fecha de Creación', 'Proveedor', 'Importe', 'Numero', '', 'Estado', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'CuentaBancaria.Nombre', index: 'CuentaBancaria.Nombre', width: 200, align: "center", formatter: ListadoChequesPropios.NombreCtaBancariaFormatter },
+                    { name: 'FechaCreacion', index: 'FechaCreacion', width: 200, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Proveedor.RazonSocial', index: 'Proveedor.RazonSocial', width: 200, align: "center", sortable: true },
+                    { name: 'Importe', index: 'Importe', width: 200, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Numero', index: 'Numero', width: 200, align: "center", sortable: true },
+                    { name: 'CuentaBancaria.Banco.Nombre', index: 'CuentaBancaria.Banco.Nombre', hidden: true },
+                    { name: 'Estado', index: 'Estado', hidden: true },
+                    { name: 'Acciones', index: 'Acciones', width: 100, align: "center", sortable: true, formatter: ListadoChequesPropios.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                pager: '#GridChequesPropios_pager',
+                rowList: [20, 40, 60],
+                rowNum: 20
+            });
+            $('#GridChequesPropios').trigger("reloadGrid");
+            $('#Proveedor_Id').select2(
+               {
+                   placeholder: "Seleccione Un Proveedor",
+                   ajax: {
+                       url: "@Url.Action("GetProveedoresCombo", "Proveedores", new { Area = "Compras" } )",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#Proveedor_Id').on("select2-selecting", ListadoChequesPropios.OnProveedorSelected);
+            $('#btnFilterByProveedor').click(ListadoChequesPropios.LoadData);
+            $(document).on('click', '.BtnVerDialog', ListadoChequesPropios.VerDetalleDialog);
+            $('#ProveedorID').change(ListadoChequesPropios.OnProveedorChange);
+            $('#BtnExportXLS').click(ListadoChequesPropios.ExportToExcel);
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                ListadoChequesPropios.ClearSelect2(IdClear, IdClearInput);
+            });
+            $('#CuentaBancaria_Id').select2(
+              {
+                  placeholder: "Seleccione Una Cuenta Bancaria",
+                  ajax: {
+                      url: "@Url.Action("GetComboCuentaBancaria", "CuentasBancarias")",
+                      dataType: 'json',
+                      params: { type: "POST" },
+                      data: function (t, p) {
+                          return { where: t };
+                      },
+                      results: function (data, page) {
+                          return { results: data.Data.Items };
+                      }
+                  }
+              });
+            $('#CuentaBancaria_Id').on("select2-selecting", ListadoChequesPropios.OnCuentaBancariaSelected);
+            $('#CuentaBancariaID').change(ListadoChequesPropios.OnCuentaBancariaChange);
+            $(document).on('click','.BtnConfirmarPago',ListadoChequesPropios.OpenConfirmarPagoDialog)
+        },
+
+        OpenConfirmarPagoDialog: function () {
+            var RowId = $(this).closest('tr').attr('id');
+            $('#listadoChequesPropios-marcarpago').OpenFormDialog('@Url.Action("ConfirmarPago")/' + RowId, 'Confirmar Pago');
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridChequesPropios', 'Listado de Cheques Propios');
+        },
+
+        VerDetalleDialog: function () {
+            var RowId = $(this).closest('tr').attr('id');
+            var opt = {
+                width: 900, height: 600,
+                openCallback: function () {
+                    $('#GridChequePropio').resizeGrid('GridChequePropio_Container');
+                }
+            };
+            $('#listadoChequesPropios-detalle-dialog').OpenFormDialog('@Url.Action("DetalleChequePropio")?Id=' + $(this).data('id') + '&opensDialog=true', 'Detalle Cheque PropioN°' + RowId, opt);
+        },
+
+        OnProveedorChange: function () {
+            var Id = $('#ProveedorID').val();
+            if (Id == "") { return; }
+            valid = ListadoChequesPropios.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetProveedor", "Proveedores", new { Area = "Compras" })',
+                data: { IdProveedor: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        var Proveedor = ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')';
+                        $('#Proveedor_Id').select2('data', { id: Id, text: Proveedor });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Proveedor no existe!', 'error');
+                        $('#Proveedor_Id').select2('data', null);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnProveedorSelected: function (e) {
+            $('#ProveedorID').val(e.val)
+        },
+
+        OnCuentaBancariaChange: function () {
+            var Id = $('#CuentaBancariaID').val();
+            if (Id == "") { return; }
+            valid = ListadoChequesPropios.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetCuentaBancaria", "CuentasBancarias" )',
+                data: { Id: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        var CuentaBancaria = ret.Data.Nombre + '(' + ret.Data.Numero + ')';
+                        $('#CuentaBancaria_Id').select2('data', { id: Id, text: CuentaBancaria });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('La Cuenta Bancaria no existe!', 'error');
+                        $('#CuentaBancaria_Id').select2('data', null);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnCuentaBancariaSelected: function (e) {
+            $('#CuentaBancariaID').val(e.val)
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridChequesPropios").setGridParam({ datatype: 'json' });
+            $('#GridChequesPropios').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '@Url.Action("DetalleChequePropio")/' + rowObject.Id;
+            if (rowObject.Estado == '@Entregado') {
+                ret += '<a class="boton boton-i BtnConfirmarPago" title="Marcar debito del Proveedor" data-Id="' + rowObject.Id + '"><i class="fa fa-calculator i-green"></i></a>';
+            }
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        },
+
+        NombreCtaBancariaFormatter: function (cellvalue, options, rowObject) {
+            if (typeof (rowObject['CuentaBancaria.Nombre']) != "undefined") {
+                return rowObject['CuentaBancaria.Banco.Nombre'] + '(' + rowObject['CuentaBancaria.Nombre'] + ')';
+            } else {
+                return rowObject.CuentaBancaria.Banco.Nombre + '(' + rowObject.CuentaBancaria.Nombre + ')';
+            }
+        },
+
+        LoadData: function () {
+            ListadoChequesPropios.CompletarFiltros();
+            valid = ListadoChequesPropios.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ListadoChequesPropios.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#ProveedorID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return { success: false, message: 'El N° de Proveedor no es correcto' };
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        }
+    }
+    </script>
+}

@@ -1,0 +1,131 @@
+﻿@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+@Styles.Render("~/Content/themes/base/css")
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+@using Woopin.SGC.Common.Json;
+<script type="text/javascript">
+    var ComprobanteDetalleId = 0;
+    var DetalleComprobanteVenta = {
+        init: function () {
+            var observaciones = @Html.Raw(JsonHelper.ToJson(Model.Observaciones));
+            $('#GridDetallesVenta').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', 'Cantidad', 'Descripción',  'IVA', '','Precio Unitario', 'Dto.','Total'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Articulo.Id', index: 'Articulo.Id', width: 0, sortable: false, hidden: true },
+                    { name: 'Cantidad', index: 'Cantidad', width: 10, align: "center", sortable: true },
+                    { name: 'Descripcion', index: 'Descripcion', width: 50, align: "left", sortable: true },
+                    { name: 'TipoIva.Data', index: 'TipoIva.Data', width: 20, align: "center", sortable: true },
+                    { name: 'IVA_Id', index: 'IVA', width: 20, align: "center", sortable: true, hidden: true },
+                    { name: 'PrecioUnitario', index: 'PrecioUnitario', width: 20, align: "center", sortable: true ,formatter: DetalleComprobanteVenta.FormatCurrency},
+                    { name: 'Descuento', index: 'Descuento', width: 10, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true,formatter: DetalleComprobanteVenta.FormatCurrency}
+                ],
+                sortname: 'Descripcion',
+                sortorder: "asc",
+                data: @Html.Raw(JsonHelper.ToJson(Model.Detalle)),
+                pager: '#GridDetallesVenta_pager'
+            });
+            $("#GridDetallesVenta").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            $('#MesPrestacion').mask('99-9999');
+            $('#Cotizacion').mask('99,999');
+
+            $(document).on('click', '.BtnEliminarCompleto', DetalleComprobanteVenta.EliminarComprobanteCompleto);
+            $(document).on('click', '.BtnEliminar', DetalleComprobanteVenta.AnularComprobante);
+            $.each(observaciones,function(i,observacion)
+            {
+                $('#GridDetallesVenta').jqGrid('addRowData', observacion.Id, observacion);
+            });
+            $('#BtnEnviarMail').click(DetalleComprobanteVenta.ConfirmarEnviarComprobante);
+            
+        },
+
+        FormatCurrency: function(cellvalue,options,row){
+            if(cellvalue == '' || typeof(cellvalue) == "undefined") return '';
+            return $.formatCurrency(cellvalue,options,row);
+        },
+
+        ConfirmarEnviarComprobante: function () {
+            var Id = $(this).data("id");
+            ConfirmationDialog.Show("Esta seguro que desea enviar por correo el comprobante?",
+                                    function () { DetalleComprobanteVenta.EnviarComprobante(Id) });
+        },
+
+        EnviarComprobante: function (Id) {
+            var params = {
+                url: '@Url.Action("EnviarMail")',
+                data: { Id: Id },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.WarningDialog("El correo ha sido agregado a la cola de envios, sera enviado en breve.", "success");
+                    }
+                    else {
+                        $.WarningDialog('Ha ocurrido un error, vuelva a intentarlo');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        AnularComprobante: function () {
+            var Id = $('.BtnEliminar').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea anular el comprobante? (No podrá utilizar el mismo nro de comprobante, para eso debe Eliminar)",
+                                    function () { DetalleComprobanteVenta.EliminarComprobante(Id) });
+        },
+
+        EliminarComprobanteCompleto: function () {
+            var Id = $('.BtnEliminarCompleto').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el comprobante? (Se habilitará el nro de comprobante eliminado)",
+                                    function () {  DetalleComprobanteCompra.EliminarComprobantePorCompleto(Id) });
+            window.location = '@Url.Action("Index")';
+        },
+
+        EliminarComprobante: function (Id) {
+            var params = {
+                url: '@Url.Action("AnularComprobante")',
+                data: { IdComprobante: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                            @:window.location.reload();
+                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        EliminarComprobantePorCompleto: function (Id) {
+            var params = {
+                url: '@Url.Action("EliminarComprobante")',
+                data: { IdComprobante: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                            @:window.location.reload();
+                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+        }
+            $.AjaxPost(params);
+        },
+    }
+    $(document).ready(function () {
+        DetalleComprobanteVenta.init();
+    });
+
+</script>

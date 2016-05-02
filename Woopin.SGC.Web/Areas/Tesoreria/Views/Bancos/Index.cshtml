@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "Bancos";
+    ViewBag.SectionIcon = "bank";
+    ViewBag.SectionTitle = "Listado de Bancos";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Banco">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Banco
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Banco..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridBancos"></table>
+    <div id="GridBancos_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+    var ListadoBancos = {
+        Nuevo: function () {
+            $('#create-dialog').OpenFormDialog('@Url.Action("Nuevo")', '<i class="fa fa-bank"></i> Crear Banco', null);
+        },
+
+        Refresh: function () {
+            ClearSelectedRows('GridBancos');
+            ListadoBancos.ReloadGrid();
+        },
+
+        ReloadGrid: function () {
+            $("#GridBancos").setGridParam({ datatype: 'json' });
+            $('#GridBancos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        OnClickEliminar: function () {
+            var Id = [$(this).closest('tr').attr('id')];
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el banco seleccionado?",
+                        function () { ListadoBancos.EliminarBancos(Id) });
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridBancos', 'Listado de Bancos');
+        },
+
+        EliminarBancos: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridBancos').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                            //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                            $("#GridBancos").jqGrid("clearGridData", true);
+                            ListadoBancos.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+        },
+
+        OnClickEliminarSeleccionados: function () {
+            var SelectedIds = $.GetSelectedRows('GridBancos');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea eliminar los bancos seleccionados?",
+                        function () { ListadoBancos.EliminarBancos(SelectedIds) });
+            } else {
+                $.WarningDialog("No hay bancos seleccionados!");
+            }
+
+        },
+            
+        Editar: function () {
+            var Id = $(this).closest('tr').attr('id');
+            $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-bank"></i> Editar Banco', null);
+        },
+
+
+        init: function () {
+            $('#BtnExportXLS').click(ListadoBancos.ExportToExcel);
+            /* Binding del boton de crear*/
+            $('#BtnCreate').bind('click', ListadoBancos.Nuevo);
+
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', ListadoBancos.Refresh);
+
+            /* Binding de los checkbox, contador de seleccionados */
+            $.SetupSelectCount('GridBancos');
+            /* Eliminar Seleccionados */
+            $('#BtnDeleteSelected').click(ListadoBancos.OnClickEliminarSeleccionados);
+
+            /* Eliminar de Grilla */
+            $(document).on('click', '.BtnEliminar', ListadoBancos.OnClickEliminar);
+            /* Editar de la grilla */
+            // Abre nueva ventana
+            $(document).on('click', '.BtnEditar', ListadoBancos.Editar);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridBancos', ["Nombre"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridBancos').CreateCommonGrid({
+                url: '@Url.Action("GetAll")',
+                colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre Banco', 'Localizcion', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                    { name: 'Lugar.Nombre', index: 'Lugar.Nombre', width: 30, align: "center", sortable: true },
+                    { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                ],
+                sortname: 'Nombre',
+                sortorder: "asc",
+                pager: '#GridBancos_pager'
+            });
+            $('#GridBancos').trigger("reloadGrid");
+        }
+        }
+    $(document).ready(function () {
+        ListadoBancos.init();
+    });
+    </script>
+}

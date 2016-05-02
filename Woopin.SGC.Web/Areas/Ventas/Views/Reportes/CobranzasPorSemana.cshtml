@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Comprobantes Ventas";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Cobranzas por Semana";
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridCobranzasPorSemana"></table>
+    <div id="GridCobranzasPorSemana_pager"></div>
+</div>
+<div id="CobranzasPorSemana-detalle-dialog"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            CobranzasPorSemana.init();
+        });
+
+        var CobranzasPorSemana = {
+
+            init: function () {
+                $('#BtnExportXLS').click(CobranzasPorSemana.ExportToExcel);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridCobranzasPorSemana', ["Fecha", "Comprobante"]);
+                $('#BtnRefresh').bind('click',CobranzasPorSemana.ReloadGrid);
+                /* Armo la grilla del ABM */
+                $('#GridCobranzasPorSemana').CreateCommonGrid({
+                    url: '@Url.Action("GetAllCobranzasPorSemana")',
+                    colNames: ['', 'Cliente', 'Tipo de Comprobante', 'Numero de Comprobante', 'Semana de Cobro', 'Fecha', 'Fecha de Vencimiento', 'Importe', 'Contacto de Cobro', 'Observación', '', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Cliente', index: 'Cliente.RazonSocial', width: 25, align: "center", sortable: true },
+                        { name: 'TipoComprobante', index: 'TipoComprobante', width: 25, align: "center", sortable: true },
+                        { name: 'Comprobante', index: 'Comprobante', width: 25, align: "center", sortable: true },
+                        { name: 'SemanaEstipuladaCobro', index: 'SemanaEstipuladaCobro', width: 25, align: "center", sortable: true, sorttype: function (cell, row) { return row.FechaEstipuladaCobro } },
+                        { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'FechaVencimiento', index: 'FechaVencimiento', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Importe', index: 'Importe', width: 25, align: "center", sortable: true, formatter: $.formatCurrency, summaryType: 'sum', summaryTpl: '<b>Total: {0}</b>' },
+                        { name: 'ContactoCobro', index: 'ContactoCobro', width: 25, align: "center", sortable: true },
+                        { name: 'Observacion', index: 'Observacion', width: 25, align: "center", sortable: true, editable: true, edittype: 'text' },
+                        { name: 'Acciones', index: 'Acciones', width: 25, align: "center", sortable: true, formatter: CobranzasPorSemana.AccionesFormatter },
+                        { name: 'FechaEstipuladaCobro', index: 'FechaEstipuladaCobro', width: 30, align: "center", sortable: true, hidden: true }
+                    ],
+                    sortname: 'FechaEstipuladaCobro',
+                    sortorder: "asc",
+                    pager: '#GridCobranzasPorSemana_pager',
+                    rowList: [50, 100, 200],
+                    rowNum: 50,
+                    grouping: true,
+                    groupingView: {
+                        groupField: ['SemanaEstipuladaCobro'],
+                        groupColumnShow: [false],
+                        groupText: ['<b>{0} - {1} Factura(s)</b>'],
+                        groupSummary: [true]
+                    },
+                    height: 700,
+                    cellEdit: true,
+                    cellsubmit: 'clientArray',
+                    afterSaveCell: function (rowId, cellname, value, iRow, iCol) {
+                        CobranzasPorSemana.SaveObservacion(rowId, cellname, value, iRow, iCol);
+                    }
+                });
+                $('#GridCobranzasPorSemana').trigger("reloadGrid");
+                $(document).on('click', '.BtnVerDialog', CobranzasPorSemana.VerDetalleDialog);
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridCobranzasPorSemana', 'Cobranzas por Semana');
+            },
+
+            ReloadGrid: function () {
+                $('#SelectCount').html('0');
+                $("#GridCobranzasPorSemana").setGridParam({ datatype: 'json' });
+                $('#GridCobranzasPorSemana').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            SaveObservacion: function (rowId, cellname, value, iRow, iCol) {
+                
+                var params = {
+                    url: '@Url.Action("Editar", "ComprobantesVentas")',
+                    data: {
+                        IdComprobante: rowId,
+                        Observacion: value
+                    },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+
+                        }
+                        else {
+                            $.WarningDialog('No se pudo modificar');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            VerDetalleDialog: function () {
+                var IdEntidad = $(this).data('id');
+                var RowId = $(this).closest('tr').attr('id');
+                var row = $("#GridCobranzasPorSemana").getRowData(RowId);
+                var opt = {
+                    width: 950, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesVenta').resizeGrid('GridDetallesVenta_Container');
+
+                    }
+                };
+                $('#CobranzasPorSemana-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","ComprobantesVentas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.Letra + row.Numero, opt);
+            },
+
+            AccionesFormatter: function (cellvalue, options, rowObject) {
+                var ret = '';
+                var url = '@Url.Action("Detalle", "ComprobantesVentas")/' + rowObject.Id;
+                ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+                ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '" data-entidad="' + rowObject.Entidad + '"><i class="fa fa-files-o i-green"></i></a>';
+                return ret;
+            }
+
+        }
+
+    </script>
+}

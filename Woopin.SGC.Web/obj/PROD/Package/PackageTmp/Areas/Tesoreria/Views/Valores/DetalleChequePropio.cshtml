@@ -1,0 +1,93 @@
+﻿@using Woopin.SGC.Web.HtmlHelper
+@model Woopin.SGC.Model.Tesoreria.ChequePropio
+
+@{
+    if (ViewBag.OpensDialog)
+    {
+        Layout = null;
+    }
+    ViewBag.Title = "Detalle Cheque Propio" + Model.Id;
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Detalle Cheque Propio" + Model.Id;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        @if (!ViewBag.OpensDialog)
+{
+    <div class="" style="float:left;">
+        <div class="col-md-12">
+            <a class="boton place-left" href='@Url.Action("IndexChequePropio")' ><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+        </div>
+    </div>
+}
+        @Html.LabelStatus(@Model.Estado.ToString(), (int)@Model.Estado, (bool)ViewBag.OpensDialog)
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Proveedor, new { @class = "col-md-3 horizontal-label readonly-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="number" id="ProveedorID" name="ProveedorID" class="col-md-2" style="margin-top: 7px;padding:0;" readonly value="@Model.Proveedor.Id" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="text" id="Proveedor_Id" name="Proveedor.Id" class="textinput" value="@Model.Proveedor.RazonSocial" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-5 horizontal-label" })
+                    <div class="col-md-7 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@Model.Fecha.ToString("dd/MM/yyyy")">
+                    </div>
+                </div>
+
+                
+            </div>
+            <div class="col-md-12">
+                
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.CuentaBancaria.Nombre, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.CuentaBancaria.Nombre, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Numero, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Importe, new { @class = "col-md-5 horizontal-label readonly-label" })
+                    <div class="col-md-7 input-container">
+                        @Html.TextBoxFor(model => model.Importe, new { @class = "textinput", @readonly = "readonly", @Value = Model.Importe.ToString("C") })
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </fieldset>
+}
+<div class="col-md-12 table-container detalles" id="GridDetallesChequePropio_Container">
+    <table id="GridDetallesChequePropio"></table>
+    <div id="GridDetallesChequePropio_pager"></div>
+</div>
+
+<div class="clearfix"></div>
+@section Scripts{
+    @Html.Partial("js/_DetalleChequePropio");
+}
+@if (ViewBag.OpensDialog)
+{
+    Html.RenderPartial("js/_DetalleChequePropio");
+}

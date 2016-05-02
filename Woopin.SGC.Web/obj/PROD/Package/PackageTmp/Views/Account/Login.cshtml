@@ -1,0 +1,132 @@
+﻿@model Woopin.SGC.Web.Models.LoginModel
+
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_Layout_LogIn.cshtml";
+}
+
+<div id="loginForm">
+    <div class="innerDiv">
+        <div style="clear:both; border-bottom:solid 1px rgb(224,224,224); margin-bottom:20px;">
+            <h4>Sistema de Gestión Integral</h4>
+        </div>
+
+        <div class="row text-center" style="margin-bottom:25px;">
+            @*<img id="logoCliente" src="@Url.Content("~/Images/LogoWoopin.png")" border="0" />*@
+        </div>
+        <div id="Alert-Container"></div>
+        <div style="clear:both; margin-bottom:10px;" id="formDiv">
+            @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+                <div class="form-horizontal">
+                    <div class="form-group @if (!ViewData.ModelState.IsValidField("UserName"))
+                                       { @Html.Raw("has-error");
+                                       }">
+                        @Html.LabelFor(m => m.UserName, new { @class = "control-label col-md-12" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "text-input"})
+                            @Html.ValidationMessageFor(m => m.UserName, null, new { @class = "help-block" })
+                        </div>
+
+                    </div>
+                    <div class="form-group @if (!ViewData.ModelState.IsValidField("Password"))
+                                       { @Html.Raw("has-error");
+                                       }">
+                        @Html.LabelFor(m => m.Password, new { @class = "control-label col-md-12" })
+                        <div class="col-md-8">
+                            @Html.PasswordFor(m => m.Password, new { @class = "text-input" })
+                            @Html.ValidationMessageFor(m => m.Password, null, new { @class = "help-block" })
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="row" style="margin-top:25px;">
+                    <div class="col-md-4 text-center col-md-offset-5" style="margin: 0% 0% 0% 35%;">
+                        <a class="boton" id="BtnSubmit"><i class="fa fa-sign-in"></i>  Ingresar</a>
+                    </div>
+                </div>
+            }
+            </>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    body {
+        background: url(/Images/bg2.jpg) no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/Images/bg2.jpg', sizingMethod='scale');
+        -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/Images/bg2.jpg', sizingMethod='scale')";
+        color: #666;
+    }
+    #loginForm {
+        clear: both;
+        width: 450px;
+        background: rgba(0,0,0,0.42);
+        border-radius: 13px;
+        -webkit-border-radius: 13px;
+        -moz-border-radius: 13px;
+        /*padding: 2px 2px;
+        background: rgba(250, 250, 250,0.955);
+        */
+        margin:auto;
+        box-shadow: rgba(204,204,204,0.5) 0px 5px 3px 3px;
+    }
+    .innerDiv {
+        border: solid 1px rgb(224,224,224);
+        padding: 10px 10px;
+        border-radius: 13px;
+        -webkit-border-radius: 13px;
+        -moz-border-radius: 13px;
+    }
+    #loginForm .innerDiv h4 {
+        color: #eeeeee;
+        margin: 2% 25%;
+        font-weight: normal !important;
+        font-family: inherit;
+    }
+    .row {margin-left: 0px;}
+    input[type=text], input[type="password"] {
+        /*-webkit-appearance: none;
+        appearance: none;
+        -moz-appearance: none;*/
+        border: none;
+        border-bottom: 1px solid rgb(224,224,224);
+        padding: 4px 2px;
+        background-color: rgb(217,217,217,0.85);
+        width: 100%;
+    }
+    .form-horizontal .form-group label {
+        color:#DFDFDF;
+    }
+    .form-horizontal .form-group input.text-input {
+        margin: 1% 30%;
+    }
+    .etiqueta {padding-top: 4px;}
+</style>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success)
+                    {
+                        $.ShowLoader();
+                        window.location = data.ReturnUrl == null ? '/' : data.ReturnUrl;
+                    }
+                    else
+                    {
+                        $('#Alert-Container').NewAlert('error',data.ErrorMessage);
+                    }
+                    
+                }
+            });
+        });
+    </script>
+}

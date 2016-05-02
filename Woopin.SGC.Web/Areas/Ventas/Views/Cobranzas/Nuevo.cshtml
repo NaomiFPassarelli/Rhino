@@ -1,0 +1,447 @@
+﻿@using Woopin.SGC.Model.Tesoreria
+@using Woopin.SGC.Common.HtmlHelper
+@using Woopin.SGC.Common.HtmlModel
+@model Woopin.SGC.Model.Ventas.Cobranza
+
+@{
+    ViewBag.Title = "Nueva Cobranza";
+    ViewBag.SectionIcon = "check-square-o";
+    ViewBag.SectionTitle = "Nueva Cobranza";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div>
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check-circle-o i-green"></i> Crear Cobranza</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Cliente, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="text" id="ClienteID" name="ClienteID" class="col-md-2" style="margin-top: 7px;" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Cliente_Id" name="Cliente.Id" class="selectinput" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Numero, new { @class = "textinput", @id = "Numero" })
+                        @Html.ValidationMessageFor(model => model.Numero, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Tipo, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.DropDownListFor(model => model.Tipo.Id, (IEnumerable<SelectListItem>)ViewBag.Tipo, " Seleccione el tipo", new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.Tipo.Id, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Detalle, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Detalle, new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.Detalle, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text">
+                        @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.Total, new { @class = "col-md-3 horizontal-label readonly-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Total, new { @class = "textinput", @id = "Total", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Total, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+}
+<div class="row">
+    <a class="boton place-right" id="agregarComprobantes">
+        <i class="fa fa-plus-circle i-green"></i>Agregar Comprobantes
+    </a>
+</div>
+@* Grilla con los comprobantes que voy a pagar ahora -->*@
+<div class="table-container" id="GridDetallesCobranza_Container">
+    <table id="GridDetallesCobranza"></table>
+    <div id="GridDetallesCobranza_pager"></div>
+</div>
+
+<div class="row" style="margin-top:20px;">
+    <a class="boton place-right" id="agregarCobros">
+        <i class="fa fa-plus-circle i-green"></i>Agregar Cobro
+    </a>
+    <div class="col-md-5 place-right">
+        @Html.Label("Tipo de Valor", new { @class = "col-md-4 horizontal-label" })
+        <div class="col-md-8 input-container">
+            @Html.DropDownListForWAD(model => model.Detalle, (SelectCombo)ViewBag.Valores, " Seleccione el tipo", null, new { @class = "textinput", @id = "TipoValor" })
+        </div>
+    </div>
+    <div class="col-md-5 place-right">
+        @Html.Label("Total de Pagos", new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-8 input-container">
+            @Html.TextBox("TotalCobros", null, new { @class = "textinput", @id = "TotalCobros", @readonly = "readonly" })
+        </div>
+    </div>
+</div>
+@* Grilla con los Valores que voy a emitir ahora -->*@
+<div class="table-container" id="GridCobrosCobranza_Container">
+    <table id="GridCobrosCobranza"></table>
+    <div id="GridCobrosCobranza_pager"></div>
+</div>
+
+<div id="ComprobantesVentasACobrar-dialog"></div>
+<div id="IngresoValores-dialog"></div>
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante. Si presiona Aceptar, todos los cambios realizados se perderan.');
+        $(document).ready(function () {
+            Cobranza.init();
+        });
+        var rowIdAnt;
+        var rowIdAct;
+        var Cobranza = {
+            IdsGridRestricta: new Array(),
+
+
+            init: function () {
+                // Saca la validacion del Total
+                $('#Total').attr("data-val", false);
+                $('#comprobante-header').removeData('unobtrusiveValidation');
+                $('#comprobante-header').removeData('validator');
+                $.validator.unobtrusive.parse('#comprobante-header');
+                $('#Numero').mask('9999-99999999');
+                $('#Numero').onEnterKey(Cobranza.GetNumero)
+                $('#ClienteID').change(Cobranza.OnClienteChange);
+                $('#Cliente_Id').select2(
+                   {
+                       placeholder: "Seleccione Un Cliente",
+                       minimumInputLength: 2,
+                       ajax: {
+                           url: "@Url.Action("GetClientesCombo", "Clientes")",
+                           dataType: 'json',
+                           params: { type: "POST" },
+                           data: function (t, p) {
+                               return { where: t };
+                           },
+                           results: function (data, page) {
+                               return { results: data.Data.Items };
+                           }
+                       }
+                   });
+                $('#Cliente_Id').on("select2-selecting", Cobranza.OnClienteSelected);
+                $("#Fecha").datepicker({ dateFormat: 'dd/mm/yy' });
+
+                //Grilla de los comprobantes elegidos a abonar despues del popup
+                $('#GridDetallesCobranza').CreateCommonGrid({
+                    datatype: 'local',
+                    colNames: ['', '', '', 'Fecha','', 'Número de Comprobante', 'Total', 'Total Abonado', 'Importe a Cobrar'],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: ABM_Eliminar, align: "center" },
+                        { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Letra', index: 'Letra', width: 0, sortable: false, hidden: true },
+                        { name: 'Numero', index: 'Numero', width: 30, align: "center", sortable: true, formatter: formatterFacturaLetraNumero },
+                        { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'TotalCobrado', index: 'TotalCobrado', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'Importe', index: 'Importe', width: 20, align: "center", sortable: true, template: GridCurrencyTemplate, editrules: { custom:true, custom_func: Cobranza.ValidateImporteChange} }
+                    ],
+                    sortname: 'Fecha',
+                    sortorder: "asc",
+                    pager: '#GridDetallesCobranza_pager',
+                    rowList: [5, 10, 15],
+                    rowNum: 5,
+                    cellEdit: true,
+                    cellsubmit: 'clientArray',
+                    afterEditCell: function (rowId, cellname, value, iRow, iCol) {
+                        Cobranza.AfterEditCell(rowIdAnt, rowId, cellname, value, iRow, iCol);
+                    },
+                    afterSaveCell: Cobranza.CalcularTotal
+                });
+                $('#GridDetallesCobranza').trigger("reloadGrid");
+                $('#agregarComprobantes').on("click", Cobranza.OnAgregarComprobantes);
+                $('#agregarCobros').on("click", Cobranza.OnAgregarValor);
+                $("#GridDetallesCobranza").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+                $(document).on('click', '.BtnEliminar', Cobranza.OnEliminarClick);
+                $('#BtnSubmit').on('click', Cobranza.Save);
+                $('#Tipo_Id').attr('data-val-required', 'Es necesario un tipo');
+                $('#comprobante-header').reParseForm();
+                IngresoValores.Init('#GridCobrosCobranza', '#TotalCobros');
+                Cobranza.ValidarTieneValores();
+                Cobranza.ControlarSelectUnico();
+            },
+
+            ControlarSelectUnico: function () {
+                if (@ViewBag.Tipo.Count == 1) {
+                    $('#Tipo_Id').attr('disabled', 'disabled');
+                }
+            },
+
+            ValidarTieneValores: function(){
+                if ($('#TipoValor option').length == 1) {
+                    var msg = 'No posee configurado ningún valor para poder realizar la cobranza.<br/> Puede configurar los mismos desde la seccion de Tesoreria.';
+                    return $.WarningDialog(msg,'warning', function () {
+                        window.location = '@Url.Action("Index", "Valores", new { Area = "Tesoreria" })';
+                        });
+                }
+            },            
+
+            ValidateImporteChange: function (value, colname) {
+                var num = new Number(value);
+                if (isNaN(num)) {
+                    return [false, 'El valor ingresado no es un número'];
+                }
+                var rowData = $('#GridDetallesCobranza').getRowData(rowIdAct);
+                // Validacion de Salida del Importe
+                var maximoImporte = $.unformatCurrency(rowData.Total) - $.unformatCurrency (rowData.TotalPagado);
+                if (value > maximoImporte) {
+                    return [false,'El importe es mayor a lo que se debe cobrar de la factura' + $.formatCurrency(maximoImporte)];
+                }
+                return [true];
+            },
+
+            AfterEditCell: function (rowIdAnt, rowId, cellname, value, iRow, iCol) {
+                if (rowIdAnt == undefined) {
+                    rowIdAnt = rowId;
+                }
+                rowIdAct = rowIdAnt;
+                rowIdAnt = rowId;
+                Cobranza.CalcularTotal();
+            },
+
+            CalcularTotal: function(){
+                var comprobantes = $("#GridDetallesCobranza").jqGrid('getGridParam', 'data')
+                var totalACancelar = 0;
+                $.each(comprobantes, function (i, comp) {
+                    totalACancelar += $.unformatCurrency(Number(comp.Importe));
+                });
+                $('#Total').val($.formatCurrency(totalACancelar));
+                return totalACancelar;
+            },
+
+            OnClienteChange: function () {
+                Cobranza.ResetComprobantesGrid();
+                var Id = $('#ClienteID').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return $.WarningDialog('El N° de Cliente no es correcto');
+                }
+                var params = {
+                    url: '@Url.Action("GetCliente", "Clientes")',
+                    data: { IdCliente: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            var CliYCuit = ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')';
+                            $('#Cliente_Id').select2('data', { id: Id, text: CliYCuit });
+                            $('#Detalle').val('Cobro a Cliente: ' + CliYCuit)
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('El Cliente no existe!');
+                            $('#Cliente_Id').select2('data', null);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            GetNumero: function () {
+                var numero = $('#Numero').val();
+                if (numero == "" || numero.length < 4) {
+                    return $.WarningDialog('Es necesario introducir un talonario valido!', 'error');
+                }
+                var talonario = numero.split('-')[0];
+                var params = {
+                    url: '@Url.Action("GetNumeroByTalonario")',
+                    data: { Talonario: talonario },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $('#Numero').val(ret.Numero);
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('Ha ocurrido un error, vuelva a intentarlo!', 'error');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClienteSelected: function (e) {
+                $('#ClienteID').val(e.val)
+            },
+
+
+            ResetComprobantesGrid: function(){
+                $("#GridDetallesCobranza").jqGrid("clearGridData", true).trigger("reloadGrid");
+                Cobranza.IdsGridRestricta = [];
+                IngresoValores.ClearValores();
+                $('#Total').val("");
+            },
+
+            OnAgregarComprobantes: function (e) {
+                if($('#Cliente_Id').val() == ""){
+                    $.WarningDialog('Debe seleccionar un Cliente!')
+                }else{
+                    $('#ComprobantesVentasACobrar-dialog').OpenFormDialog(
+                        '@Url.Action("ComprobantesACobrar", "ComprobantesVentas")?IdCliente=' + $("#ClienteID").val(),
+                        '<i class="fa fa-folder-o"></i> Comprobantes a Cobrar',
+                    { width: 800 });
+                }
+            },
+
+            Save: function () {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                    return;
+
+                $('#BtnSubmit').attr('disabled', 'disabled');
+                if ($('#Cliente_Id').select2('data') == null) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $.WarningDialog('Debe elegir un Cliente antes de emitir la cobranza!');
+                    return;
+                }
+                if (!$('#comprobante-header').valid())
+                {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return;
+                }
+                $('#Tipo_Id').attr('disabled', false);
+                var eCobranza = $('#comprobante-header').serializeFormJSON();
+                var comprobantesGrid = $('#GridDetallesCobranza').jqGrid('getGridParam', 'data');
+                if (comprobantesGrid.length == 0)
+                {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $.WarningDialog('Es necesario que agregue al menos un comprobante.');
+                    return;
+                }
+                $('#GridDetallesCobranza').jqGrid('editCell', 0, 0, false);
+
+                eCobranza.Comprobantes = new Array();
+
+                for (var i = 0; i < comprobantesGrid.length; i++) {
+                    if (comprobantesGrid[i].Importe <= 0) {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $.WarningDialog('Es necesario que el importe a cobrar de todos los comprobantes sea mayor a cero');
+                        return;
+                    }
+                    var item = {
+                        ComprobanteVenta: { Id: comprobantesGrid[i].Id },
+                        Importe: comprobantesGrid[i].Importe,
+                        Cobrado: comprobantesGrid[i].TotalCobrado
+                    };
+                    eCobranza.Comprobantes.push(item);
+                }
+
+                var NoValoresErrorMsg = 'Es necesario que agregue al menos un medio de cobro.';
+                var Valores = IngresoValores.GetValores(NoValoresErrorMsg);
+                var MsgErrorPagos = null;
+                eCobranza.Valores = new Array();
+                $.each(Valores, function (i, valor) {
+                    if (valor.Importe <= 0) {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        MsgErrorPagos = 'Es necesario que el importe de todos los medios de cobro sean mayor a cero';
+                        return false;
+                    }
+                    eCobranza.Valores.push({ Id: 0, Valor: valor });
+                });
+                if (MsgErrorPagos != null) {
+                    return $.WarningDialog(MsgErrorPagos);
+                }
+                var TotalCobros = IngresoValores.CalcularTotales();
+                var TotalComprobantes = Cobranza.CalcularTotal();
+                if ($.parseCurrency(TotalCobros) != $.parseCurrency(TotalComprobantes)) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $.WarningDialog('Hay una diferencia entre el saldo a cancelar y los cobros ingresados ');
+                    return;
+                }
+
+                if ($.parseCurrency(TotalCobros) <= 0 || $.parseCurrency(TotalComprobantes) <= 0) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $.WarningDialog('El saldo de la cobranza debe ser mayor a cero ');
+                    return;
+                }
+
+                var postParams = {
+                    url: "@Url.Action("Nuevo")",
+                    data: { Cobranza: eCobranza },
+                    success: function (data) {
+                        if (data.Success) {
+                            if (data.NuevoNumero != null) {
+                                $.WarningDialog('El N° de Cobranza ha sido tomado, su nuevo N° es ' + data.NuevoNumero, 'warning',
+                                    function () {
+                                        Cobranza.OnFinishSave(data.Cobranza)
+                                    });
+                            }
+                            else {
+                                Cobranza.OnFinishSave(data.Cobranza);
+                            }
+                        }
+                        else {
+                            $('#BtnSubmit').removeAttr('disabled');
+                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        }
+                    }
+                }
+                $.AjaxPost(postParams);
+            },
+
+            OnEliminarClick: function () {
+                var Id = $(this).closest('tr').attr('id');
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el comprobante?",
+                        function () { Cobranza.EliminarComprobante(Id) });
+            },
+
+            EliminarComprobante: function (Id) {
+                indexDelet = Cobranza.IdsGridRestricta.indexOf(Id);
+                Cobranza.IdsGridRestricta.splice(indexDelet, 1);
+                $('#GridDetallesCobranza').jqGrid('delRowData', Id);
+                Cobranza.CalcularTotal();
+            },
+
+            OnFinishSave: function (Cobranza) {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Detalle")/' + Cobranza.Id;
+            },
+
+            OnAgregarValor: function () {
+                if ($('#Cliente_Id').select2('data') == null) {
+                    $.WarningDialog('Debe elegir un Cliente antes de cargar un comprobante de cobro!');
+                    return;
+                }
+                var tipo = $('#TipoValor').val();
+                if (tipo != "") {
+                    IngresoValores.Nuevo(tipo,$('#TipoValor option:selected').data('ad'));
+                }
+            }
+        }
+
+    </script>
+    @Html.Partial("~/Areas/Tesoreria/Views/Valores/js/_IngresoValores.cshtml");
+}

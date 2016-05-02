@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Articulos";
+    ViewBag.SectionIcon = "cubes";
+    ViewBag.SectionTitle = "Listado de Articulos";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Articulo" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Articulo
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Articulo..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridArticulos"></table>
+    <div id="GridArticulos_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoArticulos = {
+
+            Refresh: function () {
+                ClearSelectedRows('GridArticulos');
+                ListadoArticulos.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridArticulos").setGridParam({ datatype: 'json' });
+                $('#GridArticulos').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            OnClickEliminar: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Articulo seleccionado?",
+                            function () { ListadoArticulos.Eliminar(Id) });
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridArticulos', 'Listado de Articulos');
+            },
+
+            Eliminar: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridArticulos').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridArticulos');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Articulos seleccionados?",
+                            function () { ListadoArticulos.Eliminar(SelectedIds) });
+                } else {
+                    $.WarningDialog("No hay Articulos seleccionados!");
+                }
+
+            },
+
+            Editar: function () {
+                $.ShowLoader();
+                var Id = $(this).closest('tr').attr('id');
+                window.location = '@Url.Action("Editar")/' + Id;
+            },
+
+            init: function () {
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoArticulos.Refresh);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridArticulos');
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoArticulos.OnClickEliminarSeleccionados);
+
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoArticulos.OnClickEliminar);
+                /* Editar de la grilla */
+                // Abre nueva ventana
+                $(document).on('click', '.BtnEditar', ListadoArticulos.Editar);
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridArticulos', ["RazonSocial", "CUIT", "Direccion"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridArticulos').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Descripcion', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Descripcion', index: 'RazonSocial', width: 30, align: "center", sortable: true },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'RazonSocial',
+                    sortorder: "asc",
+                    pager: '#GridArticulos_pager'
+                });
+                $('#GridArticulos').trigger("reloadGrid");
+                $('#BtnExportXLS').click(ListadoArticulos.ExportToExcel);
+            }
+
+        }
+        $(document).ready(function () {
+            ListadoArticulos.init();
+        });
+    </script>
+}

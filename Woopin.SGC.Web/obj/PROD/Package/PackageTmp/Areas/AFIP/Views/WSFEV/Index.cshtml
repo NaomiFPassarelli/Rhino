@@ -1,0 +1,320 @@
+﻿@{
+    ViewBag.Title = "Interfaces con la AFIP";
+    ViewBag.SectionIcon = "folder-o";
+    ViewBag.SectionTitle = "Interfaces con la AFIP";
+}
+<div class="col-md-6" style="padding:0;">
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Monedas</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="Moneda_Id" name="Moneda.Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Tipos de Comprobante</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="TipoComprobante_Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Paises</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="Paises_Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Documentos</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="Documentos_Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">IVAs</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="IVA_Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Mis Puntos de Venta</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="PuntosVenta_Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Conceptos</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="Conceptos_Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Opcionales</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="Opcionales_Id" class="selectinput" />
+        </div>
+    </div>
+    <div class="row" style="padding:0;">
+        <div class="col-md-4" style="padding:0;">Tributos</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="Tributos_Id" class="selectinput" />
+        </div>
+    </div>
+</div>
+<div class="col-md-6" style="padding:10px;">
+    <div class="row" style="padding:10px;border:1px solid #c1c1c1;">
+        <div class="col-md-12" style="padding:0;">
+            <h2>Consultar ultimo comprobante</h2>
+        </div>
+        <div class="col-md-4" style="padding:0;">Punto de venta</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="PuntoVenta_Consulta_Id" class="selectinput" />
+        </div>
+        <div class="col-md-4" style="padding:0;">Tipo Comprobante</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="TipoComprobante_Consulta_Id" class="selectinput" />
+        </div>
+        <div class="col-md-12" style="padding:0;text-align:center;">
+            <a class="boton i-blue pull-right" id="BtnSearchUltimo">Buscar <i class="fa fa-search"></i></a>
+        </div>
+        <div class="col-md-4" style="padding:0;">Respuesta</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="text" id="ConsultaUltimo" />
+        </div>
+    </div>
+    <div class="row" style="padding:10px;border:1px solid #c1c1c1;">
+        <div class="col-md-12" style="padding:0;">
+            <h2>Buscar comprobante</h2>
+        </div>
+        <div class="col-md-4" style="padding:0;">Punto de venta</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="PuntoVenta_Buscar_Id" class="selectinput" />
+        </div>
+        <div class="col-md-4" style="padding:0;">Tipo Comprobante</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="hidden" id="TipoComprobante_Buscar_Id" class="selectinput" />
+        </div>
+        <div class="col-md-4" style="padding:0;">Numero</div>
+        <div class="col-md-8" style="padding:0;">
+            <input type="text" id="Buscar_Numero" />
+        </div>
+        <div class="col-md-12" style="padding:0;text-align:center;">
+            <a class="boton i-blue pull-right" id="BtnBuscar">Buscar <i class="fa fa-search"></i></a>
+        </div>
+        <div class="col-md-4" style="padding:0;">Respuesta</div>
+        <pre class="col-md-8" style="padding:0;overflow:scroll;height:200px;text-wrap:normal;" id="Respuesta_Buscar">
+            
+        </pre>
+    </div>
+
+</div>
+<div class="clearfix"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        WSFEV.init();
+    });
+
+    var WSFEV = {
+
+        init: function () {
+            $('#Moneda_Id').select2(
+                    {
+                        width: '100%',
+                        placeholder: "Seleccione una moneda",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetMonedas")",
+                            dataType: 'json',
+                            params: { type: "POST" },
+                            data: function (t, p) {
+                                return { where: t };
+                            },
+                            results: function (data, page) {
+                                return { results: data.Data.Items };
+                            }
+                        }
+                    });
+            $('#TipoComprobante_Id,#TipoComprobante_Consulta_Id,#TipoComprobante_Buscar_Id').select2(
+                    {
+                        width: '100%',
+                        placeholder: "Seleccione un tipo comprobante",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetComprobantes")",
+                            dataType: 'json',
+                            params: { type: "POST" },
+                            data: function (t, p) {
+                                return { where: t };
+                            },
+                            results: function (data, page) {
+                                var items = [];
+                                for (var i = 0; i < data.Data.Items.length; i++) {
+                                    var current = data.Data.Items[i].text;
+                                    items.push({ id: current.split('-')[0], text: current.split('-')[1] });
+                                }
+                                return { results: items };
+                            }
+                        }
+                    });
+            $('#PuntosVenta_Id,#PuntoVenta_Consulta_Id,#PuntoVenta_Buscar_Id').select2(
+                    {
+                        width: '100%',
+                        placeholder: "Seleccione un punto de venta",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetPuntosVenta")",
+                            dataType: 'json',
+                            params: { type: "POST" },
+                            data: function (t, p) {
+                                return { where: t };
+                            },
+                            results: function (data, page) {
+                                var items = [];
+                                for (var i = 0; i < data.Data.Items.length; i++) {
+                                    var current = data.Data.Items[i].text;
+                                    items.push({ id: current, text: current });
+                                }
+                                return { results: items };
+                            }
+                        }
+                    });
+            $('#Paises_Id').select2(
+                        {
+                            width: '100%',
+                            placeholder: "Seleccione un pais",
+                            minimumInputLength: 0,
+                            ajax: {
+                                url: "@Url.Action("GetPaises")",
+                                dataType: 'json',
+                                params: { type: "POST" },
+                                data: function (t, p) {
+                                    return { where: t };
+                                },
+                                results: function (data, page) {
+                                    return { results: data.Data.Items };
+                                }
+                            }
+                        });
+            $('#Documentos_Id').select2(
+                        {
+                            width: '100%',
+                            placeholder: "Seleccione un documento",
+                            minimumInputLength: 0,
+                            ajax: {
+                                url: "@Url.Action("GetDocumentos")",
+                                dataType: 'json',
+                                params: { type: "POST" },
+                                data: function (t, p) {
+                                    return { where: t };
+                                },
+                                results: function (data, page) {
+                                    return { results: data.Data.Items };
+                                }
+                            }
+                        });
+            $('#IVA_Id').select2(
+                        {
+                            width: '100%',
+                            placeholder: "Seleccione tipo iva",
+                            minimumInputLength: 0,
+                            ajax: {
+                                url: "@Url.Action("GetTiposIvas")",
+                                dataType: 'json',
+                                params: { type: "POST" },
+                                data: function (t, p) {
+                                    return { where: t };
+                                },
+                                results: function (data, page) {
+                                    return { results: data.Data.Items };
+                                }
+                            }
+                        });
+            $('#Conceptos_Id').select2(
+                        {
+                            width: '100%',
+                            placeholder: "Seleccione concepto",
+                            minimumInputLength: 0,
+                            ajax: {
+                                url: "@Url.Action("GetConceptos")",
+                                dataType: 'json',
+                                params: { type: "POST" },
+                                data: function (t, p) {
+                                    return { where: t };
+                                },
+                                results: function (data, page) {
+                                    return { results: data.Data.Items };
+                                }
+                            }
+                        });
+            $('#Tributos_Id').select2(
+                        {
+                            width: '100%',
+                            placeholder: "Seleccione un tributo",
+                            minimumInputLength: 0,
+                            ajax: {
+                                url: "@Url.Action("GetTributos")",
+                                dataType: 'json',
+                                params: { type: "POST" },
+                                data: function (t, p) {
+                                    return { where: t };
+                                },
+                                results: function (data, page) {
+                                    return { results: data.Data.Items };
+                                }
+                            }
+                        });
+            $('#Opcionales_Id').select2(
+                        {
+                            width: '100%',
+                            placeholder: "Seleccione un opcional",
+                            minimumInputLength: 0,
+                            ajax: {
+                                url: "@Url.Action("GetOpcionales")",
+                                    dataType: 'json',
+                                    params: { type: "POST" },
+                                    data: function (t, p) {
+                                        return { where: t };
+                                    },
+                                    results: function (data, page) {
+                                        return { results: data.Data.Items };
+                                    }
+                                }
+                            });
+
+            $('#BtnSearchUltimo').click(WSFEV.SearchUltimoComprobante);
+            $('#BtnBuscar').click(WSFEV.BuscarComprobante);
+            },
+
+
+            SearchUltimoComprobante: function () {
+                var tipoComprobante = $('#TipoComprobante_Consulta_Id').val();
+                var ptoVenta = $('#PuntoVenta_Consulta_Id').val();
+
+                var params = {
+                    url: '@Url.Action("GetUltimoComprobante")',
+                    data: { PuntoVenta: ptoVenta, TipoComprobante: tipoComprobante },
+                    success: function (resp) {
+                        $('#ConsultaUltimo').val(resp.Data);
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            BuscarComprobante: function () {
+                var tipoComprobante = $('#TipoComprobante_Buscar_Id').val();
+                var ptoVenta = $('#PuntoVenta_Buscar_Id').val();
+                var nroComprobante = $('#Buscar_Numero').val();
+
+                var params = {
+                    url: '@Url.Action("GetComprobanteEmitido")',
+                    data: { PuntoVenta: ptoVenta, TipoComprobante: tipoComprobante, NroComprobante: nroComprobante },
+                    success: function (resp) {
+                        $('#Respuesta_Buscar').html(JSON.stringify(JSON.parse(resp.Data), undefined, 4));
+                    }
+                }
+                $.AjaxPost(params);
+            }
+        }
+    </script>
+}

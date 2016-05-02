@@ -1,0 +1,92 @@
+﻿@using Woopin.SGC.Web.HtmlHelper
+@model Woopin.SGC.Model.Tesoreria.Deposito
+
+@{
+    if (ViewBag.OpensDialog)
+    {
+        Layout = null;
+    }
+    ViewBag.Title = "Detalle Deposito " + Model.Id;
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Detalle Comprobante " + Model.Id;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        @if (!ViewBag.OpensDialog)
+{
+    <div class="" >
+        <div class="col-md-12">
+            <a class="boton place-left" href='@Url.Action("Index")' ><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+        </div>
+    </div>
+}
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Cuenta, new { @class = "col-md-3 horizontal-label readonly-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="number" id="CuentaID" name="CuentaID" class="col-md-2" style="margin-top: 7px;padding:0;" readonly value="@Model.Cuenta.Id" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="text" id="Cuenta_Id" name="Cuenta.Id" class="textinput" value="@Model.Cuenta.Nombre" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.FechaDeposito, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@Model.FechaDeposito.ToString("dd/MM/yyyy")">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.NumeroBoleta, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.NumeroBoleta, new { @class = "textinput", @id = "NumeroBoleta" })
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.FechaAcreditacion, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@Model.FechaAcreditacion.ToString("dd/MM/yyyy")">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Concepto, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Concepto, new { @class = "textinput" })
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Total, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        @Html.TextBoxFor(model => model.Total,"{0:C}", new { @class = "textinput", @id = "Total", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="col-md-12 table-container detalles" id="GridDetallesDeposito_Container">
+    <table id="GridDetallesDeposito"></table>
+    <div id="GridDetallesDeposito_pager"></div>
+</div>
+
+<div class="clearfix"></div>
+@section Scripts{
+    @Html.Partial("js/_Detalle");
+}
+@if (ViewBag.OpensDialog)
+{
+    Html.RenderPartial("js/_Detalle");
+}

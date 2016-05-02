@@ -1,0 +1,340 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    ViewBag.SectionIcon = "dashboard";
+    ViewBag.SectionTitle = "Dashboard";
+}
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat green-haze">
+            <a class="more" style="padding: 0px 0px; font-size: 14px; opacity: 1;">
+                <i class="m-icon-swapright m-icon-white" style="margin:0% 10%;float:none;">Compras</i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat purple-plum">
+            <a class="more" style="padding: 0px 0px; font-size: 14px; opacity: 1;">
+                <i class="m-icon-swapright m-icon-white" style="margin:0% 10%;float:none;">Ventas</i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat red-intense">
+            <a class="more" style="padding: 0px 0px; font-size: 14px; opacity: 1;">
+                <i class="m-icon-swapright m-icon-white" style="margin:0% 10%;float:none;">Tesoreria</i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat blue-madison">
+            <a class="more" style="padding: 0px 0px; font-size: 14px; opacity: 1;">
+                <i class="m-icon-swapright m-icon-white" style="margin:0% 10%;float:none;">Otros</i>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat green-haze">
+            <div class="visual">
+                <i class="fa fa-line-chart"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="ComprasMensual">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Mes Actual / Mes Anterior
+                </div>
+            </div>
+            <a class="more" style="padding: 13px 0px;">
+                <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat purple-plum">
+            <div class="visual">
+                <i class="fa fa-bar-chart-o"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="VentasMensual">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Mes Actual / Anterior
+                </div>
+            </div>
+            <a class="more" style="padding: 13px 0px;">
+                <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat red-intense">
+            <div class="visual">
+                <i class="fa fa-money"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="Disponibilidades">
+                   Cargando..
+                </div>
+                <div class="desc">
+                    Disponibilidades
+                </div>
+            </div>
+            <a class="more" style="padding: 13px 0px;">
+                <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat blue-madison">
+            <div class="visual">
+                <i class="fa fa-comments"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="ClienteProveedor">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Clientes / Proveedores
+                </div>
+            </div>
+            <a class="more" style="width: 50%; float: left;" href="@Url.Action("Index", "Clientes", new { Area = "Ventas" })">
+                Clientes <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+            <a class="more" style="float: left; width: 50%; clear: none;" href="@Url.Action("Index", "Proveedores", new { Area = "Compras" })">
+                Proveedores <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat green-haze">
+            <div class="visual">
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="ComprasMes">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Mes Actual
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("Index", "ComprobantesCompras", new { Area = "Compras" })">
+                Detalle <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat purple-plum">
+            <div class="visual">
+                <i class="fa fa-truck"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="VentasMes">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Mes Actual
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("Index", "ComprobantesVentas", new { Area = "Ventas" })">
+                Detalle <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat red-intense">
+            <div class="visual">
+                <i class="fa fa-cc"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="ValoresADepositar">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Valores a Depositar
+                </div>
+            </div>
+            <a class="more" style="padding: 13px 0px;">
+                <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat blue-madison">
+            <div class="visual">
+                <i class="fa fa-warning"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="FEPendiente">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Facturas Electronicas Pendientes
+                </div>
+            </div>
+            <a class="more" style="padding: 13px 0px;">
+                <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat green-haze">
+            <div class="visual">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="CantidadComprasVencidas">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Vencidas Mes Anterior / Total
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("Index", "ComprobantesCompras", new { Area = "Compras" })?start=@DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy")&end=@DateTime.Now.ToString("dd/MM/yyyy")&startvenc=@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")&endvenc=@DateTime.Now.ToString("dd/MM/yyyy")&statusType=Anulados">
+                Detalle <i class=" m-icon-swapright m-icon-white">
+                </i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat purple-plum">
+            <div class="visual">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="CantidadVentasVencidas">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Vencidas Mes Anterior / Total
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("Index", "ComprobantesVentas", new { Area = "Ventas" })?start=@DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy")&end=@DateTime.Now.ToString("dd/MM/yyyy")&startvenc=@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")&endvenc=@DateTime.Now.ToString("dd/MM/yyyy")&statusType=Anulados">
+                Detalle <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat red-intense">
+            <div class="visual">
+                <i class="fa fa-cc-visa"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="DeudasBancarias">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Pendiente a Cancelar con Bancos
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("Index", "PagosTarjetas", new { Area = "Tesoreria" })?start=@DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy")&end=@DateTime.Now.ToString("dd/MM/yyyy")&statusType=Pendientes">
+                Detalle <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat green-haze">
+            <div class="visual">
+                <i class="fa fa-bell"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="CantidadComprasPorVencer">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Por Vencer esta Semana
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("Index", "ComprobantesCompras", new { Area = "Compras" })?start=@DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy")&end=@DateTime.Now.ToString("dd/MM/yyyy")&startvenc=@DateTime.Now.ToString("dd/MM/yyyy")&endvenc=@DateTime.Now.AddDays(7).ToString("dd/MM/yyyy")&statusType=Pendientes">
+                Detalle <i class=" m-icon-swapright m-icon-white">
+                </i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat purple-plum">
+            <div class="visual">
+                <i class="fa fa-bell"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="CantidadVentasPorVencer">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Por Vencer esta Semana
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("Index", "ComprobantesVentas", new { Area = "Ventas" })?start=@DateTime.Now.AddMonths(-3).ToString("dd/MM/yyyy")&end=@DateTime.Now.ToString("dd/MM/yyyy")&startvenc=@DateTime.Now.ToString("dd/MM/yyyy")&endvenc=@DateTime.Now.AddDays(7).ToString("dd/MM/yyyy")&statusType=Pendientes">
+                Detalle <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat red-intense">
+            <div class="visual">
+                <i class="fa fa-cc"></i>
+            </div>
+            <div class="details">
+                <div class="number" id="ChequesNoDebitados">
+                    Cargando..
+                </div>
+                <div class="desc">
+                    Cheques no debitados
+                </div>
+            </div>
+            <a class="more" href="@Url.Action("IndexChequePropio", "Valores", new { Area = "Tesoreria" })?start=@DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy")&end=@DateTime.Now.ToString("dd/MM/yyyy")&statusType=Pendientes">
+                Detalle <i class="m-icon-swapright m-icon-white"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+    @section Scripts{
+        <script>
+            $(document).ready(function () {
+                Dashboard.Init();
+            });
+            var Dashboard = {
+                Init: function () {
+                    Dashboard.GetDashboard();
+                },
+
+                GetDashboard: function () {
+                    var parametros = {
+                        url: '@Url.Action("GetDashboard")',
+                        success: Dashboard.LoadDashboard,
+                        withoutLoader: true
+                    }
+                    $.AjaxPost(parametros);
+                },
+
+                LoadDashboard: function (data) {
+                    var info = data.Dashboard;
+                    $('#ComprasMes').html($.formatCurrency(info.ComprasMes));
+                    $('#ClienteProveedor').html(info.Clientes + '/' + info.Proveedores);
+                    $('#Disponibilidades').html($.formatCurrency(info.Disponibilidades));
+                    $('#ValoresADepositar').html($.formatCurrency(info.ValoresADepositar));
+                    $('#VentasMes').html($.formatCurrency(info.VentasMes));
+                    $('#ComprasMensual').html(info.ComprasMensual + '%');
+                    $('#VentasMensual').html(info.VentasMensual + '%');
+                    $('#CantidadComprasVencidas').html(info.ComprasVencidasMes + '/' + info.ComprasVencidas);
+                    $('#CantidadVentasVencidas').html(info.VentasVencidasMes + '/' + info.VentasVencidas);
+                    $('#CantidadComprasPorVencer').html(info.ComprasPorVencerSemana);
+                    $('#CantidadVentasPorVencer').html(info.VentasPorVencerSemana);
+                    $('#DeudasBancarias').html($.formatCurrency(info.DeudasBancarias));
+                    $('#FEPendiente').html(info.CantFEPendientes);
+                    $('#ChequesNoDebitados').html($.formatCurrency(info.ChequesADebitar));
+                }
+            }
+        </script>
+    }

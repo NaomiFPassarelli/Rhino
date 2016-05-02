@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "Ejemplos";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Ejemplo de Grilla con Arbol";
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Cuenta..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridGrillaArbol"></table>
+    <div id="GridGrillaArbol_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        EjemploGrilla.init();
+    });
+
+    var EjemploGrilla = {
+
+        init: function () {
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                EjemploGrilla.ReloadGrid();
+            });
+            $('#BtnExportXLS').click(EjemploGrilla.ExportToExcel);
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#EjemploGrilla', ["Fecha"]);
+
+            /* Armo la grilla */
+            $('#GridGrillaArbol').CreateCommonGrid({
+                url: '@Url.Action("GetAllCuentas")',
+                colNames: ['', 'Codigo', 'Nombre', 'Saldo'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Codigo', index: 'Codigo', width: 20, align: "center", sortable: true },
+                    { name: 'Nombre', index: 'Nombre', width: 20, align: "center", sortable: true },
+                    { name: 'Saldo', index: 'Saldo', width: 30, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Codigo',
+                sortorder: "asc",
+                pager: '#GridGrillaArbol_pager',
+                rowList: [15, 20, 25],
+                rowNum: 15,
+                treeGrid: true,
+                treeGridModel: 'adjacency',
+                ExpandColumn: 'Nombre'
+            });
+            $('#GridGrillaArbol').trigger("reloadGrid");
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridGrillaArbol', 'Listado de Cuentas');
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridGrillaArbol").setGridParam({ datatype: 'json' });
+            $('#GridGrillaArbol').setGridParam({ page: 1 }).trigger("reloadGrid");
+        }
+    }
+    </script>
+}

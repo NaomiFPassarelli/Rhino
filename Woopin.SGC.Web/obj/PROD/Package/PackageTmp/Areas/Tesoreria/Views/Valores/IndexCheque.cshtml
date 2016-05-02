@@ -1,0 +1,252 @@
+﻿@using Woopin.SGC.Common.Json;
+
+@{
+    ViewBag.Title = "Cheques";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Listado de Cheques";
+}
+<div class="action-bar row" style="margin-bottom:20px;">
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Banco</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="BancoID" name="BancoID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="Banco_Id" name="Banco.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Banco_Id" data-input="BancoID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="action-bar row" style="margin-bottom:20px;">
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Cliente</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="ClienteID" name="ClienteID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="Cliente_Id" name="Cliente.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Cliente_Id" data-input="ClienteID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a class="boton place-left" id="btnFilterByCliente" style="margin-top: 2px;">Filtrar <i class="fa fa-filter i-blue"></i></a>
+        </div>
+    </div>
+</div>
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Cheque..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <select id="FilterType" class="place-right" style="margin-top: 4px;margin-right: 10px;">
+        <option value="0">Todos</option>
+        <option value="1">En Cartera</option>
+        <option value="3">Depositados</option>
+        <option value="4">Devueltos</option>
+    </select>
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridCheques"></table>
+    <div id="GridCheques_pager"></div>
+</div>
+<div id="listadoCheques-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ListadoCheques.init();
+    });
+    var ListadoCheques = {
+        bancos: @Html.Raw(JsonHelper.ToJson(ViewBag.Bancos)),
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                ListadoCheques.LoadData();
+            });
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridCheques', ["Fecha", "Cliente.RazonSocial"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridCheques').CreateCommonGrid({
+                url: '@Url.Action("GetChequeFilter")',
+                serializeGridData: function (postData) {
+                    dates = {
+                        IdCliente: $('#ClienteID').val() != '' ? $('#ClienteID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                        filter: $('#FilterType').val(),
+                        IdBanco: $('#BancoID').val() != '' ? $('#BancoID').val() : 0
+                    }
+                    return JSON.stringify($.extend(postData, dates));
+                },
+                colNames: ['', 'Banco Emisor', 'Fecha de Creación', 'Cliente', 'Importe',   ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Banco.Nombre', index: 'Banco.Nombre', width: 200, align: "center", sortable: true },
+                    { name: 'FechaCreacion', index: 'FechaCreacion', width: 200, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Cliente.RazonSocial', index: 'Cliente.RazonSocial', width: 200, align: "center", sortable: true },
+                    { name: 'Importe', index: 'Importe', width: 200, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Acciones', index: 'Acciones', width: 100, align: "center", sortable: true, formatter: ListadoCheques.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                pager: '#GridCheques_pager',
+                rowList: [20, 40, 60],
+                rowNum: 20
+            });
+            $('#GridCheques').trigger("reloadGrid");
+            $('#Cliente_Id').select2(
+               {
+                   placeholder: "Seleccione Un Cliente",
+                   ajax: {
+                       url: "@Url.Action("GetClientesCombo", "Clientes", new { Area = "Ventas" } )",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#Cliente_Id').on("select2-selecting", ListadoCheques.OnClienteSelected);
+            $('#btnFilterByCliente').click(ListadoCheques.LoadData);
+            $(document).on('click', '.BtnVerDialog', ListadoCheques.VerDetalleDialog);
+            $('#ClienteID').change(ListadoCheques.OnClienteChange);
+            $('#Banco_Id').select2(
+               {
+                   placeholder: "Seleccione Un Banco",
+                   data: ListadoCheques.bancos
+            });
+            $('#Banco_Id').on("select2-selecting", ListadoCheques.OnBancoSelected);
+            $('#BancoID').change(ListadoCheques.OnBancoChange);
+            $('#BtnExportXLS').click(ListadoCheques.ExportToExcel);
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                ListadoCheques.ClearSelect2(IdClear, IdClearInput);
+            });
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridCheques', 'Listado de Cheques');
+        },
+
+        VerDetalleDialog: function () {
+            var RowId = $(this).closest('tr').attr('id');
+            var opt = {
+                width: 900, height: 600,
+                openCallback: function () {
+                    $('#GridCheque').resizeGrid('GridCheque_Container');
+                }
+            };
+            $('#listadoCheques-detalle-dialog').OpenFormDialog('@Url.Action("DetalleCheque")?Id=' + $(this).data('id') + '&opensDialog=true', 'Detalle Cheque N°' + RowId, opt);
+        },
+
+        OnBancoChange: function(){
+            $("#Banco_Id").select2("val", $('#BancoID').val());
+        },
+
+        OnClienteChange: function () {
+                var Id = $('#ClienteID').val();
+                if (Id == "") { return; }
+                valid = ListadoCheques.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetCliente", "Clientes", new { Area = "Ventas" })',
+                    data: { IdCliente: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            var Cliente = ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')';
+                            $('#Cliente_Id').select2('data', { id: Id, text: Cliente });
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('El Cliente no existe!', 'error');
+                            $('#Cliente_Id').select2('data', null);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+        OnClienteSelected: function (e) {
+            $('#ClienteID').val(e.val)
+        },
+
+        OnBancoSelected: function (e) {
+            
+            $('#BancoID').val(e.val)
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridCheques").setGridParam({ datatype: 'json' });
+            $('#GridCheques').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '@Url.Action("DetalleCheque")/' + rowObject.Id;
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        },
+
+        LoadData: function () {
+            ListadoCheques.CompletarFiltros();
+            valid = ListadoCheques.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ListadoCheques.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#ClienteID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return { success: false, message: 'El N° de Cliente no es correcto' };
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        }
+    }
+    </script>
+}

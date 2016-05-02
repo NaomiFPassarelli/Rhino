@@ -1,0 +1,155 @@
+﻿@model Woopin.SGC.Model.Reporting.GrupoEgreso
+
+@{
+    ViewBag.Title = "Editar Grupo Egreso";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Editar Grupo Egreso";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-save i-green"></i> Guardar Cambios</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-5 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>        
+        <div class="form-group  ">
+            @Html.Label("Grupo Padre", new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                @{
+                    int NodoPadreId = 0;
+                    var NodoPadreText = "Seleccionar el grupo asociado";
+                    if (Model.NodoPadre != null) {
+                        NodoPadreId = Model.NodoPadre.Id;
+                        NodoPadreText = Model.NodoPadre.Descripcion;
+                    }
+                }
+                <input type="hidden" id="NodoPadre_Id" name="NodoPadre.Id" class="selectinput" value="@NodoPadreId" text="@NodoPadreText" />
+            </div>
+        </div>
+        <div class="form-group  ">
+            @Html.Label("Rubro", new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                @{
+                    int RubroId = 0;
+                    var RubroText = "Seleccionar el rubro";
+                    if (Model.Rubro != null)
+                    {
+                        RubroId = Model.Rubro.Id;
+                        RubroText = Model.Rubro.Descripcion;
+                    }
+                }
+                <input type="hidden" id="Rubro_Id" name="Rubro.Id" class="selectinput" value="@RubroId" text="@RubroText" />
+            </div>
+        </div>
+        
+    </fieldset>
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GrupoEgresoEditar.init();
+        });
+        var GrupoEgresoEditar = {
+            init: function () {
+                $('#BtnSubmit').on('click', GrupoEgresoEditar.Save);
+                $('#NodoPadre_Id').prepend('<option></option>');
+                $('#NodoPadre_Id').select2(
+                    {
+                        placeholder: "Seleccionar el grupo asociado",
+                        minimumInputLength: 0,
+                        initSelection: function (element, callback) {
+                            var data = {
+                                id: ($(element).val()) ? $(element).val() : null,
+                                text: ($(element).attr('text')) ? $(element).attr('text') : null
+                            };
+                            callback(data);
+                        },
+                        ajax: {
+                            url: "@Url.Action("GetGruposEgresos")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { page: 0, where: t };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                    });
+                $('#NodoPadre_Id').select2("val", $('#NodoPadre_Id').val());
+        $('#Rubro_Id').prepend('<option></option>');
+        $('#Rubro_Id').select2(
+            {
+                placeholder: "Seleccionar el rubro",
+                minimumInputLength: 0,
+                initSelection: function (element, callback) {
+                    var data = {
+                        id: $(element).val(), text: $(element).attr('text')
+                    };
+                    callback(data);
+                },
+                ajax: {
+                    url: "@Url.Action("GetRubrosCombo", "Rubros", new { Area = "Compras" })",
+                dataType: 'json',
+                params: { type: "POST" },
+                data: function (t, p) {
+                    return { page: 0, where: t };
+                },
+                results: function (data, page) {
+                    return { results: data.Data.Items };
+                }
+            }
+        });
+                $('#Rubro_Id').select2("val", $('#Rubro_Id').val());
+        },
+
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
+
+            $('#BtnSubmit').attr('disabled', 'disabled');
+
+            var GrupoEgreso = {
+                Id: $('#Id').val(),
+                Descripcion: $('#Descripcion').val(),
+                NodoPadre: { Id: $('#NodoPadre_Id').val() },
+                Rubro: { Id: $('#Rubro_Id').val() }
+            }
+             
+            var postParams = {
+                url: "@Url.Action("Editar")",
+                data: { GrupoEgreso: GrupoEgreso },
+                success: function (data) {
+                if (data.Success) {
+                    window.location = '@Url.Action("Index")';
+                }
+                else {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                }
+            }
+        }
+        $.AjaxPost(postParams);
+        }
+
+
+
+        }
+    </script>
+}

@@ -1,0 +1,103 @@
+﻿@model IEnumerable<Woopin.SGC.Model.Contabilidad.Cuenta>
+@{
+    ViewBag.Title = "GetPlanCuentas";
+    Layout = null;
+}
+
+@{
+    var grupos = Model.OrderBy(c => c.Rubro).GroupBy(c => c.Rubro);
+}
+<ul>
+    @foreach (var grupo in grupos)
+    {
+        <li class="jstree-open">
+            @{
+                var headGrupo = grupo.Where(c => c.Corriente == 0 && c.Numero == 0).SingleOrDefault();
+                var cuentasGrupo = grupo.Where(c => c.Corriente == 0 && c.Numero != 0).ToList();
+                var subgrupos = grupo.Where(c => c.Corriente != 0).GroupBy(c => c.Corriente);
+                var headerSubgrupos = grupo.Where(c => c.Corriente != 0 && c.SubRubro == 0 && c.Numero == 0).ToList();
+            }
+            @headGrupo.Codigo - @headGrupo.Nombre
+            <ul>
+                @foreach (var subgrupo in subgrupos)
+                {
+                    <li class="jstree-open">
+                        @{
+                            var headSubGrupo = subgrupo.Where(c => c.SubRubro == 0 && c.Numero == 0).SingleOrDefault();
+                            var cuentasSubGrupo = subgrupo.Where(c => c.SubRubro == 0 && c.Numero != 0).ToList();
+                            var rubros = subgrupo.Where(c => c.SubRubro != 0).GroupBy(c => c.SubRubro);
+                            var headerRubros = grupo.Where(c => c.Corriente != 0 && c.SubRubro != 0 && c.Numero == 0).ToList();
+                        }
+                        @headSubGrupo.Codigo - @headSubGrupo.Nombre
+                        <ul>
+                            @foreach (var rubro in rubros)
+                            {
+                                <li>
+                                    @{
+                                        var headRubro = rubro.Where(c => c.Numero == 0).SingleOrDefault();
+                                    }
+                                    @headRubro.Codigo - @headRubro.Nombre
+                                    <ul>
+                                        @foreach (var cuenta in rubro.Where(c => c.Numero != 0).OrderBy(c => c.Numero))
+                                        {
+                                            <li data-jstree='{"icon":"fa fa-book i-blue"}'>@cuenta.Codigo - @cuenta.Nombre</li>
+                                        }
+                                        <li class="AddCodigo" data-jstree='{"icon":"fa fa-plus-circle i-green"}' data-request-url="@Url.Action("NuevaCodigo", "Cuentas")" data-codigo="@rubro.OrderBy(c => c.Numero).Last().CodigoProxima()">Agregar Nueva Cuenta</li>
+                                    </ul>
+                                </li>
+                            }
+                            @foreach (var cuenta in cuentasSubGrupo)
+                            {
+                                <li data-jstree='{"icon":"fa fa-book i-blue"}'>@cuenta.Codigo - @cuenta.Nombre</li>
+                            }
+                            @{
+                                var proximoNro = "";
+                                if (cuentasSubGrupo.Count > 0)
+                                {
+                                    proximoNro = cuentasSubGrupo.OrderBy(c => c.Numero).Last().CodigoProxima();
+                                }
+                                else
+                                {
+                                    if (headerRubros.Count > 0)
+                                    {
+                                        proximoNro = headerRubros.OrderBy(c => c.SubRubro).Last().CodigoProxima();
+                                    }
+                                    else
+                                    {
+                                        proximoNro = headSubGrupo.CodigoPrimerHijo();
+                                    }
+                        
+                                }
+                            }
+                            <li class="AddCodigo" data-jstree='{"icon":"fa fa-plus-circle i-green"}' data-request-url="@Url.Action("NuevaCodigo", "Cuentas")" data-codigo="@proximoNro">Agregar Nueva Cuenta</li>
+
+                        </ul>
+                    </li>
+                }
+                @foreach (var cuenta in cuentasGrupo)
+                {
+                    <li data-jstree='{"icon":"fa fa-book i-blue"}'>@cuenta.Codigo - @cuenta.Nombre</li>
+                }
+                @{
+                    var proximoNroGrupo = "";
+                    if (cuentasGrupo.Count > 0)
+                    {
+                        proximoNroGrupo = cuentasGrupo.OrderBy(c => c.Numero).Last().CodigoProxima();
+                    }
+                    else
+                    {
+                        if (headerSubgrupos.Count > 0)
+                        {
+                            proximoNroGrupo = headerSubgrupos.OrderBy(c => c.Corriente).Last().CodigoProxima();
+                        }
+                        else
+                        {
+                            proximoNroGrupo = headGrupo.CodigoPrimerHijo();
+                        }
+                    }
+                }
+                <li class="AddCodigo" data-jstree='{"icon":"fa fa-plus-circle i-green"}' data-request-url="@Url.Action("NuevaCodigo", "Cuentas")" data-codigo="@proximoNroGrupo">Agregar Nueva Cuenta</li>
+            </ul>
+        </li>
+    }
+</ul>

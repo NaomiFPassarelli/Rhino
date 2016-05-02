@@ -1,0 +1,128 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main">
+    <a class="boton place-left" id="BtnSave" title="Guardar">
+        <i class="fa fa-plus-circle i-green"></i>  Guardar
+    </a>
+    <div class="place-right search-box">
+        <input type="search" style="width:200px;" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes">
+        <table id="GridAllComprobantes"></table>
+        <div id="GridAllComprobantes_pager"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var GetAllComprobantesACobrar = {
+        OnSave: function () {
+            //Agarro los que no se guardaron en la IdsGridRestricta porque no se hizo onPaging
+            CheckPageToSave = $('#GridAllComprobantes .SelectCheckboxes'); //Son solo de esa page
+            for (var countBoxes = 0; countBoxes <= CheckPageToSave.length ; countBoxes++) {
+                if (IdsGridRestricta.indexOf($(CheckPageToSave[countBoxes]).val()) < 0 && ($(CheckPageToSave[countBoxes]).prop('checked'))) {
+                    //Agrego a IdsGridRestricta
+                    countInGridRestricta = IdsGridRestricta.length;
+                    IdsGridRestricta[countInGridRestricta] = $(CheckPageToSave[countBoxes]).val();
+
+                }
+                else if (IdsGridRestricta.indexOf($(CheckPageToSave[countBoxes]).val()) >= 0 && !($(CheckPageToSave[countBoxes]).prop('checked'))) {
+                    //Elimino de IdsGridRestricta
+                    indexDelete = IdsGridRestricta.indexOf($(CheckPageToSave[countBoxes]).val());
+                    IdsGridRestricta.splice(indexDelete, 1);
+                }
+            }
+            var IdsNoSelected = $('#GridComprobantes').jqGrid('getCol', 'Id');
+            $(IdsGridRestricta).each(function (indexGridRestricta, IdRestricta) {
+                var IndexGridRestricta = IdsNoSelected.indexOf(IdRestricta);
+                if (IndexGridRestricta < 0) {
+                    debugger;
+                    //Agrego a Grid Comprobante
+
+                    //TODO esto no funciona cuando tenes paginas, por eso lo pongo como comentario
+                    //var Comprobante = $('#GridAllComprobantes').jqGrid('getRowData', IdRestricta);
+                    //Esto no está bueno pero funciona con paginas
+                    $($("#GridAllComprobantes").jqGrid('getGridParam', 'data')).each(function (indexAddComprobante, ComprobanteRow) {
+                        if (ComprobanteRow.Id == IdRestricta) {
+                            Comprobante = ComprobanteRow;
+                        }
+                    });
+
+                    $('#GridComprobantes').jqGrid('addRowData', Comprobante.Id, Comprobante);
+                }
+                else {
+                    //Borro de indexNoSelected porque sigue estando seleccionada
+                    IdsNoSelected.splice(IndexGridRestricta, 1);
+                }
+            });
+
+            //indexNoSelected quedan solo los que hay que borrar
+            for (var indexNoSelected = 0; indexNoSelected < IdsNoSelected.length; indexNoSelected++) {
+                debugger;
+                $('#GridComprobantes').jqGrid('delRowData', IdsNoSelected[indexNoSelected]);
+                //var indexDelete = IdsGridRestricta.indexOf(IdsNoSelected[indexNoSelected]);
+                //IdsGridRestricta.splice(indexDelete, 1);
+            }
+
+            _OpenDialog.dialog("close");
+        }
+    }
+    $(document).ready(function () {
+        $('#BtnSave').click(GetAllComprobantesACobrar.OnSave);
+
+        /* Buscador de arriba */
+        $.SetupSearchTextbox('#GridAllComprobantes', ["Numero", "Fecha"]);
+
+        //Grilla de todos los comprobantes - Los que aparecen en el popup
+        $('#GridAllComprobantes').CreateCommonGrid({
+            url: '@Url.Action("GetAllACobrar", "ComprobantesVentas", new { IdCliente = @ViewBag.IdCliente })',
+            colNames: ['', '', '', 'Fecha', 'Número de Comprobante', 'Total', 'Total Abonado'],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'Seleccionados', index: 'Seleccionados', width: 33, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: IdsGridRestricta }, align: "center" },
+                { name: 'Fecha', index: 'Fecha', width: 85, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                { name: 'Numero', index: 'Numero', width: 110, align: "center", sortable: true },
+                { name: 'Total', index: 'Total', width: 75, align: "center", sortable: true },
+                { name: 'TotalCobrado', index: 'TotalCobrado', width: 75, align: "center", sortable: true }
+            ],
+            sortname: 'Fecha',
+            sortorder: "desc",
+            autowidth: "true",
+            pager: '#GridAllComprobantes_pager',
+            loadComplete: function () {
+                //Seleccionar de la pagina Nueva los que ya estaban seleccionados
+                CheckPage = $('#GridAllComprobantes .SelectCheckboxes');
+                for (var countBox = 0; countBox <= CheckPage.length ; countBox++) {
+                    if (IdsGridRestricta.indexOf($(CheckPage[countBox]).val()) >= 0) {
+                        $(CheckPage[countBox]).prop("checked", true);
+                    }
+                }
+            },
+            onPaging: function () {
+                //Reflejo en IdsGridRestricta los cambios que se hicieron
+                CheckPageChange = $('#GridAllComprobantes .SelectCheckboxes');
+                for (var countBox = 0; countBox <= CheckPageChange.length ; countBox++) {
+                    if ($(CheckPageChange[countBox]).prop("checked") && IdsGridRestricta.indexOf($(CheckPageChange[countBox]).val()) < 0) {
+                        //Agregar
+                            indexAdd = IdsGridRestricta.length;
+                            IdsGridRestricta[indexAdd] = $(CheckPageChange[countBox]).val();
+                    }
+                    else if (!($(CheckPageChange[countBox]).prop("checked")) && IdsGridRestricta.indexOf($(CheckPageChange[countBox]).val()) >= 0)
+                    {
+                        //Eliminar
+                        indexDel = IdsGridRestricta.indexOf($(CheckPageChange[countBox]).val());
+                        IdsGridRestricta.splice(indexDel, 1);
+                    }
+                }
+            }
+        });
+        $('#GridAllComprobantes').trigger("reloadGrid");
+    });
+
+</script>

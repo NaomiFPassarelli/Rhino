@@ -1,0 +1,253 @@
+﻿@{
+    ViewBag.Title = "EgresosStock";
+    ViewBag.SectionIcon = "cubes";
+    ViewBag.SectionTitle = "Listado de Egreso de Stock";
+}
+
+<div class="action-bar row">
+    @*<div class="select-count">
+            <span id="SelectCount">0</span>
+        </div>*@
+    <a class="boton place-left" id="BtnCreate" title="Crear Egreso Stock" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Egreso Stock
+    </a>
+    @*<a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+            <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+        </a>*@
+
+
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Egreso Stock..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+
+
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Articulo</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="ArticuloID" name="ArticuloID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Articulo_Id" name="Articulo.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Articulo_Id" data-input="ArticuloID" title="Limpiar" style="margin:2px 0px;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+
+
+</div>
+<div class="table-container">
+    <table id="GridEgresosStock"></table>
+    <div id="GridEgresosStock_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        var ListadoEgresosStock = {
+
+            ValidateFilters: function () {
+                var Id = $('#ArticuloID').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return { success: false, message: 'El N° de Articulo no es correcto' };
+                }
+
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+            },
+
+            OnArticuloChange: function () {
+                var Id = $('#ArticuloID').val();
+                if (Id == "") { return; }
+                valid = ListadoEgresosStock.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetArticuloConStock", "Articulos")',
+                    data: { idArticulo: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            $('#Articulo_Id').select2('data', { id: Id, text: ret.Data.Descripcion + '(' + ret.Data.UnidadMedida.Data + ')' });
+                        }
+                        else {
+                            $.WarningDialog('Articulo no existe o no posee inventario');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            LoadData: function () {
+                ListadoEgresosStock.CompletarFiltros();
+                valid = ListadoEgresosStock.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                ListadoEgresosStock.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridEgresosStock").setGridParam({ datatype: 'json' });
+                $('#GridEgresosStock').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            //OnClickEliminar: function () {
+            //    var Id = [$(this).closest('tr').attr('id')];
+            //    ConfirmationDialog.Show("Esta seguro que desea eliminar el EgresoStock seleccionado?",
+            //                function () { ListadoEgresosStock.Eliminar(Id) });
+            //},
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridEgresosStock', 'Listado de Egreso Stock');
+            },
+
+            ClearSelect2: function (IdClear, IdClearInput) {
+                $("#" + IdClearInput).val("");
+                $("#" + IdClear).select2("val", "");
+            },
+            @*Eliminar: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridEgresosStock').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridEgresosStock');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los EgresosStock seleccionados?",
+                            function () { ListadoEgresosStock.Eliminar(SelectedIds) });
+                } else {
+                    $.WarningDialog("No hay EgresosStock seleccionados!");
+                }
+
+            },
+
+            Editar: function () {
+                $.ShowLoader();
+                var Id = $(this).closest('tr').attr('id');
+                window.location = '@Url.Action("Editar")/' + Id;
+            },*@
+
+            init: function () {
+                $('.BtnClearSelect2').on('click', function () {
+                    var IdClear = $(this).attr('data-rel');
+                    var IdClearInput = $(this).attr('data-input');
+                    ListadoEgresosStock.ClearSelect2(IdClear, IdClearInput);
+                });
+
+                $('#Articulo_Id').select2(
+                    {
+                        width: '100%',
+                        placeholder: "Seleccione un articulo",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetArticulosConStock", "Articulos")",
+                            dataType: 'json',
+                            params: { type: "POST" },
+                            data: function (t, p) {
+                                return { where: t };
+                            },
+                            results: function (data, page) {
+                                return { results: data.Data.Items };
+                            }
+                        }
+                    });
+                $('#Articulo_Id').on("select2-selecting", function (e) { $('#ArticuloID').val(e.val); });
+                $('#ArticuloID').change(ListadoEgresosStock.OnArticuloChange);
+                $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+
+
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', function () {
+                    ListadoEgresosStock.LoadData();
+                });
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridEgresosStock');
+                /* Eliminar Seleccionados */
+                //$('#BtnDeleteSelected').click(ListadoEgresosStock.OnClickEliminarSeleccionados);
+
+                /* Eliminar de Grilla */
+                //$(document).on('click', '.BtnEliminar', ListadoEgresosStock.OnClickEliminar);
+                /* Editar de la grilla */
+                // Abre nueva ventana
+                //$(document).on('click', '.BtnEditar', ListadoEgresosStock.Editar);
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridEgresosStock', ["FechaCreacion", "Articulo.Descripcion", "Articulo.UnidadMedida.Data"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridEgresosStock').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    serializeGridData: function (postData) {
+                        dates = {
+                            id: $('#ArticuloID').val() != '' ? $('#ArticuloID').val() : 0,
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                        }
+                        return JSON.stringify($.extend(postData, dates));
+                    },
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Id Articulo', 'Articulo', 'Unidad', 'Fecha', 'Observacion', 'Cantidad', 'Stock'],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Articulo.Id', index: 'Articulo.Id', width: 10, align: "center", sortable: true },
+                        { name: 'Articulo.Descripcion', index: 'Articulo.Descripcion', width: 30, align: "center", sortable: true },
+                        { name: 'Articulo.UnidadMedida.Data', index: 'Articulo.UnidadMedida.Data', width: 20, align: "center", sortable: true },
+                        { name: 'FechaCreacion', index: 'FechaCreacion', width: 20, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Observacion', index: 'Observacion', width: 30, align: "center", sortable: true },
+                        { name: 'Cantidad', index: 'Cantidad', width: 20, align: "center", sortable: true },
+                        { name: 'Articulo.Stock', index: 'Articulo.Stock', width: 30, align: "center", sortable: true },
+                        //{ name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'FechaCreacion',
+                    sortorder: "desc",
+                    pager: '#GridEgresosStock_pager',
+                    rowList: [20, 40, 60],
+                    rowNum: 20
+                });
+                $('#GridEgresosStock').trigger("reloadGrid");
+                $('#BtnExportXLS').click(ListadoEgresosStock.ExportToExcel);
+            }
+
+        }
+        $(document).ready(function () {
+            ListadoEgresosStock.init();
+        });
+    </script>
+}

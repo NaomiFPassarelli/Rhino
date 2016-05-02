@@ -1,0 +1,67 @@
+﻿@using Woopin.SGC.Web.HtmlHelper
+@using Woopin.SGC.Common.Json;
+
+@model Woopin.SGC.Model.Tesoreria.PagoTarjeta
+@{
+    ViewBag.Title = "Detalle";
+    Layout = null;
+}
+@{
+    var Pendiente = Model.Total - Model.TotalCancelado; 
+}
+@Html.LabelStatus(@Model.Estado.ToString(), (int)@Model.Estado, true)
+<fieldset class="form-horizontal" style="margin-bottom:20px;">
+    
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Cuotas Canceladas</div>
+        <div class="col-md-6">@Model.CuotasCanceladas / @Model.Cuotas</div>
+    </div>
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Deuda Original</div>
+        <div class="col-md-6">@Model.Total.ToString("C")</div>
+    </div>
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Deuda Cancelada</div>
+        <div class="col-md-6">@Model.TotalCancelado.ToString("C")</div>
+    </div>
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Deuda Pendientes</div>
+        <div class="col-md-6">@Pendiente.ToString("C")</div>
+    </div>
+    <div class="clearfix"></div>
+</fieldset>
+<div class="col-md-12 table-container detalles" id="GridCancelaciones_Container">
+    <table id="GridCancelaciones" class="col-md-12"></table>
+    <div id="GridCancelaciones_pager"></div>
+</div>
+
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" title="Aceptar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-check-circle-o i-green"></i> Aceptar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqgrid")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#GridCancelaciones').CreateCommonGrid({
+            datatype: 'local',
+            colNames: ['', 'Cuotas Canceladas', 'Fecha', 'Cancelado'],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'Cuotas', index: 'Cuotas', width: 20, align: "center", sortable: true },
+                { name: 'Fecha', index: 'Fecha', width: 20, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                { name: 'Importe', index: 'Importe', width: 20, align: "center", sortable: true,formatter: $.formatCurrency}
+            ],
+            sortname: 'Fecha',
+            sortorder: "desc",
+            data: @Html.Raw(JsonHelper.ToJson(Model.Cancelaciones)),
+            pager: '#GridCancelaciones_pager',
+            rowList: [5, 10, 15],
+            rowNum: 5
+        });
+        $('#GridCancelaciones').trigger("reloadGrid");
+        $("#GridCancelaciones").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+    });
+</script>

@@ -1,0 +1,75 @@
+﻿@model Woopin.SGC.Model.Tesoreria.CancelacionTarjeta
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("CancelarDeudas", "PagosTarjetas", FormMethod.Post, new { Id = "form-cancelacion" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        @Html.HiddenFor(m => m.Pago.Id, new { @Value = ViewBag.IdPagoTarjeta })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Cuotas, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Cuotas, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Cuotas, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Importe, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Importe, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Importe, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Disminuir Deuda
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+@{
+    var Pendiente = ViewBag.PagoTarjeta.Total - ViewBag.PagoTarjeta.TotalCancelado;
+    var Cuotas = ViewBag.PagoTarjeta.Cuotas - ViewBag.PagoTarjeta.CuotasCanceladas;
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Fecha").datepicker({ dateFormat: 'dd/mm/yy' });
+        $('#Cuotas').attr('data-val-range-max', @Cuotas);
+        $('#Importe').attr('data-val-range-max', @Pendiente);
+        $('#form-cancelacion').reParseForm();
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                
+                if (data.Success) {
+                    var rowData = $('#GridPagosTarjetas').jqGrid('getRowData', data.CancelacionTarjeta.Pago.Id);
+                    rowData.TotalCancelado = parseFloat(data.CancelacionTarjeta.Importe) + parseFloat(rowData.TotalCancelado);
+                    $('#GridPagosTarjetas').jqGrid('setRowData', data.CancelacionTarjeta.Pago.Id, rowData);
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,139 @@
+﻿@using Woopin.SGC.Model.Common
+@using Woopin.SGC.Model.Stock
+
+@model Woopin.SGC.Model.Stock.IngresoStock
+
+@{
+    ViewBag.Title = "Nuevo Ingreso Stock";
+    ViewBag.SectionIcon = "cube";
+    ViewBag.SectionTitle = "Nuevo Ingreso Stock";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Ingreso Stock</a>
+                <a class="boton place-left " id="BtnSubmitAndBack"><i class="fa fa-plus-circle i-green"></i> Crear y Volver</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Articulo, new { @class = "col-md-2 horizontal-label" })
+            <div class="input-container col-md-6">
+                <div class="row">
+                    <input type="number" id="ArticuloID" name="ArticuloID" class="col-md-2" style="margin-top: 7px;" data-val="true" data-val-required="Es necesario un Articulo" />
+                    <div class="col-md-10" style="padding:0;">
+                        <input type="hidden" id="Articulo_Id" name="Articulo.Id" class="selectinput" />
+                        @Html.ValidationMessage("Articulo.Id", new { @class = "help-block valid-custom articulo" })
+                    </div>
+                    @Html.ValidationMessage("ArticuloID", new { @class = "help-block" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Cantidad, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-2 input-container">
+                @Html.TextBoxFor(model => model.Cantidad, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Cantidad, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Observacion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Observacion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Observacion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
+    </fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion del IngresoStock. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        $('#Cantidad').attr('data-val-number', 'La cantidad debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+        $('#Articulo_Id').select2(
+                    {
+                        width: '100%',
+                        placeholder: "Seleccione un articulo",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetArticulosConStock", "Articulos")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { where: t };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                    });
+        $('#Articulo_Id').on("select2-selecting", function (e) { $('#ArticuloID').val(e.val); });
+        $('#ArticuloID').change(
+            function () {
+                var Id = $('#ArticuloID').val();
+                if (Id == "") { return; }
+                //valid = ListadoImputaciones.ValidateFilters();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return $.WarningDialog('El N° de Articulo no es correcto');
+                }
+                var params = {
+                    url: '@Url.Action("GetArticuloConStock", "Articulos")',
+                    data: { idArticulo: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            $('#Articulo_Id').select2('data', { id: Id, text: ret.Data.Descripcion + '(' + ret.Data.UnidadMedida.Data + ')' });
+                        }
+                        else {
+                            $.WarningDialog('Articulo no existe o no posee inventario');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            }
+            );
+
+
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Index")'
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+
+        $('#BtnSubmitAndBack').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    $('form').ClearForm();
+                    $('#Alert-Container').NewAlert('success', 'Se ha creado el Ingreso Stock con exito');
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>
+}

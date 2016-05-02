@@ -1,0 +1,130 @@
+﻿@model Woopin.SGC.Model.Reporting.GrupoIngreso
+
+@{
+    ViewBag.Title = "Nuevo Grupo Ingreso";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Nuevo Grupo Ingreso";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        <div class="">
+            <div class="col-md-12">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-plus-circle i-green"></i> Crear Grupo Ingreso</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Descripcion"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group  ">
+            @Html.Label("Grupo Padre", new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                <input type="hidden" id="NodoPadre_Id" name="NodoPadre.Id" class="selectinput" />
+            </div>
+        </div>
+
+        <div class="form-group  ">
+            @Html.Label("Articulo", new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                <input type="hidden" id="Articulo_Id" name="Articulo.Id" class="selectinput" />
+            </div>
+        </div>
+
+    </fieldset>
+    
+    
+}
+@section Scripts{
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+@Scripts.Render("~/bundles/select2")
+@Styles.Render("~/Scripts/select2/select2.css")
+@Styles.Render("~/Content/themes/base/css")
+@Scripts.Render("~/bundles/jqgrid")
+<script type="text/javascript">
+    $(document).ready(function () {
+        GrupoIngreso.init();
+    });
+
+    var GrupoIngreso = {
+        init: function () {
+            $('#BtnSubmit').on('click', GrupoIngreso.Save);
+            $('#NodoPadre_Id').prepend('<option></option>');
+            $('#NodoPadre_Id').select2(
+                {
+                    placeholder: "Seleccionar el grupo asociado",
+                    minimumInputLength: 0,
+                    ajax: {
+                        url: "@Url.Action("GetGruposIngresos")",
+                    dataType: 'json',
+                    params: { type: "POST" },
+                    data: function (t, p) {
+                        return { page: 0, where: t };
+                    },
+                    results: function (data, page) {
+                        return { results: data.Data.Items };
+                    }
+                }
+            });
+            $('#Articulo_Id').prepend('<option></option>');
+            $('#Articulo_Id').select2(
+                {
+                    placeholder: "Seleccionar el Articulo",
+                    minimumInputLength: 0,
+                    ajax: {
+                        url: "@Url.Action("GetArticulos", "Articulos", new { Area = "Ventas" })",
+                    dataType: 'json',
+                    params: { type: "POST" },
+                    data: function (t, p) {
+                        return { page: 0, where: t };
+                    },
+                    results: function (data, page) {
+                        return { results: data.Data.Items };
+                    }
+                }
+            });
+
+        },
+
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
+
+            $('#BtnSubmit').attr('disabled', 'disabled');
+
+            var GrupoIngreso = {
+                Descripcion: $('#Descripcion').val(),
+                NodoPadre: { Id: $('#NodoPadre_Id').val() },
+                Articulo: { Id: $('#Articulo_Id').val() }
+            }
+            var postParams = {
+                url: "@Url.Action("Nuevo")",
+                data: { GrupoIngreso: GrupoIngreso },
+                success: function (data) {
+                    if (data.Success) {
+                        window.location = '@Url.Action("Index")';
+                    }
+                    else {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(postParams);
+        }
+
+
+
+    }
+</script>
+}

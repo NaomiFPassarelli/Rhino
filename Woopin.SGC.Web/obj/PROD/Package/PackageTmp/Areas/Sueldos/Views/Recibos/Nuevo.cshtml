@@ -1,0 +1,777 @@
+﻿@model Woopin.SGC.Model.Sueldos.Recibo
+@using Woopin.SGC.Common.HtmlHelper
+@using Woopin.SGC.Common.HtmlModel
+@using Woopin.SGC.Model.Common
+@using Woopin.SGC.Model.Negocio
+@{
+    ViewBag.Title = "Nuevo Recibo";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Nuevo Recibo";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "recibo-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="">
+            <div class="col-md-12">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-plus-circle i-green"></i> Crear Recibo</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="recibo">
+            <div class="col-md-12">
+                <div class="col-md-7 ">
+                    @Html.LabelFor(model => model.Empleado, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="number" id="EmpleadoID" name="EmpleadoID" class="col-md-2" style="margin-top: 7px;" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Empleado_Id" name="Empleado.Id" class="selectinput" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-4 ">
+                    <label class="col-md-6 horizontal-label readonly-label">N° Referencia</label>
+                    <div class="col-md-5 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.NumeroRef.ToString() })
+                    </div>
+                </div>
+
+                <div class="col-md-3 padding-left-2">
+                    @Html.LabelFor(model => model.Empleado.CUIT, new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
+                    <div class="col-md-9 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Empleado.CUIT, new { @class = "textinput padding-left-2", @id = "CUIT", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Empleado.CUIT, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.FechaInicio, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de inicio es requerida" id="FechaInicio" name="FechaInicio" type="text">
+                        @Html.ValidationMessageFor(model => model.FechaInicio, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.FechaFin, new { @class = "col-md-4 horizontal-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de fin es requerida" id="FechaFin" name="FechaFin" type="text">
+                        @Html.ValidationMessageFor(model => model.FechaFin, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Observacion, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Observacion, null, new { @class = "textinput" })
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </fieldset>
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "recibo-detalle" }))
+{
+    <fieldset class="form-horizontal">
+        <div class="recibo detalle">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.Adicionales.First().Descripcion, new { @class = " horizontal-label" })
+                    <div class="input-container col-md-12">
+                        <div class="row">
+                            <input type="number" id="AdicionalID" name="AdicionalID" class="col-md-2" style="margin-top: 7px;" data-val="true" data-val-required="Es necesario un Adicional" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Adicional_Id" name="Adicional.Id" class="selectinput" />
+                                @Html.ValidationMessage("Adicional.Id", new { @class = "help-block valid-custom adicional" })
+                            </div>
+                            @Html.ValidationMessage("AdicionalID", new { @class = "help-block" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.Adicionales.First().Porcentaje, new { @class = " horizontal-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.Adicionales.First().Porcentaje, null, new { @class = "textinput" })
+                        @Html.ValidationMessage("Porcentaje", new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.Adicionales.First().Valor, new { @class = " horizontal-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.Adicionales.First().Valor, null, new { @class = "textinput" })
+                        @Html.ValidationMessage("Valor", new { @class = "help-block" })
+                    </div>
+                </div>
+
+                @*<div class="col-md-2">*@
+                    @*@Html.LabelFor(model => model.Adicionales.First().TipoLiquidacion, new { @class = " horizontal-label" })*@
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.Adicionales.First().TipoLiquidacion, null, new { @class = "textinput", @hidden = true })
+                        @*@Html.ValidationMessage("TipoLiquidacion", new { @class = "help-block" })*@
+                    </div>
+                @*</div>*@
+
+                @*<div class="col-md-2">*@
+                @*@Html.LabelFor(model => model.Adicionales.First().Suma, new { @class = " horizontal-label" })*@
+                <div class="input-container">
+                    @Html.TextBoxFor(model => model.Adicionales.First().Suma, null, new { @class = "textinput", @hidden = true })
+                    @*@Html.ValidationMessage("Suma", new { @class = "help-block" })*@
+                </div>
+                @*</div>*@
+
+    @* TODO Checkbox con todos los que ya estan agregados de los adicionales *@
+
+            <div class="col-md-2">
+                    <a class="boton place-left" id="agregarDetalle">
+                        <i class="fa fa-check i-green"></i>Agregar
+                    </a>
+                </div>
+            </div>
+
+            @*<div class="col-md-12">
+                @Html.ValidationMessageFor(model => model.Detalle.First().Total, null, new { @class = "help-block" })
+                @Html.ValidationMessageFor(model => model.Detalle.First().IVA, null, new { @class = "help-block" })
+            </div>*@
+        </div>
+    </fieldset>
+}
+<div class="table-container detalles">
+    <table id="GridDetallesRecibo"></table>
+    <div id="GridDetallesRecibo_pager"></div>
+</div>
+
+
+<div class="recibo recibo-right col-md-4" style="margin-top:40px;">
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.TotalRemunerativo, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.TotalRemunerativo, new { @class = "textinput", @id = "TotalRemunerativo", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.TotalRemunerativo, null, new { @class = "help-block" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.TotalNoRemunerativo, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.TotalNoRemunerativo, new { @class = "textinput", @id = "TotalNoRemunerativo", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.TotalNoRemunerativo, null, new { @class = "help-block" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.TotalDescuento, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.TotalDescuento, new { @class = "textinput", @id = "TotalDescuento", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.TotalDescuento, null, new { @class = "help-block" })
+        </div>
+    </div>
+
+    @*<div class="col-md-12" style="padding-top:10px;">
+        <div class="totalSlash"></div>
+        @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.Total, new { @class = "textinput", @id = "Total", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.Total, null, new { @class = "help-block" })
+        </div>
+    </div>*@
+</div>
+
+<div class="clearfix"></div>
+<input type="hidden" id="needrefresh" value="0">
+<div id="seleccionar-sueldoBruto-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+        var reciboDetalleId = 0;
+        var sueldoBrutoSeleccionado = 0;
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de recibo. Si presiona Aceptar, todos los cambios realizados se perderan.');
+        $(document).ready(function () {
+            Recibo.init();
+        });
+
+        var Recibo = {
+            Data_AAs: new Array(),
+
+            SelectedRows: null,
+
+            OnCheckboxChange: function () {
+                if ($(this).is(":checked")) {
+                    Recibo.SelectedRows.push($(this).val());
+                }
+                else {
+                    var indexDel = Recibo.SelectedRows.indexOf($(this).val());
+                    Recibo.SelectedRows.splice(indexDel, 1);
+                }
+            },
+
+            init: function () {
+                Recibo.SelectedRows = new Array();
+
+                $('#GridDetallesRecibo').CreateCommonGrid({
+                    datatype: 'local',
+                    colNames: ['', '', '', '', 'Descripcion', 'Porcentaje', 'Valor', 'Remunerativo', 'No remunerativo', 'Descuento', '', '', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Adicional_Id', index: 'Adicional_Id', width: 0, sortable: false, hidden: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: Recibo.SelectedRows }, align: "center" },
+                        { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_Eliminar_EsDefault, align: "center" },
+                        { name: 'Descripcion', index: 'Descripcion', width: 20, align: "center", sortable: true },
+                        { name: 'Porcentaje', index: 'Porcentaje', width: 20, align: "center", sortable: true },
+                        { name: 'Valor', index: 'Valor', width: 20, align: "center", sortable: true },
+                        { name: 'Remunerativo', index: 'Remunerativo', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
+                        { name: 'NoRemunerativo', index: 'NoRemunerativo', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
+                        { name: 'Descuento', index: 'Descuento', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
+                        { name: 'TipoLiquidacion', index: 'TipoLiquidacion', width: 0, sortable: false, hidden: true },
+                        { name: 'Suma', index: 'Suma', width: 0, sortable: false, hidden: true },
+                        //{ name: 'AdicionalAdicionales', index: 'AdicionalAdicionales', width: 0, sortable: false, hidden: true, formatter: formatterRecibo_Adicionales }
+                        { name: 'AdicionalAdicionales', index: 'AdicionalAdicionales', width: 0, sortable: false, hidden: true }
+                    ],
+                    sortname: 'Adicional.Descripcion',
+                    sortorder: "asc",
+                    pager: '#GridDetallesRecibo_pager'
+                });
+                $(document).on('click', '.BtnVerDialog', Recibo.VerDetalleDialog);
+
+
+                $('#GridDetallesRecibo').trigger("reloadGrid");
+                $("#GridDetallesRecibo").parents('div.ui-jqgrid-bdiv').css("max-height", "300px");
+                $("#FechaInicio").datepicker({ dateFormat: 'dd/mm/yy' });
+                $("#FechaFin").datepicker({ dateFormat: 'dd/mm/yy' });
+                $('#agregarDetalle').on("click", Recibo.AgregarDetalleAGrilla);
+                $(document).on('click', '.BtnEliminar', Recibo.OnEliminarDetalleClick);
+                Recibo.CambiarErroresForm();
+                $('#EmpleadoID').change(Recibo.GetEmpleadoByID);
+                $('#AdicionalID').change(Recibo.GetAdicionalByID);
+                $('#Adicional_Id').prepend('<option></option>');
+                $('#Adicional_Id').select2(
+                    {
+                        width: '100%',
+                        placeholder: "Seleccione Un Adicional",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetAdicionales", "Adicionales")",
+                            dataType: 'json',
+                            params: { type: "POST" },
+                            data: function (t, p) {
+                                return { page: 0, where: t };
+                            },
+                            results: function (data, page) {
+                                return { results: data.Data.Items };
+                            }
+                        }
+                    });
+                $('#Adicional_Id').on("select2-selecting", Recibo.OnSelectAdicional);
+                $('#Empleado_Id').prepend('<option></option>');
+                $('#Empleado_Id').select2(
+                    {
+                        width: '100%',
+                        placeholder: "Seleccione Un Empleado",
+                        ajax: {
+                            url: "@Url.Action("GetEmpleados", "Empleados")",
+                            dataType: 'json',
+                            params: { type: "POST" },
+                            data: function (t, p) {
+                                return { where: t };
+                            },
+                            results: function (data, page) {
+                                return { results: data.Data.Items };
+                            }
+                        }
+                    });
+                $('#Empleado_Id').on("select2-selecting", Recibo.OnEmpleadoSeleccionado);
+                $('#BtnSubmit').on('click', Recibo.Save);
+                //$('#TipoIVA').on('change', Recibo.TipoIVATotalChange);
+                //$('#TotalRubro').on('change', Recibo.TipoIVATotalChange);
+                //$('#IVARubro').on('change', Recibo.IVARubroChange);
+            },
+
+            //TipoIVATotalChange: function () {
+            //    if ($('#TotalRubro').val() != undefined && $('#TotalRubro').val() != "" && $('#TipoIVA').val() != undefined && $('#TipoIVA').val() != "") {
+            //        tipoiva = $('#TipoIVA').val();
+            //        ivaselected = $("#TipoIVA option[value=" + tipoiva + "]");
+            //        ivaVal = $(ivaselected).attr('data-ad');
+            //        total = $('#TotalRubro').val();
+            //        if (ivaVal == 0) {
+            //            iva = 0;
+            //            $('#IVARubro').attr('readonly', true);
+            //        } else {
+            //            $('#IVARubro').attr('readonly', false);
+            //            iva = (ivaVal * total) / 100;
+            //            iva = parseFloat(iva).toFixed(2);
+            //        }
+            //        $('#IVARubro').val(iva);
+            //    }
+            //},
+
+            //IVARubroChange: function () {
+            //    if ($('#TotalRubro').val() != undefined && $('#TotalRubro').val() != "" && $('#TipoIVA').val() != undefined && $('#TipoIVA').val() != "") {
+            //        tipoiva = $('#TipoIVA').val();
+            //        ivaselected = $("#TipoIVA option[value=" + tipoiva + "]");
+            //        ivaVal = $(ivaselected).attr('data-ad');
+            //        total = $('#TotalRubro').val();
+            //        iva = (ivaVal * total) / 100;
+            //        iva = parseFloat(iva).toFixed(2);
+            //        ivaRubro = $('#IVARubro').val();
+            //        if (iva != ivaRubro) {
+            //            $('#IVARubro').attr('readonly', false);
+            //            return $.WarningDialog('El Iva sugerido por el sistema es: ' + iva + ' el iva que usted introdujo es: ' + ivaRubro);
+            //        }
+            //    } else {
+            //        iva = 0;
+            //        $('#IVARubro').val(iva);
+            //        $('#IVARubro').attr('readonly', true);
+            //    }
+            //},
+
+            CambiarErroresForm: function () {
+                //$('#CondicionCompra_Id').attr('data-val-required', 'Es necesario una condición de compra');
+                //$('#recibo-header').reParseForm();
+
+                //$('#TotalRubro').attr('data-val-number', 'El Total debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+                //$('#IVARubro').attr('data-val-number', 'El Total debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+                //$('#recibo-detalle').reParseForm();
+
+            },
+
+            VerDetalleDialog: function () {
+                var IdEntidad = $(this).data('id');
+                var RowId = $(this).closest('tr').attr('id');
+                var row = $("#GridAcumuladoCompras").getRowData(RowId);
+                if ($(this).data('entidad') == 'ComprobanteVenta') {
+                    var opt = {
+                        width: 850, height: 600,
+                        openCallback: function () {
+                            $('#GridDetallesVenta').resizeGrid('GridDetallesVenta_Container');
+                        }
+                    };
+                    $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.LetraNumero, opt);
+                }
+                else {
+                    var opt = {
+                        width: 900, height: 600,
+                        openCallback: function () {
+                            $('#GridDetallesCobranza').resizeGrid('GridDetallesCobranza_Container');
+                            $('#GridCobrosCobranza').resizeGrid('GridCobrosCobranza_Container');
+                        }
+                    };
+                    $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","Cobranzas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Cobranza ' + row.LetraNumero, opt);
+                }
+            },
+
+            GetEmpleadoByID: function () {
+                var Id = $('#EmpleadoID').val();
+                if (Id == "") { return; }
+                valid = Recibo.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetEmpleado", "Empleados")',
+                    data: { IdEmpleado: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            Recibo.LoadEmpleado(ret.Data);
+                            $('#Empleado_Id').select2('data', { id: Id, text: ret.Data.Nombre + ret.Data.Apellido + '(' + ret.Data.CUIT + ')' });
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('Empleado no existe, vuelva a intentarlo!');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            ValidateFilters: function () {
+                var Id = $('#EmpleadoID').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return { success: false, message: 'El N° de Empleado no es correcto' };
+                } else {
+                    return { success: true };
+                }
+            },
+
+            GetAdicionalByID: function () {
+                var Id = $('#AdicionalID').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return $.WarningDialog('El N° de Adicional no es correcto');
+                }
+                Recibo.LoadAdicional(Id);
+            },
+
+            //OnTipoReciboChange: function () {
+            //    $('#recibo-header').reParseForm();
+            //},
+
+            OnEliminarDetalleClick: function () {
+                var Id = $(this).closest('tr').attr('id');
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el adicional?",
+                                        function () { Recibo.EliminarDetalle(Id) });
+            },
+
+            EliminarDetalle: function (Id) {
+                $('#GridDetallesRecibo').jqGrid('delRowData', Id);
+                $('#SelectCount').html('0');
+                Recibo.CalcularTotales();
+            },
+
+            OnSelectAdicional: function (e) {
+                Recibo.LoadAdicional(e.val);
+            },
+
+            LoadAdicional: function (IdAdicional) {
+                var params = {
+                    url: '@Url.Action("GetAdicional", "Adicionales")',
+                    data: { IdAdicional: IdAdicional },
+                    success: function (ret) {
+                        debugger;
+                        if (ret.Success && ret.Data) {
+                            debugger;
+                            $('#AdicionalID').val(ret.Data.Id);
+                            $('#Adicional_Id').select2('data', { id: IdAdicional, text: ret.Data.Descripcion });
+                            $('#Porcentaje').val(ret.Data.Porcentaje);
+                            $('#Valor').val(ret.Data.Valor);
+
+                            $('#TipoLiquidacion').val(ret.Data.TipoLiquidacion);
+                            $('#Suma').val(ret.Data.Suma);
+
+                            //$('#AdicionalAdicionales').val(ret.Data_AAs);
+
+                            Recibo.Data_AAs = ret.Data_AAs;
+
+                            //if (typeof Adicional_Adicionales == "undefined" || Adicional_Adicionales == undefined || Adicional_Adicionales == null)
+                            //{
+                            //    Adicional_Adicionales = new Array();
+                            //}
+                            //New = { "Id": ret.Data.Id, "Sobre": [ret.Data_AAs] };
+                            //Adicional_Adicionales.push(New);
+
+
+                            //$('#PercepcionIVA').val(ret.Data.PercepcionIVA);
+                            //$('#PercepcionIIBB').val(ret.Data.PercepcionIIBB);
+                            //if (ret.Data.PercepcionIVA || ret.Data.PercepcionIIBB) {
+                            //    $('#TipoIVA option[data-ad="0"]').attr('selected', true);
+                            //    $('#TipoIVA').attr('disabled', 'disabled');
+                            //} else {
+                            //    $('#TipoIVA').removeAttr('disabled');
+                            //}
+                        } else {
+                            $.WarningDialog('El Adicional no existe, vuelva a intentarlo!');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnEmpleadoSeleccionado: function (e) {
+                var params = {
+                    url: '@Url.Action("GetEmpleado", "Empleados")',
+                    data: { IdEmpleado: e.val },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            Recibo.LoadEmpleado(ret.Data);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OpenSeleccionarSueldo: function (SueldoCategoria, SueldoMes, SueldoHora) {
+                $('#seleccionar-sueldoBruto-dialog').OpenFormDialog('@Url.Action("SueldoBruto")?SueldoCategoria=' + SueldoCategoria + '&SueldoMes=' + SueldoMes + '&SueldoHora=' + SueldoHora, 'Seleccionar el Sueldo Bruto a utilizar');
+            },
+
+            LoadEmpleado: function (Empleado) {
+                $('#GridDetallesRecibo').jqGrid('clearGridData');
+                $('#EmpleadoID').val(Empleado.Id);
+                $('#CUIT').val(Empleado.CUIT);
+
+                if (Empleado.SueldoBrutoMensual != null || Empleado.SueldoBrutoHora != null) {
+                    SueldoCategoria = (Empleado.Categoria.AdditionalData > 0) ? Empleado.Categoria.AdditionalData : null;
+                    SueldoMes = (Empleado.SueldoBrutoMensual > 0) ? Empleado.SueldoBrutoMensual : null;
+                    SueldoHora = (Empleado.SueldoBrutoHora > 0) ? Empleado.SueldoBrutoHora : null;
+                    Recibo.OpenSeleccionarSueldo(SueldoCategoria, SueldoMes, SueldoHora);
+                } else {
+
+                    var detalleSueldoBruto = {
+                        Id: reciboDetalleId,
+                        Valor: Empleado.Categoria.AdditionalData,
+                        //TODO poner un adicional id para lo que es el sueldo bruto
+                        //Adicional_Id: $('#Adicional_Id').val(),
+                        //TODO poner un adicional descripcion para lo que es el sueldo bruto
+                        Descripcion: "Sueldo Bruto",
+                        //TODO poner un adicional TipoLiquidacion para lo que es el sueldo bruto
+                        TipoLiquidacion: "Remunerativo"
+                    };
+
+                    reciboDetalleId++;
+                    $('#GridDetallesRecibo').jqGrid('addRowData', detalleSueldoBruto.Id, detalleSueldoBruto);
+                    Recibo.CalcularTotales();
+
+                    //limpiar form de detalle
+                    $('#recibo-detalle').ClearForm();
+                    $('#Adicional_Id').select2('data', null);
+
+                }
+
+            },
+
+            AgregarSueldoBruto: function() {
+                var detalleSueldoBruto = {
+                    Id: reciboDetalleId,
+                    Valor: sueldoBrutoSeleccionado,
+                    //TODO poner un adicional id para lo que es el sueldo bruto
+                    //Adicional_Id: $('#Adicional_Id').val(),
+                    //TODO poner un adicional descripcion para lo que es el sueldo bruto
+                    Descripcion: "Sueldo Bruto",
+                    //TODO poner un adicional TipoLiquidacion para lo que es el sueldo bruto
+                    TipoLiquidacion: "Remunerativo"
+                };
+
+                reciboDetalleId++;
+                $('#GridDetallesRecibo').jqGrid('addRowData', detalleSueldoBruto.Id, detalleSueldoBruto);
+                Recibo.CalcularTotales();
+
+                //limpiar form de detalle
+                $('#recibo-detalle').ClearForm();
+                $('#Adicional_Id').select2('data', null);
+            },
+
+            CalcularTotales: function () {
+                var Detalles = $('#GridDetallesRecibo').jqGrid('getRowData');
+                var TotalRemunerativo = 0;
+                var TotalNoRemunerativo = 0;
+                var TotalDescuento = 0;
+
+                for (var i = 0; i < Detalles.length; i++) {
+                    if (Detalles[i].Suma == "true")
+                    {
+                        switch(Detalles[i].TipoLiquidacion)
+                        {
+                            case "1":
+                                TotalRemunerativo += parseFloat(Detalles[i].Remunerativo);
+                                break;
+                            case "2":
+                                TotalNoRemunerativo += parseFloat(Detalles[i].NoRemunerativo);
+                                break;
+                            case "3":
+                                TotalDescuento += parseFloat(Detalles[i].Descuento);
+                                break;
+                        }
+                    }else{
+                        switch(Detalles[i].TipoLiquidacion)
+                        {
+                            case "1":
+                                TotalRemunerativo -= parseFloat(Detalles[i].Remunerativo);
+                                break;
+                            case "2":
+                                TotalNoRemunerativo -= parseFloat(Detalles[i].NoRemunerativo);
+                                break;
+                            case "3":
+                                TotalDescuento -= parseFloat(Detalles[i].Descuento);
+                                break;
+                        }
+                    }
+
+                }
+                //TotalRemunerativo = $.parseCurrency(TotalRemunerativo);
+                //TotalNoRemunerativo = $.parseCurrency(TotalNoRemunerativo);
+                //TotalDescuento = $.parseCurrency(TotalDescuento);
+
+                $('#TotalRemunerativo').val(TotalRemunerativo);
+                $('#TotalNoRemunerativo').val(TotalNoRemunerativo);
+                $('#TotalDescuento').val(TotalDescuento);
+            },
+
+            AgregarDetalleAGrilla: function (e) {
+                debugger;
+                if (Recibo.SelectedRows.indexOf($('#Adicional_Id').val()) >= 0)
+                {
+                    return;
+                }
+                jQuery.extend(jQuery.validator.messages, {
+                    required: "Este campo es necesario"
+                });
+                if (!($('#Adicional_Id').val() > 0 || $('#AdicionalID').val() <= 0)) {
+                    $('.valid-custom.Adicional').removeClass('field-validation-valid');
+                    $('.valid-custom.Adicional').addClass('field-validation-error');
+                    $('.valid-custom.Adicional').append("<span for='Adicional_Id' generated='true' class=''>Este campo es necesario</span>");
+                    return;
+                } else {
+                    $('.valid-custom.Adicional').removeClass('field-validation-error');
+                    $('.valid-custom.Adicional').addClass('field-validation-valid');
+                    $('.valid-custom.Adicional span').remove();
+                }
+                //if (!($('#TipoIVA').val() > 0)) {
+                //    $('#TipoIVA').parent().append("<span class='help-block field-validation-error valid-custom tipoiva' data-valmsg-for='TipoIVA' data-valmsg-replace='true'><span for='TipoIVA' generated='true' class=''>Es Necesario un Tipo de Iva</span></span>");
+                //    return;
+                //} else {
+                //    $('.valid-custom.tipoiva').remove();
+                //}
+                if ($('#recibo-detalle').valid()) {
+                    var Descripcion = $('#Adicional_Id').select2('data').text;
+                    var detalle = {
+                            Id: reciboDetalleId,
+                            Porcentaje: $('#Porcentaje').val(),
+                            Valor: $('#Valor').val(),
+                            Adicional_Id: $('#Adicional_Id').val(),
+                            Descripcion: Descripcion,
+                            TipoLiquidacion: $('#TipoLiquidacion').val(),
+                            Suma: $('#Suma').val(),
+                            AdicionalAdicionales: Recibo.Data_AAs,
+                            Seleccionados: true
+                        //Padre: 
+
+                        };
+                    debugger;
+                    $('#GridDetallesRecibo').jqGrid('addRowData', detalle.Id, detalle);
+                    Recibo.CalcularTotales();
+                    $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
+
+                    reciboDetalleId++;
+
+                    //$(this).attr(checked, "checked");
+                    Recibo.SelectedRows.push($('#Adicional_Id').val()); // reciboDetalleId o $('#Adicional_Id').val()
+
+                    var valorDelAdicionalSeleccionado = 0;
+                    var tienenTodosLosHijosValor = true;
+
+                    for (var u = 0; u < Recibo.Data_AAs.length; u++)
+                    {
+                        var detalleHijo = {
+                            Id: reciboDetalleId,
+                            Porcentaje: Recibo.Data_AAs[u].Porcentaje,
+                            Valor: Recibo.Data_AAs[u].Valor,
+                            Adicional_Id: Recibo.Data_AAs[u].Id,
+                            Descripcion: Recibo.Data_AAs[u].Descripcion,
+                            TipoLiquidacion: Recibo.Data_AAs[u].TipoLiquidacion,
+                            Suma: Recibo.Data_AAs[u].Suma,
+                            //AdicionalAdicionales: Recibo.Data_AAs,
+                            Padre: $('#Adicional_Id').val()
+                        };
+                        debugger;
+                        if (!Recibo.Data_AAs[u].Valor)
+                        {
+                            tienenTodosLosHijosValor = false;
+                        }
+
+                        if(Recibo.Data_AAs[u].Valor && Recibo.Data_AAs[u].Suma)
+                        {
+                            valorDelAdicionalSeleccionado += Recibo.Data_AAs[u].Valor;
+                        }
+                        else if(Recibo.Data_AAs[u].Valor && !Recibo.Data_AAs[u].Suma)
+                        {
+                            valorDelAdicionalSeleccionado -= Recibo.Data_AAs[u].Valor;
+                        }
+                        reciboDetalleId++;
+                        debugger;
+                        $('#GridDetallesRecibo').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
+                        Recibo.CalcularTotales();
+
+                    }
+
+                    //Colocarle el valor final
+                    if (tienenTodosLosHijosValor)
+                    {
+
+                    }
+
+
+                    //limpiar form de detalle
+                    $('#recibo-detalle').ClearForm();
+                    $('#Adicional_Id').select2('data', null);
+                }
+            },
+
+            Save: function () {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                    return;
+
+                $('#BtnSubmit').attr('disabled', 'disabled');
+                if (!$('#recibo-header').valid()) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return;
+                }
+                var Recibo = $('#recibo-header').serializeFormJSON();
+
+                var detalles = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //var detalles = $('#GridDetallesRecibo').jqGrid('getRowData');
+                if (detalles.length == 0) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return $.WarningDialog('Es necesario que agregue al menos un adicional al recibo.');
+                }
+                Recibo.Detalle = new Array();
+                for (var i = 0; i < detalles.length; i++) {
+                    var item = {
+                        Adicional: {
+                            Id: detalles[i].Adicional_Id
+                            //,
+                            //PercepcionIVA: detalles[i].PercepcionIVA == "true",
+                            //PercepcionIIBB: detalles[i].PercepcionIIBB == "true"
+                        },
+                        Descripcion: detalles[i].Descripcion,
+                        //TotalRemunerativo: detalles[i].TotalRemunerativo,
+                        //TotalNoRemunerativo: detalles[i].TotalNoRemunerativo,
+                        //TotalDescuento: detalles[i].TotalDescuento,
+                    };
+                    Recibo.Detalle.push(item);
+                }
+
+                var postParams = {
+                    url: "@Url.Action("Nuevo", "Recibos")",
+                    data: { Recibo: Recibo },
+                    success: function (data) {
+                        if (data.Success) {
+                            if (data.NuevoNumero == null && data.NumeroRef == null) {
+                                Recibo.OnFinishSave(data.Recibo);
+                            }
+                            else {
+                                var msg = "";
+                                if (data.NuevoNumero != null) {
+                                    msg += '<p>El N° de Recibo ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                                }
+                                if (data.NumeroRef != null) {
+                                    msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                                }
+                                $.WarningDialog(msg, 'warning', function () {
+                                    Recibo.OnFinishSave(data.Recibo)
+                                });
+                            }
+                        }
+                        else {
+                            $('#BtnSubmit').removeAttr('disabled');
+                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        }
+                    }
+                }
+                $.AjaxPost(postParams);
+            },
+
+            OnFinishSave: function (Recibo) {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Index")';
+                //window.location = '@@ Url.Action("Detalle")/' + Recibo.Id;
+            }
+        }
+    </script>
+}

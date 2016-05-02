@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Ventas por Cliente";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Ventas por Cliente";
+}
+<div class="action-bar row" style="margin-bottom:5px;">
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridVentasPorCliente"></table>
+    <div id="GridVentasPorCliente_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            VentasPorCliente.init();
+        });
+
+        var VentasPorCliente = {
+            headNeedsReload: false,
+
+            init: function () {
+                $('#BtnExportXLS').click(VentasPorCliente.ExportToExcel);
+
+                $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', function () {
+                    VentasPorCliente.LoadData();
+                });
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridVentasPorCliente', ["Fecha", "Numero"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridVentasPorCliente').CreateCommonGrid({
+                    datatype: 'json',
+                    url: '@Url.Action("GetAllVentasAcumPorClientes")',
+                    serializeGridData: function (postData) {
+                        data = {
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                        }
+                        return JSON.stringify($.extend(postData, data));
+                    },
+                    colNames: ['', 'Cliente', 'Cantidad', 'SubTotal', 'Total'],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Cliente', index: 'Cliente', width: 25, align: "center", sortable: true },
+                        { name: 'Cantidad', index: 'Cantidad', width: 25, align: "center", sortable: true },
+                        { name: 'Subtotal', index: 'Subtotal', width: 25, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'Total', index: 'Total', width: 25, align: "center", sortable: true, formatter: $.formatCurrency }
+                    ],
+                    sortname: 'Fecha',
+                    sortorder: "asc",
+                    pager: '#GridVentasPorCliente_pager',
+                    rowList: [20, 40, 60],
+                    rowNum: 20                    
+                });
+                $('#BtnLoadData').click(VentasPorCliente.LoadData);
+                VentasPorCliente.LoadData();
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridVentasPorCliente', 'Reporte de Ventas por Cliente');
+            },
+
+            LoadData: function () {
+                VentasPorCliente.CompletarFiltros();
+                valid = VentasPorCliente.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                VentasPorCliente.ReloadGrid();
+            },
+
+
+            ValidateFilters: function () {
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+            },
+
+
+            ReloadGrid: function () {
+                $('#SelectCount').html('0');
+                $("#GridVentasPorCliente").setGridParam({ datatype: 'json' });
+                $('#GridVentasPorCliente').setGridParam({ page: 1 }).trigger("reloadGrid");
+            }
+        }
+    </script>
+}

@@ -1,0 +1,133 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Cheque..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los cheques no depositados -->
+    <div class="table-container AllCheques" id="ChequesADepositar_Container" style="margin-top:50px;">
+        <table id="GridChequesADepositar"></table>
+        <div id="GridChequesADepositar_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var ChequesADepositar = {
+        SelectedRows: new Array(),
+
+        OnSave: function () {
+            // Solo cuando se guarda se actualiza el array de seleccionados
+            Deposito.IdsGridRestricta = new Array();
+            Deposito.IdsGridRestricta = Deposito.IdsGridRestricta.concat(ChequesADepositar.SelectedRows);
+
+            // Arrays que contienen la data, los ids no seleccionados y los que ya fueron agregados para no pisar el importe.
+            var agregarComprobantesGridData = $("#GridChequesADepositar").jqGrid('getGridParam', 'data');
+            var IdsNotSelected = Object.keys($('#GridChequesADepositar').jqGrid('getGridParam', '_index')).diff(Deposito.IdsGridRestricta);
+            var alreadyAdded = new Array();
+            $.each($('#GridCheques').jqGrid('getGridParam', 'data'), function (i, comp) {
+                alreadyAdded.push(comp.Id);
+            });
+
+            // Agrego solo los nuevos
+            $(agregarComprobantesGridData).each(function (indexAddComprobante, ComprobanteRow) {
+                if ($.inArray(ComprobanteRow.Id.toString(), Deposito.IdsGridRestricta) >= 0 &&
+                    $.inArray(ComprobanteRow.Id, alreadyAdded) < 0)
+                {
+                    $('#GridCheques').jqGrid('addRowData', ComprobanteRow.Id, ComprobanteRow);
+                }
+            });
+
+            // Borro los Ids que no esten seleccionados.
+            $.each(IdsNotSelected, function (index, value) {
+                $('#GridCheques').jqGrid('delRowData', value);
+            });
+
+            ChequesADepositar.CloseDialog();
+            Deposito.CalcularTotal();
+        },
+
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        HoldSelectedIds: function(){
+            //Seleccionar de la pagina Nueva los que ya estaban seleccionados
+            CheckPage = $('#GridChequesADepositar .SelectCheckboxes');
+            for (var countBox = 0; countBox <= CheckPage.length ; countBox++) {
+                if (ChequesADepositar.SelectedRows.indexOf($(CheckPage[countBox]).val()) >= 0) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridChequesADepositar').resizeGrid('ChequesADepositar_Container');
+        },
+
+        OnCheckboxChange: function () {
+            if ($(this).is(":checked")) {
+                ChequesADepositar.SelectedRows.push($(this).val());
+            }
+            else {
+                var indexDel = ChequesADepositar.SelectedRows.indexOf($(this).val());
+                ChequesADepositar.SelectedRows.splice(indexDel, 1);
+            }
+        },
+
+        init: function () {
+            // Si Cancela quedan en el array
+            ChequesADepositar.SelectedRows = new Array();
+            ChequesADepositar.SelectedRows = ChequesADepositar.SelectedRows.concat(Deposito.IdsGridRestricta);
+
+            $('#BtnSave').click(ChequesADepositar.OnSave);
+            $('#BtnCancel').click(ChequesADepositar.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridChequesADepositar', ["Numero", "Fecha"]);
+
+            //Grilla de todos los comprobantes - Los que aparecen en el popup
+
+            $('#GridChequesADepositar').CreateCommonGrid({
+                url: '@Url.Action("GetAllChequesEnCartera")',
+                colNames: ['', '', 'Fecha','Cliente', 'Numero', 'Importe'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 80, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: Deposito.IdsGridRestricta }, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 150, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Cliente.RazonSocial', index: 'Cliente.RazonSocial', width: 150, align: "center", sortable: true },
+                    { name: 'Numero', index: 'Numero', width: 150, align: "center", sortable: true },
+                    { name: 'Importe', index: 'Importe', width: 150, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridChequesADepositar_pager',
+                loadComplete: ChequesADepositar.HoldSelectedIds,
+                onPaging: ChequesADepositar.HoldSelectedIds,
+                rowList: [5, 10, 20],
+                rowNum: 5
+            });
+            $('#GridChequesADepositar').trigger("reloadGrid");
+            $(document).off('change', '#GridChequesADepositar .SelectCheckboxes');
+            $(document).on('change','#GridChequesADepositar .SelectCheckboxes', ChequesADepositar.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        ChequesADepositar.init();
+    });
+
+</script>

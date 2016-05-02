@@ -1,0 +1,118 @@
+﻿@model Woopin.SGC.Model.Common.CategoriaIVA
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Predeterminado)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Nombre, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Abreviatura, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Abreviatura, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Abreviatura, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Discrimina, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="textinput" id="Discrimina" name="Discrimina" type="checkbox" value="true" @if (Model.Discrimina) { @Html.Raw("checked") ; }>
+                @Html.ValidationMessageFor(model => model.Discrimina, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("LiquidaInternos"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.LiquidaInternos, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="textinput" id="LiquidaInternos" name="LiquidaInternos" type="checkbox" value="true" @if(Model.LiquidaInternos){@Html.Raw("checked");}>
+                @Html.ValidationMessageFor(model => model.LiquidaInternos, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LetraCompras, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.LetraCompras.Id, (IEnumerable<SelectListItem>)ViewBag.LetraComprobantes, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.LetraCompras, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LetraVentas, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.LetraVentas.Id, (IEnumerable<SelectListItem>)ViewBag.LetraComprobantes, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.LetraVentas, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("ExentoIva"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.ExentoIva, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="textinput" id="ExentoIva" name="ExentoIva" type="checkbox" value="true" @if (Model.ExentoIva) { @Html.Raw("checked") ; }>
+                @Html.ValidationMessageFor(model => model.ExentoIva, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("ResponsabilidadAfip"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.ResponsabilidadAfip, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.ResponsabilidadAfip, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.ResponsabilidadAfip, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Guardar Categoría de IVA
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#BtnSubmit').FormSubmit({
+            success: function (data) {
+                if (data.Success) {
+                    var rowData = $('#GridCategoriasIVA').jqGrid('getRowData', data.CategoriaIVA.Id);
+                    rowData.Nombre = data.CategoriaIVA.Nombre;
+                    rowData.Abreviatura = data.CategoriaIVA.Abreviatura;
+                    rowData.Discrimina = data.CategoriaIVA.Discrimina;
+                    rowData.LiquidaInternos = data.CategoriaIVA.LiquidaInternos;
+                    rowData["LetraCompras.Data"] = data.CategoriaIVA.LetraCompras.Data;
+                    rowData["LetraVentas.Data"] = data.CategoriaIVA.LetraVentas.Data;
+                    rowData.ExentoIva = data.CategoriaIVA.ExentoIva;
+                    rowData.Predeterminado = data.CategoriaIVA.Predeterminado;
+                    $('#GridCategoriasIVA').jqGrid('setRowData', data.CategoriaIVA.Id, rowData);
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>

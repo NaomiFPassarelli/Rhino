@@ -1,0 +1,183 @@
+﻿@using Woopin.SGC.Model.Ventas
+@{
+    ViewBag.Title = "Lista de Precios";
+    ViewBag.SectionIcon = "calculator";
+    if(ViewBag.Nombre != null)
+    {
+        ViewBag.SectionTitle = "Gestionar Lista de " + ViewBag.Nombre;
+    }
+    else
+    {
+        ViewBag.SectionTitle = "Gestionar Lista";
+    }
+}
+
+<div class="action-bar row">
+    <label class="col-md-3 horizontal-label text-center">Filtrar por Grupo</label>
+    <div class="col-md-6 input-container">
+        <div class="row">
+            <input type="number" id="GrupoID" name="GrupoID" class="col-md-2" style="margin-top: 7px;" value="@(ViewBag.IdCliente == 0 ? "" : ViewBag.IdCliente.ToString())" />
+            <div class="col-md-8" style="padding:0;">
+                <input type="hidden" id="Grupo_Id" name="Grupo.Id" class="selectinput" />
+            </div>
+            <a class="boton boton-i place-right BtnClearSelect2" data-rel="Grupo_Id" data-input="GrupoID" title="Limpiar">
+                <i class="fa fa-eraser i-blue"></i>
+            </a>
+        </div>
+    </div>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar modalidad..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridListaPrecios"></table>
+    <div id="GridListaPrecios_pager"></div>
+</div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+        var ListaPrecios = {
+
+            ReloadGrid:function () {
+                $('#SelectCount').html('0');
+                $("#GridListaPrecios").setGridParam({ datatype: 'json' });
+                $('#GridListaPrecios').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridListaPrecios', 'Listado de Precios');
+            },
+
+            ValidateFilters: function () {
+                var Id = $('#GrupoID').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return { success: false, message: 'El N° de Cliente no es correcto' };
+                }
+                return { success: true };
+            },
+
+            init: function () {
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListaPrecios.ReloadGrid);
+                // Setup del combo cliente.
+                $('#GrupoID').change(ListaPrecios.OnClienteChange);
+                $('#Grupo_Id').select2(
+                    {
+                        placeholder: "Seleccione Un Grupo Economico",
+                        minimumInputLength: 2,
+                        ajax: {
+                            url: "@Url.Action("GetGruposCombo", "GrupoEconomico")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { where: t };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+                $('#Grupo_Id').on("select2-selecting", ListaPrecios.OnClienteSelected);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridListaPrecios', ["Detalle"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridListaPrecios').CreateCommonGrid({
+                    url: '@Url.Action("GetAllById")',
+                    serializeGridData: function (postData) {
+                        data = {
+                            Id: $('#GrupoID').val() != '' ? "@TipoListaPrecios.Grupo" + $('#GrupoID').val() : "",
+                        }
+                        return JSON.stringify($.extend(postData, data));
+                    },
+                    colNames: ['', 'Articulo', 'Precio', '', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Articulo.Descripcion', index: 'Articulo.Descripcion', width: 30, align: "center", sortable: true },
+                        { name: 'Precio', index: 'Precio', width: 30, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'Articulo.Id', index: 'Articulo.Id', width: 30, align: "center", sortable: true, hidden: true },
+                        { name: 'Acciones', index: 'Acciones', width: 10, align: "center", sortable: true, formatter: ListaPrecios.accionesFormatter }
+                    ],
+                    sortname: 'Detalle',
+                    sortorder: "asc",
+                    pager: '#GridListaPrecios_pager',
+                    rowList: [50, 100, 200],
+                    rowNum: 50,
+                });
+                $('#GridListaPrecios').trigger("reloadGrid");
+                $('#BtnExportXLS').click(ListaPrecios.ExportToExcel);
+                $(document).on('click', '.BtnEditar', ListaPrecios.OnEditar);
+                @if(ViewBag.IdCliente != 0)
+                {
+                    @: $('#GrupoID').trigger('change');
+                }
+                $('.BtnClearSelect2').on('click', function () {
+                    var IdClear = $(this).attr('data-rel');
+                    var IdClearInput = $(this).attr('data-input');
+                    ListaPrecios.ClearSelect2(IdClear, IdClearInput);
+                });
+            },
+
+            ClearSelect2: function (IdClear, IdClearInput) {
+                $("#" + IdClearInput).val("");
+                $("#" + IdClear).select2("val", "");
+            },
+
+            accionesFormatter: function (cell,attr,row) {
+                return '<a class="boton boton-i BtnEditar"><i class="fa fa-edit i-blue"></i> Editar Precio</a>';
+            },
+
+            OnEditar: function () {
+                var Id = $(this).closest('tr').attr('id');
+                var IdCliente = "@TipoListaPrecios.Grupo" + $('#GrupoID').val();
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")?Id=' + Id + '&IdCliente=' + IdCliente, '<i class="fa fa-calculator"></i> Editar precio de venta', null);
+            },
+
+            OnClienteChange: function () {
+                var Id = $('#GrupoID').val();
+                if (Id == "") { return; }
+                valid = ListaPrecios.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetGrupo", "GrupoEconomico")',
+                    data: { Id: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            $('#Grupo_Id').select2('data', { id: Id, text: ret.Data.Nombre });
+                            $('.section-header').html('<h2><i class="fa fa-calculator"></i> Gestionar Lista de ' + ret.Data.Nombre + '</h2>');
+                            ListaPrecios.ReloadGrid();
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('El Grupo Economico no existe!');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClienteSelected: function (e) {
+                $('#GrupoID').val(e.val);
+                ListaPrecios.OnClienteChange();
+            }
+
+        }
+    $(document).ready(function () {
+        ListaPrecios.init();
+    });
+    </script>
+}

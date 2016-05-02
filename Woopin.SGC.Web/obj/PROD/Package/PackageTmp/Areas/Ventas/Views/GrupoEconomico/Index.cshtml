@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Grupo Economico";
+    ViewBag.SectionIcon = "group";
+    ViewBag.SectionTitle = "Listado de Grupo Economico";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Grupo Economico">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Grupo Economico
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Grupo Economico..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridGrupoEconomico"></table>
+    <div id="GridGrupoEconomico_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoGrupos = {
+            Nuevo: function () {
+                $('#create-dialog').OpenFormDialog('@Url.Action("Nuevo")', '<i class="fa fa-group"></i> Crear Grupo Economico', null);
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridGrupoEconomico');
+                ListadoGrupos.ReloadGrid();
+            },
+
+            ReloadGrid:function () {
+                $("#GridGrupoEconomico").setGridParam({ datatype: 'json' });
+                $('#GridGrupoEconomico').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            OnClickEliminar: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Grupo Economico seleccionado?",
+                            function () { ListadoGrupos.Eliminar(Id) });
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridGrupoEconomico', 'Listado de Grupos Economicos');
+            },
+
+            Eliminar: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridGrupoEconomico').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                            //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                            $("#GridGrupoEconomico").jqGrid("clearGridData", true);
+                            ListadoGrupos.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridGrupoEconomico');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Grupos Economicos seleccionados?",
+                            function () { ListadoGrupos.Eliminar(SelectedIds) });
+                } else {
+                    $.WarningDialog("No hay Grupos Economicos seleccionados!");
+                }
+
+            },
+
+            Editar: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-group"></i> Editar Grupo Economico', null);
+            },
+
+            init: function () {
+                /* Binding del boton de crear*/
+                $('#BtnCreate').bind('click', ListadoGrupos.Nuevo);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoGrupos.Refresh);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridGrupoEconomico');
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoGrupos.OnClickEliminarSeleccionados);
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoGrupos.OnClickEliminar);
+                /* Editar de la grilla */
+                $(document).on('click', '.BtnEditar', ListadoGrupos.Editar);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridGrupoEconomico', ["Nombre"]);
+                $('#BtnExportXLS').click(ListadoGrupos.ExportToExcel);
+                /* Armo la grilla del ABM */
+                $('#GridGrupoEconomico').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Nombre',
+                    sortorder: "asc",
+                    pager: '#GridGrupoEconomico_pager'
+                });
+                $('#GridGrupoEconomico').trigger("reloadGrid");
+            }
+        }
+    $(document).ready(function () {
+        ListadoGrupos.init();
+    });
+    </script>
+}

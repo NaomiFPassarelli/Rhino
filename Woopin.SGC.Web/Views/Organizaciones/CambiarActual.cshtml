@@ -1,0 +1,122 @@
+﻿@using Woopin.SGC.CommonApp.Security
+@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="CHORG_TbxSearch" placeholder="Buscar Organizacion..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="CHORG_BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="CHORG_BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="CambiarActual_Container" style="margin-top:50px;">
+        <table id="GridCambiarActual"></table>
+        <div id="GridCambiarActual_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+
+    var CambiarActual = {
+
+        SelectedRow: '@Security.GetOrganizacion().Id',
+
+        OnSave: function () {
+            var params = {
+                url: '@Url.Action("CambiarActual")',
+                data: { Id: CambiarActual.SelectedRow },
+                success: CambiarActual.OnSaveCompleted
+            }
+            $.AjaxPost(params);
+        },
+
+        OnSaveCompleted: function (ret) {
+            if (ret.Success) {
+                CambiarActual.CloseDialog();
+                $.WarningDialog('La organización fue cambiada exitosamente.', 'success', CambiarActual.OnFinishSave);
+            }
+            else {
+                $.WarningDialog('Ocurrio un error al querer cambiar de organización, vuelva a intentarlo.', 'error');
+            }
+        },
+
+        OnFinishSave: function(){
+            window.location.reload();
+        },
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        init: function () {
+            $('#BtnSave').click(CambiarActual.OnSave);
+            $('#BtnCancel').click(CambiarActual.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridCambiarActual', ["NombreFantasia"],'CHORG');
+
+            $('#GridCambiarActual').CreateCommonGrid({
+                url: '@Url.Action("GetAllMisOrganizaciones")',
+                colNames: ['', '', 'Nombre de Fantasia','Razón Social'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: RadioFormatter, formatoptions: { SelectedRows: CambiarActual.SelectedRow }, align: "center" },
+                    { name: 'NombreFantasia', index: 'NombreFantasia', width: 0, sortable: false },
+                    { name: 'RazonSocial', index: 'RazonSocial', width: 0, sortable: false }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridCambiarActual_pager',
+                rowList: [15, 30, 50],
+                rowNum: 15,
+                loadComplete: CambiarActual.HoldSelectedIds,
+                onPaging: CambiarActual.HoldSelectedIds,
+                ondblClickRow: function (rowid) {
+                    CambiarActual.SelectedRow = rowid;
+                    CambiarActual.OnSave();
+                }
+            });
+            $('#GridCambiarActual').trigger("reloadGrid");
+
+            $(document).off('change', '#GridCambiarActual .SelectCheckboxes');
+            $(document).on('change', '#GridCambiarActual .SelectCheckboxes', CambiarActual.OnRadioSelected);
+        },
+
+        OnRadioSelected: function () {
+            $('.SelectCheckboxes').attr('checked', false);
+            $(this).attr('checked', true);
+            CambiarActual.SelectedRow = $(this).val();
+        },
+
+        HoldSelectedIds: function () {
+            //buscar number y seleccionar ese id o con la grid restricta
+            CheckPage = $('#GridCambiarActual .SelectCheckboxes');
+            for (var countBox = 0; countBox < CheckPage.length ; countBox++) {
+                if (CambiarActual.SelectedRow == $(CheckPage[countBox]).val()) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridCambiarActual').resizeGrid('CambiarActual_Container');
+        },
+    }
+
+    $(document).ready(function () {
+        CambiarActual.init();
+    });
+
+</script>

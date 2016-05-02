@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2E29BE0F-CB6C-4634-A170-556EEC344542}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Woopin.SGC.NHMapping</RootNamespace>
+    <AssemblyName>Woopin.SGC.NHMapping</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DESA|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'QA|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PROD|AnyCPU'">
+    <OutputPath>bin\PROD\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\LogMap.cs" />
+    <Compile Include="Common\OrganizacionMap.cs" />
+    <Compile Include="Common\UsuarioOrganizacionMap.cs" />
+    <Compile Include="Compras\ImputacionCompraMap.cs" />
+    <Compile Include="Compras\OtroEgresoItem.cs" />
+    <Compile Include="Compras\OtroEgresoPago.cs" />
+    <Compile Include="Compras\OtroEgresoMap.cs" />
+    <Compile Include="Compras\OrdenPagoValorItemMap.cs" />
+    <Compile Include="Compras\OrdenPagoComprobanteItemMap.cs" />
+    <Compile Include="Compras\ComprobanteCompraMap.cs" />
+    <Compile Include="Compras\DetalleComprobanteCompraMap.cs" />
+    <Compile Include="Compras\OrdenPagoMap.cs" />
+    <Compile Include="Compras\RubroCompraMap.cs" />
+    <Compile Include="Contabilidad\BloqueoContableMap.cs" />
+    <Compile Include="Contabilidad\AsientoItemMap.cs" />
+    <Compile Include="Contabilidad\AsientoMap.cs" />
+    <Compile Include="Contabilidad\RetencionMap.cs" />
+    <Compile Include="Contabilidad\EjercicioMap.cs" />
+    <Compile Include="Helpers\NHibernateConfigurationExtensions.cs" />
+    <Compile Include="Reporting\GrupoEgresoMap.cs" />
+    <Compile Include="Reporting\GrupoIngresoMap.cs" />
+    <Compile Include="Sueldos\AdicionalAdicionalesMap.cs" />
+    <Compile Include="Sueldos\AdicionalMap.cs" />
+    <Compile Include="Sueldos\ReciboMap.cs" />
+    <Compile Include="Sueldos\EmpleadoMap.cs" />
+    <Compile Include="Stock\IngresoStockMap.cs" />
+    <Compile Include="Stock\EgresoStockMap.cs" />
+    <Compile Include="Stock\RubroArticulo.cs" />
+    <Compile Include="Stock\ArticuloMap.cs" />
+    <Compile Include="Tesoreria\ChequeraMap.cs" />
+    <Compile Include="Ventas\ImputacionVenta.cs" />
+    <Compile Include="Ventas\ObservComprobanteVentaMap.cs" />
+    <Compile Include="Ventas\ListaPreciosMap.cs" />
+    <Compile Include="Tesoreria\CancelacionTarjetaMap.cs" />
+    <Compile Include="Tesoreria\DepositoItemMap.cs" />
+    <Compile Include="Tesoreria\DepositoMap.cs" />
+    <Compile Include="Tesoreria\ComprobanteRetencionMap.cs" />
+    <Compile Include="Tesoreria\PagoTarjetaMap.cs" />
+    <Compile Include="Tesoreria\TarjetaCreditoMap.cs" />
+    <Compile Include="Tesoreria\TransferenciaMap.cs" />
+    <Compile Include="Tesoreria\ChequePropioMap.cs" />
+    <Compile Include="Tesoreria\HistorialCuentaBancariaMap.cs" />
+    <Compile Include="Tesoreria\HistorialCajaMap.cs" />
+    <Compile Include="Tesoreria\ChequeMap.cs" />
+    <Compile Include="Tesoreria\CajaMap.cs" />
+    <Compile Include="Tesoreria\BancoMap.cs" />
+    <Compile Include="Common\ComboItemMap.cs" />
+    <Compile Include="Common\ComboMap.cs" />
+    <Compile Include="Common\CategoriaIVAMap.cs" />
+    <Compile Include="Common\LocalizacionMap.cs" />
+    <Compile Include="Common\UsuarioMap.cs" />
+    <Compile Include="Common\SucursalMap.cs" />
+    <Compile Include="Common\MonedaMap.cs" />
+    <Compile Include="Tesoreria\CuentaBancariaMap.cs" />
+    <Compile Include="Compras\ProveedorMap.cs" />
+    <Compile Include="Contabilidad\CuentaMap.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tesoreria\MovimientoFondoMap.cs" />
+    <Compile Include="Tesoreria\ValorIngresadoMap.cs" />
+    <Compile Include="Tesoreria\ValorMap.cs" />
+    <Compile Include="Ventas\CobranzaMap.cs" />
+    <Compile Include="Ventas\CobranzaComprobanteItemMap.cs" />
+    <Compile Include="Ventas\CobranzaValorItemMap.cs" />
+    <Compile Include="Ventas\DetalleComprobanteVentaMap.cs" />
+    <Compile Include="Ventas\GrupoEconomicoMap.cs" />
+    <Compile Include="Ventas\ClienteMap.cs" />
+    <Compile Include="Ventas\ComprobanteVentaMap.cs" />
+    <Compile Include="Ventas\TalonarioMap.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Woopin.SGC.Common\Woopin.SGC.Common.csproj">
+      <Project>{9ca0881b-f044-483c-a594-82d0158832f7}</Project>
+      <Name>Woopin.SGC.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Woopin.SGC.Model\Woopin.SGC.Model.csproj">
+      <Project>{18216b6b-29b8-48a8-a2aa-444e068abcb8}</Project>
+      <Name>Woopin.SGC.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

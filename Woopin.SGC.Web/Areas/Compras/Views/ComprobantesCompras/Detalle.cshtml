@@ -1,0 +1,183 @@
+﻿@model Woopin.SGC.Model.Compras.ComprobanteCompra
+@using Woopin.SGC.Common.HtmlHelper
+@using Woopin.SGC.Common.HtmlModel
+@using Woopin.SGC.Web.HtmlHelper
+@{
+    if (ViewBag.OpensDialog)
+    {
+        Layout = null;
+    }
+    ViewBag.Title = "Detalle Comprobante " + Model.GetLetraNumero();
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Detalle Comprobante " + Model.GetLetraNumero();
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        @if (!ViewBag.OpensDialog)
+        {
+            <div class="" style="float:left;">
+                <div class="col-md-12">
+                    <a class="boton place-left" href='@Url.Action("Index")' ><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+                </div>
+            </div>
+        }
+        @Html.LabelStatus(@Model.Estado.ToString(), (int)@Model.Estado, (bool)ViewBag.OpensDialog)
+        @if (!ViewBag.OpensDialog && Model.CanAnular())
+        {
+                <a class="boton boton-i BtnEliminar" style="float: right; border-bottom-color: #bd362f; " title="Anular" data-id="@Model.Id">
+                    <i class="fa fa-trash-o" style="padding: 2px 5px 0px 5px; color: #666666;">
+                        <br /><span style="color: #666666; font-size: 12px; padding: 0px; margin: 0px;">Anular</span>
+                    </i>
+                </a>
+                <a class="boton boton-i BtnEliminarCompleto" style="float: right; border-bottom-color: #bd362f; " title="Eliminar" data-id="@Model.Id">
+                    <i class="fa fa-trash-o" style="padding: 2px 5px 0px 5px; color: #666666;">
+                        <br /><span style="color: #666666; font-size: 12px; padding: 0px; margin: 0px;">Eliminar</span>
+                    </i>
+                </a>
+        }
+            
+        <div class="comprobante">
+            <div class="col-md-12">
+                <div class="col-md-7 ">
+                    @Html.LabelFor(model => model.Proveedor, new { @class = "col-md-3 horizontal-label readonly-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="text" id="ProveedorID" name="ProveedorID" class="col-md-2" style="margin-top: 7px;" readonly value="@Model.Proveedor.Id" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="text" id="Proveedor_Id" name="Proveedor.Id" class="textinput" readonly value="@Model.Proveedor.RazonSocial" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="col-md-12 input-container padding-left-2 font-size-22">
+                        <input type="hidden" id="LetraProveedor" />
+                        @Html.TextBoxFor(model => model.Letra, new { @class = "textinput readonly-label", @id = "Letra", @readonly = "readonly" })
+                    </div>
+                </div>
+
+
+                <div class="col-md-4 ">
+                    <div class="col-md-12 input-container">
+                       @Html.TextBoxFor(model => model.Tipo.Data, new { @class = "textinput readonly-label", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-4 ">
+                    <label class="col-md-6 horizontal-label readonly-label">N° Referencia</label>
+                    <div class="col-md-5 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Id, new { @class = "textinput", @id = "NumeroReferencia", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="col-md-3 padding-left-2">
+                    @Html.LabelFor(model => model.Proveedor.CUIT, new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
+                    <div class="col-md-9 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Proveedor.CUIT, new { @class = "textinput padding-left-2", @id = "CUIT", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Numero, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        @Html.TextBoxFor(model => model.Numero, new { @class = "textinput", @id = "Numero", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.CondicionCompra, new { @class = "col-md-3 horizontal-label readonly-label" })
+                    <div class="col-md-7 input-container">
+                        @Html.TextBoxFor(model => model.CondicionCompra.Data, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Fecha, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" readonly data-val="true" data-val-required="La Fecha es requerida" id="Fecha" name="Fecha" type="text" value="@Model.Fecha.ToString("dd/MM/yyyy")">
+                        @Html.ValidationMessageFor(model => model.Fecha, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.LabelFor(model => model.Observacion, new { @class = "col-md-3 horizontal-label readonly-label" })
+                    <div class="col-md-9 input-container">
+                        @Html.TextBoxFor(model => model.Observacion, null, new { @class = "textinput", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.FechaContable, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="FechaContable" name="FechaContable" type="text" readonly value="@Model.FechaContable.ToString("dd/MM/yyyy")">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="col-md-12 table-container detalles" id="GridDetallesCompra_Container">
+    <table id="GridDetallesCompra" class="col-md-12"></table>
+    <div id="GridDetallesCompra_pager"></div>
+</div>
+
+
+<div class="comprobante comprobante-right col-md-4" style="margin-top:40px;">
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.Subtotal, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.Subtotal, "{0:C}", new { @class = "textinput", @id = "Subtotal", @readonly = "readonly" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA, "{0:C}", new { @class = "textinput", @id = "IVA", @readonly = "readonly" })
+        </div>
+    </div>
+
+    <div class="col-md-12" style="padding-top:10px;">
+        <div class="totalSlash"></div>
+        @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.Total, "{0:C}", new { @class = "textinput", @id = "Total", @readonly = "readonly" })
+        </div>
+    </div>
+</div>
+<div class="comprobante place-left col-md-4" style="margin-top:40px;">
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA105, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA105, "{0:C}", new { @class = "textinput", @id = "IVA105", @readonly = "readonly" })
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA21, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA21, "{0:C}", new { @class = "textinput", @id = "IVA21", @readonly = "readonly" })
+        </div>
+    </div>
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.IVA27, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.IVA27, "{0:C}", new { @class = "textinput", @id = "IVA27", @readonly = "readonly" })
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+@section Scripts{
+    @Html.Partial("js/_Detalle");
+}
+@if(ViewBag.OpensDialog)
+{
+    Html.RenderPartial("js/_Detalle");
+}

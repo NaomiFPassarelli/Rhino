@@ -1,0 +1,84 @@
+﻿@model Woopin.SGC.Model.Common.Moneda
+
+@{
+    ViewBag.Title = "Nueva Moneda";
+    ViewBag.SectionIcon = "money";
+    ViewBag.SectionTitle = "Nueva Moneda";
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+     <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Nombre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Nombre, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Abreviatura"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Abreviatura, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Abreviatura, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Abreviatura, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("CodigoAfip"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.CodigoAfip, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CodigoAfip, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CodigoAfip, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Signo"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Signo, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Signo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Signo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Crear Moneda
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success)
+                {
+                    $('#GridMonedas').jqGrid('addRowData', 'Id', data.Moneda);
+                    $('#GridMonedas').trigger("reloadGrid");
+                    _OpenDialog.dialog('close');
+                }
+                else
+                {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>

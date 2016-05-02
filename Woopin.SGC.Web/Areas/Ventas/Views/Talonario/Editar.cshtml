@@ -1,0 +1,101 @@
+﻿@model Woopin.SGC.Model.Ventas.Talonario
+
+@{
+    Layout = null;
+}
+@using (Html.BeginForm("Editar", "Talonario", FormMethod.Post, new { enctype = "multipart/form-data", Area = "Ventas" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Prefijo, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Prefijo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Prefijo, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.InicioActividad, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="InicioActividad" name="InicioActividad" type="text" value="@Model.InicioActividad.Value.ToString("dd/MM/yyyy")" />
+                @Html.ValidationMessageFor(model => model.InicioActividad, null, new { @class = "help-block" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-4 horizontal-label">Factura Electronica?</label>
+            <div class="col-md-6 input-container">
+                <input type="checkbox" name="FE" id="FE" value="true" @if (Model.PuntoVenta != null) { @Html.Raw("checked='checked'") ; } />
+                <input type="hidden" name="FE" value="false" />
+            </div>
+        </div>
+        <div class="@if(Model.PuntoVenta == null) { @Html.Raw("hidden"); }" id="FE_Container">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PuntoVenta, new { @class = "col-md-4 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.PuntoVenta, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.PuntoVenta, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CertificadoPath, new { @class = "col-md-4 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    <input id="Archivo" type="file" name="Archivo" />
+                    @Html.TextBoxFor(model => model.CertificadoPath, new { @class = "textinput", @hidden = "hidden" })
+                    @Html.ValidationMessageFor(model => model.CertificadoPath, null, new { @class = "help-block" })
+                </div>
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmit" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Guardar Talonario
+        </a>
+        <a class="boton place-left" title="Cancelar" onclick="$.CloseOpenedDialog()">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#InicioActividad").datepicker({ dateFormat: 'dd/mm/yy' });
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    var rowData = $('#GridTalonario').jqGrid('getRowData', data.Talonario.Id);
+                    rowData.Descripcion = data.Talonario.Descripcion;
+                    rowData.Prefijo = data.Talonario.Prefijo;
+                    rowData.PuntoVenta = data.Talonario.PuntoVenta;
+                    $('#GridTalonario').jqGrid('setRowData', data.Talonario.Id, rowData);
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+        $("#FE").change(function () {
+            if ($(this).is(':checked')) {
+                $('#FE_Container').removeClass('hidden');
+            } else {
+                $('#FE_Container').addClass('hidden');
+            }
+        });
+    });
+</script>

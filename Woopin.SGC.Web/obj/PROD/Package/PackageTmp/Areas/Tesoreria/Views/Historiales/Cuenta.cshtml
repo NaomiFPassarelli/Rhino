@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "Historial de Movimiento de Cuentas Bancarias";
+    ViewBag.SectionIcon = "exchange";
+    ViewBag.SectionTitle = "Historial de Movimiento de Cuentas Bancarias";
+}
+<div class="action-bar row">
+    <div class="col-md-8 ">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Cuenta Bancaria</label>
+        <div class="col-md-9 input-container">
+            <div class="row">
+                <div class="col-md-10" style="padding:0;">
+                    <input type="hidden" id="CuentaBancaria_Id" name="CuentaBancaria.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="CuentaBancaria_Id" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="action-bar row">
+    <div class="place-left" style="margin-top:6px;">
+        <i class="fa fa-money"></i> Saldo Actual: <span id="Saldo"></span>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridHistorialCuentaBancaria"></table>
+    <div id="GridHistorialCuentaBancaria_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+        var HistorialCuentas = {
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridHistorialCuentaBancaria', 'Historial de Cuentas Bancarias');
+            },
+
+
+            OnCuentaChange: function (e) {
+                var Id = e.val || $('#CuentaBancaria_Id').val();
+                if (Id == "") { return; }
+                valid = HistorialCuentas.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetCuentaBancaria", "CuentasBancarias")',
+                    data: { Id: e.val },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $('#Saldo').html($.formatCurrency(ret.Data.Fondo));
+                            $('#CuentaBancaria_Id').val(ret.Data.Id);
+                            HistorialCuentas.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            ReloadGrid:function () {
+                $('#SelectCount').html('0');
+                $("#GridHistorialCuentaBancaria").setGridParam({ datatype: 'json' });
+                $('#GridHistorialCuentaBancaria').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            historialImporteFormatter: function (cellvalue, options, rowObject) {
+                if (rowObject.Importe < 0 && options.colModel.formatoptions.columna == 'Debita') {
+                    return '<span>' + $.formatCurrency(rowObject.Importe * -1) + '</span>';
+                } else if (rowObject.Importe > 0 && options.colModel.formatoptions.columna == 'Acredita') {
+                    return '<span>' + $.formatCurrency(rowObject.Importe) + '</span>';
+                } else {
+                    return '<span> </span>';
+                }
+            },
+
+            ClearSelect2: function (IdClear, IdClearInput) {
+                $("#" + IdClearInput).val("");
+                $("#" + IdClear).select2("val", "");
+            },
+
+            LoadData: function () {
+                HistorialCuentas.CompletarFiltros();
+                valid = HistorialCuentas.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                HistorialCuentas.ReloadGrid();
+            },
+
+            ValidateFilters: function () {
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+            },
+
+            init: function () {
+                $('#BtnExportXLS').click(HistorialCuentas.ExportToExcel);
+                $('#CuentaBancaria_Id').prepend('<option></option>');
+                $('#CuentaBancaria_Id').select2(
+                    {
+                        placeholder: "Seleccione la cuenta bancaria",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetComboCuentaBancaria","CuentasBancarias")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { page: 0 };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+                /* Binding del boton de crear*/
+                $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', HistorialCuentas.LoadData);
+
+                /* Armo la grilla del ABM */
+                $('#GridHistorialCuentaBancaria').CreateCommonGrid({
+                    url: '@Url.Action("GetAllCuentasByDates")',
+                    serializeGridData: function (postData) {
+                        dates = {
+                            id: $('#CuentaBancaria_Id').val() != '' ? $('#CuentaBancaria_Id').val() : 0,
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                        }
+                        return JSON.stringify($.extend(postData, dates));
+                    },
+                    colNames: ['', 'Concepto', 'Fecha', 'Debita', 'Acredita', 'Saldo',''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Concepto', index: 'Concepto', width: 30, align: "center", sortable: true },
+                        { name: 'Fecha', index: 'Fecha', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Debita', index: 'Debita', width: 25, align: "center", sortable: true, formatter: HistorialCuentas.historialImporteFormatter, formatoptions: { columna: 'Debita' } },
+                        { name: 'Acredita', index: 'Acredita', width: 25, align: "center", sortable: true, formatter: HistorialCuentas.historialImporteFormatter, formatoptions: { columna: 'Acredita' } },
+                        { name: 'Saldo', index: 'Saldo', width: 30, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'Importe', index: 'Importe', width: 25, align: "center", sortable: true, hidden: true }
+                    ],
+                    sortname: 'Id',
+                    sortorder: "desc",
+                    pager: '#GridHistorialCuentaBancaria_pager',
+                    rowList: [20, 40, 60],
+                    rowNum: 20
+                });
+                $('#GridHistorialCuentaBancaria').trigger("reloadGrid");
+                $('#CuentaBancaria_Id').on("select2-selecting", HistorialCuentas.OnCuentaChange);
+                $('.BtnClearSelect2').on('click', function () {
+                    var IdClear = $(this).attr('data-rel');
+                    var IdClearInput = $(this).attr('data-input');
+                    HistorialCuentas.ClearSelect2(IdClear, IdClearInput);
+                });
+            }
+        }
+        $(document).ready(function () {
+            HistorialCuentas.init();
+        });
+     
+    </script>
+}

@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = @ViewBag.ComboName;
+    ViewBag.SectionIcon = "map-marker";
+    ViewBag.SectionTitle = "Listado de " + @ViewBag.ComboName;
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear">
+        <i class="fa fa-plus-circle i-green"></i>  Crear
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" href="@Url.Action("ExportarExcel")">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="Grid"></table>
+    <div id="Grid_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+        /* Binding del boton de crear*/
+        $('#BtnCreate').bind('click', function () {
+            $('#create-dialog').OpenFormDialog('@Url.Action("Nueva", "Combos", new { Combo = @ViewBag.ComboId })', '<i class="fa fa-map-maker"></i> Crear', null);
+        });
+
+        /* Binding del boton de Refresh */
+        $('#BtnRefresh').bind('click', function () {
+            $('#SelectCount').html('0');
+            $("#Grid").setGridParam({ datatype: 'json' });
+            $('#Grid').setGridParam({ page: 1 }).trigger("reloadGrid");
+        });
+
+        /* Binding de los checkbox, contador de seleccionados */
+        $.SetupSelectCount();
+        /* Binding del Boton para setear la moneda predeterminada */
+        $.SetupSetDefaulter('@Url.Action("SetDefault")')
+        /* Eliminar Seleccionados */
+        $('#BtnDeleteSelected').click(function () {
+            var SelectedIds = $('.SelectCheckboxes:checked').GetCheckboxValues();
+            if (SelectedIds.length > 0) {
+                $(this).ConfirmDialog("Esta seguro que desea eliminarlos seleccionados?",
+                    {
+                        "Si, confirmar": function () {
+                            _OpenDialog = $(this);
+                            var params = {
+                                url: '@Url.Action("Eliminar")',
+                                data: { Ids: SelectedIds },
+                                success: function (ret) {
+                                    if (ret.Success) {
+                                        $.each(SelectedIds, function (i, v) {
+                                            $('#Grid').jqGrid('delRowData', v);
+                                        });
+                                        $('#SelectCount').html('0');
+                                        _OpenDialog.dialog("close");
+                                    }
+                                }
+                            }
+                            $.AjaxPost(params);
+                        },
+                        "Cancelar": function () {
+                            $(this).dialog("close");
+                        }
+                    });
+            } else {
+                $('#Alert-Container').NewAlert('error', "No hay seleccionados");
+            }
+
+        });
+
+        /* Eliminar de Grilla */
+        $(document).on('click', '.BtnEliminar', function () {
+            var Id = $(this).closest('tr').attr('id');
+            $(this).ConfirmDialog("Esta seguro que desea eliminar el seleccionado?",
+                    {
+                        "Si, confirmar": function () {
+                            _OpenDialog = $(this);
+                            var params = {
+                                url: '@Url.Action("Eliminar")',
+                                data: { Ids: Id },
+                                success: function (ret) {
+                                    if (ret.Success) {
+                                        $('#Grid').jqGrid('delRowData', Id);
+                                        $('#SelectCount').html('0');
+                                        _OpenDialog.dialog("close");
+                                    }
+                                }
+                            }
+                            $.AjaxPost(params);
+                        },
+                        "Cancelar": function () {
+                            $(this).dialog("close");
+                        }
+                    });
+        });
+        /* Editar de la grilla */
+        $(document).on('click', '.BtnEditar', function () {
+            var Id = $(this).closest('tr').attr('id');
+            $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-map-maker"></i> Editar', null);
+        });
+
+        /* Buscador de arriba */
+        $.SetupSearchTextbox('#Grid', ["Nombre"]);
+
+        /* Armo la grilla del ABM */
+        $('#Grid').CreateCommonGrid({
+            url: '@Url.Action("GetAll", "Combos", new { ComboId = @ViewBag.ComboId })',
+            colNames: ['', '<input type="checkbox" id="SelectAll"/>',  'Data', 'Value', ''],
+            colModel: [
+            { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+            { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+            { name: 'Data', index: 'Data', width: 5, sortable: true, align: "center" },
+            { name: 'Value', index: 'Value', width: 30, align: "center", sortable: true },
+            { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+        ],
+        sortname: 'Data',
+        sortorder: "asc",
+        pager: '#Grid_pager'
+        });
+        $('#GridCategoriasIVA').trigger("reloadGrid");
+    });
+    </script>
+}

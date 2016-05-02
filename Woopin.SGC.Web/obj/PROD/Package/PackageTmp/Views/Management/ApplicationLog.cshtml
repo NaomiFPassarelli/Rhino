@@ -1,0 +1,210 @@
+﻿@{
+    ViewBag.Title = "Logs de la Aplicación";
+    ViewBag.SectionIcon = "warning";
+    ViewBag.SectionTitle = "Logs de la Aplicación";
+}
+<div class="action-bar row" style="margin-bottom:5px;">
+    <div class="col-md-4" style="padding-left:0px;">
+        <div class="col-md-12 input-container" style="padding-left:0px;">
+            <div class="row">
+                <input type="number" id="UsuarioID" name="UsuarioID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-9" style="padding:0;">
+                    <input type="hidden" id="Usuario_Id" name="Usuario.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Usuario_Id" data-input="UsuarioID" title="Limpiar" style="margin: 4px 0px; padding: 2px 3px !important;">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Logs
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Log..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridLogs"></table>
+    <div id="GridLogs_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ListadoLogs.init();
+    });
+
+    var ListadoLogs = {
+
+        init: function () {
+            $('#BtnExportXLS').click(ListadoLogs.ExportToExcel);
+
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click',ListadoLogs.LoadData);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridLogs', ["Message"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridLogs').CreateCommonGrid({
+                url: '@Url.Action("GetAllLogs")',
+                serializeGridData: function (postData) {
+                    data = {
+                        IdUsuario: $('#UsuarioID').val() != '' ? $('#UsuarioID').val() : 0,
+                        IdOrganizacion: 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['','Tipo', 'Fecha', 'Descripcion', 'Usuario'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Level', index: 'Level', width: 5, align: "center", sortable: true, formatter: ListadoLogs.TipoFormatter },
+                    { name: 'Date', index: 'Date', width: 10, align: "center", sortable: true, formatter: 'date', formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
+                    { name: 'Message', index: 'Message', width: 70, align: "center", sortable: true },
+                    { name: 'Usuario.NombreCompleto', index: 'Usuario.NombreCompleto', width: 15, align: "center", sortable: true }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                pager: '#GridLogs_pager',
+                rowList: [30, 60, 90],
+                rowNum: 30,
+                height:700
+            });
+            $('#GridLogs').trigger("reloadGrid");
+
+            $('#Usuario_Id').select2(
+               {
+                   placeholder: "Seleccione Un Usuario",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetUsuariosCombo", "Usuarios")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#UsuarioID').change(ListadoLogs.OnUsuarioChange);
+            $('#Usuario_Id').on("select2-selecting", ListadoLogs.OnUsuarioSelected);
+            $('#BtnLoadData').click(ListadoLogs.LoadData);
+
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                ListadoLogs.ClearSelect2(IdClear, IdClearInput);
+            });
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        OnUsuarioSelected: function (e) {
+            $('#UsuarioID').val(e.val)
+        },
+
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridLogs', 'Listado de Ventas de Servicios');
+        },
+
+        LoadData: function () {
+            ListadoLogs.CompletarFiltros();
+            valid = ListadoLogs.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ListadoLogs.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        OnUsuarioChange: function () {
+            var Id = $('#UsuarioID').val();
+            if (Id == "") { return; }
+            valid = ListadoLogs.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetUsuario", "Usuarios")',
+                data: { IdUsuario: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $('#Usuario_Id').select2('data', { id: Id, text: ret.Data.NombreCompleto });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Usuario no existe');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridLogs").setGridParam({ datatype: 'json' });
+            $('#GridLogs').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        TipoFormatter: function (cellvalue, options, rowObject) {
+            var ret = "<i class='log fa fa-";
+
+            switch(cellvalue)
+            {
+                case 'WARN':
+                    ret += "warning"
+                    break;
+                case 'ERROR':
+                    ret += "times-circle"
+                    break;
+                case 'DEBUG':
+                    ret += "bug"
+                    break;
+                case 'INFO':
+                    ret += "info"
+                    break;
+            }
+            ret += "'></i>";
+
+            return ret;
+        }
+    }
+    </script>
+}

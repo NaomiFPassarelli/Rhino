@@ -1,0 +1,284 @@
+﻿@model Woopin.SGC.Model.Sueldos.Adicional
+
+@{
+    ViewBag.Title = "Editar Adicional";
+    ViewBag.SectionIcon = "map-marker";
+    ViewBag.SectionTitle = "Editar Adicional";
+}
+
+<div class="">
+    <div class="col-md-12">
+        <a class="boton place-left" id="BtnSubmit"><i class="fa fa-plus-circle i-green"></i> Editar Adicional</a>
+        <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+    </div>
+</div>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Porcentaje, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Porcentaje, "{0:0.00}", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Porcentaje, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Valor, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Valor, "{0:0.00}", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Valor, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group" id="SumaDiv">
+            @Html.LabelFor(model => model.Suma, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-1 input-container">
+                <input class="textinput" id="Suma" name="Suma" type="checkbox" value="true" @if (Model.Suma){ @Html.Raw("checked"); } >
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TipoLiquidacion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownList(Model.TipoLiquidacion.ToString(), (IEnumerable<SelectListItem>)ViewBag.TypeLiquidaciones, null , new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.TipoLiquidacion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
+    </fieldset>
+}
+
+<!-- Grilla con todos los adicionales -->
+<div class="table-container AllAdicionales" id="Adicional_Container" style="margin-top:50px;">
+    <table id="GridAdicional"></table>
+    <div id="GridAdicional_pager"></div>
+</div>
+
+
+@*@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#Valor').attr('data-val-number', 'El Valor debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+        $('#Porcentaje').attr('data-val-number', 'El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+        $('form').reParseForm();
+
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    var rowData = $('#GridAdicionales').jqGrid('getRowData', data.Adicional.Id);
+                    rowData.Descripcion = data.Adicional.Descripcion;
+                    rowData.Valor = data.Adicional.Valor;
+                    rowData.Porcentaje = data.Adicional.Porcentaje;
+                    rowData.Suma = data.Adicional.Suma;
+                    $('#GridAdicionales').jqGrid('setRowData', data.Adicional.Id, rowData);
+                    _OpenDialog.dialog('close');
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>*@
+
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            AdicionalJsEditar.init();
+        });
+
+
+        var AdicionalJsEditar = {
+
+            SelectedRows: null,
+
+            OnCheckboxChange: function () {
+                if ($(this).is(":checked")) {
+                    var index = AdicionalJsEditar.SelectedRows.indexOf($(this).val());
+                    if(index < 0)
+                    {
+                        AdicionalJsEditar.SelectedRows.push($(this).val());
+                    }
+                }
+                else {
+                    var indexDel = AdicionalJsEditar.SelectedRows.indexOf($(this).val());
+                    AdicionalJsEditar.SelectedRows.splice(indexDel, 1);
+                }
+            },
+
+            init: function () {
+                $.SetupSearchTextbox('#GridAdicional', ["Descripcion"]);
+                AdicionalJsEditar.SelectedRows = new Array();
+
+                $('#GridAdicional').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '', 'Descripcion', 'Porcentaje', 'Valor', 'Tipo', 'Suma'],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: AdicionalJsEditar.SelectedRows }, align: "center" },
+                        { name: 'Descripcion', index: 'Descripcion', width: 20, align: "center", sortable: true },
+                        { name: 'Porcentaje', index: 'Porcentaje', width: 20, align: "center", sortable: true },
+                        { name: 'Valor', index: 'Valor', width: 20, align: "center", sortable: true },
+                        { name: 'TipoLiquidacion', index: 'TipoLiquidacion', width: 0, sortable: false, hidden: true },
+                        { name: 'Suma', index: 'Suma', width: 0, sortable: false, hidden: true }
+                    ],
+                    sortname: 'Descripcion',
+                    sortorder: "desc",
+                    autowidth: false,
+                    pager: '#GridAdicional_pager',
+                    rowList: [15, 30, 50],
+                    rowNum: 15
+                });
+                $('#GridAdicional').trigger("reloadGrid");
+                $(document).off('change', '#GridAdicional .SelectCheckboxes');
+                $(document).on('change', '#GridAdicional .SelectCheckboxes', AdicionalJsEditar.OnCheckboxChange);
+
+                $('#Valor').attr('data-val-number', 'El Valor debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+                $('#Porcentaje').attr('data-val-number', 'El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+                $('form').reParseForm();
+                @*$('#agregarAdicional').on("click",
+                    function () {
+                        $('#Adicional-dialog').OpenFormDialog(
+                            '@Url.Action("Adicional", "Adicionales")',
+                            '<i class="fa fa-folder-o"></i> Adicionales',
+                        { width: 800 });
+                    }
+
+                    );*@
+
+                $('#BtnSubmit').on('click', AdicionalJsEditar.Save);
+                $('#Porcentaje').on('change', AdicionalJsEditar.PorcentajeOrValor);
+                $('#Valor').on('change', AdicionalJsEditar.PorcentajeOrValor);
+                AdicionalJsEditar.GetSeleccionadosDefault();
+            },
+
+            GetSeleccionadosDefault: function () {
+                var Id = @Model.Id;
+                var params = {
+                    url: '@Url.Action("GetAdicional")',
+                    data: {
+                        idAdicional: Id != "" ? Id : 0,
+                    },
+                    success: function (ret) {
+                        for(var i = 0; i < ret.Data_AAs.length; i++)
+                        {
+                            for(var j = 0; j < $('.SelectCheckboxes').length; j++)
+                            {
+                                if($('.SelectCheckboxes')[j].value == ret.Data_AAs[i].AdicionalSobre.Id)
+                                {
+                                    $($('.SelectCheckboxes')[j]).attr('checked', 'checked');
+                                }
+                            }
+                            var index = AdicionalJsEditar.SelectedRows.indexOf(ret.Data_AAs[i].AdicionalSobre.Id.toString());
+                            if(index < 0)
+                            {
+                                AdicionalJsEditar.SelectedRows.push(ret.Data_AAs[i].AdicionalSobre.Id.toString());
+                            }
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+                $("#GridAdicional").setGridParam({ datatype: 'json' });
+                $('#GridAdicional').setGridParam({ page: 1 }).trigger("reloadGrid");
+     
+            },
+
+            PorcentajeOrValor: function () {
+                if ($(this).attr('id') == "Porcentaje" && ($('#Porcentaje').val() != "" || $('#Porcentaje').val() > 0)) {
+                    $('#Valor').val("");
+                } else if ($(this).attr('id') == "Valor" && ($('#Valor').val() != "" || $('#Valor').val() > 0)) {
+                    $('#Porcentaje').val("");
+                }
+            },
+
+            Save: function () {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                    return;
+
+                $('#BtnSubmit').attr('disabled', 'disabled');
+                if (!$('form').valid()) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return;
+                }
+                var Adicional = $('form').serializeFormJSON();
+                //Adicional["Tipo.Data"] = $('#Tipo_Id :selected').text();
+
+                //if (Adicional.ImputaComprobante != null) {
+                //    Comprobante["Imputacion[0].ComprobanteADescontar.Id"] = Adicional.ImputaComprobante.Id;
+                //}
+
+                AdicionalAdicionales = new Array();
+                for (var i = 0; i < AdicionalJsEditar.SelectedRows.length; i++) {
+                    var item = {
+                        //RubroCompra: {
+                        //    Id: detalles[i].RubroCompra_Id,
+                        //    PercepcionIVA: detalles[i].PercepcionIVA == "true",
+                        //    PercepcionIIBB: detalles[i].PercepcionIIBB == "true"
+                        //},
+                        //Descripcion: detalles[i].Descripcion,
+                        //TipoIva: { Id: detalles[i].IVA_Id, AdditionalData: detalles[i].IVA },
+                        //Total: detalles[i].Total,
+                        //IVA: detalles[i].IVARubro
+                        
+                        Id: AdicionalJsEditar.SelectedRows[i]
+                        //AdicionalSobre: { Id: AdicionalJsEditar.SelectedRows[i]},
+                        //Adicional: { Id: Adicional.Id }
+                    };
+                    AdicionalAdicionales.push(item);
+                }
+                var postParams = {
+                    url: "@Url.Action("Editar", "Adicionales")",
+                    data: {
+                        Adicional: Adicional,
+                        Adicionales: AdicionalAdicionales.length > 0 ? AdicionalAdicionales : null
+                    },
+                    success: function (data) {
+                        if (data.Success) {
+                            window.location = '@Url.Action("Index")';
+                        }
+                        else {
+                            $('#BtnSubmit').removeAttr('disabled');
+                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        }
+                    }
+                }
+                $.AjaxPost(postParams);
+            },
+
+            @*OnFinishSave: function (Comprobante) {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Detalle")/' + Adicional.Id;
+            }*@
+
+
+        }
+    </script>
+}

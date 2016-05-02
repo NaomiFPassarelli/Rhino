@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Warning";
+    Layout = null;
+}
+<div id="dialog-warning">
+    <div class="visual">
+        <i class="fa fa-warning"></i>
+    </div>
+    <div class="detail">
+        Usted no posee configurada ningun banco en el sistema para esta organización.<br />
+        Para configurar un banco debe ir a la seccón de configuración de Bancos <br />
+        <a href='@Url.Action("Index", "Bancos", new { Area = "Tesoreria" })' target="_blank" class="boton">Configurar <i class="fa fa-cog"></i></a>
+    </div>
+    <div class="button-pane clearfix" style="margin-top:-10px;">
+        <div class="button-set" style="text-align:center;float:none;padding-top:5px;padding-bottom:5px;">
+            <a class="boton" title="Aceptar" onclick="_WarningDialogCallback()" style="float:none;">
+                <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+            </a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>

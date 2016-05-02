@@ -1,0 +1,143 @@
+﻿@{
+    ViewBag.Title = "Categorías de IVA";
+    ViewBag.SectionIcon = "tags";
+    ViewBag.SectionTitle = "Listado de Categorías de IVA";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Categoría de IVA">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Categoría de IVA
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar categorías de IVA..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridCategoriasIVA"></table>
+    <div id="GridCategoriasIVA_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoCategorias = {
+
+            init: function () {
+                $('#BtnExportXLS').click(ListadoCategorias.ExportToExcel);
+                /* Binding del boton de crear*/
+                $('#BtnCreate').bind('click', ListadoCategorias.NuevaCategoria);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoCategorias.Refresh);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridCategoriasIVA');
+                /* Binding del Boton para setear la moneda predeterminada */
+                $.SetupSetDefaulter('@Url.Action("SetDefault")')
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoCategorias.OnClickEliminarSeleccionados);
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoCategorias.OnClickEliminar);
+                /* Editar de la grilla */
+                $(document).on('click', '.BtnEditar', ListadoCategorias.EditarCategoria);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridCategoriasIVA', ["Nombre"]);
+                /* Armo la grilla del ABM */
+                $('#GridCategoriasIVA').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', 'Abreviatura', 'Letra para Compras', 'Letra para Ventas', '<span class="is-default"><i class="fa fa-star"></i></span>', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                        { name: 'Abreviatura', index: 'Abreviatura', width: 25, align: "center", sortable: true },
+                        { name: 'LetraCompras.Data', index: 'LetraCompras.Data', width: 20, align: "center", sortable: true },
+                        { name: 'LetraVentas.Data', index: 'LetraVentas.Data', width: 20, align: "center", sortable: true },
+                        { name: 'Predeterminado', index: 'Predeterminado', width: 5, align: "center", sortable: true, formatter: DefaultStarFormatter },
+                        { name: 'Acciones', index: 'Acciones', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Nombre',
+                    sortorder: "asc",
+                    pager: '#GridCategoriasIVA_pager'
+                });
+                $('#GridCategoriasIVA').trigger("reloadGrid");
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridCategoriasIVA');
+                ListadoCategorias.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridCategoriasIVA").setGridParam({ datatype: 'json' });
+                $('#GridCategoriasIVA').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            NuevaCategoria:function () {
+                $('#create-dialog').OpenFormDialog('@Url.Action("Nueva")', '<i class="fa fa-tags"></i> Crear Categoría de IVA', null);
+            },
+
+            EditarCategoria: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")/' + Id, '<i class="fa fa-tags"></i> Editar Categoria de IVA', null);
+            },
+
+            OnClickEliminar:function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar la categorías de IVA seleccionada?",
+                            function () { ListadoCategorias.EliminarCategorias(Id) });
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridCategoriasIVA', 'Listado de Categorias de IVA');
+            },
+
+            EliminarCategorias: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridCategoriasIVA').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                            $("#GridCategoriasIVA").jqGrid("clearGridData", true);
+                            ListadoCategorias.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnClickEliminarSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridCategoriasIVA');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar las categorías de IVA seleccionadas?",
+                            function () { ListadoCategorias.EliminarCategorias(SelectedIds) });
+                } else {
+                    $.WarningDialog("No hay categorias seleccionadas!");
+                }
+
+            }
+
+        }
+        $(document).ready(function () {
+            ListadoCategorias.init();
+        });
+    </script>
+}

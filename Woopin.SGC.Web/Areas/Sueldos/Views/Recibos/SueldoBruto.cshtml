@@ -1,0 +1,69 @@
+﻿@{
+    Layout = null;
+}
+@*@using (Html.BeginForm("Importar", "Empleados", FormMethod.Post, new { enctype = "multipart/form-data", Area = "Sueldos" }))
+{
+    <div class="row">
+        <h2>¿Como importar los empleados?</h2>
+        <span style="text-align: justify;display: block;">
+            Para importar los Empleados que posee, debe descargarse el excel desde <a href="@Url.Action("DescargarTemplate")" style="text-decoration:underline;color:blue;">este vinculo</a>.
+            Este contiene el formato y los valores que puede seleccionar para configurar los mismos. Una vez completo el archivo, debe volver a esta sección y en la parte inferior seleccionar el archivo para importar. Una vez que el proceso de importación se complete, le aparecera una alerta comentandole el estado y un nuevo link al resultado del excel.
+        </span>
+    </div>
+
+    <div class="row">
+        <h2>Importación</h2>
+        <div id="Alert-Dialog-Container"></div>
+        <div class="form-group">
+@*            <label class="col-md-4 horizontal-label">Archivo</label>
+            <div class="col-md-6 input-container">
+                <input id="Archivo" type="file" name="Archivo" />
+            </div>
+        </div>
+    </div>
+}*@
+<div class="form-group" style="margin:0px;">
+    @Html.Label("Sueldo")
+    <div class="col-md-12 input-container">
+        @if (ViewBag.SueldoCategoria > 0)
+        {
+            <input class="col-md-5" id="Categoria" name="Sueldo" type="radio" value="@ViewBag.SueldoCategoria"> <p class="col-md-7"> Categoria: @ViewBag.SueldoCategoria </p>
+        }
+        
+        @if (ViewBag.SueldoMes > 0)
+        {
+            <input class="col-md-5" id="Mes" name="Sueldo" type="radio" value="@ViewBag.SueldoMes"><p class="col-md-7"> Mensual: @ViewBag.SueldoMes </p>
+        }
+        @if (ViewBag.SueldoHora > 0)
+        {
+            <input class="col-md-5" id="Hora" name="Sueldo" type="radio" value="@ViewBag.SueldoHora"> <p class="col-md-7"> Jornada/Hora: @ViewBag.SueldoHora </p>
+        }
+    </div>
+</div>
+
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmitSueldo" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Aceptar
+        </a>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#BtnSubmitSueldo').on("click", function () {
+            debugger;
+            if ($('#Categoria').attr('checked') == "checked") {
+                sueldoBrutoSeleccionado = $('#Categoria').val();
+            } else if ($('#Mes').attr('checked') == "checked") {
+                sueldoBrutoSeleccionado = $('#Mes').val();
+            } else if ($('#Hora').attr('checked') == "checked") {
+                sueldoBrutoSeleccionado = $('#Hora').val();
+            }
+            _OpenDialog.dialog('close');
+            Recibo.AgregarSueldoBruto();
+        });
+    });
+</script>

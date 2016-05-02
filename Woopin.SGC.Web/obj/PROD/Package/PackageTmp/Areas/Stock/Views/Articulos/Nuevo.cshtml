@@ -1,0 +1,188 @@
+﻿@using Woopin.SGC.Model.Common
+@using Woopin.SGC.Model.Stock
+
+@model Woopin.SGC.Model.Stock.Articulo
+
+@{
+    ViewBag.Title = "Nuevo Articulo";
+    ViewBag.SectionIcon = "cube";
+    ViewBag.SectionTitle = "Nuevo Articulo";
+    var unidadesMedida = (int) ComboType.UnidadesMedidas;
+    var tiposIva = (int)ComboType.TipoIva;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Articulo</a>
+                <a class="boton place-left " id="BtnSubmitAndBack"><i class="fa fa-plus-circle i-green"></i> Crear y Volver</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodigoBarras, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CodigoBarras, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CodigoBarras, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Tipo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container" style="margin-top:5px">
+                @Html.RadioButtonFor(model => model.Tipo, TipoArticulo.Producto.ToString(), new { @class = "Tipo" }) Producto
+                @Html.RadioButtonFor(model => model.Tipo, TipoArticulo.Servicio.ToString(), new { @class = "Tipo" }) Servicio
+                @Html.ValidationMessageFor(model => model.Tipo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group" id="InventarioDiv" style="display:none;">
+            @Html.LabelFor(model => model.Inventario, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-1 input-container">
+                <input class="textinput" id="Inventario" name="Inventario" type="checkbox" value="true">
+            </div>
+        </div>
+
+        <div class="form-group col-md-12" id="EstadoDiv" style="display:none;">
+            @Html.LabelFor(model => model.Estado, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container" style="margin-top:5px">
+                @Html.RadioButtonFor(model => model.Estado, EstadoArticulo.MateriaPrima.ToString()) Materia Prima
+                @Html.RadioButtonFor(model => model.Estado, EstadoArticulo.EnProceso.ToString()) En Proceso
+                @Html.RadioButtonFor(model => model.Estado, EstadoArticulo.Terminado.ToString()) Terminado
+                @Html.ValidationMessageFor(model => model.Estado, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group" id="StockDiv" style="display:none;">
+            @Html.LabelFor(model => model.Stock, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Stock, "{0:0.000}", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Stock, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Rubro, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <select id="Rubro_Id" name="Rubro.Id" class="col-md-2 textinput" data-val-required="Es necesario un Rubro"></select>
+                @Html.ValidationMessageFor(model => model.Rubro, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UnidadMedida, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <select id="UnidadMedida_Id" name="UnidadMedida.Id" class="col-md-2 textinput" data-val-required="Es necesario una Unidad de Medida"></select>
+                @Html.ValidationMessageFor(model => model.UnidadMedida, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AlicuotaIVA, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <select id="AlicuotaIVA_Id" name="AlicuotaIVA.Id" class="col-md-2 textinput" data-val-required="Es necesario una Alicuota de IVA"></select>
+                @Html.ValidationMessageFor(model => model.AlicuotaIVA, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion del Articulo. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        $('#Estado').attr('data-val-required', 'Es necesario un tipo');
+        $('#Stock').attr('data-val-number', 'El Stock debe ser un número mayor a cero, puede contener el caracter punto (.) y con tres decimales');
+
+        $('.Tipo:radio').change(
+                function () {
+                    if ($(this).val() == "Producto") {
+                        $('#InventarioDiv').attr('style', 'display:block');
+                        $('#Inventario').attr('checked', false);
+                    } else {
+                        $('#InventarioDiv').attr('style', 'display:none');
+                        $('#Inventario').attr('value', false);
+                        $('#EstadoDiv').attr('style', 'display:none');
+                        $('#StockDiv').attr('style', 'display:none');
+                        $('input[name=Estado]:checked', 'form').attr('checked', false);
+                        $('#Stock').attr('value', "");
+                    }
+                    
+                }
+            );
+
+        $('#Inventario').change(
+                function () {
+                    if ($(this).attr('checked') || $(this).attr('checked') == "checked") {
+                        $(this).attr('value', true);
+                        $('#EstadoDiv').attr('style', 'display:block');
+                        $('#StockDiv').attr('style', 'display:block');
+                    } else {
+                        $(this).attr('value', false);
+                        $('#EstadoDiv').attr('style', 'display:none');
+                        $('#StockDiv').attr('style', 'display:none');
+                        $('input[name=Estado]:checked', 'form').attr('checked', false);
+                        $('#Stock').attr('value', "");
+                    }
+
+                }
+            );
+
+        $('#Rubro_Id').fillSelect({
+            url: '@Url.Action("GetCombo","RubroArticulos")',
+                placeholder: 'Seleccione un Rubro'
+            });
+        $('#UnidadMedida_Id').fillSelect({
+            url: '@Url.Action("GetSelectCombo", "Combos", new { Area = "Configuracion" })',
+            data: { type: '@unidadesMedida'},
+            placeholder: 'Seleccione una Unidad de Medida'
+        });
+        $('#AlicuotaIVA_Id').fillSelect({
+            url: '@Url.Action("GetSelectCombo", "Combos", new { Area = "Configuracion" })',
+            data: { type: '@tiposIva' },
+            placeholder: 'Seleccione una Alicuota de IVA'
+        }); 
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Index")'
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+        $('#BtnSubmitAndBack').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    $('form').ClearForm();
+                    $('#Alert-Container').NewAlert('success', 'Se ha creado el Articulo con exito');
+                }
+                else {
+                    $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+        });
+    });
+</script>
+}

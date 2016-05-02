@@ -1,0 +1,197 @@
+﻿@{
+    ViewBag.Title = "Reportes";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Retenciones";
+}
+<div class="action-bar row">
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Tipo de Retencion</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="RetencionID" name="RetencionID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="Retencion_Id" name="Retencion.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="Retencion_Id" data-input="RetencionID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Retenciones
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <div class="col-md-6 place-right">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridComprobantesRetenciones"></table>
+    <div id="GridComprobantesRetenciones_pager"></div>
+</div>
+<div id="retencion-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ComprobantesRetenciones.init();
+        });
+
+        var ComprobantesRetenciones = {
+
+            init: function () {
+                $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ComprobantesRetenciones.LoadData);
+                $('#BtnExportXLS').click(ComprobantesRetenciones.ExportToExcel);
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridComprobantesRetenciones', ["Fecha"]);
+
+                /* Armo la grilla */
+                $('#GridComprobantesRetenciones').CreateCommonGrid({
+                    url: '@Url.Action("GetAllComprobantesRetenciones")',
+                    serializeGridData: function (postData) {
+                        data = {
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                            TipoRetencion: $('#RetencionID').val() != '' ? $('#RetencionID').val() : 0
+                        }
+                        return JSON.stringify($.extend(postData, data));
+                    },
+                    colNames: ['', 'Comprobante Numero', 'Retencion Numero', 'Retencion', 'Fecha', 'Cliente CUIT', 'Cliente', 'Proveedor CUIT', 'Proveedor', 'Debe', 'Haber'],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Numero', index: 'Numero', width: 180, align: "center", sortable: true },
+                        { name: 'NumeroRetencion', index: 'NumeroRetencion', width: 180, align: "center", sortable: true },
+                        { name: 'RetencionAbreviatura', index: 'Retencion.Abreviatura', width: 180, align: "center", sortable: true },
+                        { name: 'Fecha', index: 'Fecha', width: 180, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'ClienteCUIT', index: 'ClienteCUIT', width: 180, align: "center", sortable: true },
+                        { name: 'ClienteRazonSocial', index: 'ClienteRazonSocial', width: 180, align: "center", sortable: true },
+                        { name: 'ProveedorCUIT', index: 'ProveedorCUIT', width: 180, align: "center", sortable: true },
+                        { name: 'ProveedorRazonSocial', index: 'ProveedorRazonSocial', width: 180, align: "center", sortable: true },
+                        { name: 'Haber', index: 'Haber', width: 180, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'Debe', index: 'Debe', width: 180, align: "center", sortable: true, formatter: $.formatCurrency }
+                    ],
+                    sortname: 'Fecha',
+                    sortorder: "asc",
+                    pager: '#GridComprobantesRetenciones_pager',
+                    rowList: [25, 50, 75],
+                    rowNum: 25,
+                    shrinkToFit: false,
+                    footerrow: true,
+                    userDataOnFooter: true
+                });
+                $('#GridComprobantesRetenciones').trigger("reloadGrid");
+                $('.ui-jqgrid .ui-jqgrid-htable th').addClass('no-padding');
+                $('#BtnLoadData').click(ComprobantesRetenciones.LoadData);
+                $('.BtnClearSelect2').on('click', function () {
+                    var IdClear = $(this).attr('data-rel');
+                    var IdClearInput = $(this).attr('data-input');
+                    ComprobantesRetenciones.ClearSelect2(IdClear, IdClearInput);
+                });
+                $('#Retencion_Id').select2(
+               {
+                   placeholder: "Seleccione Un Tipo de Retencion",
+                   ajax: {
+                       url: "@Url.Action("GetRetencionesCombo", "Retenciones", new { Area = "Contabilidad" })",
+                   dataType: 'json',
+                   params: { type: "POST" },
+                   data: function (t, p) {
+                       return { where: t };
+                   },
+                   results: function (data, page) {
+                       return { results: data.Data.Items };
+                   }
+               }
+                });
+                $('#Retencion_Id').on("select2-selecting", ComprobantesRetenciones.OnRetencionSelected);
+                $('#RetencionID').change(ComprobantesRetenciones.OnRetencionChange);
+            },
+
+            ClearSelect2: function (IdClear, IdClearInput) {
+                $("#" + IdClearInput).val("");
+                $("#" + IdClear).select2("val", "");
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridComprobantesRetenciones', 'Libro IVA Ventas');
+            },
+
+            LoadData: function () {
+                ComprobantesRetenciones.CompletarFiltros();
+                valid = ComprobantesRetenciones.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                ComprobantesRetenciones.ReloadGrid();
+            },
+
+            ValidateFilters: function () {
+                var IdRetencion = $('#RetencionID').val();
+                if (IdRetencion != "" && (!$.isNumeric(IdRetencion) || IdRetencion <= 0)) {
+                    return { success: false, message: 'El Tipo de Retencion no es correcto' };
+                }
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+            },
+
+            ReloadGrid: function () {
+                $("#GridComprobantesRetenciones").setGridParam({ datatype: 'json' });
+                $('#GridComprobantesRetenciones').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            OnRetencionChange: function () {
+                var Id = $('#RetencionID').val();
+                if (Id == "") { return; }
+                valid = ComprobantesRetenciones.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetRetencion", "Retenciones", new { Area = "Contabilidad" })',
+                    data: { Id: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            var Retencion = ret.Data.Descripcion + '(' + ret.Data.Abreviatura + ')';
+                            $('#Retencion_Id').select2('data', { id: Id, text: Retencion });
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('El tipo de Retencion no existe!', 'error');
+                            $('#Retencion_Id').select2('data', null);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnRetencionSelected: function (e) {
+                $('#RetencionID').val(e.val)
+            }
+        }
+    </script>
+}

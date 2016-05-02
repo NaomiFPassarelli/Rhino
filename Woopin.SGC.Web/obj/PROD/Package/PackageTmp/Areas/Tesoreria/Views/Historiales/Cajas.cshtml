@@ -1,0 +1,176 @@
+﻿@{
+    ViewBag.Title = "Historial de Movimiento de Caja";
+    ViewBag.SectionIcon = "exchange";
+    ViewBag.SectionTitle = "Historial de Movimiento de Caja";
+}
+<div class="action-bar row">
+    <div class="col-md-8 ">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Caja</label>
+        <div class="col-md-9 input-container">
+            <div class="row">
+                <div class="col-md-10" style="padding:0;">
+                    <input type="hidden" id="Caja_Id" name="Caja.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="CuentaBancaria_Id" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="action-bar row">
+    <div class="place-left" style="margin-top:6px;">
+        Saldo Actual: <span id="Saldo"></span>
+    </div>
+
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridHistorialCaja"></table>
+    <div id="GridHistorialCaja_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    <script type="text/javascript">
+        var HistorialCajas = {
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridHistorialCaja', 'Historial de Caja');
+            },
+
+            OnCajaChange: function (e) {
+                var Id = e.val || $('#Caja_Id').val();
+                if (Id == "") { return; }
+                valid = HistorialCajas.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetCaja", "Cajas")',
+                    data: { Id: e.val },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $('#Saldo').html($.formatCurrency(ret.Data.Fondos));
+                            HistorialCajas.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            ReloadGrid:function () {
+                $('#SelectCount').html('0');
+                $("#GridHistorialCaja").setGridParam({ datatype: 'json' });
+                $('#GridHistorialCaja').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            historialImporteFormatter: function(cellvalue, options, rowObject) {
+                if (rowObject.Importe < 0 && options.colModel.formatoptions.columna == 'Debita') {
+                    return '<span>' + $.formatCurrency(rowObject.Importe * -1) + '</span>';
+                } else if (rowObject.Importe > 0 && options.colModel.formatoptions.columna == 'Acredita') {
+                    return '<span>' + $.formatCurrency(rowObject.Importe)  + '</span>';
+                } else {
+                    return '<span> </span>';
+                }
+            },
+
+            LoadData: function () {
+                HistorialCajas.CompletarFiltros();
+                valid = HistorialCajas.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                HistorialCajas.ReloadGrid();
+            },
+
+            ValidateFilters: function () {
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+            },
+
+            ClearSelect2: function (IdClear, IdClearInput) {
+                $("#" + IdClearInput).val("");
+                $("#" + IdClear).select2("val", "");
+            },
+
+            init: function(){
+                $('#BtnExportXLS').click(HistorialCajas.ExportToExcel);
+
+                $('#Caja_Id').prepend('<option></option>');
+                $('#Caja_Id').select2(
+                    {
+                        placeholder: "Seleccione la caja",
+                        minimumInputLength: 0,
+                        ajax: {
+                            url: "@Url.Action("GetCombo","Cajas")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { page: 0 };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                    });
+                $('#Caja_Id').on("select2-selecting", HistorialCajas.OnCajaChange);
+
+
+                $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', HistorialCajas.LoadData);
+
+                /* Armo la grilla del ABM */
+                $('#GridHistorialCaja').CreateCommonGrid({
+                    url: '@Url.Action("GetAllCajasByDates")',
+                    serializeGridData: function (postData) {
+                        dates = {
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                            IdCaja: $('#Caja_Id').val() != '' ? $('#Caja_Id').val() : 0,
+                        }
+                        return JSON.stringify($.extend(postData, dates));
+                    },
+                    colNames: ['', 'Concepto', 'Fecha', 'Debita', 'Acredita', 'Saldo', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Concepto', index: 'Concepto', width: 30, align: "center", sortable: true },
+                        { name: 'Fecha', index: 'Fecha', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Debita', index: 'Debita', width: 25, align: "center", sortable: true, formatter: HistorialCajas.historialImporteFormatter, formatoptions: { columna: 'Debita' } },
+                        { name: 'Acredita', index: 'Acredita', width: 25, align: "center", sortable: true, formatter: HistorialCajas.historialImporteFormatter, formatoptions: { columna: 'Acredita' } },
+                        { name: 'Saldo', index: 'Saldo', width: 30, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'Importe', index: 'Importe', width: 25, align: "center", sortable: true, hidden: true },
+                    ],
+                    sortname: 'Id',
+                    sortorder: "desc",
+                    pager: '#GridHistorialCaja_pager',
+                    rowList: [20, 40, 60],
+                    rowNum: 20
+                });
+                $('#GridHistorialCaja').trigger("reloadGrid");
+            }
+        }
+        $(document).ready(function () {
+            HistorialCajas.init();
+        });
+    </script>
+}

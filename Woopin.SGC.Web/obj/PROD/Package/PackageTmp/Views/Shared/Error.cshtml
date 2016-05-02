@@ -1,0 +1,42 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    Layout = null;
+    ViewBag.Title = "Error";
+}
+
+@Styles.Render("~/Content/ErrorPages.css")
+
+<div class="error-background">
+    <div class="wrapper">
+
+        <h1>Oops!</h1>
+        @switch(Response.StatusCode)
+        {
+            case 400:
+                <img src="@Url.Content("~/Images/error-img400.png")" title="error" class="img-error">
+                break;
+            case 401:
+                <img src="@Url.Content("~/Images/error-img401.png")" title="error" class="img-error">
+                break;
+            case 403:
+                <img src="@Url.Content("~/Images/error-img403.png")" title="error" class="img-error">
+                break;
+            case 404:
+                <img src="@Url.Content("~/Images/error-img404.png")" title="error" class="img-error">
+                break;
+            case 500:
+                <img src="@Url.Content("~/Images/error-img500.png")" title="error" class="img-error">
+                break;
+        
+        }
+        
+        <div class="description">
+            <p>Parece que algo ha fallado, Por favor proba otra sección del sistema!</p>
+        </div>
+
+        <a class="btnBack" href="@Url.Action("Index", "Home", new { Area = "" })">Volver al Dashboard</a>
+
+    </div>
+</div>
+

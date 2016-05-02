@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Woopin.SGC.Model.Contabilidad.Cuenta>
+@{
+    Layout = null;
+}
+<table>
+    <tr><td colspan="8" style="text-align:right;">Fecha: @DateTime.Now.ToString("dd/MM/yyyy")</td></tr>
+    <tr><td colspan="8" style="text-align:center;">Plan De Cuentas</td></tr>
+    <tr><td colspan="8"></td></tr>
+    @{
+        var grupos = Model.OrderBy(c => c.Rubro).GroupBy(c => c.Rubro);
+    }
+    @foreach (var grupo in grupos)
+    {
+        var headGrupo = grupo.Where(c => c.Corriente == 0 && c.Numero == 0).SingleOrDefault();
+        var cuentasGrupo = grupo.Where(c => c.Corriente == 0 && c.Numero != 0).ToList();
+        var subgrupos = grupo.Where(c => c.Corriente != 0).GroupBy(c => c.Corriente);
+        <tr>
+            <td colspan="4">@headGrupo.Codigo</td>
+            <td colspan="4">@headGrupo.Nombre</td>
+        </tr>
+        foreach (var subgrupo in subgrupos)
+        {
+            var headSubGrupo = subgrupo.Where(c => c.SubRubro == 0 && c.Numero == 0).SingleOrDefault();
+            var cuentasSubGrupo = subgrupo.Where(c => c.SubRubro == 0 && c.Numero != 0).ToList();
+            var rubros = subgrupo.Where(c => c.SubRubro != 0).GroupBy(c => c.SubRubro);
+            <tr>
+                <td colspan="1"></td>
+                <td colspan="3">@headSubGrupo.Codigo</td>
+                <td colspan="1"></td>
+                <td colspan="3">@headSubGrupo.Nombre</td>
+            </tr>
+            foreach (var rubro in rubros)
+            {
+                var headRubro = rubro.Where(c => c.Numero == 0).SingleOrDefault();
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">@headRubro.Codigo</td>
+                    <td colspan="2"></td>
+                    <td colspan="2">@headRubro.Nombre</td>
+                </tr>
+                foreach (var cuenta in rubro.Where(c => c.Numero != 0).OrderBy(c => c.Numero))
+                {
+                    <tr>
+                        <td colspan="3"></td>
+                        <td colspan="1">@cuenta.Codigo</td>
+                        <td colspan="3"></td>
+                        <td colspan="1">@cuenta.Nombre</td>
+                    </tr>
+                }
+
+            }
+            foreach (var cuenta in cuentasSubGrupo)
+            {
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">@cuenta.Codigo</td>
+                    <td colspan="2"></td>
+                    <td colspan="2">@cuenta.Nombre</td>
+                </tr>
+            }
+        }
+        foreach (var cuenta in cuentasGrupo)
+        {
+            <tr>
+                <td colspan="1"></td>
+                <td colspan="3">@cuenta.Codigo</td>
+                <td colspan="1"></td>
+                <td colspan="3">@cuenta.Nombre</td>
+            </tr>
+        }
+    }
+</table>
+

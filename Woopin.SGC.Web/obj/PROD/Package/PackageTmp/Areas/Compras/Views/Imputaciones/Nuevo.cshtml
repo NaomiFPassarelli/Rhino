@@ -1,0 +1,375 @@
+﻿@model Woopin.SGC.Model.Compras.ImputacionCompra
+@using Woopin.SGC.Common.HtmlHelper
+@using Woopin.SGC.Common.HtmlModel
+@using Woopin.SGC.Model.Negocio
+@using Woopin.SGC.Model.Common
+@{
+    ViewBag.Title = "Nueva Imputacion";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Nueva Imputacion";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        <div class="">
+            <div class="col-md-12">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-plus-circle i-green"></i> Crear Imputacion</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="comprobante col-md-12">
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    @Html.Label("Proveedor", new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="number" id="ProveedorID" name="ProveedorID" class="col-md-2" style="margin-top: 7px;" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Proveedor_Id" name="Proveedor.Id" class="selectinput" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.NotaCredito.Numero, new { @class = "col-md-4 horizontal-label readonly-label" })
+                    <div class="col-md-8 input-container">
+                        <input class="textinput" id="Imputacion_Numero" name="ComprobanteADescontar.Numero" type="text" readonly="readonly">
+                        @Html.ValidationMessageFor(model => model.NotaCredito.Numero, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <a id="agregarNC" class="boton boton-i SearchNC" style="margin: 3px 0px; padding: 3px 5px !important;">
+                    <i class="fa fa-search i-blue"></i>
+                </a>
+
+            </div>
+        </div>
+    </fieldset>
+}
+<div class="row">
+    <a class="boton place-right" id="agregarCD">
+        <i class="fa fa-plus-circle i-green"></i>Agregar Comprobantes
+    </a>
+</div>
+
+@* Grilla con los comprobantes que voy a pagar ahora -->*@
+<div class="table-container" id="GridCDescontar_Container">
+    <table id="GridCDescontar"></table>
+    <div id="GridCDescontar_pager"></div>
+</div>
+
+<div class="col-md-12">
+    <div class="col-md-4 place-right" style="margin-top: 10px;">
+        @Html.Label("Total Nota Credito", new { @class = "col-md-6 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            <input class="textinput" id="Imputacion_Total" type="text" readonly="readonly">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="col-md-4 place-right" style="margin-top: 10px;">
+        @Html.Label("Total Saldado Nota Credito", new { @class = "col-md-6 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            <input class="textinput" id="Imputacion_TotalSaldado" type="text" readonly="readonly">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="col-md-4 place-right" style="margin-top: 10px;">
+        @Html.Label("Total A Saldar Nota Credito", new { @class = "col-md-6 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            <input class="textinput" id="Imputacion_TotalASaldar" type="text" readonly="readonly">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="col-md-4 place-right" style="margin-top: 10px;">
+        @Html.Label("Total A Descontar", new { @class = "col-md-6 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            <input class="textinput" id="Imputacion_Descontar" type="text" readonly="readonly">
+        </div>
+    </div>
+</div>
+
+
+
+<div id="NotasCredito-dialog"></div>
+<div id="CDescontar-dialog"></div>
+<div class="clearfix"></div>
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante. Si presiona Aceptar, todos los cambios realizados se perderan.');
+        $(document).ready(function () {
+            Imputacion.init();
+        });
+
+
+        var rowIdAnt;
+        var rowIdAct;
+        var Imputacion = {
+            //NC
+            IdsGridRestricta: new Array(),
+		
+		    init:function(){
+			//Nuevo Gral
+	            $('#ProveedorID').change(Imputacion.GetProveedorByID);
+	            $('#Proveedor_Id').prepend('<option></option>');
+	            $('#Proveedor_Id').select2(
+	                {
+	                    width: '100%',
+	                    placeholder: "Seleccione Un Proveedor",
+	                    minimumInputLength: 2,
+	                    ajax: {
+	                        url: "@Url.Action("GetProveedoresCombo", "Proveedores")",
+	                        dataType: 'json',
+	                        params: { type: "POST" },
+	                        data: function (t, p) {
+	                            return { where: t };
+	                        },
+	                        results: function (data, page) {
+	                            return { results: data.Data.Items };
+	                        }
+	                    }
+	                });
+	            $('#Proveedor_Id').on("select2-selecting", Imputacion.OnProveedorSeleccionado);
+
+	            $('#BtnSubmit').on('click', Imputacion.Save);
+	            //NC
+	            $('#agregarNC').on("click", Imputacion.OnAgregarNC); //Unica NC
+	            //CDs
+	            $('#agregarCD').on("click", Imputacion.OnAgregarCD); //Una o mas Comprobantes a Descontar
+	            $(document).on('click', '.BtnEliminar', Imputacion.OnEliminarCDClick); //eliminar de la grilla de CD
+
+	            $('#GridCDescontar').CreateCommonGrid({
+	                datatype: 'local',
+	                colNames: ['', '', '', 'Fecha','', 'Número de Comprobante', 'Total', 'Total Abonado','Pendiente de Pago', 'Importe a Pagar'],
+	                colModel: [
+	                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+	                    { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+	                    { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: ABM_Eliminar, align: "center" },
+	                    { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+	                    { name: 'Letra', index: 'Letra', width: 1, align: "center", hidden: true },
+	                    { name: 'Numero', index: 'Numero', width: 30, align: "center", sortable: true, formatter: formatterFacturaLetraNumero },
+	                    { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+	                    { name: 'TotalPagado', index: 'TotalPagado', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+	                    { name: 'Pendiente', index: 'Pendiente', width: 20, align: "center", sortable: true, formatter: $.formatCurrency },
+	                    { name: 'Importe', index: 'Importe', width: 20, align: "center", sortable: true, template: GridCurrencyTemplate, editrules: { custom: true, custom_func: Imputacion.ValidateImporteChange } }
+	                ],
+	                sortname: 'Fecha',
+	                sortorder: "asc",
+	                pager: '#GridCDescontar_pager',
+	                rowList: [5, 10, 15],
+	                rowNum: 5,
+	                cellEdit: true,
+	                cellsubmit: 'clientArray',
+	                afterEditCell: function (rowId, cellname, value, iRow, iCol) {
+	                    Imputacion.AfterEditCell(rowIdAnt, rowId, cellname, value, iRow, iCol);
+	                },
+	                afterSaveCell: Imputacion.CalcularTotales
+	            });
+	            $('#GridCDescontar').trigger("reloadGrid");
+	 	    },
+ 
+            OnNCSeleccionado: function () {
+                $('#Imputacion_Container').show();
+            },
+
+            OnAgregarNC: function (e) {
+                if ($('#Proveedor_Id').val() == "" || $('#ProveedorID').val() == "") {
+                    $.WarningDialog('Debe seleccionar un Proveedor!')
+                } else {
+                    var pagada = '@Html.Raw(( (int) ComprobantesACancelarFilter.Pendientes ).ToString())';
+                    $('#NotasCredito-dialog').OpenFormDialog(
+                        '@Url.Action("NotasCredito", "Imputaciones")?IdProveedor=' + $("#ProveedorID").val() + '&Tipo=' + '@ComprobanteCompraHelper.NotaCredito' +  '&Pagada=' + pagada,
+                    '<i class="fa fa-folder-o"></i> Buscar Nota de Credito',
+                { width: 800 });
+                }
+            },
+
+            //CDs
+
+            IdsGridRestrictaCD: new Array(),
+
+            OnAgregarCD: function (e) {
+                if ($('#Proveedor_Id').val() == "") {
+                    return $.WarningDialog('Debe seleccionar un Proveedor')
+                }
+                if ($('#Imputacion_Numero').val() == "") {
+                    return $.WarningDialog('Debe seleccionar una Nota de Credito')
+                }
+
+                var pagada = '@Html.Raw(( (int) ComprobantesACancelarFilter.Pendientes ).ToString())';
+                var get_params = '?IdProveedor=' + $("#ProveedorID").val() + '&NoTipo=' + '@ComprobanteCompraHelper.NotaCredito' + '&Pagada=' + pagada;
+                $('#CDescontar-dialog').OpenFormDialog(
+                    '@Url.Action("CDescontar", "Imputaciones")' + get_params,
+                    '<i class="fa fa-folder-o"></i> Comprobantes a Pagar',
+                { width: 800 });
+            },
+
+            OnEliminarCDClick: function () {
+                var Id = $(this).closest('tr').attr('id');
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el comprobante?",
+                                        function () { Imputacion.EliminarDetalle(Id) });
+            },
+
+            EliminarDetalle: function (Id) {
+                $('#GridCDescontar').jqGrid('delRowData', Id);
+                Imputacion.IdsGridRestrictaCD = Imputacion.IdsGridRestrictaCD.diff(Id);
+                $('#SelectCount').html('0');
+                Imputacion.CalcularTotales();
+            },
+
+            AfterEditCell: function (rowIdAnt, rowId, cellname, value, iRow, iCol) {
+                if (rowIdAnt == undefined) {
+                    rowIdAnt = rowId;
+                }
+                rowIdAct = rowIdAnt;
+                rowIdAnt = rowId;
+            },
+
+            ValidateImporteChange: function (value, colname) {
+                var num = new Number(value);
+                if (isNaN(num)) {
+                    return [false, 'El valor ingresado no es un númerico. Utilice punto para separar los decimales.'];
+                }
+                var rowId = $('#GridCDescontar').jqGrid('getGridParam', 'selrow');
+                var rowData = $('#GridCDescontar').jqGrid('getRowData', rowId);
+                var maximoImporte = ($.unformatCurrency(rowData.Total) - $.unformatCurrency(rowData.TotalPagado)).toFixedNumber(2);
+                if (value > maximoImporte) {
+                    return [false, 'El importe es mayor a lo que se debe cancelar de la factura' + $.formatCurrency(maximoImporte)];
+                }
+                return [true];
+                    
+            },
+
+
+            GetProveedorByID: function () {
+                var Id = $('#ProveedorID').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return $.WarningDialog('El N° de Proveedor no es correcto');
+                }
+                var params = {
+                    url: '@Url.Action("GetProveedor", "Proveedores")',
+                    data: { IdProveedor: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            Imputacion.LoadProveedor(ret.Data);
+                            $('#Proveedor_Id').select2('data', { id: Id, text: ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')' });
+                            $('#Imputacion_Numero').val("");
+                            $('#Imputacion_TotalSaldado').val("");
+                            $('#Imputacion_TotalASaldar').val("");
+                            $('#Imputacion_Total').val("");
+                            $("#GridCDescontar").jqGrid("clearGridData", true).trigger("reloadGrid");
+                        }
+                        else {
+                            $.WarningDialog('Proveedor no existe, vuelva a intentarlo!');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            OnProveedorSeleccionado: function (e) {
+                $('#ProveedorID').val(e.val);
+                Imputacion.GetProveedorByID();
+            },
+
+            LoadProveedor: function (Proveedor) {
+                $('#ProveedorID').val(Proveedor.Id);
+            },
+
+
+            CalcularTotales: function () {
+                var ASaldar = parseFloat($('#Imputacion_TotalASaldar').val());
+                var Descontado = 0;
+
+                var Detalles = $('#GridCDescontar').jqGrid('getGridParam', 'data');
+                for (var i = 0; i < Detalles.length; i++) {
+                    Descontado += parseFloat(Detalles[i].Importe);
+                }
+                Descontado = $.parseCurrency(Descontado);
+                $('#Imputacion_Descontar').val(Descontado);
+                if (ASaldar < Descontado) {
+                    $.WarningDialog('Los importes a cancelar superan el pendiente de la Nota de Crédito');
+                    return false;
+                }
+                return true;
+            },
+
+
+            Save: function () {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                    return;
+
+                $('#BtnSubmit').attr('disabled', 'disabled');
+                if ($('#ProveedorID').val() == "" || $('#Proveedor_Id').val() == "") {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return $.WarningDialog('Debe seleccionar un Proveedor!')
+                }
+                if ($('#Imputacion_Numero').val() == "") {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return $.WarningDialog('Debe seleccionar la Nota de Credito!')
+                }
+                var detalles = $('#GridCDescontar').jqGrid('getGridParam', 'data');
+                if (detalles.length == 0) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return $.WarningDialog('Es necesario que agregue al menos una factura a imputar.');
+                }
+
+                if (!Imputacion.CalcularTotales()) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return;
+                }
+
+                Imputaciones = new Array();
+                for (var i = 0; i < detalles.length; i++) {
+                    var item = {
+                        Proveedor: { Id: $('#ProveedorID').val() },
+                        NotaCredito: { Id: Imputacion.IdsGridRestricta.toString() },
+                        ComprobanteADescontar: { Id: Imputacion.IdsGridRestrictaCD[i] },
+                        Importe: $.parseCurrency(detalles[i].Importe)
+                    };
+                    Imputaciones.push(item);
+                }
+
+                var postParams = {
+                    url: "@Url.Action("Nuevo", "Imputaciones")",
+                    data: { Imputaciones: Imputaciones },
+                    success: function (data) {
+                        if (data.Success) {
+                            Imputacion.OnFinishSave();
+                        }
+                        else {
+                            $('#BtnSubmit').removeAttr('disabled');
+                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        }
+                    }
+                }
+                $.AjaxPost(postParams);
+            },
+
+            OnFinishSave: function () {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Index")';
+            }
+
+
+        }
+    </script>
+}

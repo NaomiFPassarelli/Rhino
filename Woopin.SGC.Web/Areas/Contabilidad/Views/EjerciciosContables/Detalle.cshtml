@@ -1,0 +1,119 @@
+﻿@using Woopin.SGC.Common.Json;
+
+@model Woopin.SGC.Model.Contabilidad.Ejercicio
+@{
+    ViewBag.Title = "Ejercicios Contables";
+    ViewBag.SectionIcon = "circle-o-notch";
+    ViewBag.SectionTitle = "Detalle del Ejercicio Contable: " + Model.Nombre;
+}
+<fieldset class="form-horizontal" style="margin-bottom:20px;">
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Ejercicio</div>
+        <div class="col-md-6">@Model.Nombre</div>
+    </div>
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Inicio del Ejercicio</div>
+        <div class="col-md-6">@Model.Inicio.ToString("dd/MM/yyyy")</div>
+    </div>
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Fin del Ejercicio</div>
+        <div class="col-md-6">@Model.Final.ToString("dd/MM/yyyy")</div>
+    </div>
+    <div class="col-md-12 detail-row">
+        <div class="col-md-6 detail-label">Estado del Ejercicio</div>
+        <div class="col-md-6">
+            @if(Model.Cerrado)
+            {
+                <span class="label label-danger">Cerrado</span>
+            }
+            else
+            {
+                <span class="label label-success">Abierto</span>
+            }
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</fieldset>
+<a class="boton place-left" id="BtnCreate" title="Crear Bloqueo">
+    <i class="fa fa-plus-circle i-green"></i>  Crear Bloqueo Contable
+</a>
+<div class="col-md-12 table-container detalles" id="GridBloqueos_Container">
+    <table id="GridBloqueos" class="col-md-12"></table>
+    <div id="GridBloqueos_pager"></div>
+</div>
+<div id="create-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var DetalleEjercicio = {
+            formatEstadoBloqueo: function (cellvalue, options, rowObject) {
+                if (cellvalue) {
+                    return '<span class="label label-danger ChangeBloqueo" data-id="' + rowObject.Id + '" style="cursor:pointer;">Bloqueado</span>';
+                }
+                else {
+                    return '<span class="label label-success ChangeBloqueo" data-id="' + rowObject.Id + '" style="cursor:pointer;">Desbloqueado</span>';
+                }
+            },
+
+            NuevoBloqueo:function() {
+                $('#create-dialog').OpenFormDialog('@Url.Action("NuevoBloqueo", new { Id = Model.Id })', '<i class="fa fa-lock"></i> Armar Bloqueo Contable', { height: 500});
+            },
+
+            init: function () {
+                $('#GridBloqueos').CreateCommonGrid({
+                    datatype: 'local',
+                    colNames: ['', 'Nombre', 'Fecha Inicio', 'Fecha Final', 'Estado del Bloqueo'],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Nombre', index: 'Nombre', width: 20, align: "center", sortable: true },
+                        { name: 'Inicio', index: 'Inicio', width: 20, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Final', index: 'Final', width: 20, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { name: 'Activo', index: 'Activo', width: 20, align: "center", sortable: true, formatter: DetalleEjercicio.formatEstadoBloqueo, title: false }
+                    ],
+                    sortname: 'Fecha',
+                    sortorder: "desc",
+                    data: @Html.Raw(JsonHelper.ToJson(Model.Bloqueos)),
+                    pager: '#GridBloqueos_pager',
+                    rowList: [5, 10, 15],
+                    rowNum: 5
+                });
+                $('#GridBloqueos').trigger("reloadGrid");
+                $("#GridBloqueos").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+                $('#BtnCreate').click(DetalleEjercicio.NuevoBloqueo);
+                $(document).on('click','.ChangeBloqueo',DetalleEjercicio.OnClickEstadoBloqueo)
+            },
+
+            OnClickEstadoBloqueo: function () {
+                var Estado = $(this);
+                ConfirmationDialog.Show("Esta seguro que desea cambiar el estado del bloqueo contable?",
+                        function () { DetalleEjercicio.ChangeEstadoBloqueo(Estado) });
+            },
+
+            ChangeEstadoBloqueo: function (Estado) {
+                var Bloqueado = Estado.hasClass('label-danger');
+                var Id = Estado.data("id");
+                var params = {
+                    url: '@Url.Action("CambiarBloqueo")',
+                    data: { Id: Id, Bloqueado:Bloqueado },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            if(Bloqueado){
+                                // Paso a Abierto
+                                Estado.removeClass('label-danger').addClass('label-success').html('Desbloqueado');
+                            }
+                            else{
+                                Estado.removeClass('label-success').addClass('label-danger').html('Bloqueado');
+                            }
+                            
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            }
+        }
+        $(document).ready(function () {
+            DetalleEjercicio.init();
+        });
+    </script>
+}

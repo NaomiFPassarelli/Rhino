@@ -1,0 +1,125 @@
+﻿@using Woopin.SGC.Model.Common
+@{
+    ViewBag.Title = "Reporte Citi Ventas";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Reporte Citi Ventas";
+    var tipoVentas = (int) TipoReporteCiti.Ventas;
+    var tipoAlicuotas = (int)TipoReporteCiti.VentasAlicuotas;
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+    <div class="button-dropdown place-left">
+        <a class="dropdown-toggle boton boton-i" style="padding:4px 12px !important; margin:0px;" title="Descargar Archivos AFIP">
+            <i class="fa fa-download i-blue"></i> Descargar Archivos AFIP
+        </a>
+        <ul class="dropdown-menu" data-role="dropdown">
+            <li><a id="BtnDescargarVentas">Ventas</a></li>
+            <li><a id="BtnDescargarAlicuotas">Alicuotas IVA</a></li>
+        </ul>
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridCitiVentas"></table>
+    <div id="GridCitiVentas_pager"></div>
+</div>
+<div id="CitiVentas-detalle-dialog"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        CitiVentas.init();
+    });
+
+    var CitiVentas = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+
+            $('#BtnExportXLS').click(CitiVentas.ExportToExcel);
+            $('#BtnDescargarVentas').click(function () {
+                CitiVentas.DescargarArchivo('@tipoVentas');
+            });
+            $('#BtnDescargarAlicuotas').click(function () {
+                CitiVentas.DescargarArchivo('@tipoAlicuotas');
+            });
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridCitiVentas', ["Fecha", "Comprobante"]);
+            $('#BtnRefresh').bind('click',CitiVentas.ReloadGrid);
+            /* Armo la grilla del ABM */
+            $('#GridCitiVentas').CreateCommonGrid({
+                url: '@Url.Action("GetAllCiti")',
+                serializeGridData: function (postData) {
+                    dates = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, dates));
+                },
+                colNames: ['Fecha', 'CUIT', 'Cliente', 'Tipo de Comprobante', 'Numero de Comprobante', 'IVA', 'Total', ],
+                colModel: [
+                    { name: 'Fecha', index: 'Fecha', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'CUIT', index: 'CUIT', width: 25, align: "center", sortable: true },
+                    { name: 'RazonSocial', index: 'RazonSocial', width: 25, align: "center", sortable: true },
+                    { name: 'TipoComprobante', index: 'TipoComprobante', width: 25, align: "center", sortable: true },
+                    { name: 'Comprobante', index: 'Comprobante', width: 25, align: "center", sortable: true },
+                    { name: 'IVA', index: 'IVA', width: 25, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Total', index: 'Total', width: 25, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'FechaVencimiento',
+                sortorder: "asc",
+                pager: '#GridCitiVentas_pager',
+                rowList: [50, 100, 200],
+                rowNum: 50,
+                height: 700
+            });
+            $('#GridCitiVentas').trigger("reloadGrid");
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridCitiVentas', 'Citi Ventas');
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridCitiVentas").setGridParam({ datatype: 'json' });
+            $('#GridCitiVentas').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        DescargarArchivo: function (type) {
+            // Por alguna razon cuando va por get la fecha la toma invertida. mm/dd/yy
+            var params = "";
+            params += "tipo=" + type + "&";
+            var datestart = $('#datestart').val() != '' ? $('#datestart').val() : null;
+            if (datestart != null) {
+                params += "start=" + $.datepicker.formatDate('mm/dd/yy', $('#datestart').datepicker("getDate")) + "&";
+            }
+            var dateend = $('#dateend').val() != '' ? $('#dateend').val() : null;
+            if (dateend != null) {
+                params += "end=" + $.datepicker.formatDate('mm/dd/yy', $('#dateend').datepicker("getDate"));
+            }
+            window.location = '@Url.Action("GetCitiPlainFile")?' + params;
+        }
+
+
+    }
+
+    </script>
+}

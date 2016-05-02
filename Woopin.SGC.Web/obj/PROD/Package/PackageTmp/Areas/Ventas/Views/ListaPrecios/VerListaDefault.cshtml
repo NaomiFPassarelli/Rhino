@@ -1,0 +1,83 @@
+﻿@using Woopin.SGC.Model.Ventas
+@{
+    ViewBag.Title = "Lista de Precios";
+    ViewBag.SectionIcon = "calculator";
+    ViewBag.SectionTitle = "Gestionar Lista de Precios Predeterminada"; 
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar modalidad..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridListaPrecios"></table>
+    <div id="GridListaPrecios_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListaPrecios = {
+
+            ReloadGrid:function () {
+                $('#SelectCount').html('0');
+                $("#GridListaPrecios").setGridParam({ datatype: 'json' });
+                $('#GridListaPrecios').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridListaPrecios', 'Listado de Precios');
+            },
+
+            init: function () {
+                $('#BtnRefresh').bind('click', ListaPrecios.ReloadGrid);
+                $.SetupSearchTextbox('#GridListaPrecios', ["Detalle"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridListaPrecios').CreateCommonGrid({
+                    url: '@Url.Action("GetAllById")/D',
+                    colNames: ['', 'Articulo', 'Precio', '', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Articulo.Descripcion', index: 'Articulo.Descripcion', width: 30, align: "center", sortable: true },
+                        { name: 'Precio', index: 'Precio', width: 30, align: "center", sortable: true, formatter: $.formatCurrency },
+                        { name: 'Articulo.Id', index: 'Articulo.Id', width: 30, align: "center", sortable: true, hidden: true },
+                        { name: 'Acciones', index: 'Acciones', width: 10, align: "center", sortable: true, formatter: ListaPrecios.accionesFormatter }
+                    ],
+                    sortname: 'Detalle',
+                    sortorder: "asc",
+                    pager: '#GridListaPrecios_pager',
+                    rowList: [50, 100, 200],
+                    rowNum: 50,
+                });
+                $('#GridListaPrecios').trigger("reloadGrid");
+                $('#BtnExportXLS').click(ListaPrecios.ExportToExcel);
+                $(document).on('click', '.BtnEditar',ListaPrecios.OnEditar)
+            },
+
+            accionesFormatter: function (cell,attr,row) {
+                return '<a class="boton boton-i BtnEditar"><i class="fa fa-edit i-blue"></i> Editar Precio</a>';
+            },
+
+            OnEditar: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $('#edit-dialog').OpenFormDialog('@Url.Action("Editar")?Id=' + Id + '&IdCliente=@TipoListaPrecios.Default', '<i class="fa fa-calculator"></i> Editar precio de venta', null);
+            }
+
+        }
+    $(document).ready(function () {
+        ListaPrecios.init();
+    });
+    </script>
+}

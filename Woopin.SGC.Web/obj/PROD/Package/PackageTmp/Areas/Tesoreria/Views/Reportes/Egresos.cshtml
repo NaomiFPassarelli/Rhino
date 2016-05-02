@@ -1,0 +1,115 @@
+﻿@using Woopin.SGC.Common.Helpers
+@using Woopin.SGC.Common.Helpers
+@{
+    ViewBag.Title = "Reportes";
+    ViewBag.SectionIcon = "line-chart";
+    ViewBag.SectionTitle = "Egresos por Periodo";
+}
+<div class="action-bar row" style="margin:1% 0">
+    <div class="col-md-6 place-left">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateHelper.GetWeek(DateTime.Now).Start.ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateHelper.GetWeek(DateTime.Now).End.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnLoadData" title="Cargar Información">
+        <i class="fa fa-search i-blue"></i>  Cargar Reporte de Egresos
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Ingreso..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+
+</div>
+<div class="table-container">
+    <table id="GridReporteEgresos"></table>
+    <div id="GridReporteEgresos_pager"></div>
+</div>
+<div id="asiento-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ReporteEgresos.init();
+    });
+
+    var ReporteEgresos = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', ReporteEgresos.LoadData);
+            $('#BtnExportXLS').click(ReporteEgresos.ExportToExcel);
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridReporteEgresos', ["Valor","Descripcion"]);
+
+            /* Armo la grilla */
+            $('#GridReporteEgresos').CreateCommonGrid({
+                url: '@Url.Action("GetAllEgresos")',
+                serializeGridData: function (postData) {
+                    data = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', 'Tipo de Valor', 'Descripcion', 'Monto Total'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Valor', index: 'Valor', width: 30, align: "center", sortable: true },
+                    { name: 'Descripcion', index: 'Descripcion', width: 40, align: "center", sortable: true },
+                    { name: 'Monto', index: 'Monto', width: 30, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Valor',
+                sortorder: "asc",
+                pager: '#GridReporteEgresos_pager',
+                rowList: [15, 20, 25],
+                rowNum: 15,
+                userDataOnFooter: true
+            });
+            $('#GridReporteEgresos').trigger("reloadGrid");
+            $('#BtnLoadData').click(ReporteEgresos.LoadData);
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridReporteEgresos', 'Reporte de Egresos por Periodo');
+        },
+
+        LoadData: function () {
+            ReporteEgresos.CompletarFiltros();
+            valid = ReporteEgresos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ReporteEgresos.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        ReloadGrid: function () {
+            $("#GridReporteEgresos").setGridParam({ datatype: 'json' });
+            $('#GridReporteEgresos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        }
+    }
+</script>
+}

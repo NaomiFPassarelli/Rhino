@@ -1,0 +1,213 @@
+﻿@{
+    ViewBag.Title = "Depositos";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Listado de Depositos";
+}
+<div class="action-bar row" style="margin-bottom:20px;">
+    <div class="col-md-12">
+        <label class="col-md-3 horizontal-label text-center">Filtrar por Cuenta Bancaria</label>
+        <div class="col-md-6 input-container">
+            <div class="row">
+                <input type="number" id="CuentaBancariaID" name="CuentaBancariaID" class="col-md-2" style="margin-top: 7px;" />
+                <div class="col-md-8" style="padding:0;">
+                    <input type="hidden" id="CuentaBancaria_Id" name="CuentaBancaria.Id" class="selectinput" />
+                </div>
+                <a class="boton boton-i place-right BtnClearSelect2" data-rel="CuentaBancaria_Id" data-input="CuentaBancariaID" title="Limpiar">
+                    <i class="fa fa-eraser i-blue"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a class="boton place-left" id="btnFilterByCuentaBancaria" style="margin-top: 2px;">Filtrar <i class="fa fa-filter i-blue"></i></a>
+        </div>
+    </div>
+</div>
+<div class="action-bar row">
+    <a class="boton place-left" id="BtnCreate" title="Crear Deposito" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Deposito
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Deposito..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel">
+        <span class="icon-xls"></span>
+    </a>
+    <div class="place-right" style="margin-top:6px;margin-right:20px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+</div>
+<div class="table-container">
+    <table id="GridDepositos"></table>
+    <div id="GridDepositos_pager"></div>
+</div>
+<div id="listadoDepositos-detalle-dialog" class="detalle-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $(document).ready(function () {
+        ListadoDepositos.init();
+    });
+    var ListadoDepositos = {
+
+        init: function () {
+            $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                ListadoDepositos.LoadData();
+            });
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridDepositos', ["Fecha", "Numero"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridDepositos').CreateCommonGrid({
+                url: '@Url.Action("GetDepositoFilter")',
+                serializeGridData: function (postData) {
+                    dates = {
+                        idCuentaBancaria: $('#CuentaBancariaID').val() != '' ? $('#CuentaBancariaID').val() : 0,
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, dates));
+                },
+                colNames: ['', 'Fecha', 'Concepto', 'Banco', 'Boleta', 'Total',''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'FechaCreacion', index: 'FechaCreacion', width: 200, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Concepto', index: 'Concepto', width: 200, align: "center", sortable: true },
+                    { name: 'Cuenta.Banco.Nombre', index: 'Cuenta.Banco.Nombre', width: 200, align: "center", sortable: true },
+                    { name: 'NumeroBoleta', index: 'NumeroBoleta', width: 200, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 200, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'Acciones', index: 'Acciones', width: 100, align: "center", sortable: true, formatter: ListadoDepositos.AccionesFormatter }
+                ],
+                sortname: 'Fecha',
+                sortorder: "asc",
+                pager: '#GridDepositos_pager',
+                rowList: [20, 40, 60],
+                rowNum: 20
+            });
+            $('#GridDepositos').trigger("reloadGrid");
+            $('#CuentaBancaria_Id').select2(
+               {
+                   placeholder: "Seleccione Una Cuenta Bancaria",
+                   ajax: {
+                       url: "@Url.Action("GetComboCuentaBancaria", "CuentasBancarias")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
+                       }
+                   }
+               });
+            $('#CuentaBancaria_Id').on("select2-selecting", ListadoDepositos.OnCuentaBancariaSelected);
+            $('#btnFilterByCuentaBancaria').click(ListadoDepositos.LoadData);
+            $(document).on('click', '.BtnVerDialog', ListadoDepositos.VerDetalleDialog);
+            $('#CuentaBancariaID').change(ListadoDepositos.OnCuentaBancariaChange);
+            $('#BtnExportXLS').click(ListadoDepositos.ExportToExcel);
+            $('.BtnClearSelect2').on('click', function () {
+                var IdClear = $(this).attr('data-rel');
+                var IdClearInput = $(this).attr('data-input');
+                ListadoDepositos.ClearSelect2(IdClear, IdClearInput);
+            });
+        },
+
+        ClearSelect2: function (IdClear, IdClearInput) {
+            $("#" + IdClearInput).val("");
+            $("#" + IdClear).select2("val", "");
+        },
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridDepositos', 'Listado de Depositos de Cheques');
+        },
+        
+        VerDetalleDialog: function () {
+            var RowId = $(this).closest('tr').attr('id');
+            var opt = {
+                width: 900, height: 600,
+                openCallback: function () {
+                    $('#GridDetallesDeposito').resizeGrid('GridDetallesDeposito_Container');
+                }
+            };
+            $('#listadoDepositos-detalle-dialog').OpenFormDialog('@Url.Action("Detalle")?Id=' + $(this).data('id') + '&opensDialog=true', 'Detalle Deposito N°' + RowId, opt);
+        },
+
+        OnCuentaBancariaChange: function () {
+                var Id = $('#CuentaBancariaID').val();
+                if (Id == "") { return; }
+                valid = ListadoDepositos.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                var params = {
+                    url: '@Url.Action("GetCuentaBancaria", "CuentasBancarias")',
+                    data: { Id: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            var Cuenta = ret.Data.Banco.Nombre + '(' + ret.Data.Numero + ')';
+                            $('#CuentaBancaria_Id').select2('data', { id: Id, text: Cuenta });
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('La Cuenta no existe!', 'error');
+                            $('#Cuenta_Id').select2('data', null);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+        OnCuentaBancariaSelected: function (e) {
+            $('#CuentaBancariaID').val(e.val)
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridDepositos").setGridParam({ datatype: 'json' });
+            $('#GridDepositos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        AccionesFormatter: function (cellvalue, options, rowObject) {
+            var ret = '';
+            var url = '@Url.Action("Detalle")/' + rowObject.Id;
+            ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
+            ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '"><i class="fa fa-files-o i-green"></i></a>';
+            return ret;
+        },
+
+        LoadData: function () {
+            ListadoDepositos.CompletarFiltros();
+            valid = ListadoDepositos.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            ListadoDepositos.ReloadGrid();
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#CuentaBancariaID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return { success: false, message: 'El N° de Cuenta Bancaria no es correcto' };
+            }
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        }
+    }
+    </script>
+}

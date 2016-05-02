@@ -1,0 +1,170 @@
+﻿@{
+    ViewBag.Title = "Movimientos de Fondos";
+    ViewBag.SectionIcon = "exchange";
+    ViewBag.SectionTitle = "Listado de Movimientos de Fondos";
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Movimiento de Fondo" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Movimiento de Fondo
+    </a>
+    <div class="place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Movimiento de Fondo..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridMovimientosFondos"></table>
+    <div id="GridMovimientosFondos_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        var MovimientoFondos = {
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridMovimientosFondos', 'Listado de Movimientos de Fondos');
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridMovimientosFondos');
+                MovimientoFondos.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridMovimientosFondos").setGridParam({ datatype: 'json' });
+                $('#GridMovimientosFondos').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            LoadData: function () {
+                MovimientoFondos.CompletarFiltros();
+                valid = MovimientoFondos.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
+                MovimientoFondos.ReloadGrid();
+            },
+
+            ValidateFilters: function () {
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+            },
+
+            depositaAcreditaFormatter: function(cellvalue, options, rowObject) {
+                var additionalData = rowObject.Movimiento === undefined ? rowObject['Movimiento.AdditionalData'] : rowObject.Movimiento.AdditionalData;
+                if (additionalData < 0 && options.colModel.formatoptions.columna == 'Debita')
+                {
+                    return '<span>' + $.formatCurrency(rowObject.Importe) + '</span>';
+                } else if (additionalData > 0 && options.colModel.formatoptions.columna == 'Acredita') {
+                    return '<span>' + $.formatCurrency(rowObject.Importe) + '</span>';
+                } else {
+                    return '<span> </span>';
+                }  
+            },
+
+            ctabcariaCajaFormatter: function (cellvalue, options, rowObject) {
+
+                debugger;
+                var additionalData = rowObject.Movimiento.AdditionalData;
+                //-1 Extraccion
+                //0 Transferencia entre cuentas
+                //1 Deposito
+                if (additionalData == -1 && options.colModel.name == "CuentaBancaria.Numero"){
+                return '<span>' + cellvalue + '</span>';
+                } else if (additionalData == -1 && options.colModel.name == "Caja") {
+                    return '<span>' + rowObject.Caja.Nombre + '</span>';
+                } else if (additionalData == 0 && options.colModel.name == "CuentaBancaria.Numero") {
+                return '<span>' + cellvalue + '</span>';
+                } else if (additionalData == 0 && options.colModel.name == "CuentaDestino") {
+                    return '<span>' + rowObject.CuentaDestino.Numero + '</span>';
+                } else if (additionalData == 1 && options.colModel.name == "CuentaBancaria.Numero") {
+                return '<span>' + cellvalue + '</span>';
+                } else if (additionalData == 1 && options.colModel.name == "Caja") {
+                    return '<span>' + rowObject.Caja.Nombre + '</span>';
+                }else{
+                    return '<span> - </span>';
+                }
+        }
+
+
+        }
+    $(document).ready(function () {
+        $('#BtnExportXLS').click(MovimientoFondos.ExportToExcel);
+        /* Binding del boton de crear*/
+        $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+
+        /* Binding del boton de Refresh */
+        $('#BtnRefresh').bind('click', function () {
+            MovimientoFondos.LoadData();
+        });
+
+        /* Binding de los checkbox, contador de seleccionados */
+        $.SetupSelectCount('GridMovimientosFondos');
+
+        /* Editar de la grilla */
+        // Abre nueva ventana
+        $(document).on('click', '.BtnEditar', function () {
+            $.ShowLoader();
+            var Id = $(this).closest('tr').attr('id');
+            window.location = '@Url.Action("Editar")/' + Id;
+        });
+
+
+        /* Buscador de arriba */
+        $.SetupSearchTextbox('#GridMovimientosFondos', ["CuentaBancaria.NumeroDeCuenta"]);
+
+        /* Armo la grilla del ABM */
+        $('#GridMovimientosFondos').CreateCommonGrid({
+            url: '@Url.Action("GetAllByDates")',
+            serializeGridData: function (postData) {
+                dates = {
+                    start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                    end: $('#dateend').val() != '' ?  $('#dateend').val() : null 
+                }
+                return JSON.stringify($.extend(postData,dates));
+            },
+            colNames: ['', '', 'Cuenta', 'Cuenta Destino', 'Caja', 'Tipo de Movimiento', 'Debita', 'Acredita', 'Fecha', 'Fecha de Acreditación',''],
+            colModel: [
+                { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'Movimiento.AdditionalData', index: 'Movimiento.AdditionalData', width: 0, sortable: false, hidden: true, key: true },
+                { name: 'CuentaBancaria.Numero', index: 'CuentaBancaria.NumeroDeCuenta', width: 30, align: "center", sortable: true, formatter: MovimientoFondos.ctabcariaCajaFormatter },
+                { name: 'CuentaDestino', index: 'CuentaDestino.Numero', width: 30, align: "center", sortable: true, formatter: MovimientoFondos.ctabcariaCajaFormatter },
+                { name: 'Caja', index: 'Caja.Nombre', width: 30, align: "center", sortable: true, formatter: MovimientoFondos.ctabcariaCajaFormatter },
+                { name: 'Movimiento.Data', index: 'Movimiento.Data', width: 30, align: "center", sortable: true },
+                { name: 'Debita', index: 'Importe', width: 25, align: "center", sortable: true, formatter: MovimientoFondos.depositaAcreditaFormatter, formatoptions: { columna: 'Debita' } },
+                { name: 'Acredita', index: 'Importe', width: 25, align: "center", sortable: true, formatter: MovimientoFondos.depositaAcreditaFormatter, formatoptions: { columna: 'Acredita' } },
+                { name: 'Fecha', index: 'Fecha', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                { name: 'FechaAcredita', index: 'FechaAcredita', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                { name: 'Importe', index: 'Importe', width: 25, align: "center", sortable: true,hidden: true },
+            ],
+            sortname: 'Fecha',
+            sortorder: "desc",
+            pager: '#GridMovimientosFondos_pager'
+        });
+        $('#GridMovimientosFondos').trigger("reloadGrid");
+    });
+
+    </script>
+}

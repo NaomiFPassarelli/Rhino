@@ -1,0 +1,63 @@
+﻿@model Woopin.SGC.Web.Models.LocalPasswordModel
+
+@{
+    ViewBag.Title = "Mi Cuenta";
+    ViewBag.SectionIcon = "building-o";
+    ViewBag.SectionTitle = "Mi Cuenta";
+}
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <div class="page-header">
+        <h3>Cambiar Mi Contraseña</h3>
+    </div>
+
+
+    <fieldset class="form-horizontal col-md-8">
+
+        <div class="form-group">
+           <label class = "col-md-4 emparejarLabel">Nueva Contraseña</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(model => model.NewPassword, new { @class = "inputTexto", placeholder = "Introducir la nueva contraseña" })
+                @Html.ValidationMessageFor(model => model.NewPassword)
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("ConfirmPassword"))
+                            { @Html.Raw("has-error");
+                            }">
+            @Html.LabelFor(model => model.ConfirmPassword, new { @class = "col-md-4 emparejarLabel" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(model => model.ConfirmPassword, new { @class = "inputTexto", placeholder = "Repetir la nueva contraseña" })
+                @Html.ValidationMessageFor(model => model.ConfirmPassword)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-right" id="BtnSubmit"><i class="fa fa-save i-green"></i> Cambiar Contraseña</a>
+            </div>
+        </div>
+    </fieldset>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success)
+                    {
+                        $('#Alert-Container').NewAlert('success', data.SuccessMessage);
+                    }
+                    else
+                    {
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                    }
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,123 @@
+﻿@{
+    Layout = null;
+}
+<div class="container main has-bs">
+    <div class="place-right search-box col-md-12" style="padding-left:0px;padding-right:0px;">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Comprobante..." style="width:100%;" />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch" style="right:20px;"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+
+    <!-- Grilla con todos los comprobantes no pagados -->
+    <div class="table-container AllComprobantes" id="ComprobantesAPagarNC_Container" style="margin-top:50px;">
+        <table id="GridComprobantesAPagarNC"></table>
+        <div id="GridComprobantesAPagarNC_pager"></div>
+    </div>
+
+</div>
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSave" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i>  Aceptar
+        </a>
+        <a class="boton place-left" id="BtnCancel" title="Cancelar">
+            <i class="fa fa-times-circle-o i-red"></i>  Cancelar
+        </a>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var ComprobantesAPagarNC = {
+
+        SelectedComprobante: null,
+
+        OnSave: function () {
+            if (ComprobantesAPagarNC.SelectedComprobante != null) {
+                //poner letra + numero en el input
+                var LetraNumero = ComprobantesAPagarNC.SelectedComprobante.Letra + ComprobantesAPagarNC.SelectedComprobante.Numero;
+                $('#Imputacion_Numero').val(LetraNumero);
+                ComprobanteCompra.ImputaComprobante = ComprobantesAPagarNC.SelectedComprobante;
+            }
+            ComprobantesAPagarNC.CloseDialog();
+        },
+
+        HoldSelectedIds: function () {
+            CheckPage = $('#GridComprobantesAPagarNC .SelectCheckboxes');
+            for (var countBox = 0; countBox < CheckPage.length ; countBox++) {
+                if (ComprobantesAPagarNC.SelectedComprobante != null && ComprobantesAPagarNC.SelectedComprobante.Id == $(CheckPage[countBox]).val()) {
+                    $(CheckPage[countBox]).prop("checked", true);
+                }
+            }
+            $('#GridComprobantesAPagarNC').resizeGrid('ComprobantesAPagarNC_Container');
+        },
+
+        CloseDialog: function(){
+            _OpenDialog.dialog("close");
+        },
+
+        OnCheckboxChange: function () {
+            $('.SelectCheckboxes').attr('checked', false);
+            $(this).attr('checked', true);
+            ComprobantesAPagarNC.SelectedComprobante = new Object();
+            ComprobantesAPagarNC.SelectedComprobante.Id = $(this).val();
+            var row = $('#GridComprobantesAPagarNC').getRowData($(this).val());
+            //letra y number
+            ComprobantesAPagarNC.SelectedComprobante.Letra = row.Letra;
+            ComprobantesAPagarNC.SelectedComprobante.Numero = row.Numero;
+        },
+
+        init: function () {
+            if (ComprobanteCompra.ImputaComprobante != null) {
+                ComprobantesAPagarNC.SelectedComprobante = new Object();
+                ComprobantesAPagarNC.SelectedComprobante = ComprobanteCompra.ImputaComprobante;
+            }
+            $('#BtnSave').click(ComprobantesAPagarNC.OnSave);
+            $('#BtnCancel').click(ComprobantesAPagarNC.CloseDialog);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridComprobantesAPagarNC', ["Numero", "Fecha"]);
+
+            //Grilla de todos los comprobantes - Los que aparecen en el popup
+
+            $('#GridComprobantesAPagarNC').CreateCommonGrid({
+                url: '@Url.Action("GetAllByProvFilterNC")',
+                serializeGridData: function (postData) {
+                    data = {
+                        IdProveedor: '@ViewBag.IdProveedor',
+                        Tipo: '@ViewBag.Tipo',
+                        NoTipo: '@ViewBag.NoTipo',
+                        Pagada: '@ViewBag.Pagada'
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', '', '', 'Fecha', 'Letra', 'Número de Comprobante', 'Total', 'Total Abonado'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Comprobante_Id', index: 'Comprobante_Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 50, sortable: false, formatter: RadioFormatter, formatoptions: { SelectedRows: ComprobantesAPagarNC.SelectedComprobante }, align: "center" },
+                    { name: 'Fecha', index: 'Fecha', width: 100, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Letra', index: 'Letra', width: 100, align: "center", sortable: true },
+                    { name: 'Numero', index: 'Numero', width: 150, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 150, align: "center", sortable: true, formatter: $.formatCurrency },
+                    { name: 'TotalPagado', index: 'TotalPagado', width: 150, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Fecha',
+                sortorder: "desc",
+                autowidth: false,
+                pager: '#GridComprobantesAPagarNC_pager',
+                loadComplete: ComprobantesAPagarNC.HoldSelectedIds,
+                onPaging: ComprobantesAPagarNC.HoldSelectedIds,
+                rowList: [15, 30, 50],
+                rowNum: 15
+            });
+            $('#GridComprobantesAPagarNC').trigger("reloadGrid");
+            $(document).off('change', '#GridComprobantesAPagarNC .SelectCheckboxes');
+            $(document).on('change','#GridComprobantesAPagarNC .SelectCheckboxes', ComprobantesAPagarNC.OnCheckboxChange);
+        }
+    }
+
+    $(document).ready(function () {
+        ComprobantesAPagarNC.init();
+    });
+
+</script>

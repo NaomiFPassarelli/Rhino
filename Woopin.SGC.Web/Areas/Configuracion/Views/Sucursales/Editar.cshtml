@@ -1,0 +1,122 @@
+﻿@model Woopin.SGC.Model.Common.Sucursal
+
+@{
+    ViewBag.Title = "Editar Sucursal";
+    ViewBag.SectionIcon = "building-o";
+    ViewBag.SectionTitle = "Editar Sucursal";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Predeterminado)
+    
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-save i-green"></i> Guardar Sucursal</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Nombre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Nombre, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Nombre, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Direccion"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Direccion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Direccion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Direccion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("CodigoPostal"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.CodigoPostal, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.CodigoPostal, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CodigoPostal, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Localidad"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Localidad, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Localidad, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Localidad, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Lugar"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Lugar, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Lugar.Id, (IEnumerable<SelectListItem>)ViewBag.Localizaciones, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Lugar, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Telefono1"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Telefono1, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.Telefono1, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Telefono1, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Telefono2"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Telefono2, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.Telefono2, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Telefono2, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Telefono3"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Telefono3, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.Telefono3, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Telefono3, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Email"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Email, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Email, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        $('#Alert-Container').NewAlert('success', 'Se ha guardado los cambios exitosamente!');
+                    }
+                    else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+        });
+    </script>
+}
