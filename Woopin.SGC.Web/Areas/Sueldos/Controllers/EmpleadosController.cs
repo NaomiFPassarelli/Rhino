@@ -290,7 +290,7 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         [HttpPost]
         public JsonResult GetEmpleado(int idEmpleado)
         {
-            Empleado a = this.SueldosConfigService.GetEmpleado(idEmpleado);
+            Empleado a = this.SueldosConfigService.GetEmpleadoCompleto(idEmpleado);
             return Json(new { Data = (a != null && a.Activo) ? a : null, Success = true });
         }
 

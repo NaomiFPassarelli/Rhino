@@ -54,16 +54,39 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#BtnSubmitSueldo').on("click", function () {
-            debugger;
+            var Mes = true;
             if ($('#Categoria').attr('checked') == "checked") {
                 sueldoBrutoSeleccionado = $('#Categoria').val();
             } else if ($('#Mes').attr('checked') == "checked") {
                 sueldoBrutoSeleccionado = $('#Mes').val();
             } else if ($('#Hora').attr('checked') == "checked") {
                 sueldoBrutoSeleccionado = $('#Hora').val();
+                Mes = false;
             }
             _OpenDialog.dialog('close');
-            Recibo.AgregarSueldoBruto();
+
+            Recibo.AgregarSueldoBruto(Mes);
+            EmpleadoAntiguedad = Recibo.CalcularAntiguedad(Recibo.EmpleadoFechaIngreso);
+            Recibo.AgregarAntiguedad(EmpleadoAntiguedad);
+
+
+            //var promise = Recibo.AgregarSueldoBruto(Mes);
+
+
+            //Recibo.AgregarSueldoBrutoYAntiguedad();
+            //setTimeout(Recibo.AgregarSueldoBruto(Mes), 10000000000000);
+            
+            //debugger;
+            //if (promise) {
+            //EmpleadoAntiguedad = Recibo.CalcularAntiguedad(Recibo.EmpleadoFechaIngreso);
+            //setTimeout(Recibo.AgregarAntiguedad(EmpleadoAntiguedad), 10000);
+                //Recibo.AgregarAntiguedad(EmpleadoAntiguedad);
+
+            //}
+            //promise.success(function () {
+            //});
+
+            debugger;
         });
     });
 </script>

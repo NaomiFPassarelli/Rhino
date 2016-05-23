@@ -161,6 +161,55 @@ $.CompletarFiltroDates = function (start, end) {
         start.val(date_start.format("dd/mm/yyyy"));
     }
 }
+
+
+$.CalcularDiasLaborales = function (start, end) {
+    //TODO validar que las fechas no esten vacias, sino completarlas, y validar que el start sea menor que end
+
+    dayStart = (start.split("/"))[0];
+    monthStart = (start.split("/"))[1];
+    yearStart = (start.split("/"))[2];
+    var dateStart = new Date(yearStart, monthStart - 1, dayStart);
+
+    dayEnd = (end.split("/"))[0];
+    monthEnd = (end.split("/"))[1];
+    yearEnd = (end.split("/"))[2];
+    var dateEnd = new Date(yearEnd, monthEnd - 1, dayEnd);
+
+    //TODO HAY UNA FUNCION QUE HACE LA DIFERENCIA ENTRE FECHAS REPLICAR EN CALCULARANTIGUEDAD!
+
+    // Calculate days between dates
+    var millisecondsPerDay = 86400 * 1000; // Day in milliseconds
+    dateStart.setHours(0, 0, 0, 1);  // Start just after midnight
+    dateEnd.setHours(23, 59, 59, 999);  // End just before midnight
+    var diff = dateEnd - dateStart;  // Milliseconds between datetime objects   
+    var days = Math.ceil(diff / millisecondsPerDay);
+
+    // Subtract two weekend days for every week in between
+    var weeks = Math.floor(days / 7);
+    var days = days - (weeks * 2);
+
+    // Handle special cases
+    var startDay = dateStart.getDay();
+    var endDay = dateEnd.getDay();
+
+    // Remove weekend not previously removed.   
+    if (startDay - endDay > 1)
+        days = days - 2;
+
+    // Remove start day if span starts on Sunday but ends before Saturday
+    if (startDay == 0 && endDay != 6)
+        days = days - 1;
+
+    // Remove end day if span ends on Saturday but starts after Sunday
+    if (endDay == 6 && startDay != 0)
+        days = days - 1;
+
+    return days;
+},
+
+
+
 $.fn.hasVerticalScrollbar = function () {
     var divnode = this.get(0);
     if (divnode.scrollHeight > divnode.clientHeight)

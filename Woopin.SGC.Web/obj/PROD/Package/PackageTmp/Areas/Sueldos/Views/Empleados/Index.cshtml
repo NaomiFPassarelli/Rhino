@@ -64,13 +64,19 @@
                 /* Armo la grilla del ABM */
                 $('#GridEmpleados').CreateCommonGrid({
                     url: '@Url.Action("GetAll")',
-                    colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre', 'Apellido', 'CUIT', ''],
+                    colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre', 'Apellido', 'CUIT', 'Categoria', 'Tarea', 'Sindicato', 'Obra Social', 'Sueldo Bruto Mensual', 'Fecha Ingreso', ''],
                     colModel: [
                         { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
-                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
-                        { name: 'Nombre', index: 'Nombre', width: 30, align: "center", sortable: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Nombre', index: 'Nombre', width: 25, align: "center", sortable: true },
                         { name: 'Apellido', index: 'Apellido', width: 30, align: "center", sortable: true },
-                        { name: 'CUIT', index: 'CUIT', width: 25, align: "center", sortable: true },
+                        { name: 'CUIT', index: 'CUIT', width: 30, align: "center", sortable: true },
+                        { name: 'Categoria.Data', index: 'Categoria.Data', width: 25, align: "center", sortable: true },
+                        { name: 'Tarea.Data', index: 'Tarea.Data', width: 25, align: "center", sortable: true },
+                        { name: 'Sindicato.Data', index: 'Sindicato.Data', width: 20, align: "center", sortable: true },
+                        { name: 'ObraSocial.Data', index: 'ObraSocial.Data', width: 20, align: "center", sortable: true },
+                        { name: 'SueldoBrutoMensual', index: 'SueldoBrutoMensual', width: 20, align: "center", sortable: true },
+                        { name: 'FechaIngreso', index: 'FechaIngreso', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
                         { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
                     ],
                     sortname: 'Nombre',

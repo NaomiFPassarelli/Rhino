@@ -105,7 +105,7 @@ namespace Woopin.SGC.Web.Scheduler
                         Empleado c = new Empleado(){};
 
                         int[] obligatorios = new int[] {1,2,3,17};
-                        for (int u = 1; u < 21; u++)
+                        for (int u = 1; u < 23; u++)
                         {
                             if (currentRow.GetCell(u) != null)
                             {

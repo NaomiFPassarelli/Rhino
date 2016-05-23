@@ -157,7 +157,6 @@ C:\Woopin\Peakly\src\Woopin.SGC.Web\bin\NPOI.OpenXml4Net.dll
 C:\Woopin\Peakly\src\Woopin.SGC.Web\bin\NPOI.OpenXmlFormats.dll
 C:\Woopin\Peakly\src\Woopin.SGC.Web\bin\Woopin.SGC.Web.pssym
 C:\Woopin\Peakly\src\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.dll.postsharp
-C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.csprojResolveAssemblyReference.cache
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Web.dll.config
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Web.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Web.pdb
@@ -281,6 +280,7 @@ C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Microsoft.Data.OData.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\System.Spatial.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\FluentNHibernate.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.NHMapping.pdb
+C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Iesi.Collections.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\de\PdfSharp.resources.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\de\PdfSharp.Charting.resources.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\de\Microsoft.Data.Edm.resources.dll
@@ -311,6 +311,7 @@ C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\ru\System.Spatial.resources.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\zh-Hans\System.Spatial.resources.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\zh-Hant\System.Spatial.resources.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Services.Afip.XmlSerializers.dll
+C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.csprojResolveAssemblyReference.cache
 C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.pdb
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Web.pssym

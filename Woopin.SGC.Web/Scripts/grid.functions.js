@@ -108,13 +108,13 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
     } else {
         switch (rowObject.TipoLiquidacion) {
             case "0":
-                return (rowObject.Valor > 0) ? rowObject.Valor : rowObject.Porcentaje;
+                return (rowObject.Valor != null) ? rowObject.Valor : rowObject.Porcentaje;
                 break;
             case "1":
-                return (rowObject.Valor > 0) ? rowObject.Valor : rowObject.Porcentaje;
+                return (rowObject.Valor != null) ? rowObject.Valor : rowObject.Porcentaje;
                 break;
             case "2":
-                return (rowObject.Valor > 0) ? rowObject.Valor : rowObject.Porcentaje;
+                return (rowObject.Valor != null) ? rowObject.Valor : rowObject.Porcentaje;
                 break;
         }
     }
