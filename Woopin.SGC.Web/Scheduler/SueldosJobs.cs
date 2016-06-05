@@ -71,8 +71,8 @@ namespace Woopin.SGC.Web.Scheduler
                 if (currentRow != null && Cuit != null && Cuit.Length > 0)
                 {
                     // Creates the comment cell
-                    ICell statusCell = currentRow.CreateCell(24);
-                    sheet.AutoSizeColumn(24);
+                    ICell statusCell = currentRow.CreateCell(26);
+                    sheet.AutoSizeColumn(26);
                     statusCell.CellStyle.WrapText = true;
 
                     try
@@ -105,7 +105,8 @@ namespace Woopin.SGC.Web.Scheduler
                         Empleado c = new Empleado(){};
 
                         int[] obligatorios = new int[] {1,2,3,17};
-                        for (int u = 1; u < 23; u++)
+                        int columnsExcel = 25;
+                        for (int u = 1; u < columnsExcel; u++)
                         {
                             if (currentRow.GetCell(u) != null)
                             {
@@ -176,6 +177,12 @@ namespace Woopin.SGC.Web.Scheduler
                                     case 22:
                                         c.ObraSocial = new ComboItem() { Data = currentRow.GetCell(22).StringCellValue };
                                         break;
+                                    case 23:
+                                        c.BancoDeposito = new ComboItem() { Data = currentRow.GetCell(23).StringCellValue };
+                                        break;
+                                    case 24:
+                                        c.FechaAntiguedadReconocida = Convert.ToDateTime(currentRow.GetCell(24).DateCellValue);
+                                        break;
                                     
                                 }
                             }
@@ -241,7 +248,12 @@ namespace Woopin.SGC.Web.Scheduler
                                     case 22:
                                         c.ObraSocial = null;
                                         break;
-                                    
+                                    case 23:
+                                        c.BancoDeposito = null;
+                                        break;
+                                    case 24:
+                                        c.FechaAntiguedadReconocida = null;
+                                        break;
                                 }
                             }
                         }

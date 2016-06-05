@@ -59,15 +59,13 @@ function ABM_Eliminar(cellvalue, options, rowObject) {
     return '<a class="boton boton-i BtnEliminar" title="Eliminar"><i class="fa fa-trash-o i-red"></i></a>';
 }
 
-function ABM_Eliminar_EsDefault(cellvalue, options, rowObject) {
-    var ret = '';
-    ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '"><i class="fa fa-files-o i-green"></i></a>';
-    ret += '<a class="boton boton-i BtnEliminar" title="Eliminar"><i class="fa fa-trash-o i-red"></i></a>';
-    return ret;
-
-
-    return '<a class="boton boton-i BtnEliminar" title="Eliminar"><i class="fa fa-trash-o i-red"></i></a>';
-}
+//TODO ver si es util es de Sueldos/Recibos/Nuevo
+//function ABM_Eliminar_EsDefault(cellvalue, options, rowObject) {
+//    var ret = '';
+//    ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '"><i class="fa fa-files-o i-green"></i></a>';
+//    ret += '<a class="boton boton-i BtnEliminar" title="Eliminar"><i class="fa fa-trash-o i-red"></i></a>';
+//    return ret;
+//}
 
 function Usuarios_Actions(cellvalue, options, rowObject) {
     return '<a class="boton boton-i BtnDeshabilitar" title="Deshabilitar" data-Id="' + rowObject.Id + '"><i class="fa fa-lock i-red"></i> Deshabilitar</a>';
@@ -99,24 +97,96 @@ function formatterNumberToString(cellvalue,opt,row)
 }
 
 function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
-    debugger;
     rowObject.TipoLiquidacion = String(rowObject.TipoLiquidacion);
     if ((options.colModel.name == "Remunerativo" && rowObject.TipoLiquidacion != "0")
         || (options.colModel.name == "NoRemunerativo" && rowObject.TipoLiquidacion != "1")
         || (options.colModel.name == "Descuento" && rowObject.TipoLiquidacion != "2")) {
         return "";
     } else {
-        switch (rowObject.TipoLiquidacion) {
-            case "0":
-                return (rowObject.Valor != null) ? rowObject.Valor : rowObject.Porcentaje;
+        var importe = 0;
+        if(rowObject.Valor != null && ($.isNumeric(rowObject.Valor)) && rowObject.Unidades != null && ($.isNumeric(rowObject.Unidades)))
+        {
+            //es util para sueldo, dias, horas
+            importe = rowObject.Unidades * rowObject.Valor;
+        } else if (rowObject.Valor != null && ($.isNumeric(rowObject.Valor)) && rowObject.Porcentaje != null && ($.isNumeric(rowObject.Porcentaje)))
+        {
+            //es util para antiguedad
+            importe = rowObject.Valor * rowObject.Porcentaje / 100;
+        }else{
+            importe = rowObject.Valor;
+        }
+
+        importeSuma = importe;
+        importeResta = "-" + importeSuma;
+        
+        switch(rowObject.Adicional_Id)
+        {
+            //TODO SQL
+            //TODO no encontre mejor forma de hacerlo
+            case 6: //antiguedad
+                valorAntiguedad = importe;
                 break;
-            case "1":
-                return (rowObject.Valor != null) ? rowObject.Valor : rowObject.Porcentaje;
+            case 7: //antiguedad
+                valorAntiguedad = importe;
                 break;
-            case "2":
-                return (rowObject.Valor != null) ? rowObject.Valor : rowObject.Porcentaje;
+            case 8: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 9: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 10: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 11: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 12: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 13: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 14: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 15: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 16: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 17: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 18: //antiguedad
+                valorAntiguedad = importe;
+                break;
+            case 1004: //premio asistencia y puntualidad
+                valorPremioAsistenciaYPuntualidad = importe;
+                break;
+            case 1005: //premio asistencia perfecta 
+                valorPremioAsistenciaPerfecta = importe;
+                break;
+            default:
                 break;
         }
+
+        return ((rowObject.Suma == "true" || rowObject.Suma == true) ? importeSuma : importeResta);
+
+
+        //TODO TIENE SENTIDO ESTE SWITCH?
+        //switch (rowObject.TipoLiquidacion) {
+        //    case "0":
+        //        return (rowObject.Suma == "true" ? importeSuma : importeResta);
+        //        break;
+        //    case "1":
+        //        return (rowObject.Suma == "true" ? importeSuma : importeResta);
+        //        break;
+        //    case "2":
+        //        return (rowObject.Suma == "true" ? importeSuma : importeResta);
+        //        break;
+        //}
     }
 }
 

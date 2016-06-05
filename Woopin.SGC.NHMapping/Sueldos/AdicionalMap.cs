@@ -14,6 +14,7 @@ namespace Woopin.SGC.NHMapping.Sueldos
         {
             this.Id(c => c.Id).GeneratedBy.Identity();
             this.Map(c => c.Descripcion).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.AdditionalDescription).Nullable().Not.LazyLoad();
             this.Map(c => c.Porcentaje).Nullable().Not.LazyLoad();
             this.Map(c => c.Valor).Nullable().Not.LazyLoad();
             this.References(c => c.Organizacion).Not.Nullable().Not.LazyLoad();

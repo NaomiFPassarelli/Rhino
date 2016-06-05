@@ -16,6 +16,7 @@ namespace Woopin.SGC.Model.Sueldos
 
         [Required(ErrorMessage = "El valor es requerido")]
         public virtual string Descripcion { get; set; }
+        public virtual string AdditionalDescription { get; set; }
         [RegularExpression("^[0-9]+[0-9]*(.[0-9]{0,2})?$", ErrorMessage = "El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales")]
         public virtual decimal? Porcentaje { get; set; }
         [RegularExpression("^[0-9]+[0-9]*(.[0-9]{0,2})?$", ErrorMessage = "El Valor debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales")]

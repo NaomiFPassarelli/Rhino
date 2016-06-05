@@ -14,5 +14,6 @@ namespace Woopin.SGC.Repositories.Sueldos
         IList<Empleado> GetAllByFilter(SelectComboRequest req);
         IList<Empleado> GetAllByFilter(PagingRequest req);
         bool ExistCUIT(string cuit, int? IdUpdate);
+        Empleado GetCompleto(int IdEmpleado);
     }
 }

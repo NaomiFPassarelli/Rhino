@@ -33,7 +33,6 @@ C:\Woopin\Peakly\src\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.csprojReso
 C:\Woopin\Peakly\src\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.dll
 C:\Woopin\Peakly\src\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.pdb
 C:\Woopin\Peakly\src\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.dll.postsharp
-C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.csprojResolveAssemblyReference.cache
 C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\Woopin.SGC.Services.dll.config
 C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\Woopin.SGC.Services.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\Woopin.SGC.Services.pdb
@@ -64,5 +63,8 @@ C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\NHibernate.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\FluentNHibernate.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\Woopin.SGC.NHMapping.pdb
 C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\Iesi.Collections.xml
+C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.csprojResolveAssemblyReference.cache
 C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.pdb
+C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\Debug\Woopin.SGC.Services.pssym
+C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\DESA\Woopin.SGC.Services.dll.postsharp

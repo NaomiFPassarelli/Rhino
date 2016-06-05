@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Symbols xmlns="http://schemas.postsharp.org/2.0/symbols">
+  <Class Class="#1=T:[Woopin.SGC.Common.App]Woopin.SGC.Common.App.Logging.LoggableAttribute">
+    <Instance Declaration="#2=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::AddUsuario(Woopin.SGC.Model.Common.Usuario)" Id="e77f7265c5cabfe6">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3=Wrapped by advice(s) OnEntry, OnSuccess, OnException, OnExit" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#4=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::DeleteUsuarios(System.Collections.Generic.List{System.Int32})" Id="e77f726585a9153d">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#5=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::CambiarActivo(System.Collections.Generic.List{System.Int32}, System.Boolean)" Id="e77f7265e9ffcd48">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#6=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::RemoverUsuariosOrganizacion(System.Collections.Generic.List{System.Int32}, System.Int32)" Id="e77f72657ba329dd">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#7=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::AgregarUsuariosOrganizacion(System.Collections.Generic.List{System.Int32}, System.Int32)" Id="e77f7265406b927c">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#8=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::AddOrganizacion(Woopin.SGC.Model.Common.Organizacion)" Id="e77f7265a3c6d77e">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#9=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::UpdateOrganizacion(Woopin.SGC.Model.Common.Organizacion)" Id="e77f7265429948e1">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#10=M:[Woopin.SGC.Services]Woopin.SGC.Services.SystemService::SetCurrentOrganizacion(System.Int32)" Id="e77f72659d69e4cb">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#11=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasConfigService::ImportProveedores(System.Collections.Generic.List{[Woopin.SGC.Model]Woopin.SGC.Model.Compras.Proveedor})" Id="e77f72656c5f00be">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#12=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasConfigService::ImportProveedor(Woopin.SGC.Model.Compras.Proveedor)" Id="e77f7265ed5e5bd7">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#13=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasConfigService::ImportProveedorNT(Woopin.SGC.Model.Compras.Proveedor)" Id="e77f72650f7e885b">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#14=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AddComprobanteCompra(Woopin.SGC.Model.Compras.ComprobanteCompra)" Id="e77f72652c7ae711">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#15=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AnularComprobante(System.Int32)" Id="e77f72653ff6bb3b">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#16=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::EliminarComprobante(System.Int32)" Id="e77f7265b4822928">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#17=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AddOrdenPago(Woopin.SGC.Model.Compras.OrdenPago)" Id="e77f7265c0e8771e">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#18=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::CancelarOrdenPago(System.Int32)" Id="e77f72651c2aba53">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#19=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AddOtroEgreso(Woopin.SGC.Model.Compras.OtroEgreso)" Id="e77f7265f8db302e">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#20=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AnularOE(System.Int32)" Id="e77f7265c2ffe6c2">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#21=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AddImputacion(Woopin.SGC.Model.Compras.ImputacionCompra)" Id="e77f7265f92144ca">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#22=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AddImputacionNT(Woopin.SGC.Model.Compras.ImputacionCompra)" Id="e77f72657c478ec7">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#23=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AddImputaciones(System.Collections.Generic.IList{[Woopin.SGC.Model]Woopin.SGC.Model.Compras.ImputacionCompra})" Id="e77f7265b0317c5a">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#24=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::UpdateImputacion(Woopin.SGC.Model.Compras.ImputacionCompra)" Id="e77f72655851e0b9">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#25=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::AnularImputacion(System.Int32)" Id="e77f7265d3656439">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#26=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::DeleteImputacion(System.Int32)" Id="e77f72656c52097a">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#27=M:[Woopin.SGC.Services]Woopin.SGC.Services.ComprasService::DeleteImputacionNT(System.Int32)" Id="e77f72653b26f593">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#28=M:[Woopin.SGC.Services]Woopin.SGC.Services.ContabilidadService::AddAsiento(Woopin.SGC.Model.Contabilidad.Asiento)" Id="e77f7265f3c99f01">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#29=M:[Woopin.SGC.Services]Woopin.SGC.Services.ContabilidadService::BuildAndSaveAsiento(Woopin.SGC.Model.Contabilidad.Asiento)" Id="e77f7265d10f2c39">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#30=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::AddEmpleado(Woopin.SGC.Model.Sueldos.Empleado)" Id="e77f7265cc721744">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#31=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::UpdateEmpleado(Woopin.SGC.Model.Sueldos.Empleado)" Id="e77f7265b447b3be">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#32=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::ImportEmpleados(System.Collections.Generic.List{[Woopin.SGC.Model]Woopin.SGC.Model.Sueldos.Empleado})" Id="e77f726552a365c2">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#33=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::ImportEmpleado(Woopin.SGC.Model.Sueldos.Empleado)" Id="e77f7265e247f43c">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#34=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::ImportEmpleadoNT(Woopin.SGC.Model.Sueldos.Empleado)" Id="e77f726517450dde">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#35=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::AddAdicional(Woopin.SGC.Model.Sueldos.Adicional)" Id="e77f72650459fe8e">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#36=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::UpdateAdicional(Woopin.SGC.Model.Sueldos.Adicional, System.Collections.Generic.IList{[Woopin.SGC.Model]Woopin.SGC.Model.Sueldos.AdicionalAdicionales})" Id="e77f726557a44691">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#37=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::AddAdicionalRecibo(Woopin.SGC.Model.Sueldos.AdicionalRecibo)" Id="e77f7265af1d0f90">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#38=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosConfigService::AddAdicionalAdicionales(Woopin.SGC.Model.Sueldos.AdicionalAdicionales)" Id="e77f7265489bdf3b">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#39=M:[Woopin.SGC.Services]Woopin.SGC.Services.SueldosService::AddRecibo(Woopin.SGC.Model.Sueldos.Recibo)" Id="e77f72653c158805">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#40=M:[Woopin.SGC.Services]Woopin.SGC.Services.StockConfigService::AddArticulo(Woopin.SGC.Model.Stock.Articulo)" Id="e77f7265c893c353">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#41=M:[Woopin.SGC.Services]Woopin.SGC.Services.StockConfigService::UpdateArticulo(Woopin.SGC.Model.Stock.Articulo)" Id="e77f7265f3d8ea31">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#42=M:[Woopin.SGC.Services]Woopin.SGC.Services.StockConfigService::AddRubroArticulo(Woopin.SGC.Model.Stock.RubroArticulo)" Id="e77f7265f086bccc">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#43=M:[Woopin.SGC.Services]Woopin.SGC.Services.StockConfigService::UpdateRubroArticulo(Woopin.SGC.Model.Stock.RubroArticulo)" Id="e77f7265e3bf9095">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#44=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::AddMovimientoFondo(Woopin.SGC.Model.Tesoreria.MovimientoFondo)" Id="e77f726534fbb999">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#45=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::AddCheque(Woopin.SGC.Model.Tesoreria.Cheque)" Id="e77f726507559536">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#46=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::AddChequePropio(Woopin.SGC.Model.Tesoreria.ChequePropio)" Id="e77f7265216dbe6d">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#47=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::CanjeCheque(System.Int32, Woopin.SGC.Model.Tesoreria.ChequePropio)" Id="e77f72653aeca197">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#48=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::AnularChequePropio(System.Int32, System.Int32)" Id="e77f72652d60531b">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#49=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::ConfirmarPagoChequePropio(System.Int32, System.DateTime)" Id="e77f726509f0ec34">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#50=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::AddTransferencia(Woopin.SGC.Model.Tesoreria.Transferencia)" Id="e77f7265ad1d98a3">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#51=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::AddDeposito(Woopin.SGC.Model.Tesoreria.Deposito)" Id="e77f7265705dd709">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#52=M:[Woopin.SGC.Services]Woopin.SGC.Services.TesoreriaService::AddComprobanteRetencion(Woopin.SGC.Model.Tesoreria.ComprobanteRetencion)" Id="e77f7265c7612a7e">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#53=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasConfigService::AddCliente(Woopin.SGC.Model.Ventas.Cliente)" Id="e77f7265d4e2a0f3">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#54=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasConfigService::ImportClientes(System.Collections.Generic.List{[Woopin.SGC.Model]Woopin.SGC.Model.Ventas.Cliente})" Id="e77f72657eb6633f">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#55=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasConfigService::ImportCliente(Woopin.SGC.Model.Ventas.Cliente)" Id="e77f726547acc17f">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#56=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasConfigService::ImportClienteNT(Woopin.SGC.Model.Ventas.Cliente)" Id="e77f7265f9318cf2">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#57=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasConfigService::UpdateCliente(Woopin.SGC.Model.Ventas.Cliente)" Id="e77f72659f8a2488">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#58=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasConfigService::SaveListaPrecios(Woopin.SGC.Model.Ventas.ListaPreciosItem, System.String)" Id="e77f7265499533c2">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#59=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::AddComprobanteVentaNT(Woopin.SGC.Model.Ventas.ComprobanteVenta)" Id="e77f72652ec9c897">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#60=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::SetearCAEComprobanteVenta(System.Int32, System.String, System.String)" Id="e77f7265712d4a66">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#61=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::AnularComprobante(System.Int32)" Id="e77f72655684c114">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#62=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::EliminarComprobante(System.Int32)" Id="e77f7265258a0711">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#63=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::AddCobranza(Woopin.SGC.Model.Ventas.Cobranza)" Id="e77f726595932820">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#64=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::AnularCobranza(System.Int32)" Id="e77f7265e6cde307">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#65=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::AddImputacionNT(Woopin.SGC.Model.Ventas.ImputacionVenta)" Id="e77f72653c1d28b9">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#66=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::AddImputaciones(System.Collections.Generic.IList{[Woopin.SGC.Model]Woopin.SGC.Model.Ventas.ImputacionVenta})" Id="e77f7265fa263d6c">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+    <Instance Declaration="#67=M:[Woopin.SGC.Services]Woopin.SGC.Services.VentasService::AnularImputacion(System.Int32)" Id="e77f7265b0db3651">
+      <Target>
+        <JoinPoint Advising="#1" Description="#3" />
+      </Target>
+    </Instance>
+  </Class>
+</Symbols>

@@ -30,16 +30,18 @@ namespace Woopin.SGC.Services
 
         private readonly IEmpleadoRepository EmpleadoRepository;
         private readonly IAdicionalRepository AdicionalRepository;
+        private readonly IAdicionalReciboRepository AdicionalReciboRepository;
         private readonly IAdicionalAdicionalesRepository AdicionalAdicionalesRepository;
         private readonly IComboItemRepository ComboItemRepository;
         private readonly ILocalizacionRepository LocalizacionRepository;
 
         public SueldosConfigService(IEmpleadoRepository EmpleadoRepository, IAdicionalRepository AdicionalRepository,
                                         IComboItemRepository ComboItemRepository, ILocalizacionRepository LocalizacionRepository,
-                                        IAdicionalAdicionalesRepository AdicionalAdicionalesRepository)
+                                        IAdicionalAdicionalesRepository AdicionalAdicionalesRepository, IAdicionalReciboRepository AdicionalReciboRepository)
         {
             this.EmpleadoRepository = EmpleadoRepository;
             this.AdicionalRepository = AdicionalRepository;
+            this.AdicionalReciboRepository = AdicionalReciboRepository;
             this.AdicionalAdicionalesRepository = AdicionalAdicionalesRepository;
             this.ComboItemRepository = ComboItemRepository;
             this.LocalizacionRepository = LocalizacionRepository;
@@ -54,6 +56,16 @@ namespace Woopin.SGC.Services
             this.EmpleadoRepository.GetSessionFactory().SessionInterceptor(() =>
             {
                 Empleado = this.EmpleadoRepository.Get(Id);
+            });
+            return Empleado;
+        }
+
+        public Empleado GetEmpleadoCompleto(int Id)
+        {
+            Empleado Empleado = null;
+            this.EmpleadoRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                Empleado = this.EmpleadoRepository.GetCompleto(Id);
             });
             return Empleado;
         }
@@ -115,6 +127,7 @@ namespace Woopin.SGC.Services
                 ToUpdate.Telefono = Empleado.Telefono;
                 ToUpdate.FechaIngreso = Empleado.FechaIngreso;
                 ToUpdate.FechaNacimiento = Empleado.FechaNacimiento;
+                ToUpdate.FechaAntiguedadReconocida = Empleado.FechaAntiguedadReconocida;
                 if ((ToUpdate.Localizacion == null && Empleado.Localizacion != null) || (ToUpdate.Localizacion != null && Empleado.Localizacion != null && ToUpdate.Localizacion.Id != Empleado.Localizacion.Id))
                 {
                     ToUpdate.Localizacion = new Localizacion();
@@ -167,6 +180,15 @@ namespace Woopin.SGC.Services
                 else
                 {
                     ToUpdate.ObraSocial = Empleado.ObraSocial;
+                }
+                if ((ToUpdate.BancoDeposito == null && Empleado.BancoDeposito != null) || (ToUpdate.BancoDeposito != null && Empleado.BancoDeposito != null && ToUpdate.BancoDeposito.Id != Empleado.BancoDeposito.Id))
+                {
+                    ToUpdate.BancoDeposito = new ComboItem();
+                    ToUpdate.BancoDeposito.Id = Empleado.BancoDeposito.Id;
+                }
+                else
+                {
+                    ToUpdate.BancoDeposito = Empleado.BancoDeposito;
                 }
                 if ((ToUpdate.Tarea == null && Empleado.Tarea != null) || (ToUpdate.Tarea != null && Empleado.Tarea != null && ToUpdate.Tarea.Id != Empleado.Tarea.Id))
                 {
@@ -226,7 +248,7 @@ namespace Woopin.SGC.Services
                                                               .Select(x => new SelectComboItem()
                                                               {
                                                                   id = x.Id,
-                                                                  text = x.Nombre + " " + x.Apellido
+                                                                  text = x.Nombre + " " + x.Apellido + " " + "(" + x.CUIT + ")"
                                                               }).ToList();
             });
             return SelectEmpleadoCombos;
@@ -277,6 +299,10 @@ namespace Woopin.SGC.Services
             if (Empleado.ObraSocial != null)
             {
                 Empleado.ObraSocial = this.ComboItemRepository.GetByComboAndName(ComboType.ObraSocial, Empleado.ObraSocial.Data);
+            }
+            if (Empleado.BancoDeposito != null)
+            {
+                Empleado.BancoDeposito = this.ComboItemRepository.GetByComboAndName(ComboType.BancoDeposito, Empleado.BancoDeposito.Data);
             }
             if (Empleado.Sexo != null)
             {
@@ -412,6 +438,7 @@ namespace Woopin.SGC.Services
                 }
 
                 ToUpdate.Descripcion = Adicional.Descripcion;
+                ToUpdate.AdditionalDescription = Adicional.AdditionalDescription;
                 ToUpdate.Porcentaje = Adicional.Porcentaje;
                 ToUpdate.Valor = Adicional.Valor;
                 ToUpdate.Suma = Adicional.Suma;
@@ -451,7 +478,7 @@ namespace Woopin.SGC.Services
                                                               .Select(x => new SelectComboItem()
                                                               {
                                                                   id = x.Id,
-                                                                  text = x.Descripcion
+                                                                  text = x.Descripcion + x.AdditionalDescription
                                                               }).ToList();
             });
             return SelectAdicionalCombos;
@@ -466,7 +493,7 @@ namespace Woopin.SGC.Services
                                                               .Select(x => new SelectComboItem()
                                                               {
                                                                   id = x.Id,
-                                                                  text = x.Descripcion
+                                                                  text = x.Descripcion + x.AdditionalDescription
                                                               }).ToList();
             });
             return SelectAdicionalCombos;
@@ -491,6 +518,195 @@ namespace Woopin.SGC.Services
                 }
             });
         }
+
+
+        #endregion
+
+        #region AdicionalRecibo
+        public AdicionalRecibo GetAdicionalReciboNT(int Id)
+        {
+            AdicionalRecibo AdicionalRecibo = null;
+            AdicionalRecibo = this.AdicionalReciboRepository.Get(Id);
+            return AdicionalRecibo;
+        }
+
+        public AdicionalRecibo GetAdicionalRecibo(int Id)
+        {
+            AdicionalRecibo AdicionalRecibo = null;
+            this.AdicionalReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                AdicionalRecibo = this.AdicionalReciboRepository.Get(Id);
+            });
+            return AdicionalRecibo;
+        }
+
+        //public IList<AdicionalRecibo> GetAllAdicionalReciboes()
+        //{
+        //    IList<AdicionalRecibo> AdicionalReciboes = null;
+        //    this.AdicionalReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+        //    {
+        //        AdicionalReciboes = this.AdicionalReciboRepository.GetAll();
+        //    });
+        //    return AdicionalReciboes;
+        //}
+
+        [Loggable]
+        public void AddAdicionalRecibo(AdicionalRecibo AdicionalRecibo)
+        {
+            this.AdicionalReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.AddAdicionalReciboNT(AdicionalRecibo);
+            });
+        }
+        public void AddAdicionalReciboNT(AdicionalRecibo AdicionalRecibo)
+        {
+            this.AdicionalReciboRepository.Add(AdicionalRecibo);
+        }
+
+        //[Loggable]
+        //public void UpdateAdicionalRecibo(AdicionalRecibo AdicionalRecibo, IList<AdicionalAdicionales> AdicionalReciboesAdicionalRecibo = null)
+        //{
+        //    this.AdicionalReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
+        //    {
+        //        AdicionalRecibo ToUpdate = this.AdicionalReciboRepository.Get(AdicionalRecibo.Id);
+        //        IList<AdicionalAdicionales> AdicionalReciboesToUpdate = this.AdicionalAdicionalesRepository.GetByAdicional(AdicionalRecibo.Id, true);
+
+        //        if (AdicionalReciboesToUpdate.Count == 0 && AdicionalReciboesAdicionalRecibo.Count > 0)
+        //        {
+        //            foreach (AdicionalAdicionales Adic in AdicionalReciboesAdicionalRecibo)
+        //            {
+        //                AdicionalAdicionales RAAS = new AdicionalAdicionales();
+        //                RAAS.EsDefault = true;
+        //                RAAS.Adicional = new Adicional();
+        //                RAAS.Adicional.Id = AdicionalRecibo.Id;
+
+        //                RAAS.AdicionalSobre = new Adicional();
+        //                RAAS.AdicionalSobre.Id = Adic.Id;
+
+        //                this.AddAdicionalAdicionalesNT(RAAS);
+        //            }
+        //        }
+        //        else if (AdicionalReciboesToUpdate.Count > 0 && AdicionalReciboesAdicionalRecibo.Count == 0)
+        //        {
+        //            foreach (AdicionalAdicionales Adic in AdicionalReciboesToUpdate)
+        //            {
+        //                this.AdicionalAdicionalesRepository.Delete(Adic);
+        //            }
+        //        }
+        //        else if (AdicionalReciboesToUpdate.Count > 0 && AdicionalReciboesAdicionalRecibo.Count > 0)
+        //        {
+        //            foreach (AdicionalAdicionales Adic in AdicionalReciboesToUpdate)
+        //            {
+        //                //int AdicionalReciboAgregar = AdicionalReciboesAdicionalRecibo.IndexOf(Adic);
+        //                //si estaba pero ahora no esta mas, eliminar
+        //                AdicionalAdicionales AdicionalReciboAgregar = new AdicionalAdicionales();
+        //                //es cn el id porque AdicionalSobre no lo seteamos en la vista
+        //                AdicionalReciboAgregar = AdicionalReciboesAdicionalRecibo.Where(x => x.Id == Adic.AdicionalSobre.Id).SingleOrDefault();
+        //                if (AdicionalReciboAgregar == null)
+        //                {
+        //                    this.AdicionalAdicionalesRepository.Delete(Adic);
+        //                }
+        //            }
+        //            foreach (AdicionalAdicionales Adic in AdicionalReciboesAdicionalRecibo)
+        //            {
+        //                AdicionalAdicionales AdicionalReciboAgregar = new AdicionalAdicionales();
+        //                AdicionalReciboAgregar = AdicionalReciboesToUpdate.Where(x => x.AdicionalSobre.Id == Adic.Id).SingleOrDefault();
+        //                //si esta pero antes no estaba, agreagr
+        //                //int AdicionalReciboAgregar = AdicionalReciboesToUpdate.IndexOf(Adic);
+        //                //if (AdicionalReciboAgregar < 0)
+        //                if (AdicionalReciboAgregar == null)
+        //                {
+        //                    AdicionalAdicionales RAAS = new AdicionalAdicionales();
+        //                    RAAS.EsDefault = true;
+        //                    RAAS.Adicional = new Adicional();
+        //                    RAAS.Adicional.Id = AdicionalRecibo.Id;
+
+        //                    RAAS.AdicionalSobre = new Adicional();
+        //                    RAAS.AdicionalSobre.Id = Adic.Id;
+
+        //                    this.AddAdicionalAdicionalesNT(RAAS);
+        //                }
+        //            }
+        //        }
+
+        //        //ToUpdate.Descripcion = AdicionalRecibo.Descripcion;
+        //        //ToUpdate.Porcentaje = AdicionalRecibo.Porcentaje;
+        //        //ToUpdate.Valor = AdicionalRecibo.Valor;
+        //        //ToUpdate.Suma = AdicionalRecibo.Suma;
+        //        //ToUpdate.TipoLiquidacion = AdicionalRecibo.TipoLiquidacion;
+        //        this.AdicionalReciboRepository.Update(ToUpdate);
+        //    });
+        //}
+        public void DeleteAdicionalRecibos(List<int> Ids)
+        {
+            this.AdicionalReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                foreach (var Id in Ids)
+                {
+                    AdicionalRecibo AdicionalRecibo = this.AdicionalReciboRepository.Get(Id);
+                    IList<AdicionalAdicionales> AdicAdicionalReciboes = this.AdicionalAdicionalesRepository.GetByAdicional(Id, false);
+                    foreach (AdicionalAdicionales AA in AdicAdicionalReciboes)
+                    {
+                        this.AdicionalAdicionalesRepository.Delete(AA);
+                    }
+                    IList<AdicionalAdicionales> AdicSobreAdicionalReciboes = this.AdicionalAdicionalesRepository.GetSobreByAdicional(Id);
+                    foreach (AdicionalAdicionales AA in AdicSobreAdicionalReciboes)
+                    {
+                        this.AdicionalAdicionalesRepository.Delete(AA);
+                    }
+
+                    this.AdicionalReciboRepository.Delete(AdicionalRecibo);
+                }
+            });
+        }
+
+        //public SelectCombo GetAdicionalReciboCombos()
+        //{
+        //    SelectCombo SelectAdicionalReciboCombos = new SelectCombo();
+        //    this.AdicionalReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+        //    {
+        //        SelectAdicionalReciboCombos.Items = this.AdicionalReciboRepository.GetAll()
+        //                                                      .Select(x => new SelectComboItem()
+        //                                                      {
+        //                                                          id = x.Id,
+        //                                                      }).ToList();
+        //    });
+        //    return SelectAdicionalReciboCombos;
+        //}
+
+        //public SelectCombo GetAllAdicionalReciboesByFilterCombo(SelectComboRequest req)
+        //{
+        //    SelectCombo SelectAdicionalReciboCombos = new SelectCombo();
+        //    this.AdicionalReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+        //    {
+        //        SelectAdicionalReciboCombos.Items = this.AdicionalReciboRepository.GetAllByFilter(req)
+        //                                                      .Select(x => new SelectComboItem()
+        //                                                      {
+        //                                                          id = x.Id,
+        //                                                      }).ToList();
+        //    });
+        //    return SelectAdicionalReciboCombos;
+        //}
+
+        //public void AddAdicionalReciboConAdicionalReciboes(AdicionalRecibo AdicionalRecibo, IList<AdicionalRecibo> AdicionalReciboes)
+        //{
+        //    this.AdicionalReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
+        //    {
+        //        this.AddAdicionalReciboNT(AdicionalRecibo);
+        //        foreach (AdicionalRecibo A in AdicionalReciboes)
+        //        {
+        //            AdicionalAdicionales RAAS = new AdicionalAdicionales();
+        //            RAAS.EsDefault = true;
+        //            RAAS.Adicional = new Adicional();
+        //            RAAS.Adicional.Id = AdicionalRecibo.Id;
+
+        //            RAAS.AdicionalSobre = new Adicional();
+        //            RAAS.AdicionalSobre.Id = A.Id;
+
+        //            this.AddAdicionalAdicionalesNT(RAAS);
+        //        }
+        //    });
+        //}
 
 
         #endregion

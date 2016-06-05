@@ -69,24 +69,8 @@
             EmpleadoAntiguedad = Recibo.CalcularAntiguedad(Recibo.EmpleadoFechaIngreso);
             Recibo.AgregarAntiguedad(EmpleadoAntiguedad);
 
+            Recibo.AgregarAdicionalesIniciales();
 
-            //var promise = Recibo.AgregarSueldoBruto(Mes);
-
-
-            //Recibo.AgregarSueldoBrutoYAntiguedad();
-            //setTimeout(Recibo.AgregarSueldoBruto(Mes), 10000000000000);
-            
-            //debugger;
-            //if (promise) {
-            //EmpleadoAntiguedad = Recibo.CalcularAntiguedad(Recibo.EmpleadoFechaIngreso);
-            //setTimeout(Recibo.AgregarAntiguedad(EmpleadoAntiguedad), 10000);
-                //Recibo.AgregarAntiguedad(EmpleadoAntiguedad);
-
-            //}
-            //promise.success(function () {
-            //});
-
-            debugger;
         });
     });
 </script>

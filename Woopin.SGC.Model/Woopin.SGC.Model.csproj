@@ -137,6 +137,7 @@
     <Compile Include="Negocio\ValoresHelper.cs" />
     <Compile Include="Reporting\GrupoEgreso.cs" />
     <Compile Include="Reporting\GrupoIngreso.cs" />
+    <Compile Include="Sueldos\AdicionalRecibo.cs" />
     <Compile Include="Sueldos\AdicionalAdicionales.cs" />
     <Compile Include="Sueldos\Adicional.cs" />
     <Compile Include="Sueldos\Recibo.cs" />

@@ -15,6 +15,7 @@ namespace Woopin.SGC.Services
         void AddEmpleado(Empleado Empleado);
         void AddEmpleadoNT(Empleado Empleado);
         Empleado GetEmpleado(int Id);
+        Empleado GetEmpleadoCompleto(int Id);
         void UpdateEmpleado(Empleado Empleado);
         IList<Empleado> GetAllEmpleados();
         void DeleteEmpleados(List<int> Ids);
@@ -38,6 +39,20 @@ namespace Woopin.SGC.Services
         SelectCombo GetAdicionalCombos();
         void AddAdicionalConAdicionales(Adicional Adicional, IList<Adicional> Adicionales);
         #endregion
+
+        #region AdicionalRecibo
+        void AddAdicionalRecibo(AdicionalRecibo AdicionalRecibo);
+        void AddAdicionalReciboNT(AdicionalRecibo AdicionalRecibo);
+        AdicionalRecibo GetAdicionalRecibo(int Id);
+        AdicionalRecibo GetAdicionalReciboNT(int Id);
+        //void UpdateAdicionalRecibo(AdicionalRecibo AdicionalRecibo, IList<AdicionalAdicionales> Adicionales = null);
+        //IList<AdicionalRecibo> GetAllAdicionalReciboes();
+        void DeleteAdicionalRecibos(List<int> Ids);
+        //SelectCombo GetAllAdicionalReciboesByFilterCombo(SelectComboRequest req);
+        //SelectCombo GetAdicionalReciboCombos();
+        //void AddAdicionalReciboConAdicionalReciboes(AdicionalRecibo AdicionalRecibo, IList<AdicionalRecibo> AdicionalReciboes);
+        #endregion
+
 
 
         #region AdicionalAdicionales

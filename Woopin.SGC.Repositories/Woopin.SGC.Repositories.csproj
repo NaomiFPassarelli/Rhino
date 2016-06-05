@@ -132,10 +132,12 @@
     <Compile Include="Reporting\Interface\IGrupoEgresoRepository.cs" />
     <Compile Include="Reporting\Interface\IGrupoIngresoRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalAdicionalesRepository.cs" />
+    <Compile Include="Sueldos\Implementacion\AdicionalReciboRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalRepository.cs" />
     <Compile Include="Sueldos\Implementacion\ReciboRepository.cs" />
     <Compile Include="Sueldos\Implementacion\EmpleadoRepository.cs" />
     <Compile Include="Sueldos\Interface\IAdicionalAdicionalesRepository.cs" />
+    <Compile Include="Sueldos\Interface\IAdicionalReciboRepository.cs" />
     <Compile Include="Sueldos\Interface\IAdicionalRepository.cs" />
     <Compile Include="Sueldos\Interface\IReciboRepository.cs" />
     <Compile Include="Sueldos\Interface\IEmpleadoRepository.cs" />

@@ -38,6 +38,7 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         {
             //ViewBag.Localizaciones = this.commonConfigService.GetAllLocalizaciones().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();
             //ViewBag.Nacionalidades = this.commonConfigService.GetItemsByCombo(ComboType.Paises).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
+            ViewBag.DomicilioEmpresa = Security.GetOrganizacion().Domicilio;
             ViewBag.NumeroRef = this.SueldosService.GetProximoNumeroReferencia();
             return View();
         }

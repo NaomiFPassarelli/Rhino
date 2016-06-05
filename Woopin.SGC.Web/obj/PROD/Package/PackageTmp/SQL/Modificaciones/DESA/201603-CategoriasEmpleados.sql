@@ -85,7 +85,7 @@ SET IDENTITY_INSERT dbo.Combo OFF;
 
 
 SET IDENTITY_INSERT dbo.ComboItem ON;
---290 a 330 Obra Social
+--290 a 339 Obra Social
 insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(291,'OSETYA', null, null, 'true', 20)
 insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(292,'OSPCN', null, null, 'true', 20)
 insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(293,'UCI', null, null, 'true', 20)
@@ -95,5 +95,35 @@ insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) value
 insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(297,'OSECAC', null, null, 'true', 20)
 insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(298,'O.S.De Relojeros Y Joyeros', null, null, 'true', 20)
 SET IDENTITY_INSERT dbo.ComboItem OFF;
+
+
+SET IDENTITY_INSERT dbo.Combo ON;
+insert into Combo(Id,Nombre, Activo) values(21,'Banco Deposito', 'true')
+SET IDENTITY_INSERT dbo.Combo OFF;
+
+SET IDENTITY_INSERT dbo.ComboItem ON;
+--340 a 359 Banco Deposito
+insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(340,'Banco Credicoop', null, null, 'true', 21)
+insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(341,'Banco Galicia', null, null, 'true', 21)
+insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(342,'Banco HSBC', null, null, 'true', 21)
+insert into ComboItem(Id,Data, AdditionalData, AfipData, Activo, Combo_id) values(343,'Banco ICBC', null, null, 'true', 21)
+SET IDENTITY_INSERT dbo.ComboItem OFF;
+
+
+SET IDENTITY_INSERT [dbo].[Adicional] ON
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (6, N'Antiguedad', CAST(0.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'0')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (7, N'Antiguedad', CAST(1.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'1')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (8, N'Antiguedad', CAST(4.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'2')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (9, N'Antiguedad', CAST(8.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'3')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (10, N'Antiguedad', CAST(10.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'5')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (11, N'Antiguedad', CAST(14.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'8')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (12, N'Antiguedad', CAST(16.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'10')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (13, N'Antiguedad', CAST(18.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'15')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (14, N'Antiguedad', CAST(20.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'20')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (15, N'Antiguedad', CAST(22.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'25')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (16, N'Antiguedad', CAST(25.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'30')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (17, N'Antiguedad', CAST(28.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'35')
+INSERT INTO [dbo].[Adicional] ([Id], [Descripcion], [Porcentaje], [Valor], [Suma], [TipoLiquidacion], [Organizacion_id], [AdditionalDescription]) VALUES (18, N'Antiguedad', CAST(35.00000 AS Decimal(19, 5)), NULL, 1, N'Remunerativo', 1, N'40')
+SET IDENTITY_INSERT [dbo].[Adicional] OFF
 
 

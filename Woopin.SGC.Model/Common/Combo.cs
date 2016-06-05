@@ -43,6 +43,7 @@ namespace Woopin.SGC.Model.Common
         Sexo = 17,
         EstadoCivil = 18,
         Sindicato = 19,
-        ObraSocial = 20
+        ObraSocial = 20,
+        BancoDeposito = 21
     }
 }

@@ -131,6 +131,14 @@
         </div>
 
         <div class="form-group">
+            @Html.LabelFor(model => model.FechaAntiguedadReconocida, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" id="FechaAntiguedadReconocida" name="FechaAntiguedadReconocida" type="text" value="@ViewBag.FechaAntiguedadReconocida">
+                @Html.ValidationMessageFor(model => model.FechaAntiguedadReconocida, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
             @Html.LabelFor(model => model.FechaNacimiento, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
                 <input class="text-box single-line textinput" data-val="true" id="FechaNacimiento" name="FechaNacimiento" type="text" value="@ViewBag.FechaNacimiento">
@@ -197,6 +205,14 @@
                 @Html.DropDownListFor(model => model.ObraSocial.Id, (IEnumerable<SelectListItem>)ViewBag.ObrasSociales, null, new { @class = "textinput" })
             </div>
         </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BancoDeposito, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.BancoDeposito.Id, (IEnumerable<SelectListItem>)ViewBag.BancosDepositos, null, new { @class = "textinput" })
+            </div>
+        </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.Sexo, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
@@ -219,6 +235,8 @@
         $(document).ready(function () {
             $("#FechaIngreso").datepicker({ dateFormat: 'dd/mm/yy' });
             $("#FechaNacimiento").datepicker({ dateFormat: 'dd/mm/yy' });
+            $("#FechaAntiguedadReconocida").datepicker({ dateFormat: 'dd/mm/yy' });
+            
             $('#CUIT').mask('99-99999999-9');
 
             $('#BtnSubmit').FormSubmit({

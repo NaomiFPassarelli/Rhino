@@ -77,6 +77,8 @@ namespace Woopin.SGC.Model.Sueldos
         [DisplayName("Fecha de Ingreso")]
         [Required(ErrorMessage = "Es Necesario una Fecha de Ingreso")]
         public virtual DateTime FechaIngreso { get; set; }
+        [DisplayName("Fecha de Antiguedad Reconocidad")]
+        public virtual DateTime? FechaAntiguedadReconocida { get; set; }
 
         [DisplayName("Fecha de Nacimiento")]
         public virtual DateTime? FechaNacimiento { get; set; }
@@ -93,6 +95,11 @@ namespace Woopin.SGC.Model.Sueldos
         [DisplayName("Obra Social")]
         [DoNotValidate]
         public virtual ComboItem ObraSocial { get; set; }
+        
+        [DisplayName("Banco de Deposito")]
+        [DoNotValidate]
+        public virtual ComboItem BancoDeposito { get; set; }
+        
 
         public Empleado()
         {

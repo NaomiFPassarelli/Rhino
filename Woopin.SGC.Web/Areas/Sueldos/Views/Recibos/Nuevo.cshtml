@@ -21,6 +21,27 @@
             </div>
         </div>
         <div class="recibo">
+
+            <div class="col-md-12">
+
+                <div class="col-md-7 ">
+                    <label class="col-md-6 horizontal-label readonly-label">Domicilio Empresa</label>
+                    <div class="col-md-5 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.DomicilioEmpresa, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.DomicilioEmpresa.ToString() })
+                    </div>
+                </div>
+
+                <div class="col-md-4 ">
+                    <label class="col-md-6 horizontal-label readonly-label">N° Referencia</label>
+                    <div class="col-md-5 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.NumeroRef.ToString() })
+                    </div>
+                </div>
+
+
+            </div>
+
+            
             <div class="col-md-12">
                 <div class="col-md-7 ">
                     @Html.LabelFor(model => model.Empleado, new { @class = "col-md-3 horizontal-label" })
@@ -35,14 +56,9 @@
                 </div>
 
             </div>
-            <div class="col-md-12">
-                <div class="col-md-4 ">
-                    <label class="col-md-6 horizontal-label readonly-label">N° Referencia</label>
-                    <div class="col-md-5 input-container padding-left-2">
-                        @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.NumeroRef.ToString() })
-                    </div>
-                </div>
 
+            <div class="col-md-12">
+                
                 <div class="col-md-3 padding-left-2">
                     @Html.LabelFor(model => model.Empleado.CUIT, new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
                     <div class="col-md-9 input-container padding-left-2">
@@ -64,6 +80,14 @@
                     <div class="col-md-9 input-container padding-left-2">
                         @Html.TextBoxFor(model => model.Empleado.ObraSocial, new { @class = "textinput padding-left-2", @id = "ObraSocial", @readonly = "readonly" })
                         @Html.ValidationMessageFor(model => model.Empleado.ObraSocial, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-3 padding-left-2">
+                    @Html.LabelFor(model => model.Empleado.BancoDeposito, new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
+                    <div class="col-md-9 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Empleado.BancoDeposito, new { @class = "textinput padding-left-2", @id = "BancoDeposito", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Empleado.BancoDeposito, null, new { @class = "help-block" })
                     </div>
                 </div>
 
@@ -95,38 +119,36 @@
                 </div>
 
                 <div class="col-md-12">
-                    <div class="col-md-3 padding-left-2">
-                        @Html.Label("Dias Trabajados", new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
-                        <div class="col-md-9 input-container padding-left-2">
+                    <div class="col-md-6 padding-left-2">
+                        @Html.Label("Dias Trabajados", new { @class = "col-md-8 horizontal-label padding-left-2 readonly-label" })
+                        <div class="col-md-4 input-container padding-left-2">
                             @Html.TextBox("Dias Trabajados", null, new { @class = "textinput padding-left-2", @id = "DiasTrabajados", @readonly = "readonly" })
                         </div>
                     </div>
 
 
-                    <div class="col-md-3 padding-left-2">
-                        @Html.Label("Dias No Trabajados Justificados", new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
-                        <div class="col-md-9 input-container padding-left-2">
+                    <div class="col-md-6 padding-left-2">
+                        @Html.Label("Dias No Trabajados Justificados", new { @class = "col-md-8 horizontal-label padding-left-2 readonly-label" })
+                        <div class="col-md-4 input-container padding-left-2">
                             @Html.TextBox("Dias No Trabajados Justificados", null, new { @class = "textinput padding-left-2", @id = "DiasJustificados", @readonly = "readonly" })
                         </div>
                     </div>
+                </div>
 
-
-                    <div class="col-md-3 padding-left-2">
-                        @Html.Label("Dias No Trabajados No Justificados", new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
-                        <div class="col-md-9 input-container padding-left-2">
+                <div class="col-md-12">
+                    <div class="col-md-6 padding-left-2">
+                        @Html.Label("Dias No Trabajados No Justificados", new { @class = "col-md-8 horizontal-label padding-left-2 readonly-label" })
+                        <div class="col-md-4 input-container padding-left-2">
                             @Html.TextBox("Dias No Trabajados No Justificados", null, new { @class = "textinput padding-left-2", @id = "DiasNoJustificados", @readonly = "readonly" })
                         </div>
                     </div>
 
-
-                    <div class="col-md-3 padding-left-2">
-                        @Html.Label("Horas No Trabajadas No Justificadas", new { @class = "col-md-3 horizontal-label padding-left-2 readonly-label" })
-                        <div class="col-md-9 input-container padding-left-2">
+                    <div class="col-md-6 padding-left-2">
+                        @Html.Label("Horas No Trabajadas No Justificadas", new { @class = "col-md-8 horizontal-label padding-left-2 readonly-label" })
+                        <div class="col-md-4 input-container padding-left-2">
                             @Html.TextBox("Horas No Trabajadas No Justificadas", null, new { @class = "textinput padding-left-2", @id = "HorasNoJustificadas", @readonly = "readonly" })
                         </div>
                     </div>
-
-
                 </div>
 
             </div>
@@ -173,7 +195,7 @@
                 <div class="col-md-2">
                     @Html.LabelFor(model => model.AdicionalesRecibo.First().Unidades, new { @class = " horizontal-label" })
                     <div class="input-container">
-                        @Html.TextBoxFor(model => model.AdicionalesRecibo.First().Unidades, null, new { @class = "textinput" })
+                        @Html.TextBoxFor(model => model.AdicionalesRecibo.First().Unidades, null, new { @class = "textinput", @id="Adicional_Unidades" })
                         @Html.ValidationMessage("Unidades", new { @class = "help-block" })
                     </div>
                 </div>
@@ -181,7 +203,7 @@
                 <div class="col-md-2">
                     @Html.LabelFor(model => model.AdicionalesRecibo.First().Total, new { @class = " horizontal-label" })
                     <div class="input-container">
-                        @Html.TextBoxFor(model => model.AdicionalesRecibo.First().Total, null, new { @class = "textinput" })
+                        @Html.TextBoxFor(model => model.AdicionalesRecibo.First().Total, null, new { @class = "textinput", @id = "Adicional_Total" })
                         @Html.ValidationMessage("Total", new { @class = "help-block" })
                     </div>
                 </div>
@@ -191,7 +213,7 @@
                 </div>
 
                 <div class="input-container">
-                    @Html.TextBoxFor(model => model.AdicionalesRecibo.First().Adicional.Suma, null, new { @class = "textinput", @hidden = true })
+                    @Html.TextBoxFor(model => model.AdicionalesRecibo.First().Adicional.Suma, null, new { @class = "textinput", @hidden = true, @id = "Adicional_Suma" })
                 </div>
 
     @* TODO Checkbox con todos los que ya estan agregados de los adicionales *@
@@ -241,6 +263,15 @@
         </div>
     </div>
 
+    <div class="col-md-12">
+        @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label readonly-label" })
+        <div class="col-md-6 input-container">
+            @Html.TextBoxFor(model => model.Total, new { @class = "textinput", @id = "TotalRecibo", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.Total, null, new { @class = "help-block" })
+        </div>
+    </div>
+
+
     @*<div class="col-md-12" style="padding-top:10px;">
         <div class="totalSlash"></div>
         @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label readonly-label" })
@@ -264,8 +295,14 @@
     @Scripts.Render("~/bundles/jqgrid")
     @Scripts.Render("~/Scripts/jquery.mask.min.js")
     <script type="text/javascript">
-    var reciboDetalleId = 0;
-    var sueldoBrutoSeleccionado = 0;
+        var reciboDetalleId = 0;
+        //valor de la hora o dia
+        var sueldoBrutoSeleccionado = 0;
+        //valor de la hora
+        var horasNoJustificadasSeleccionado = 0;
+        //valor final de antiguedad - ya en la columna remunerativo //TODO recordar editar cuando sea necesario
+        var valorAntiguedad = 0;
+
     $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de recibo. Si presiona Aceptar, todos los cambios realizados se perderan.');
     $(document).ready(function () {
         Recibo.init();
@@ -281,31 +318,73 @@
         SelectedRows: null,
 
         OnCheckboxChange: function () {
+            var existeEnGrillaMismoTipo = false;
             if ($(this).is(":checked")) {
-                Recibo.SelectedRows.push($(this).val());
+                //TODO recontra ojo con esto!
+                var IdAdicional = $($(this).parent().parent().find("td")[1]).html();
+                //buscamos entre los que son varios de un mismo tipo
+                if (IdAdicional >= 1 && IdAdicional <= 2) {
+                    //sueldos
+                    //buscamos otro del mismo tipo
+                    //TODO SQL faltaria revisar bien el tema de los sueldos, porque tenemos mensual y basico
+                    mismoTipo = [1, 2];
+                    $.each(mismoTipo, function (i, item) {
+                        if (Recibo.SelectedRows.indexOf(item) >= 0 && item != IdAdicional) {
+                            //TODO notificar que ya se encuentra uno de este tipo en la grilla
+                            existeEnGrillaMismoTipo = true;
+                        }
+                    });
+                } else if (IdAdicional >= 6 && IdAdicional <= 18) {
+                    //antiguedades
+                    //buscamos otro del mismo tipo
+                    mismoTipo = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+                    $.each(mismoTipo, function (i, item) {
+                        if (Recibo.SelectedRows.indexOf(item) >= 0 && item != IdAdicional) {
+                            //TODO notificar que ya se encuentra uno de este tipo en la grilla
+                            existeEnGrillaMismoTipo = true;
+                        }
+                    });
+                } else {
+                    //no buscamos porque no tienen del mismo tipo, son unicos
+                    Recibo.SelectedRows.push(parseFloat(IdAdicional));
+                    return;
+                }
+
+                //si se encontro del mismo tipo sacar el check porque no pueden haber dos
+                if (existeEnGrillaMismoTipo) {
+                    $(this).removeAttr("checked");
+                } else {
+                    Recibo.SelectedRows.push(parseFloat(IdAdicional));
+                }
             }
             else {
-                var indexDel = Recibo.SelectedRows.indexOf($(this).val());
-                Recibo.SelectedRows.splice(indexDel, 1);
+                //TODO recontra ojo con esto!
+                var Adicional_Id_Eliminar = $($(this).parent().parent().find("td")[1]).html();
+                var indexDel = Recibo.SelectedRows.indexOf(parseFloat(Adicional_Id_Eliminar));
+                if (indexDel >= 0) {
+                    Recibo.SelectedRows.splice(indexDel, 1);
+                }
             }
         },
 
         init: function () {
-            
-
             Recibo.SelectedRows = new Array();
 
             $('#GridDetallesRecibo').CreateCommonGrid({
                 datatype: 'local',
-                colNames: ['', '', '', '', 'Descripcion', 'Porcentaje', 'Valor', 'Remunerativo', 'No remunerativo', 'Descuento', '', '', ''],
+                colNames: ['', '', '', '', 'Descripcion', 'Porcentaje', 'Unidades', '', 'Remunerativo', 'No remunerativo', 'Descuento', '', '', ''],
                 colModel: [
                     { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
                     { name: 'Adicional_Id', index: 'Adicional_Id', width: 0, sortable: false, hidden: true },
-                    { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: CheckboxFormatter, formatoptions: { GridRestringida: Recibo.SelectedRows }, align: "center" },
-                    { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_Eliminar_EsDefault, align: "center" },
-                    { name: 'Descripcion', index: 'Descripcion', width: 20, align: "center", sortable: true },
-                    { name: 'Porcentaje', index: 'Porcentaje', width: 20, align: "center", sortable: true },
-                    { name: 'Valor', index: 'Valor', width: 20, align: "center", sortable: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: Recibo.CheckboxFormatterAdicional, /*formatoptions: { GridRestringida: Recibo.SelectedRows },*/ align: "center" },
+                    //{ name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_Eliminar_EsDefault, align: "center" },
+                    { name: 'Actions', index: 'Actions', width: 10, sortable: false, formatter: ABM_Eliminar, align: "center" },
+                    { name: 'Descripcion', index: 'Descripcion', width: 25, align: "center", sortable: true },
+                    { name: 'Porcentaje', index: 'Porcentaje', width: 15, align: "center", sortable: true },
+                    { name: 'Unidades', index: 'Unidades', width: 15, align: "center", sortable: true, editable: true, edittype: 'text' },
+                    //TODO por ahora prohibida la edicion
+                    //{ name: 'Unidades', index: 'Unidades', width: 15, align: "center", sortable: true, editable: true, edittype: 'text' },
+                    { name: 'Valor', index: 'Valor', width: 0, sortable: false, hidden: true },
                     { name: 'Remunerativo', index: 'Remunerativo', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
                     { name: 'NoRemunerativo', index: 'NoRemunerativo', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
                     { name: 'Descuento', index: 'Descuento', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
@@ -316,10 +395,15 @@
                 ],
                 sortname: 'Adicional.Descripcion',
                 sortorder: "asc",
-                pager: '#GridDetallesRecibo_pager'
+                pager: '#GridDetallesRecibo_pager',
+                cellEdit: true,
+                cellsubmit: 'clientArray',
+                //afterSaveCell: function (rowId, cellname, value, iRow, iCol) {
+                //    Recibo.SaveUnidades(rowId, cellname, value, iRow, iCol);
+                //}
             });
             $(document).on('click', '.BtnVerDialog', Recibo.VerDetalleDialog);
-
+            $(document).on('change', '#GridDetallesRecibo .SelectCheckboxes', Recibo.OnCheckboxChange);
 
             $('#GridDetallesRecibo').trigger("reloadGrid");
             $("#GridDetallesRecibo").parents('div.ui-jqgrid-bdiv').css("max-height", "300px");
@@ -377,10 +461,8 @@
             //TODO todas estas funciones
             $('#DiasTrabajados').change(Recibo.ChangeDiasTrabajados);
             $('#DiasJustificados').change(Recibo.ChangeDiasJustificados);
-            $('#DiasNoJustificados').change(Recibo.ChangeDiasNosJustificados);
-            $('#HorasNoJustificadas').change(Recibo.HorasNoJustificadas);
-
-
+            $('#DiasNoJustificados').change(Recibo.ChangeDiasNoJustificados);
+            $('#HorasNoJustificadas').change(Recibo.ChangeHorasNoJustificadas);
 
             //$('#TipoIVA').on('change', Recibo.TipoIVATotalChange);
             //$('#TotalRubro').on('change', Recibo.TipoIVATotalChange);
@@ -442,44 +524,434 @@
             $('#Periodo').val(NameMonth + "/" + year);
         },
 
+        //SaveUnidades: function (rowId, cellname, value, iRow, iCol) {
+        //    //TODO ver si no hay forma de pasar la row entre los parametros de la funcion, o el row.Valor
+        //    //para no tener que hacer el getRowData
+        //    var row = $("#GridDetallesRecibo").getRowData(rowId);
+        //    Recibo.TakeAndAddAdicional(rowId, row.Valor, value, null);
+
+        //    //Si se esta modificando en la grilla los dias trabajados o no trabajados, cambiar tambien 
+        //    //en el encabezado
+
+        //    //TODO hacer lo mismo pero inverso, si se modifica el encabezado, modificar el valor de la grilla
+        //    //este todo seria dentro de takeandaddadicional la parte de si existe, entonces editar
+
+        //    switch(rowId)
+        //    {
+        //        case 2:
+        //            //sueldo bruto
+        //            $('#DiasTrabajados').val(value);
+        //            break;
+        //        case 3:
+        //            //dias no trabajados justificados
+        //            $('#DiasJustificados').val(value);    
+        //            break;
+        //        case 4:
+        //            //dias no trabajados no justificados
+        //            $('#DiasNoJustificados').val(value);
+        //            break;
+        //        case 5:
+        //            //horas no trabajadas
+        //            $('#HorasNoJustificadas').val(value);
+        //            break;
+        //        default:
+        //            break;
+        //    }
+
+        //    $('#GridDetallesRecibo').trigger("reloadGrid");
+
+
+        //    //$("#CuentaCorrienteCompras").setGridParam({ datatype: 'json' });
+        //    //$('#CuentaCorrienteCompras').setGridParam({ page: 1 }).trigger("reloadGrid");
+
+        //},
+
+        AgregarAdicionalesIniciales: function() {
+            dias = parseFloat($('#DiasTrabajados').val()) + parseFloat($('#DiasJustificados').val()) - parseFloat($('#DiasNoJustificados').val());
+            horas = $('#HorasNoJustificadas').val();
+            valorDias = dias * sueldoBrutoSeleccionado;
+
+            valorHoras = horas * horasNoJustificadasSeleccionado;
+            //TODO primero tiene que agregarse a grilla el sueldo, y la antiguedad para poder hacer esto
+
+            //TODO SQL
+            idAdicionalPremioAsistenciaYPuntualidad = 1004;
+            Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, null, null, false);
+
+            //TODO SQL
+            idAdicionalPremioAsistenciaPerfecta = 1005;
+            Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, null, false);
+
+            //TODO ver si falta algun premio
+            //TODO de prueba agarramos los que estamos usando, pero modificar esto
+            
+            valorDiasHorasAntiguedadPremios = valorDias - valorHoras + valorAntiguedad + valorPremioAsistenciaPerfecta + valorPremioAsistenciaYPuntualidad;
+            
+            //TODO SQL
+            idAdicionalRefrigerio = 1006;
+            Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, null, false);
+
+            //TODO SQL
+            idAdicionalObraSocial = 1007;
+            Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorDiasHorasAntiguedadPremios, null, false);
+
+            //TODO SQL
+            idAdicionalJubilacion = 1008;
+            Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorDiasHorasAntiguedadPremios, null, false);
+
+            //TODO SQL
+            idAdicionalLey19032 = 1009;
+            Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorDiasHorasAntiguedadPremios, null, false);
+
+            //TODO SQL
+            idAdicionalCuotaSindical = 1010;
+            Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorDiasHorasAntiguedadPremios, null, false);
+
+        },
+
         CompletarDiasTrabajados: function () {
-            var diasLaboralesPeriodo = $.CalcularDiasLaborales($('#datestart').val(), $('#dateend').val());
+            //TODO si es dias literal trabajados, usar CalcularDiasLaborales sino CantidadDeDiasEntreFechas 
+            //var diasLaboralesPeriodo = $.CalcularDiasLaborales($('#datestart').val(), $('#dateend').val());
+            var diasLaboralesPeriodo = $.CantidadDeDiasEntreFechas($('#datestart').val(), $('#dateend').val());
             $('#DiasTrabajados').val(diasLaboralesPeriodo);
             //TODO inicialmente podemos poner todo en cero los no trabajados, y darle premio
             $('#DiasJustificados').val(0);
             $('#DiasNoJustificados').val(0);
             $('#HorasNoJustificadas').val(0);
 
-            //TODO SQL
-            idAdicionalPremioAsistenciaYPuntualidad = 1004;
-            Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, null, false);
-
-            //TODO SQL
-            idAdicionalPremioAsistenciaPerfecta = 1005;
-            Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, null, false);
-
-
         },
 
         ChangeDiasTrabajados: function () {
-            //TODO no puede ser menor a cero
-            
+            var diasTrabajados = $('#DiasTrabajados').val();
+            if (diasTrabajados != "" && (!$.isNumeric(diasTrabajados) || diasTrabajados <= 0)) {
+                $('#DiasTrabajados').val(1);
+            }
+
+            //TODO SQL
+            idAdicionalRefrigerio = 1006;
+            Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajados, false);
+
+            //TODO SQL
+            idAdicionalSueldoBasico = 2;
+            Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, diasTrabajados, false);
+
+
         },
 
         ChangeDiasJustificados: function () {
-            //TODO no puede ser menor a cero
+            var diasJustificados = $(this).val();
+            //TODO SQL
+            var idAdicionalDiasJustificados = 3;
+
+            if (diasJustificados != "" && (!$.isNumeric(diasJustificados) || diasJustificados <= 0)) {
+                $(this).val(0);
+                diasJustificados = 0;
+
+                //eliminar de la grilla si es que esta
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalDiasJustificados);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalDiasJustificados) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalDiasJustificados);
+                }
+
+
+
+            } else if(diasJustificados > 0){
+                //TODO agregar es igual a sueldo basico mismo valor del sueldo basico por unidades
+                Recibo.TakeAndAddAdicional(idAdicionalDiasJustificados, sueldoBrutoSeleccionado, diasJustificados, false);
+            }
         },
 
-        ChangeDiasNosJustificados: function () {
-            //TODO no puede haber premio por haber ido siempre si es mayor a cero
-            //y si es igual a cero este y dias no trabajados no justificados hay premio
-            //TODO no puede ser menor a cero
+        ChangeDiasNoJustificados: function () {
+            var diasNoJustificados = $(this).val();
+
+            //TODO SQL
+            var idAdicionalDiasNoJustificados = 4;
+
+            if (diasNoJustificados != "" && (!$.isNumeric(diasNoJustificados) || diasNoJustificados <= 0)) {
+                $(this).val(0);
+                diasNoJustificados = 0;
+
+                //eliminar de la grilla si es que esta
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalDiasNoJustificados);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalDiasNoJustificados) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalDiasNoJustificados);
+                }
+
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //var idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalDiasNoJustificados) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla);
+                //}
+
+            }
+            if (diasNoJustificados == 0 && $('#HorasNoJustificadas').val() == 0) {
+                //Hay premio agregar o editar adicionales no se si es editar porque creo que es a todo o nada pero habria que ver si cambio el sueldo por ejemplo
+
+                //TODO SQL
+                idAdicionalPremioAsistenciaYPuntualidad = 1004;
+                Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, null, null, false);
+
+                //TODO SQL
+                idAdicionalPremioAsistenciaPerfecta = 1005;
+                Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, null, null, false);
+
+                //eliminar de la grilla si es que esta
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalDiasNoJustificados);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalDiasNoJustificados) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalDiasNoJustificados);
+                }
+
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //var idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalDiasNoJustificados) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla);
+                //}
+
+            } else if (diasNoJustificados > 0) {
+                //No hay premio eliminar si es que esta en la grilla los adicionales
+                //TODO SQL
+                idAdicionalPremioAsistenciaYPuntualidad = 1004;
+                idAdicionalPremioAsistenciaPerfecta = 1005;
+
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalPremioAsistenciaYPuntualidad);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalPremioAsistenciaYPuntualidad) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaYPuntualidad);
+                }
+
+
+                ////TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //var idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalPremioAsistenciaYPuntualidad) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaYPuntualidad);
+                //}
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalPremioAsistenciaPerfecta);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalPremioAsistenciaPerfecta) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaPerfecta);
+                }
+
+                //TODO SQL
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalPremioAsistenciaPerfecta) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaPerfecta);
+                //}
+
+                //TODO agregar es igual a sueldo basico mismo valor del sueldo basico por unidades
+                Recibo.TakeAndAddAdicional(idAdicionalDiasNoJustificados, sueldoBrutoSeleccionado, diasNoJustificados, false);
+
+            }
         },
 
-        HorasNoJustificadas: function () {
-            //TODO no puede haber premio por haber ido siempre si es mayor a cero
-            //y si es igual a cero este y dias no trabajados no justificados hay premio
-            //TODO no puede ser menor a cero
+        ChangeHorasNoJustificadas: function () {
+            var horasNoJustificados = $(this).val();
+            //TODO SQL
+            var idAdicionalHorasNoJustificadas = 5;
+
+            if (horasNoJustificados != "" && (!$.isNumeric(horasNoJustificados) || horasNoJustificados <= 0)) {
+                $(this).val(0);
+                horasNoJustificados = 0;
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalHorasNoJustificadas);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalHorasNoJustificadas) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalHorasNoJustificadas);
+                }
+
+                //eliminar de la grilla si es que esta
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //var idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalHorasNoJustificadas) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla, idAdicionalHorasNoJustificadas);
+                //}
+
+            }
+            debugger;
+            if (horasNoJustificados == 0 && $('#DiasNoJustificados').val() == 0) {
+                //Hay premio agregar o editar adicionales no se si es editar porque creo que es a todo o nada pero habria que ver si cambio el sueldo por ejemplo
+
+                //TODO SQL
+                idAdicionalPremioAsistenciaYPuntualidad = 1004;
+                Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, null, null, false);
+
+                //TODO SQL
+                idAdicionalPremioAsistenciaPerfecta = 1005;
+                Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, null, null, false);
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalHorasNoJustificadas);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalHorasNoJustificadas) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalHorasNoJustificadas);
+                }
+
+
+                //eliminar de la grilla si es que esta
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //var idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalHorasNoJustificadas) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla, idAdicionalHorasNoJustificadas);
+                //}
+
+            } else if (horasNoJustificados > 0){
+                //No hay premio eliminar si es que esta en la grilla los adicionales
+                //TODO SQL
+                idAdicionalPremioAsistenciaYPuntualidad = 1004;
+                idAdicionalPremioAsistenciaPerfecta = 1005;
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalPremioAsistenciaYPuntualidad);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalPremioAsistenciaYPuntualidad) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaYPuntualidad);
+                }
+
+
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //var idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalPremioAsistenciaYPuntualidad) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaYPuntualidad);
+                //}
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Recibo.SelectedRows.indexOf(idAdicionalPremioAsistenciaPerfecta);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                    idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Adicional_Id == idAdicionalPremioAsistenciaPerfecta) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaPerfecta);
+                }
+
+
+                //TODO SQL
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //idEnGrilla = -1;
+                //$.each(allGridData, function (i, item) {
+                //    if (item.Adicional_Id == idAdicionalPremioAsistenciaPerfecta) {
+                //        idEnGrilla = item.id;
+                //    }
+                //});
+                //if (idEnGrilla != -1) {
+                //    Recibo.EliminarDetalle(idEnGrilla, idAdicionalPremioAsistenciaPerfecta);
+                //}
+
+                //TODO agregar es igual a sueldo basico mismo valor del sueldo basico por unidades
+                Recibo.TakeAndAddAdicional(idAdicionalHorasNoJustificadas, horasNoJustificadasSeleccionado, horasNoJustificados , false);
+
+
+            }
         },
 
         CambiarErroresForm: function () {
@@ -492,7 +964,7 @@
 
         },
 
-        VerDetalleDialog: function () {
+        @*VerDetalleDialog: function () {
             var IdEntidad = $(this).data('id');
             var RowId = $(this).closest('tr').attr('id');
             var row = $("#GridAcumuladoCompras").getRowData(RowId);
@@ -515,7 +987,7 @@
                 };
                 $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","Cobranzas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Cobranza ' + row.LetraNumero, opt);
             }
-        },
+        },*@
 
         GetEmpleadoByID: function () {
             var Id = $('#EmpleadoID').val();
@@ -570,11 +1042,17 @@
 
         OnEliminarDetalleClick: function () {
             var Id = $(this).closest('tr').attr('id');
+            //TODO recontra ojo con esto!
+            var Adicional_Id_Eliminar = $($(this).parent().parent().find("td")[1]).html();
             ConfirmationDialog.Show("Esta seguro que desea eliminar el adicional?",
-                                    function () { Recibo.EliminarDetalle(Id) });
+                                    function () { Recibo.EliminarDetalle(Id, Adicional_Id_Eliminar) });
         },
 
-        EliminarDetalle: function (Id) {
+        EliminarDetalle: function (Id, Adicional_Id_Eliminar) {
+            var indexDel = Recibo.SelectedRows.indexOf(parseFloat(Adicional_Id_Eliminar));
+            if(indexDel >= 0){
+                Recibo.SelectedRows.splice(indexDel, 1);
+            }
             $('#GridDetallesRecibo').jqGrid('delRowData', Id);
             $('#SelectCount').html('0');
             Recibo.CalcularTotales();
@@ -594,7 +1072,6 @@
                         $('#Adicional_Id').select2('data', { id: IdAdicional, text: ret.Data.Descripcion });
                         $('#Adicional_Porcentaje').val(ret.Data.Porcentaje);
                         $('#Adicional_Valor').val(ret.Data.Valor);
-
                         $('#Adicional_TipoLiquidacion').val(ret.Data.TipoLiquidacion);
                         $('#Adicional_Suma').val(ret.Data.Suma);
 
@@ -678,7 +1155,6 @@
         },
 
         CamposNoEditables: function (Readonly) {
-            debugger;
             $('#datestart').attr('readonly', Readonly);
             $('#dateend').attr('readonly', Readonly);
             $('#DiasTrabajados').attr('readonly', Readonly);
@@ -688,8 +1164,8 @@
 
             if (!Readonly)
             {
-                $("#datestart").datepicker({ dateFormat: 'dd/mm/yy' });
                 $("#dateend").datepicker({ dateFormat: 'dd/mm/yy' });
+                $("#datestart").datepicker({ dateFormat: 'dd/mm/yy' });
             }
 
         },
@@ -700,14 +1176,14 @@
             $('#CUIT').val(Empleado.CUIT);
             $('#Sindicato').val(Empleado.Sindicato.Data);
             $('#ObraSocial').val(Empleado.ObraSocial.Data);
-            //TODO habilitar informacion de fechas, completar fechas iniciales
+            $('#BancoDeposito').val(Empleado.BancoDeposito.Data);
             Recibo.CamposNoEditables(false);
 
             Recibo.CompletarFiltros();
-            Recibo.CompletarPeriodo(); //TODO capaz no es necesario ponerlo porque ya esta lo de change de las fechas
+            Recibo.CompletarPeriodo();
             Recibo.CompletarDiasTrabajados();
+            //Recibo.AgregarAdicionalesIniciales(); se paso a la vista de SueldoBruto por una cuestion de necesidad de informacion antes
 
-            
             Recibo.EmpleadoFechaIngreso = Empleado.FechaIngreso;
 
             if (Empleado.SueldoBrutoMensual != null || Empleado.SueldoBrutoHora != null) {
@@ -716,33 +1192,20 @@
                 SueldoHora = (Empleado.SueldoBrutoHora > 0) ? Empleado.SueldoBrutoHora : null;
                 Recibo.OpenSeleccionarSueldo(SueldoCategoria, SueldoMes, SueldoHora);
             } else {
+                //no tiene ni mensual ni hora, solo categoria
 
-                var detalleSueldoBruto = {
-                    Id: reciboDetalleId,
-                    Valor: Empleado.Categoria.AdditionalData,
-                    //TODO poner un adicional id para lo que es el sueldo bruto
-                    //Adicional_Id: $('#Adicional_Id').val(),
-                    //TODO poner un adicional descripcion para lo que es el sueldo bruto
-                    Descripcion: "Sueldo Bruto",
-                    //TODO poner un adicional TipoLiquidacion para lo que es el sueldo bruto
-                    TipoLiquidacion: "Remunerativo"
-                };
-                $('#GridDetallesRecibo').jqGrid('addRowData', detalleSueldoBruto.Id, detalleSueldoBruto);
-                Recibo.CalcularTotales();
-                $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-                reciboDetalleId++;
+                //TODO SQL
+                idAdicionalSueldoBasico = 2;
+                //TODO hay una duda con respecto a esto, si trabajo todo el mes son 22 dias o 30 ponele
+                unidades = $('#DiasTrabajados').val();
+                sueldoBrutoSeleccionado = Empleado.Categoria.AdditionalData;
+                Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, unidades, false);
 
                 //TODO PROBAR SI ESTO ANDA BIEN CUANDO NO TIENE SUELDO POR HORA O MES,SOLO CON EL DE LA CATEGORIA
                 EmpleadoAntiguedad = Recibo.CalcularAntiguedad(Empleado.FechaIngreso);
                 Recibo.AgregarAntiguedad(EmpleadoAntiguedad);
 
-
-                //$($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-
-                //reciboDetalleId++;
-                //$('#GridDetallesRecibo').jqGrid('addRowData', detalleSueldoBruto.Id, detalleSueldoBruto);
-
-                //Recibo.CalcularTotales();
+                Recibo.AgregarAdicionalesIniciales();
 
                 //limpiar form de detalle
                 $('#recibo-detalle').ClearForm();
@@ -750,422 +1213,132 @@
 
             }
 
-
-
         },
 
-        TakeAndAddAdicional: function (IdAdicional, valueCalculated, withSobreAdicionales) {
-            debugger;
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("GetAdicional", "Adicionales")',
-                data: { IdAdicional: IdAdicional },
-                success: function (ret) {
-
-                    if (ret.Success && ret.Data) {
-
-                        if (withSobreAdicionales) {
-                            Recibo.Data_AAs = ret.Data_AAs;
-                        }
-                        debugger;
-                        var detalleAdicional = {
-                            Id: reciboDetalleId,
-                            Porcentaje: ret.Data.Porcentaje,
-                            Valor: (valueCalculated != null) ? valueCalculated : (ret.Data.Valor != null ? ret.Data.Valor : ret.Data.Porcentaje),
-                            Adicional_Id: IdAdicional,
-                            Descripcion: ret.Data.Descripcion,
-                            TipoLiquidacion: ret.Data.TipoLiquidacion
-                        };
-
-                        $('#GridDetallesRecibo').jqGrid('addRowData', detalleAdicional.Id, detalleAdicional);
-                        Recibo.CalcularTotales();
-                        $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-                        reciboDetalleId++;
-                    }
-                },
-                dataType: 'json',
-                async: false
-            });
-
-
-            @*var params = {
-                url: '@Url.Action("GetAdicional", "Adicionales")',
-                data: { IdAdicional: IdAdicional },
-                success: function (ret) {
-
-                    if (ret.Success && ret.Data) {
-
-                        if (withSobreAdicionales) {
-                            Recibo.Data_AAs = ret.Data_AAs;
-                        }
-                        debugger;
-                        var detalleAdicional = {
-                            Id: reciboDetalleId,
-                            Porcentaje: ret.Data.Porcentaje,
-                            Valor: (valueCalculated != null) ? valueCalculated : ret.Data.Valor,
-                            Adicional_Id: IdAdicional,
-                            Descripcion: ret.Data.Descripcion,
-                            TipoLiquidacion: ret.Data.TipoLiquidacion
-                        };
-
-                        $('#GridDetallesRecibo').jqGrid('addRowData', detalleAdicional.Id, detalleAdicional);
-                        Recibo.CalcularTotales();
-                        $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-                        reciboDetalleId++;
-                    }
-                }
+        //TODO hacer que sea util el withSobreAdicionales si es que vale la pena porque estamos calculando todo como desde afuera
+        //TODO ver si todos los parametros son utilizadas por alguna funcion alguna vez, sino sacar.
+        TakeAndAddAdicional: function (IdAdicional, valueCalculated, unidadesCalculated, withSobreAdicionales) {
+            //Inicio del mismo/padre
+            if (IdAdicional == 1005)
+            {
+                debugger;
             }
-            $.AjaxPost(params);*@
+            //Primero me fijo sino esta en la grilla
+            //si ya esta en la grilla habria que editar los valores
+            var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+            var existeEnGrilla = false;
+            var existeEnGrillaDelMismoTipo = false;
+            var valorEnGrillaPorUsuario = valueCalculated;
+            var row;
 
-        },
-
-        AgregarSueldoBruto: function (Mes) {
-            if (Mes) {
-                sueldoBrutoSeleccionado = sueldoBrutoSeleccionado / 30;
-            } else {
-                sueldoBrutoSeleccionado = sueldoBrutoSeleccionado / 200;
+            //TODO deberia ser lo mismo mirar en la selectedRows que en toda la grilla
+            //pero obvio que es menos trabajo mirar en la selectedRows
+            //por ahora pongo las dos funciones, pero la idea es eliminar el each allgriddata
+            if (Recibo.SelectedRows.indexOf(IdAdicional) >= 0) {
+                existeEnGrilla = true;
             }
 
-            //TODO SQL
-            idAdicionalSueldoBasico = 2;
-            Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, false);
-
-            return true;
-            @*var params = {
-                url: '@Url.Action("GetAdicional", "Adicionales")',
-                data: { IdAdicional: idAdicionalSueldoBasico },
-                success: function (ret) {
-                    if (ret.Success && ret.Data) {
-
-                        //TODO cuando funcione TakeAdicional esto mandarlo afuera
-                        var detalleAdicionalSueldoBasico = {
-                            Id: reciboDetalleId,
-                            Porcentaje: ret.Data.Porcentaje,
-                            Valor: sueldoBrutoSeleccionado,
-                            Adicional_Id: idAdicionalSueldoBasico,
-                            Descripcion: ret.Data.Descripcion,
-                            TipoLiquidacion: ret.Data.TipoLiquidacion
-                        };
-                        $('#GridDetallesRecibo').jqGrid('addRowData', detalleAdicionalSueldoBasico.Id, detalleAdicionalSueldoBasico);
-                        Recibo.CalcularTotales();
-                        $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-                        reciboDetalleId++;
-                    }
-                }
-            }
-            $.AjaxPost(params);*@
-        },
-
-
-        AgregarAGrillaAutomatico: function (Adicional) {
-            if (Recibo.SelectedRows.indexOf(Adicional.Id) >= 0) {
-                return;
-            }
-
-            //modificar desde aca, hice pausa para probar todo lo anterior. Todo depende aca del Adicional
-            var Descripcion = $('#Adicional_Id').select2('data').text;
-            var detalle = {
-                Id: reciboDetalleId,
-                Porcentaje: $('#Porcentaje').val(),
-                Valor: $('#Valor').val(),
-                Adicional_Id: $('#Adicional_Id').val(),
-                Descripcion: Descripcion,
-                TipoLiquidacion: $('#TipoLiquidacion').val(),
-                Suma: $('#Suma').val(),
-                AdicionalAdicionales: Recibo.Data_AAs,
-                Seleccionados: true
-                //Padre:
-
-            };
-            $('#GridDetallesRecibo').jqGrid('addRowData', detalle.Id, detalle);
-            Recibo.CalcularTotales();
-            $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-            reciboDetalleId++;
-
-            Recibo.SelectedRows.push($('#Adicional_Id').val()); // reciboDetalleId o $('#Adicional_Id').val()
-
-            var valorDelAdicionalSeleccionado = 0;
-            var tienenTodosLosHijosValor = true;
-
-            for (var u = 0; u < Recibo.Data_AAs.length; u++) {
-                //si ya esta en la grilla listo
-                var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
-                var existeEnGrilla = false;
-                $.each(allGridData, function (i, item) {
-                    if (item.Adicional_Id == Recibo.Data_AAs[u].Id) {
-                        existeEnGrilla = true;
+            if (IdAdicional >= 1 && IdAdicional <= 2)
+            {
+                //sueldos
+                //buscamos otro del mismo tipo
+                //TODO SQL faltaria revisar bien el tema de los sueldos, porque tenemos mensual y basico
+                mismoTipo = [1, 2];
+                $.each(mismoTipo, function (i, item) {
+                    if (Recibo.SelectedRows.indexOf(item) >= 0 && item != IdAdicional) {
+                        existeEnGrillaDelMismoTipo = true;
                     }
                 });
-
-                if (!existeEnGrilla) {
-                    //agrego a grilla y recalculo
-                    var detalleHijo = {
-                        Id: reciboDetalleId,
-                        Porcentaje: Recibo.Data_AAs[u].Porcentaje,
-                        Valor: Recibo.Data_AAs[u].Valor,
-                        Adicional_Id: Recibo.Data_AAs[u].Id,
-                        Descripcion: Recibo.Data_AAs[u].Descripcion,
-                        TipoLiquidacion: Recibo.Data_AAs[u].TipoLiquidacion,
-                        Suma: Recibo.Data_AAs[u].Suma,
-                        //AdicionalAdicionales: Recibo.Data_AAs,
-                        Padre: $('#Adicional_Id').val()
-                    };
-                    if (!Recibo.Data_AAs[u].Valor) {
-                        tienenTodosLosHijosValor = false;
+            } else if (IdAdicional >= 6 && IdAdicional <= 18) {
+                //antiguedades
+                //buscamos otro del mismo tipo
+                mismoTipo = [6,7,8,9,10,11,12,13,14,15,16,17,18];
+                $.each(mismoTipo, function (i, item) {
+                    if (Recibo.SelectedRows.indexOf(item) >= 0 && item != IdAdicional) {
+                        existeEnGrillaDelMismoTipo = true;
                     }
-
-                    if (Recibo.Data_AAs[u].Valor && Recibo.Data_AAs[u].Suma) {
-                        valorDelAdicionalSeleccionado += Recibo.Data_AAs[u].Valor;
-                    }
-                    else if (Recibo.Data_AAs[u].Valor && !Recibo.Data_AAs[u].Suma) {
-                        valorDelAdicionalSeleccionado -= Recibo.Data_AAs[u].Valor;
-                    }
-
-                    reciboDetalleId++;
-                    $('#GridDetallesRecibo').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
-                    Recibo.CalcularTotales();
-
-
-                }
-
-                //Colocarle el valor final
-                if (tienenTodosLosHijosValor) {
-
-                }
-
-
-                //limpiar form de detalle
-                $('#recibo-detalle').ClearForm();
-                $('#Adicional_Id').select2('data', null);
+                });
             }
-        },
-
-        AgregarAntiguedad: function (antiguedadEmpleado) {
-            //Switch entre los adicionales por la cantidad de años del empleado
-            var porcentajeAntiguedad = 0;
-            var idAdicionalAntiguedad = 0;
-
-            //TODO Capaz el porcentaje de antiguedad podria estar en la base del adicional
-            //TODO SQL
-            switch (antiguedadEmpleado) {
-                case 0:
-                    porcentajeAntiguedad = 0;
-                    idAdicionalAntiguedad = 6;
-                    break;
-                case 1:
-                    porcentajeAntiguedad = 1;
-                    idAdicionalAntiguedad = 7;
-                    break;
-                case 2:
-                    porcentajeAntiguedad = 4;
-                    idAdicionalAntiguedad = 8;
-                    break;
-                case 3:
-                    porcentajeAntiguedad = 8;
-                    idAdicionalAntiguedad = 9;
-                    break;
-                case 5:
-                    porcentajeAntiguedad = 10;
-                    idAdicionalAntiguedad = 10;
-                    break;
-                case 8:
-                    porcentajeAntiguedad = 14;
-                    idAdicionalAntiguedad = 11;
-                    break;
-                case 10:
-                    porcentajeAntiguedad = 16;
-                    idAdicionalAntiguedad = 12;
-                    break;
-                case 15:
-                    porcentajeAntiguedad = 18;
-                    idAdicionalAntiguedad = 13;
-                    break;
-                case 20:
-                    porcentajeAntiguedad = 20;
-                    idAdicionalAntiguedad = 14;
-                    break;
-                case 25:
-                    porcentajeAntiguedad = 22;
-                    idAdicionalAntiguedad = 15;
-                    break;
-                case 30:
-                    porcentajeAntiguedad = 25;
-                    idAdicionalAntiguedad = 16;
-                    break;
-                case 35:
-                    porcentajeAntiguedad = 28;
-                    idAdicionalAntiguedad = 17;
-                    break;
-                case 40:
-                    porcentajeAntiguedad = 35;
-                    idAdicionalAntiguedad = 18;
-                    break;
-            }
-
-
-            //TODO agarrar el sueldo basico, dias trabajados, ausencias y todo para hacer la antiguedad,
-            //inicialmente se podria tomar como que trabajo correctamente todos los dias
-            //(Sueldo Basico + Faltas Justificadas - Faltas Injustificadas - Descuento de Horas) * Porcentaje correspondiente
-
             
-
-
-
-            //NO ELIMINAR POR AHORA HASTA PREGUNTAR A EMI SI SE DETALLA O NO EN LOS DETALLES LA CANTIDAD DE DIAS TRABAJADOS Y ESO
-
-            //TODO dias trabajados, no trabajados, horas trabajadas, hs no trabajadas
-            //var diasLaboralesPeriodo = $.CalcularDiasLaborales($('#datestart').val(), $('#dateend').val());
-            //TODO SQL 
-            //idDiasTrabajados = 1003;
-            //Recibo.TakeAndAddAdicional(idDiasTrabajados, diasLaboralesPeriodo, false);
-
-
-
-
-            //TODO restar todos los otros dias y horas
-
-            //TODO CADA VEZ QUE CAMBIAN LAS FECHAS o LOS DIAS LABURADOS, O LOS QUE NO TRABAJO, O SE ELIMINA UNA
-            //FILA O LO QUE SEA, HACER LOS CAMBIOS NECESARIOS
-
-            //(Sueldo Basico + Faltas Justificadas - Faltas Injustificadas - Descuento de Horas) * Porcentaje correspondiente
-            if (porcentajeAntiguedad > 0) {
-                var valorAntiguedad = sueldoBrutoSeleccionado * diasLaboralesPeriodo / (22 * porcentajeAntiguedad);
-            } else {
-                var valorAntiguedad = 0;
-            }
-
-
-            //Agarrar el adicional
-            //Recibo.AdicionalAntiguedad = Recibo.TakeAdicional(idAdicionalAntiguedad);
-            //Recibo.TakeAdicional(idAdicionalAntiguedad);
-            //TODO TakeAdicional que funcione
-
-            Recibo.TakeAndAddAdicional(idAdicionalAntiguedad, valorAntiguedad, true);
-            @*var params = {
-                url: '@Url.Action("GetAdicional", "Adicionales")',
-                data: { IdAdicional: idAdicionalAntiguedad },
-                success: function (ret) {
-                    if (ret.Success && ret.Data) {
-                        Recibo.Data_AAs = ret.Data_AAs;
-                        debugger;
-                        //Recibo.AdicionalAntiguedad = ret.Data;
-                        //return Recibo.AdicionalAntiguedad;
-
-                        //Agregar el adicional a grilla con los sobreAdicionales
-                        //TODO cuando funcione TakeAdicional esto mandarlo afuera
-                        var detalleAdicionalAntiguedad = {
-                            Id: reciboDetalleId,
-                            Porcentaje: ret.Data.Porcentaje,
-                            Valor: valorAntiguedad,
-                            Adicional_Id: idAdicionalAntiguedad,
-                            Descripcion: ret.Data.Descripcion,
-                            TipoLiquidacion: ret.Data.TipoLiquidacion
-                        };
-                        debugger;
-                        $('#GridDetallesRecibo').jqGrid('addRowData', detalleAdicionalAntiguedad.Id, detalleAdicionalAntiguedad);
-                        Recibo.CalcularTotales();
-                        $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-                        reciboDetalleId++;
-
-                    }
+        
+            $.each(allGridData, function (i, item) {
+                if (item.Adicional_Id == IdAdicional) {
+                    existeEnGrilla = true;
+                    valorEnGrillaPorUsuario = item.Adicional_Unidades;
+                    row = item;
                 }
-            }
-            $.AjaxPost(params);*@
-
-        },
-
-        CalcularTotales: function () {
-            var Detalles = $('#GridDetallesRecibo').jqGrid('getRowData');
-            var TotalRemunerativo = 0;
-            var TotalNoRemunerativo = 0;
-            var TotalDescuento = 0;
-
-            for (var i = 0; i < Detalles.length; i++) {
-                if (Detalles[i].Suma == "true") {
-                    switch (Detalles[i].TipoLiquidacion) {
-                        case "1":
-                            TotalRemunerativo += parseFloat(Detalles[i].Remunerativo);
-                            break;
-                        case "2":
-                            TotalNoRemunerativo += parseFloat(Detalles[i].NoRemunerativo);
-                            break;
-                        case "3":
-                            TotalDescuento += parseFloat(Detalles[i].Descuento);
-                            break;
-                    }
-                } else {
-                    switch (Detalles[i].TipoLiquidacion) {
-                        case "1":
-                            TotalRemunerativo -= parseFloat(Detalles[i].Remunerativo);
-                            break;
-                        case "2":
-                            TotalNoRemunerativo -= parseFloat(Detalles[i].NoRemunerativo);
-                            break;
-                        case "3":
-                            TotalDescuento -= parseFloat(Detalles[i].Descuento);
-                            break;
-                    }
-                }
-
-            }
-            //TotalRemunerativo = $.parseCurrency(TotalRemunerativo);
-            //TotalNoRemunerativo = $.parseCurrency(TotalNoRemunerativo);
-            //TotalDescuento = $.parseCurrency(TotalDescuento);
-
-            $('#TotalRemunerativo').val(TotalRemunerativo);
-            $('#TotalNoRemunerativo').val(TotalNoRemunerativo);
-            $('#TotalDescuento').val(TotalDescuento);
-        },
-
-        AgregarDetalleAGrilla: function (e) {
-            if (Recibo.SelectedRows.indexOf($('#Adicional_Id').val()) >= 0) {
-                return;
-            }
-            jQuery.extend(jQuery.validator.messages, {
-                required: "Este campo es necesario"
             });
-            if (!($('#Adicional_Id').val() > 0 || $('#AdicionalID').val() <= 0)) {
-                $('.valid-custom.Adicional').removeClass('field-validation-valid');
-                $('.valid-custom.Adicional').addClass('field-validation-error');
-                $('.valid-custom.Adicional').append("<span for='Adicional_Id' generated='true' class=''>Este campo es necesario</span>");
-                return;
-            } else {
-                $('.valid-custom.Adicional').removeClass('field-validation-error');
-                $('.valid-custom.Adicional').addClass('field-validation-valid');
-                $('.valid-custom.Adicional span').remove();
+
+
+            //valueCalculated es el que el sistema toma como inicial o calcula automaticamente
+            //el valorEnGrillaPorUsuario es el valor que coloco manualmente el usuario
+            if (valorEnGrillaPorUsuario != null && valorEnGrillaPorUsuario != valueCalculated) {
+                valueCalculated = valorEnGrillaPorUsuario;
             }
-            //if (!($('#TipoIVA').val() > 0)) {
-            //    $('#TipoIVA').parent().append("<span class='help-block field-validation-error valid-custom tipoiva' data-valmsg-for='TipoIVA' data-valmsg-replace='true'><span for='TipoIVA' generated='true' class=''>Es Necesario un Tipo de Iva</span></span>");
-            //    return;
-            //} else {
-            //    $('.valid-custom.tipoiva').remove();
-            //}
-            if ($('#recibo-detalle').valid()) {
-                var Descripcion = $('#Adicional_Id').select2('data').text;
-                var detalle = {
-                    Id: reciboDetalleId,
-                    Porcentaje: $('#Porcentaje').val(),
-                    Valor: $('#Valor').val(),
-                    Adicional_Id: $('#Adicional_Id').val(),
-                    Descripcion: Descripcion,
-                    TipoLiquidacion: $('#TipoLiquidacion').val(),
-                    Suma: $('#Suma').val(),
-                    AdicionalAdicionales: Recibo.Data_AAs,
-                    Seleccionados: true
-                    //Padre:
 
-                };
-                $('#GridDetallesRecibo').jqGrid('addRowData', detalle.Id, detalle);
-                Recibo.CalcularTotales();
-                $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
-                reciboDetalleId++;
+            if (!existeEnGrilla && !existeEnGrillaDelMismoTipo) {
+                //Si no esta lo agrego
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetAdicional", "Adicionales")',
+                    data: { IdAdicional: IdAdicional },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data) {
+                            if (withSobreAdicionales) {
+                                Recibo.Data_AAs = ret.Data_AAs;
+                            }
 
-                Recibo.SelectedRows.push($('#Adicional_Id').val()); // reciboDetalleId o $('#Adicional_Id').val()
+                            var detalleAdicional = {
+                                Id: reciboDetalleId,
+                                Porcentaje: ret.Data.Porcentaje,
+                                Unidades: (unidadesCalculated != null) ? unidadesCalculated : "",
+                                Valor: (valueCalculated != null) ? valueCalculated : (ret.Data.Valor != null ? ret.Data.Valor : ret.Data.Porcentaje),
+                                Adicional_Id: IdAdicional,
+                                Descripcion: ret.Data.Descripcion,
+                                TipoLiquidacion: ret.Data.TipoLiquidacion,
+                                Suma: ret.Data.Suma,
+                                Seleccionados: true
+                            };
+                            $('#GridDetallesRecibo').jqGrid('addRowData', detalleAdicional.Id, detalleAdicional);
+                            Recibo.CalcularTotales();
+                            //Para agregar necesita la cantidad que hay, para eliminar necesita el Id correspondiente
+                            cant = $($('.SelectCheckboxes')).length;
+                            $($('.SelectCheckboxes')[--cant]).attr('checked', 'checked');
+                            //$($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
+                            reciboDetalleId++;
+                            Recibo.SelectedRows.push(parseFloat(IdAdicional)); //TODO revisar que cuando se haga esto solo sea por id, Id Adicional
+                        }
+                    },
+                    dataType: 'json',
+                    async: false
+                });
 
+            } else if(existeEnGrilla && !existeEnGrillaDelMismoTipo){
+                //existeEnGrilla entonces editamos los campos necesarios
+                Recibo.SelectedRows.push(parseFloat(IdAdicional));
+
+                if (unidadesCalculated != null && unidadesCalculated != "" && $.isNumeric(unidadesCalculated) && row.Unidades != unidadesCalculated)
+                {
+                    row.Unidades = unidadesCalculated;
+                }
+
+                if (valueCalculated != null && valueCalculated != "" && $.isNumeric(valueCalculated) && row.Unidades != valueCalculated)
+                {
+                    row.Valor = valueCalculated;
+                }
+
+                //TODO porcentaje ? ver si alguno necesita esa edicion
+                $('#GridDetallesRecibo').trigger("reloadGrid");
+            }
+
+            //TODO todo lo que es de los hijos hay que revisarlo, estaba en la funcion vieja: AgregarAGrillaAutomatico
+            //Inicio de los hijos del que se va a agregar
+            if (withSobreAdicionales && !existeEnGrillaDelMismoTipo) {
                 var valorDelAdicionalSeleccionado = 0;
                 var tienenTodosLosHijosValor = true;
 
                 for (var u = 0; u < Recibo.Data_AAs.length; u++) {
+                    //TODO que se fije en la selectedRow
                     //si ya esta en la grilla listo
                     var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
                     var existeEnGrilla = false;
@@ -1174,6 +1347,7 @@
                             existeEnGrilla = true;
                         }
                     });
+
                     if (!existeEnGrilla) {
                         //agrego a grilla y recalculo
                         var detalleHijo = {
@@ -1197,24 +1371,330 @@
                         else if (Recibo.Data_AAs[u].Valor && !Recibo.Data_AAs[u].Suma) {
                             valorDelAdicionalSeleccionado -= Recibo.Data_AAs[u].Valor;
                         }
-
                         reciboDetalleId++;
                         $('#GridDetallesRecibo').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
                         Recibo.CalcularTotales();
+                    }
 
+                    //Colocarle el valor final al Padre
+                    if (tienenTodosLosHijosValor) {
 
                     }
                 }
 
-                //Colocarle el valor final
-                if (tienenTodosLosHijosValor) {
+            }
+            //Fin de los hijos
+            //limpiar form de detalle
+            $('#recibo-detalle').ClearForm();
+            $('#Adicional_Id').select2('data', null);
 
+
+        },
+
+        AgregarSueldoBruto: function (Mes) {
+            if (Mes) {
+                sueldoBrutoSeleccionado = sueldoBrutoSeleccionado / 30;
+                horasNoJustificadasSeleccionado = sueldoBrutoSeleccionado / 200;
+            } else {
+                sueldoBrutoSeleccionado = sueldoBrutoSeleccionado / 200;
+                horasNoJustificadasSeleccionado = sueldoBrutoSeleccionado;
+            }
+
+            //TODO SQL
+            idAdicionalSueldoBasico = 2;
+            //TODO hay una duda con respecto a esto, si trabajo todo el mes son 22 dias o 30 ponele
+            unidades = $('#DiasTrabajados').val();
+            Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, unidades, false);
+
+            return true;
+        },
+
+
+        //AgregarAGrillaAutomatico: function (Adicional) {
+        //    if (Recibo.SelectedRows.indexOf(Adicional.Id) >= 0) {
+        //        return;
+        //    }
+
+        //    //modificar desde aca, hice pausa para probar todo lo anterior. Todo depende aca del Adicional
+        //    var Descripcion = $('#Adicional_Id').select2('data').text;
+        //    var detalle = {
+        //        Id: reciboDetalleId,
+        //        Porcentaje: $('#Porcentaje').val(),
+        //        Valor: $('#Valor').val(),
+        //        Adicional_Id: $('#Adicional_Id').val(),
+        //        Descripcion: Descripcion,
+        //        TipoLiquidacion: $('#TipoLiquidacion').val(),
+        //        Suma: $('#Suma').val(),
+        //        AdicionalAdicionales: Recibo.Data_AAs,
+        //        Seleccionados: true
+        //        //Padre:
+
+        //    };
+        //    $('#GridDetallesRecibo').jqGrid('addRowData', detalle.Id, detalle);
+        //    Recibo.CalcularTotales();
+        //    $($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
+        //    reciboDetalleId++;
+        //    Recibo.SelectedRows.push($('#Adicional_Id').val()); // reciboDetalleId o $('#Adicional_Id').val()
+
+        //    var valorDelAdicionalSeleccionado = 0;
+        //    var tienenTodosLosHijosValor = true;
+
+        //    for (var u = 0; u < Recibo.Data_AAs.length; u++) {
+        //        //si ya esta en la grilla listo
+        //        var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+        //        var existeEnGrilla = false;
+        //        $.each(allGridData, function (i, item) {
+        //            if (item.Adicional_Id == Recibo.Data_AAs[u].Id) {
+        //                existeEnGrilla = true;
+        //            }
+        //        });
+
+        //        if (!existeEnGrilla) {
+        //            //agrego a grilla y recalculo
+        //            var detalleHijo = {
+        //                Id: reciboDetalleId,
+        //                Porcentaje: Recibo.Data_AAs[u].Porcentaje,
+        //                Valor: Recibo.Data_AAs[u].Valor,
+        //                Adicional_Id: Recibo.Data_AAs[u].Id,
+        //                Descripcion: Recibo.Data_AAs[u].Descripcion,
+        //                TipoLiquidacion: Recibo.Data_AAs[u].TipoLiquidacion,
+        //                Suma: Recibo.Data_AAs[u].Suma,
+        //                //AdicionalAdicionales: Recibo.Data_AAs,
+        //                Padre: $('#Adicional_Id').val()
+        //            };
+        //            if (!Recibo.Data_AAs[u].Valor) {
+        //                tienenTodosLosHijosValor = false;
+        //            }
+
+        //            if (Recibo.Data_AAs[u].Valor && Recibo.Data_AAs[u].Suma) {
+        //                valorDelAdicionalSeleccionado += Recibo.Data_AAs[u].Valor;
+        //            }
+        //            else if (Recibo.Data_AAs[u].Valor && !Recibo.Data_AAs[u].Suma) {
+        //                valorDelAdicionalSeleccionado -= Recibo.Data_AAs[u].Valor;
+        //            }
+
+        //            reciboDetalleId++;
+        //            $('#GridDetallesRecibo').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
+        //            Recibo.CalcularTotales();
+
+
+        //        }
+
+        //        //Colocarle el valor final
+        //        if (tienenTodosLosHijosValor) {
+
+        //        }
+
+
+        //        //limpiar form de detalle
+        //        $('#recibo-detalle').ClearForm();
+        //        $('#Adicional_Id').select2('data', null);
+        //    }
+        //},
+
+        AgregarAntiguedad: function (antiguedadEmpleado) {
+            //Switch entre los adicionales por la cantidad de años del empleado
+            var idAdicionalAntiguedad = 0;
+
+            //TODO SQL
+            switch (antiguedadEmpleado) {
+                case 0:
+                    idAdicionalAntiguedad = 6;
+                    break;
+                case 1:
+                    idAdicionalAntiguedad = 7;
+                    break;
+                case 2:
+                    idAdicionalAntiguedad = 8;
+                    break;
+                case 3,4:
+                    idAdicionalAntiguedad = 9;
+                    break;
+                case 5,6,7:
+                    idAdicionalAntiguedad = 10;
+                    break;
+                case 8,9:
+                    idAdicionalAntiguedad = 11;
+                    break;
+                case 10,11,12,13,14:
+                    idAdicionalAntiguedad = 12;
+                    break;
+                case 15,16,17,18,19:
+                    idAdicionalAntiguedad = 13;
+                    break;
+                case 20,21,22,23,24:
+                    idAdicionalAntiguedad = 14;
+                    break;
+                case 25,26,27,28,29:
+                    idAdicionalAntiguedad = 15;
+                    break;
+                case 30,31,32,33,34:
+                    idAdicionalAntiguedad = 16;
+                    break;
+                case 35,36,37,38,39:
+                    idAdicionalAntiguedad = 17;
+                    break;
+                case 40:
+                    idAdicionalAntiguedad = 18;
+                    break;
+            }
+
+            //TODO eliminar esto solo es para probar
+            idAdicionalAntiguedad = 9;
+
+            //TODO CADA VEZ QUE CAMBIAN LAS FECHAS o LOS DIAS LABURADOS, O LOS QUE NO TRABAJO, O SE ELIMINA UNA
+            //FILA O LO QUE SEA, HACER LOS CAMBIOS NECESARIOS
+
+            //TODO ver si pasamos todo esto a globales
+            dias = parseFloat($('#DiasTrabajados').val()) + parseFloat($('#DiasJustificados').val()) - parseFloat($('#DiasNoJustificados').val());
+            horas = $('#HorasNoJustificadas').val();
+            valorDias = dias * sueldoBrutoSeleccionado;
+            valorHoras = horas * horasNoJustificadasSeleccionado;
+
+            var valueAntiguedad = valorDias - valorHoras;
+            Recibo.TakeAndAddAdicional(idAdicionalAntiguedad, valueAntiguedad, null, false);
+        },
+
+        CalcularTotales: function () {
+            var Detalles = $('#GridDetallesRecibo').jqGrid('getRowData');
+            var TotalRemunerativo = 0;
+            var TotalNoRemunerativo = 0;
+            var TotalDescuento = 0;
+
+            for (var i = 0; i < Detalles.length; i++) {
+                //No se necesita preguntar por Detalles[i].Suma porque cada uno ya tiene su signo en su columna
+                switch (Detalles[i].TipoLiquidacion) {
+                    case "0":
+                        TotalRemunerativo += parseFloat(Detalles[i].Remunerativo);
+                        break;
+                    case "1":
+                        TotalNoRemunerativo += parseFloat(Detalles[i].NoRemunerativo);
+                        break;
+                    case "2":
+                        TotalDescuento += parseFloat(Detalles[i].Descuento);
+                        break;
                 }
+            }
+            //TotalRemunerativo = $.parseCurrency(TotalRemunerativo);
+            //TotalNoRemunerativo = $.parseCurrency(TotalNoRemunerativo);
+            //TotalDescuento = $.parseCurrency(TotalDescuento);
+
+            $('#TotalRemunerativo').val(TotalRemunerativo);
+            $('#TotalNoRemunerativo').val(TotalNoRemunerativo);
+            $('#TotalDescuento').val(TotalDescuento);
+            var TotalRecibo = TotalRemunerativo + TotalNoRemunerativo + TotalDescuento;
+            $('#TotalRecibo').val(TotalRecibo);
+        },
+
+        AgregarDetalleAGrilla: function (e) {
+            //TODO que onda el e que se esta pasando como parametro, en vez de adicional_id no es e o this?
+            //if (Recibo.SelectedRows.indexOf($('#Adicional_Id').val()) >= 0) {
+            //    return;
+            //}
+            jQuery.extend(jQuery.validator.messages, {
+                required: "Este campo es necesario"
+            });
+            if (!($('#Adicional_Id').val() > 0 || $('#AdicionalID').val() <= 0)) {
+                $('.valid-custom.Adicional').removeClass('field-validation-valid');
+                $('.valid-custom.Adicional').addClass('field-validation-error');
+                $('.valid-custom.Adicional').append("<span for='Adicional_Id' generated='true' class=''>Este campo es necesario</span>");
+                return;
+            } else {
+                $('.valid-custom.Adicional').removeClass('field-validation-error');
+                $('.valid-custom.Adicional').addClass('field-validation-valid');
+                $('.valid-custom.Adicional span').remove();
+            }
+
+            if ($('#recibo-detalle').valid()) {
+                var Descripcion = $('#Adicional_Id').select2('data').text;
+                Recibo.TakeAndAddAdicional($('#Adicional_Id').val(), $('#Adicional_Total').val(), $('#Adicional_Unidades').val(), false);
+                //var detalle = {
+                //    Id: reciboDetalleId,
+                //    Porcentaje: $('#Adicional_Porcentaje').val(),
+                //    Valor: ($('#Adicional_Unidades').val() != null && $('#Adicional_Unidades').val() != "" ) ? $('#Adicional_Unidades').val() : $('#Adicional_Total').val(),
+                //    Adicional_Id: $('#Adicional_Id').val(),
+                //    Descripcion: Descripcion,
+                //    TipoLiquidacion: $('#Adicional_TipoLiquidacion').val(),
+                //    Suma: $('#Adicional_Suma').val(),
+                //    AdicionalAdicionales: Recibo.Data_AAs,
+                //    Seleccionados: true
+                //    //Padre:
+
+                //};
+                //$('#GridDetallesRecibo').jqGrid('addRowData', detalle.Id, detalle);
+                //Recibo.CalcularTotales();
+                //$($('.SelectCheckboxes')[reciboDetalleId]).attr('checked', 'checked');
+                //reciboDetalleId++;
+                //Recibo.SelectedRows.push($('#Adicional_Id').val()); // reciboDetalleId o $('#Adicional_Id').val()
 
 
-                //limpiar form de detalle
-                $('#recibo-detalle').ClearForm();
-                $('#Adicional_Id').select2('data', null);
+                //if (Recibo.Data_AAs != null)
+                //{
+                //    var valorDelAdicionalSeleccionado = 0;
+                //    var tienenTodosLosHijosValor = true;
+
+                //    for (var u = 0; u < Recibo.Data_AAs.length; u++) {
+                //        //si ya esta en la grilla listo
+                //        var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
+                //        var existeEnGrilla = false;
+                //        $.each(allGridData, function (i, item) {
+                //            if (item.Adicional_Id == Recibo.Data_AAs[u].Id) {
+                //                existeEnGrilla = true;
+                //            }
+                //        });
+                //        if (!existeEnGrilla) {
+                //            //agrego a grilla y recalculo
+                //            var detalleHijo = {
+                //                Id: reciboDetalleId,
+                //                Porcentaje: Recibo.Data_AAs[u].Porcentaje,
+                //                Valor: Recibo.Data_AAs[u].Valor,
+                //                Adicional_Id: Recibo.Data_AAs[u].Id,
+                //                Descripcion: Recibo.Data_AAs[u].Descripcion,
+                //                TipoLiquidacion: Recibo.Data_AAs[u].TipoLiquidacion,
+                //                Suma: Recibo.Data_AAs[u].Suma,
+                //                //AdicionalAdicionales: Recibo.Data_AAs,
+                //                Padre: $('#Adicional_Id').val()
+                //            };
+                //            if (!Recibo.Data_AAs[u].Valor) {
+                //                tienenTodosLosHijosValor = false;
+                //            }
+
+                //            if (Recibo.Data_AAs[u].Valor && Recibo.Data_AAs[u].Suma) {
+                //                valorDelAdicionalSeleccionado += Recibo.Data_AAs[u].Valor;
+                //            }
+                //            else if (Recibo.Data_AAs[u].Valor && !Recibo.Data_AAs[u].Suma) {
+                //                valorDelAdicionalSeleccionado -= Recibo.Data_AAs[u].Valor;
+                //            }
+
+                //            reciboDetalleId++;
+                //            $('#GridDetallesRecibo').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
+                //            Recibo.CalcularTotales();
+
+
+                //        }
+                //    }
+
+                //    //Colocarle el valor final
+                //    if (tienenTodosLosHijosValor) {
+
+                //    }
+
+                //}
+                
+
+                ////limpiar form de detalle
+                //$('#recibo-detalle').ClearForm();
+                //$('#Adicional_Id').select2('data', null);
+            }
+        },
+
+        CheckboxFormatterAdicional: function (cellvalue, options, rowObject) {
+            if (Recibo.SelectedRows.indexOf(rowObject.Adicional_Id) >= 0) {
+                return '<input type="checkbox" value="' + rowObject.Id + '" class="SelectCheckboxes" checked="checked"/>'
+            }
+            else
+            {
+                return '<input type="checkbox" value="' + rowObject.Id + '" class="SelectCheckboxes" />'
             }
         },
 
@@ -1292,6 +1772,7 @@
             window.onbeforeunload = null;
             $.ShowLoader();
             window.location = '@Url.Action("Index")';
+            //TODO que vaya a detalle de como se va a imprimir podria ser
             //window.location = '@@ Url.Action("Detalle")/' + Recibo.Id;
         }
     }

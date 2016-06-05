@@ -7,7 +7,7 @@
     <meta http-equiv="content-type" content="text/plain; charset=UTF-8" />
     <title>@ViewBag.Title - Gestión Contable</title>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    @*<link href='https://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>*@
+    <link href='https://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
     <meta name="viewport" content="width=device-width" />
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/hoe")
@@ -18,7 +18,7 @@
     <div id="hoeapp-wrapper" class="hoe-hide-lpanel" hoe-device-type="desktop">
         <header id="hoe-header" hoe-lpanel-effect="shrink">
             <div class="hoe-left-header">
-                @*<a href="/" style="float:left; margin-left: 10%;"> <span style="font-family: 'Gloria Hallelujah', cursive;font-size: 180%;">Rhino</span> <img src="@Url.Content("~/Images/RhinoFaceTransparent.png")" /> </a>*@
+                <a href="/" style="float:left; margin-left: 10%;"> <span style="font-family: 'Gloria Hallelujah', cursive;font-size: 180%;">Rhino</span> <img src="@Url.Content("~/Images/RhinoFaceTransparent.png")" /> </a>
                 <span class="hoe-sidebar-toggle"><a href="#"></a></span>
             </div>
             <div class="hoe-right-header" hoe-position-type="relative">
@@ -702,12 +702,12 @@
                                                     <span class="selected"></span>
                                                 </a>
                                             </li>
-                                            <li>
+                                            @*<li>
                                                 <a href="@Url.Action("Index", "Adicionales", new { Area = "Sueldos" })">
                                                     <span class="menu-text">Adicionales</span>
                                                     <span class="selected"></span>
                                                 </a>
-                                            </li>
+                                            </li>*@
                                         </ul>
                                     </li>
                                     <li>

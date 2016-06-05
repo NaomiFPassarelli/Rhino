@@ -56,6 +56,10 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             List<SelectListItem> ObrasSociales = this.commonConfigService.GetItemsByCombo(ComboType.ObraSocial).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
             ObrasSociales.Insert(0, (new SelectListItem() { Value = "0", Text = "Seleccione una obra social" }));
             ViewBag.ObrasSociales = ObrasSociales;
+
+            List<SelectListItem> BancosDepositos = this.commonConfigService.GetItemsByCombo(ComboType.BancoDeposito).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
+            BancosDepositos.Insert(0, (new SelectListItem() { Value = "0", Text = "Seleccione un Banco de deposito" }));
+            ViewBag.BancosDepositos = BancosDepositos;
             
             List<SelectListItem> EstadosCivil = this.commonConfigService.GetItemsByCombo(ComboType.EstadoCivil).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
             EstadosCivil.Insert(0, (new SelectListItem() { Value = "0", Text = "Seleccione un estado civil" }));
@@ -100,6 +104,10 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
                     if (Empleado.ObraSocial.Id == 0)
                     {
                         Empleado.ObraSocial = null;
+                    }
+                    if (Empleado.BancoDeposito.Id == 0)
+                    {
+                        Empleado.BancoDeposito = null;
                     }
                     if (Empleado.Sexo.Id == 0)
                     {
@@ -180,6 +188,10 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             ObrasSociales.Insert(0, (new SelectListItem() { Value = "0", Text = "Seleccione una obra social" }));
             ViewBag.ObrasSociales = ObrasSociales;
 
+            List<SelectListItem> BancosDepositos = this.commonConfigService.GetItemsByCombo(ComboType.BancoDeposito).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
+            BancosDepositos.Insert(0, (new SelectListItem() { Value = "0", Text = "Seleccione un banco de deposito" }));
+            ViewBag.BancosDepositos = BancosDepositos;
+
             List<SelectListItem> EstadosCivil = this.commonConfigService.GetItemsByCombo(ComboType.EstadoCivil).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
             EstadosCivil.Insert(0, (new SelectListItem() { Value = "0", Text = "Seleccione un estado civil" }));
             ViewBag.EstadosCivil = EstadosCivil;
@@ -193,6 +205,7 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             ViewBag.Tareas = Tareas;
 
             ViewBag.FechaNacimiento = Empleado.FechaNacimiento;
+            ViewBag.FechaAntiguedadReconocida = Empleado.FechaAntiguedadReconocida;
             return View(Empleado);
         }
 
@@ -225,6 +238,10 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
                     if (Empleado.ObraSocial.Id == 0)
                     {
                         Empleado.ObraSocial = null;
+                    }
+                    if (Empleado.BancoDeposito.Id == 0)
+                    {
+                        Empleado.BancoDeposito = null;
                     }
                     if (Empleado.Sexo.Id == 0)
                     {

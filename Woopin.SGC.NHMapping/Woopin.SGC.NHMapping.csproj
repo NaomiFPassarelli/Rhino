@@ -79,6 +79,7 @@
     <Compile Include="Reporting\GrupoEgresoMap.cs" />
     <Compile Include="Reporting\GrupoIngresoMap.cs" />
     <Compile Include="Sueldos\AdicionalAdicionalesMap.cs" />
+    <Compile Include="Sueldos\AdicionalReciboMap.cs" />
     <Compile Include="Sueldos\AdicionalMap.cs" />
     <Compile Include="Sueldos\ReciboMap.cs" />
     <Compile Include="Sueldos\EmpleadoMap.cs" />

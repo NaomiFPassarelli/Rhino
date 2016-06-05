@@ -27,8 +27,9 @@ namespace Woopin.SGC.Repositories.Sueldos
         public IList<Empleado> GetAllByFilter(SelectComboRequest req)
         {
             return this.GetSessionFactory().GetSession().QueryOver<Empleado>()
-                                                        .Where((Restrictions.On<Empleado>(x => x.Nombre).IsLike('%' + req.where + '%')))
-                                                        .Where((Restrictions.On<Empleado>(x => x.Apellido).IsLike('%' + req.where + '%')))
+                                                        .Where((Restrictions.On<Empleado>(x => x.Nombre).IsLike('%' + req.where + '%')) ||
+                                                        (Restrictions.On<Empleado>(x => x.Apellido).IsLike('%' + req.where + '%')) ||
+                                                        (Restrictions.On<Empleado>(x => x.CUIT).IsLike('%' + req.where + '%')))
                                                         .And(Expression.Eq("Activo", true))
                                                         .GetFilterBySecurity()
                                                         .List();
@@ -61,6 +62,18 @@ namespace Woopin.SGC.Repositories.Sueldos
             if (e != null)
                 return true;
             return false;
+        }
+
+        public Empleado GetCompleto(int IdEmpleado)
+        {
+            Empleado e = null;
+            e = this.GetSessionFactory().GetSession().QueryOver<Empleado>()
+                    .Where(x => x.Activo && (x.Id == IdEmpleado)).GetFilterBySecurity()
+                    .Fetch(x => x.Sindicato).Eager
+                    .Fetch(x => x.ObraSocial).Eager
+                    .Fetch(x => x.BancoDeposito).Eager
+                    .SingleOrDefault();
+            return e;
         }
 
     }

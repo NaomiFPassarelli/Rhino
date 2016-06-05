@@ -29,12 +29,14 @@ namespace Woopin.SGC.NHMapping.Sueldos
             this.Map(c => c.SueldoBrutoMensual).Nullable().Not.LazyLoad();
             this.Map(c => c.SueldoBrutoHora).Nullable().Not.LazyLoad();
             this.Map(c => c.FechaIngreso).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.FechaAntiguedadReconocida).Nullable().Not.LazyLoad();
             this.References(c => c.Nacionalidad).Nullable().Not.LazyLoad();
             this.Map(c => c.FechaNacimiento).Nullable().Not.LazyLoad();
             this.References(c => c.Categoria).Nullable().Not.LazyLoad();
             this.References(c => c.EstadoCivil).Nullable().Not.LazyLoad();
             this.References(c => c.Sindicato).Nullable().Not.LazyLoad();
             this.References(c => c.ObraSocial).Nullable().Not.LazyLoad();
+            this.References(c => c.BancoDeposito).Nullable().Not.LazyLoad();
             this.References(c => c.Tarea).Nullable().Not.LazyLoad();
             this.References(c => c.Sexo).Nullable().Not.LazyLoad();
             this.Map(c => c.DNI).Not.Nullable().Not.LazyLoad();

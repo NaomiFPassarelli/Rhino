@@ -162,6 +162,30 @@ $.CompletarFiltroDates = function (start, end) {
     }
 }
 
+$.CantidadDeDiasEntreFechas = function (start, end) {
+    //TODO validar que las fechas no esten vacias, sino completarlas, y validar que el start sea menor que end
+
+    dayStart = (start.split("/"))[0];
+    monthStart = (start.split("/"))[1];
+    yearStart = (start.split("/"))[2];
+    var dateStart = new Date(yearStart, monthStart - 1, dayStart);
+
+    dayEnd = (end.split("/"))[0];
+    monthEnd = (end.split("/"))[1];
+    yearEnd = (end.split("/"))[2];
+    var dateEnd = new Date(yearEnd, monthEnd - 1, dayEnd);
+
+    //TODO HAY UNA FUNCION QUE HACE LA DIFERENCIA ENTRE FECHAS REPLICAR EN CALCULARANTIGUEDAD!
+
+    // Calculate days between dates
+    var millisecondsPerDay = 86400 * 1000; // Day in milliseconds
+    dateStart.setHours(0, 0, 0, 1);  // Start just after midnight
+    dateEnd.setHours(23, 59, 59, 999);  // End just before midnight
+    var diff = dateEnd - dateStart;  // Milliseconds between datetime objects   
+    var days = Math.ceil(diff / millisecondsPerDay);
+
+    return days;
+},
 
 $.CalcularDiasLaborales = function (start, end) {
     //TODO validar que las fechas no esten vacias, sino completarlas, y validar que el start sea menor que end
