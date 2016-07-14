@@ -12,6 +12,7 @@ using Woopin.SGC.Model.Sueldos;
 using Woopin.SGC.Model.Ventas;
 using Woopin.SGC.Services;
 using Woopin.SGC.Web.Controllers;
+using Woopin.SGC.Web.PDF;
 using Woopin.SGC.Web.Scheduler;
 
 namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
@@ -19,11 +20,14 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
     public class RecibosController : BaseController
     {
         private readonly ISueldosService SueldosService;
+        private readonly ISystemService SystemService;
         private readonly ICommonConfigService commonConfigService;
 
-        public RecibosController(ISueldosService SueldosService, ICommonConfigService commonConfigService)
+        public RecibosController(ISueldosService SueldosService, ICommonConfigService commonConfigService, 
+            ISystemService SystemService)
         {
-            this.SueldosService = SueldosService; 
+            this.SueldosService = SueldosService;
+            this.SystemService = SystemService;
             this.commonConfigService = commonConfigService;
         }
 
@@ -49,15 +53,16 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             try
             {
                 ClearNotValidatedProperties(Recibo);
-                if (ModelState.IsValid)
-                {
+                
+                //if (ModelState.IsValid)
+                //{
                     this.SueldosService.AddRecibo(Recibo);
                     return Json(new { Success = true, Recibo = Recibo });
-                }
-                else
-                {
-                    return Json(new { Success = false, ErrorMessage = "Hay errores en el formulario de creación de Recibo", Errors = ModelState.Values.SelectMany(v => v.Errors) });
-                }
+                //}
+                //else
+                //{
+                //    return Json(new { Success = false, ErrorMessage = "Hay errores en el formulario de creación de Recibo", Errors = ModelState.Values.SelectMany(v => v.Errors) });
+                //}
             }
             catch
             {
@@ -122,6 +127,19 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         //    }
         //}
 
+
+        public ActionResult Detalle(int Id, bool? opensDialog)
+        {
+            Recibo r = this.SueldosService.GetReciboCompleto(Id);
+            if (r == null)
+            {
+                return RedirectToAction("NotFound", "Error", new { Area = "" });
+            }
+            ViewBag.OpensDialog = opensDialog.HasValue ? opensDialog.Value : false;
+            return View(r);
+        }
+
+
         [HttpPost]
         public JsonResult GetAll(PagingRequest paging)
         {
@@ -133,7 +151,19 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             {
                 PagingResponse<Recibo> resp = new PagingResponse<Recibo>();
                 resp.Page = paging.page;
-                resp.Records = this.SueldosService.GetAllRecibos();
+                resp.Records = this.SueldosService.GetAllRecibos().Select(x => new Recibo()
+                {
+                    Id = x.Id,
+                    Total = x.Total,
+                    TotalDescuento = x.TotalDescuento,
+                    TotalNoRemunerativo = x.TotalNoRemunerativo,
+                    TotalRemunerativo = x.TotalRemunerativo,
+                    FechaCreacion = x.FechaCreacion,
+                    NumeroReferencia = x.NumeroReferencia,
+                    Periodo = x.Periodo,
+                    Empleado = x.Empleado
+                }).ToList();
+                
                 resp.TotalPages = Convert.ToInt32(Math.Ceiling((double)resp.Records.Count / paging.rows));
                 resp.TotalRecords = resp.Records.Count;
                 return Json(resp);
@@ -159,6 +189,54 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             ViewBag.SueldoMes = SueldoMes;
             ViewBag.SueldoHora = SueldoHora;
             return View();
+        }
+
+        [HttpPost]
+        public JsonResult GetReciboAnterior(int IdEmpleado)
+        {
+            Recibo rAnterior = this.SueldosService.GetReciboAnterior(IdEmpleado);
+            return Json(new { Data = rAnterior, Success = true });
+        }
+
+        /* Funcion para impresion de Recibo. */
+        public void DescargarPDF(int Id)
+        {
+            string outpath = this.ArmarComprobantePDF(Id);
+            Response.Clear();
+            Response.AddHeader("content-disposition", "attachment; filename=\"" + Path.GetFileName(outpath) + "\"");
+            Response.WriteFile(outpath);
+            Response.ContentType = "";
+            Response.End();
+        }
+
+        private string ArmarComprobantePDF(int IdRecibo)
+        {
+            Recibo r = this.SueldosService.GetReciboCompleto(IdRecibo);
+            ViewBag.BaseURL = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "");
+            Organizacion o = this.SystemService.GetOrganizacion(r.Organizacion.Id);
+            if (o.ImagePath != null)
+            {
+                string logoorgpath = "/" + o.ImagePath;
+                ViewBag.BaseLogoOrg = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, logoorgpath);
+            }
+
+            string html = RenderViewToString("VersionImprimible", r);
+            string filename = r.NumeroReferencia + ".pdf";
+            string OutputPath = HtmlToPDF.Generate(html, filename, "Recibos/" + o.Id.ToString());
+            return OutputPath;
+        }
+
+        public ActionResult VersionImprimible(int Id, bool? opensDialog)
+        {
+            Recibo r = this.SueldosService.GetReciboCompleto(Id);
+            ViewBag.OpensDialog = opensDialog.HasValue ? opensDialog.Value : false;
+            return View(r);
+        }
+
+        public JsonResult MejorRemuneracion(int IdEmpleado)
+        {
+            decimal mejorRemuneracion = this.SueldosService.GetMejorRemuneracion(IdEmpleado);
+            return Json(new { Data = mejorRemuneracion, Success = true });
         }
 
     }

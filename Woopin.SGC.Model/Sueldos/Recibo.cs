@@ -13,7 +13,7 @@ namespace Woopin.SGC.Model.Sueldos
     public class Recibo : ISecuredEntity
     {
         public virtual int Id { get; set; }
-
+        [DoNotValidateOnlyId]
         public virtual Empleado Empleado { get; set; }
         //[DoNotValidate]
         //del empleado porque si se llega a modificar el sind, obra social o bco deposito del mismo
@@ -41,21 +41,53 @@ namespace Woopin.SGC.Model.Sueldos
         public virtual DateTime FechaInicio { get; set; }
         [DisplayName("Fecha Fin")]
         public virtual DateTime FechaFin { get; set; }
-        public virtual DateTime Periodo { get; set; }
+        [Required(ErrorMessage = "Es Necesario un Periodo")]
+        public virtual string Periodo { get; set; }
+        [DisplayName("Fecha de Pago")]
+        [Required(ErrorMessage = "Es Necesario una Fecha de Pago")]
+        public virtual DateTime FechaPago { get; set; } //en la que se va a pagar este recibo
+
+        [DisplayName("Periodo Anterior")]
+        [Required(ErrorMessage = "Es Necesario un Periodo Anterior")] 
+        //TODO si es anterior a la fecha de comienzo de actividad de la organizacion que muestre null
+        //pero poner como required porque solo el primer recibo de cada empleado va a ser null
+        public virtual string PeriodoAnterior { get; set; }
+        [DisplayName("Fecha de Pago Anterior")]
+        [Required(ErrorMessage = "Es Necesario una Fecha de Pago Anterior")]
+        //TODO si es anterior a la fecha de comienzo de actividad de la organizacion que muestre null
+        //pero poner como required porque solo el primer recibo de cada empleado va a ser null
+        public virtual DateTime FechaPagoAnterior { get; set; } //en la que se pago el recibo anterior
+
         public virtual string Observacion { get; set; }
         [DisplayName("Numero Referencia")]
         public virtual int NumeroReferencia { get; set; }
-        public virtual decimal DomicilioEmpresa { get; set; }
+        public virtual string DomicilioEmpresa { get; set; }
 
         //Estado - creado, pagado, habria que ver si se puede anular
         //Asiento
 
         [DisplayName("Tipo de Recibo")]
-        public virtual ComboItem TipoRecibo { get; set; }
+        public virtual TypeRecibo TipoRecibo { get; set; }
+        [DisplayName("Dias Trabajados")]
+        public virtual int DiasTrabajados { get; set; } 
+        //El resto lo puede sacar de los adicionales
+        [DisplayName("Remuneración Básica")]
+        [Required(ErrorMessage = "Es Necesario una Remuneración Básica")]
+        public virtual decimal RemuneracionBasica { get; set; }
 
         public Recibo()
         {
-
+            TipoRecibo = TypeRecibo.Sueldo;
+            FechaCreacion = DateTime.Now;
         }
     }
+    public enum TypeRecibo
+    {
+        Sueldo = 0,
+        SAC = 1,
+        Despido = 2,
+        Renuncia = 3,
+        Vacaciones = 4
+    }
+
 }

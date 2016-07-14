@@ -44,5 +44,3 @@ C:\Woopin\App_Rhino\Woopin.SGC.Common.App\bin\Debug\NHibernate.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Common.App\obj\DESA\Woopin.SGC.CommonApp.csprojResolveAssemblyReference.cache
 C:\Woopin\App_Rhino\Woopin.SGC.Common.App\obj\DESA\Woopin.SGC.Common.App.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Common.App\obj\DESA\Woopin.SGC.Common.App.pdb
-C:\Woopin\App_Rhino\Woopin.SGC.Common.App\bin\Debug\Woopin.SGC.Common.App.pssym
-C:\Woopin\App_Rhino\Woopin.SGC.Common.App\obj\DESA\Woopin.SGC.Common.App.dll.postsharp

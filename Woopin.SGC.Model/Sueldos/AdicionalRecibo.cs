@@ -15,15 +15,18 @@ namespace Woopin.SGC.Model.Sueldos
         public virtual int Id { get; set; }
 
         [RegularExpression("^[0-9]+[0-9]*(.[0-9]{0,2})?$", ErrorMessage = "El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales")]
-        public virtual decimal? Total { get; set; }
+        public virtual decimal Total { get; set; }
         public virtual Organizacion Organizacion { get; set; }
+
+        [DoNotValidate]
         public virtual Adicional Adicional { get; set; }
+        
+        [DoNotValidateOnlyId]
         public virtual Recibo Recibo { get; set; }
         public virtual decimal? Unidades { get; set; }
         public AdicionalRecibo()
         {
         }
-
         
     }
     

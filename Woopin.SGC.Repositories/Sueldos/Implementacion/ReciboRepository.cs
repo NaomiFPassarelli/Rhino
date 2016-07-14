@@ -31,6 +31,26 @@ namespace Woopin.SGC.Repositories.Sueldos
                                                         .GetFilterBySecurity()
                                                         .List();
         }
+        public Recibo GetCompleto(int Id)
+        {
+            Recibo recibo = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
+                                                        .Where(x => x.Id == Id)
+                                                        .GetFilterBySecurity()
+                                                        .Fetch(x => x.AdicionalesRecibo).Eager
+                                                        .Fetch(x => x.Empleado).Eager
+                                                        .Fetch(x => x.Organizacion).Eager
+                                                        .SingleOrDefault();
+
+            if (recibo == null) return null;
+
+            foreach (var adicional in recibo.AdicionalesRecibo)
+            {
+                adicional.Recibo = null;
+            }
+
+            return recibo;
+        }
+        
 
         public IList<Recibo> GetAllByFilter(PagingRequest req)
         {
@@ -52,7 +72,35 @@ namespace Woopin.SGC.Repositories.Sueldos
 
             return ultimoRecibo != null ? ultimoRecibo.Id + 1 : 1;
         }
-        
+
+        public Recibo GetReciboAnterior(int IdEmpleado)
+        {
+            return this.GetSessionFactory().GetSession().QueryOver<Recibo>()
+                                                                        .GetFilterBySecurity()
+                                                                       .OrderBy(x => x.Id).Desc
+                                                                       .Take(1)
+                                                                       .SingleOrDefault();
+        }
+
+        public decimal GetMejorRemuneracion(int IdEmpleado)
+        { 
+            DateTime today = DateTime.Now;
+            DateTime mitadAño = new DateTime(today.Year, 6, 30);
+            Recibo reciboMejorRemuneracion = null;
+            DateTime primerDia = new DateTime(today.Year, 1, 1);
+            reciboMejorRemuneracion = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
+                                                                                  .GetFilterBySecurity()
+                                                                                  .Where(c => c.Empleado.Id == IdEmpleado && (c.FechaInicio >= primerDia && c.FechaInicio <= mitadAño))
+                                                                                  .OrderBy(c => c.TotalRemunerativo).Desc
+                                                                                  .Take(1)
+                                                                                  .SingleOrDefault();
+
+            if (reciboMejorRemuneracion != null)
+            {
+                return reciboMejorRemuneracion.TotalRemunerativo;
+            }
+            return 0;
+        }
 
     }
 }

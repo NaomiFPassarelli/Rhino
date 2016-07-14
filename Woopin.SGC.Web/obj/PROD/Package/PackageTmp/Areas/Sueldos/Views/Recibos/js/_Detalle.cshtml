@@ -1,0 +1,101 @@
+﻿@using Woopin.SGC.Common.Json;
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+@Scripts.Render("~/bundles/select2")
+@Styles.Render("~/Scripts/select2/select2.css")
+@Styles.Render("~/Content/themes/base/css")
+@Scripts.Render("~/bundles/jqgrid")
+@Scripts.Render("~/Scripts/jquery.mask.min.js")
+
+<script type="text/javascript">
+    var ReciboDetalleId = 0;
+    var DetalleRecibo = {
+        init: function () {
+            $('#GridDetallesRecibo').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', 'Descripcion', 'Porcentaje', 'Unidades', 'Valor', 'Remunerativo', 'No Remunerativo', 'Descuento', 'Tipo', 'Suma'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Adicional.Id', index: 'Adicional_Id', width: 0, sortable: false, hidden: true },
+                    { name: 'Adicional.Descripcion', index: 'Adicional_Descripcion', width: 25, align: "center", sortable: true },
+                    { name: 'Adicional.Porcentaje', index: 'Porcentaje', width: 15, align: "center", sortable: true },
+                    { name: 'Unidades', index: 'Unidades', width: 15, align: "center", sortable: true, editable: true, edittype: 'text' },
+                    { name: 'Total', index: 'Valor', width: 0, sortable: false, hidden: true },
+                    { name: 'Remunerativo', index: 'Remunerativo', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
+                    { name: 'NoRemunerativo', index: 'NoRemunerativo', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
+                    { name: 'Descuento', index: 'Descuento', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
+                    { name: 'Adicional.TipoLiquidacion', index: 'TipoLiquidacion', width: 0, sortable: false, hidden: true },
+                    { name: 'Adicional.Suma', index: 'Suma', width: 0, sortable: false, hidden: true }
+                ],
+                sortname: 'Descripcion',
+                sortorder: "asc",
+                data: @Html.Raw(JsonHelper.ToJson(Model.AdicionalesRecibo)),
+                pager: '#GridDetallesRecibo_pager'
+            });
+            $('#GridDetallesRecibo').trigger("reloadGrid");
+            $("#GridDetallesRecibo").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+
+            $(document).on('click', '.BtnEliminarCompleto', DetalleRecibo.EliminarComprobanteCompleto);
+            $(document).on('click', '.BtnEliminar', DetalleRecibo.AnularComprobante);
+        },
+
+        AnularComprobante: function () {
+            var Id = $('.BtnEliminar').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea anular el Recibo? (No podrá utilizar el mismo nro de Recibo, para eso debe Eliminar)",
+                                    function () {  DetalleRecibo.EliminarComprobante(Id) });
+        },
+
+        EliminarComprobanteCompleto: function () {
+            var Id = $('.BtnEliminarCompleto').data("id");
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el Recibo? (Se habilitará el nro de Recibo eliminado)",
+                                    function () {  DetalleRecibo.EliminarComprobantePorCompleto(Id) });
+            window.location = '@Url.Action("Index")';
+        },
+
+        EliminarComprobante: function (Id) {
+            var params = {
+                url: '@Url.Action("AnularComprobante")',
+                data: { IdRecibo: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                                                    @:window.location.reload();
+                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        EliminarComprobantePorCompleto: function (Id) {
+            var params = {
+                url: '@Url.Action("EliminarComprobante")',
+                data: { IdRecibo: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        $.WarningDialog(ret.Data, "success");
+                        @if (!ViewBag.OpensDialog)
+                        {
+                            @:$.ShowLoader();
+                            @:window.location.reload();
+                        }
+                    }
+                    else {
+                        $.WarningDialog(ret.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        }
+    }
+    $(document).ready(function () {
+        DetalleRecibo.init();
+    });
+</script>

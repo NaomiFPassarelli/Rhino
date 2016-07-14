@@ -15,12 +15,15 @@ namespace Woopin.SGC.Services
         void AddRecibo(Recibo Recibo);
         void AddReciboNT(Recibo Recibo);
         Recibo GetRecibo(int Id);
+        Recibo GetReciboCompleto(int Id);
         //void UpdateRecibo(Recibo Recibo);
         IList<Recibo> GetAllRecibos();
         //void DeleteRecibos(List<int> Ids);
         SelectCombo GetAllRecibosByFilterCombo(SelectComboRequest req);
         SelectCombo GetReciboCombos();
         int GetProximoNumeroReferencia();
+        Recibo GetReciboAnterior(int IdEmpleado);
+        decimal GetMejorRemuneracion(int IdEmpleado);
         #endregion
     }
 }

@@ -13,7 +13,7 @@ namespace Woopin.SGC.NHMapping.Sueldos
         public AdicionalReciboMap()
         {
             this.Id(c => c.Id).GeneratedBy.Identity();
-            this.Map(c => c.Total).Nullable().Not.LazyLoad();
+            this.Map(c => c.Total).Not.Nullable().Not.LazyLoad();
             this.References(c => c.Organizacion).Not.Nullable().Not.LazyLoad();
             this.References(c => c.Adicional).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.Unidades).Nullable().Not.LazyLoad();

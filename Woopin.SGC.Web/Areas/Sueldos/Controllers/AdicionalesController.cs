@@ -111,7 +111,7 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
 
         public ActionResult Editar(int Id)
         {
-            Adicional Adicional = this.SueldosConfigService.GetAdicional(Id);
+            Adicional Adicional = this.SueldosConfigService.GetAdicional(Id, 0);
             ViewBag.TypeLiquidaciones = Enum.GetNames(typeof(TypeLiquidacion)).Select(x => new SelectListItem() { Text = x, Value = (Enum.Parse(typeof(TypeLiquidacion), x)).ToString(), Selected = (x == Adicional.TipoLiquidacion.ToString() ? true : false)  }).ToList();
             return View(Adicional);
         }
@@ -158,15 +158,15 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetAdicionales(SelectComboRequest req)
+        public JsonResult GetAdicionales(SelectComboRequest req, int IdSindicato)
         {
-            return Json(new { Data = this.SueldosConfigService.GetAllAdicionalesByFilterCombo(req), Success = true });
+            return Json(new { Data = this.SueldosConfigService.GetAllAdicionalesByFilterCombo(req, IdSindicato), Success = true });
         }
 
         [HttpPost]
-        public JsonResult GetAdicional(int idAdicional)
+        public JsonResult GetAdicional(int idAdicional, int IdSindicato)
         {
-            Adicional a = this.SueldosConfigService.GetAdicional(idAdicional);
+            Adicional a = this.SueldosConfigService.GetAdicional(idAdicional, IdSindicato);
             //TODO buscar sobre los que va
             //IList<AdicionalAdicionales> AAs = this.SueldosConfigService.GetAdicionalAdicionalesByAdicional(idAdicional);
             IEnumerable<Adicional> AAs = this.SueldosConfigService.GetAdicionalAdicionalesByAdicional(idAdicional).Select(x => x.AdicionalSobre);

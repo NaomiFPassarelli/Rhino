@@ -40,6 +40,7 @@ namespace Woopin.SGC.NHMapping.Sueldos
             this.References(c => c.Tarea).Nullable().Not.LazyLoad();
             this.References(c => c.Sexo).Nullable().Not.LazyLoad();
             this.Map(c => c.DNI).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.BeneficiarioObraSocial).Nullable().Not.LazyLoad();
         }
     }
 }

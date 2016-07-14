@@ -71,41 +71,15 @@ namespace Woopin.SGC.Web.Scheduler
                 if (currentRow != null && Cuit != null && Cuit.Length > 0)
                 {
                     // Creates the comment cell
-                    ICell statusCell = currentRow.CreateCell(26);
-                    sheet.AutoSizeColumn(26);
+                    ICell statusCell = currentRow.CreateCell(27);
+                    sheet.AutoSizeColumn(27);
                     statusCell.CellStyle.WrapText = true;
 
                     try
                     {
-                        //Empleado c = new Empleado()
-                        //{
-                        //    DNI = currentRow.GetCell(1).StringCellValue,
-                        //    CUIT = Cuit,
-                        //    Nombre = currentRow.GetCell(5).StringCellValue,
-                        //    Apellido = currentRow.GetCell(6).StringCellValue,
-                        //    Email = currentRow.GetCell(7).StringCellValue,
-                        //    Localizacion = new Localizacion() { Nombre = currentRow.GetCell(8).StringCellValue },
-                        //    Direccion = currentRow.GetCell(9).StringCellValue,
-                        //    Numero = currentRow.GetCell(10).StringCellValue,
-                        //    Departamento = currentRow.GetCell(11).StringCellValue,
-                        //    Piso = currentRow.GetCell(12).StringCellValue,
-                        //    CodigoPostal = currentRow.GetCell(13).StringCellValue,
-                        //    Nacionalidad = new ComboItem() { Data = currentRow.GetCell(14).StringCellValue },
-                        //    EstadoCivil = new ComboItem() { Data = currentRow.GetCell(15).StringCellValue },
-                        //    Sexo = new ComboItem() { Data = currentRow.GetCell(16).StringCellValue },
-                        //    Telefono = currentRow.GetCell(17).StringCellValue,
-                        //    SueldoBrutoMensual = Convert.ToDecimal(currentRow.GetCell(18).StringCellValue),
-                        //    SueldoBrutoHora = Convert.ToDecimal(currentRow.GetCell(19).StringCellValue),
-                        //    FechaIngreso = Convert.ToDateTime(currentRow.GetCell(20).StringCellValue),
-                        //    FechaNacimiento = Convert.ToDateTime(currentRow.GetCell(21).StringCellValue),
-                        //    Categoria = new ComboItem() { Data = currentRow.GetCell(22).StringCellValue },
-                        //    Tarea = new ComboItem() { Data = currentRow.GetCell(23).StringCellValue }
-                        //};
-
                         Empleado c = new Empleado(){};
-
                         int[] obligatorios = new int[] {1,2,3,17};
-                        int columnsExcel = 25;
+                        int columnsExcel = 26;
                         for (int u = 1; u < columnsExcel; u++)
                         {
                             if (currentRow.GetCell(u) != null)
@@ -183,7 +157,9 @@ namespace Woopin.SGC.Web.Scheduler
                                     case 24:
                                         c.FechaAntiguedadReconocida = Convert.ToDateTime(currentRow.GetCell(24).DateCellValue);
                                         break;
-                                    
+                                    case 25:
+                                        c.BeneficiarioObraSocial = Convert.ToDecimal(currentRow.GetCell(25).NumericCellValue);
+                                        break;
                                 }
                             }
                             else if (obligatorios.Contains(u)) //Campos obligatorios
@@ -254,6 +230,9 @@ namespace Woopin.SGC.Web.Scheduler
                                     case 24:
                                         c.FechaAntiguedadReconocida = null;
                                         break;
+                                    case 25:
+                                        c.BeneficiarioObraSocial = null;
+                                        break;
                                 }
                             }
                         }
@@ -265,67 +244,6 @@ namespace Woopin.SGC.Web.Scheduler
                         c.Apellido = currentRow.GetCell(3).StringCellValue;
                         c.FechaIngreso = Convert.ToDateTime(currentRow.GetCell(17).DateCellValue);
                         
-
-                        //Campos no obligatorios
-                        //c.Departamento = ((currentRow.GetCell(8) != null) && currentRow.GetCell(8).CellType == CellType.String) ? currentRow.GetCell(8).StringCellValue : currentRow.GetCell(8).NumericCellValue.ToString();
-                        //c.Piso = ((currentRow.GetCell(9) != null) && currentRow.GetCell(9).CellType == CellType.String) ? currentRow.GetCell(9).StringCellValue : currentRow.GetCell(9).NumericCellValue.ToString();
-                        //c.Telefono = ((currentRow.GetCell(14) != null) && currentRow.GetCell(14).CellType == CellType.String) ? currentRow.GetCell(14).StringCellValue : currentRow.GetCell(14).NumericCellValue.ToString();
-                        //c.SueldoBrutoMensual =  (currentRow.GetCell(15) != null) ? Convert.ToDecimal(currentRow.GetCell(15).StringCellValue);
-                        //c.SueldoBrutoHora = (currentRow.GetCell(15) != null) ? Convert.ToDecimal(currentRow.GetCell(16).StringCellValue);
-                        //c.EstadoCivil = new ComboItem() { Data = currentRow.GetCell(12).StringCellValue };
-                        //c.Sexo = new ComboItem() { Data = currentRow.GetCell(13).StringCellValue };
-                        //c.Categoria = new ComboItem() { Data = currentRow.GetCell(19).StringCellValue };
-                        //c.Tarea = new ComboItem() { Data = currentRow.GetCell(20).StringCellValue };
-
-                        //c.Email = currentRow.GetCell(4).StringCellValue;
-                        //c.Localizacion = new Localizacion() { Nombre = currentRow.GetCell(5).StringCellValue };
-                        //c.Direccion = currentRow.GetCell(6).StringCellValue;
-                        //c.Numero = (currentRow.GetCell(7).CellType == CellType.String) ? currentRow.GetCell(10).StringCellValue : currentRow.GetCell(10).NumericCellValue.ToString();
-                        //c.CodigoPostal = (currentRow.GetCell(10).CellType == CellType.String) ? currentRow.GetCell(10).StringCellValue : currentRow.GetCell(10).NumericCellValue.ToString();
-                        //c.Nacionalidad = new ComboItem() { Data = currentRow.GetCell(11).StringCellValue };
-                        //c.FechaNacimiento = Convert.ToDateTime(currentRow.GetCell(18).DateCellValue);
-
-                        
-                        // Force celltypes
-                        //for (int u = 5; u < 24; u++)
-                        //{
-                        //    if (currentRow.GetCell(u) != null)
-                        //    {
-                                
-                        //        CellType type = currentRow.GetCell(u).CellType;
-                        //        if(type == CellType.String)
-                        //        {
-                        //            currentRow.GetCell(u).SetCellType(CellType.String);
-                        //        }
-                        //        else if (type == CellType.Numeric)
-                        //        {
-                        //            currentRow.GetCell(u).SetCellType(CellType.Numeric);
-                        //        }
-                                
-                        //    }
-                        //}
-                        //    currentRow.GetCell(5).SetCellType(CellType.String);
-                        //currentRow.GetCell(6).SetCellType(CellType.String);
-                        //currentRow.GetCell(7).SetCellType(CellType.String);
-                        //currentRow.GetCell(8).SetCellType(CellType.String);
-                        //currentRow.GetCell(9).SetCellType(CellType.String);
-                        //currentRow.GetCell(10).SetCellType(CellType.String);
-                        //currentRow.GetCell(11).SetCellType(CellType.String);
-                        //currentRow.GetCell(12).SetCellType(CellType.String);
-                        //currentRow.GetCell(13).SetCellType(CellType.String);
-                        //currentRow.GetCell(14).SetCellType(CellType.String);
-                        //currentRow.GetCell(15).SetCellType(CellType.String);
-                        //currentRow.GetCell(16).SetCellType(CellType.String);
-                        //currentRow.GetCell(17).SetCellType(CellType.String);
-                        //currentRow.GetCell(18).SetCellType(CellType.String);
-                        //currentRow.GetCell(19).SetCellType(CellType.String);
-                        //currentRow.GetCell(20).SetCellType(CellType.String);
-                        //currentRow.GetCell(21).SetCellType(CellType.String);
-                        //currentRow.GetCell(22).SetCellType(CellType.String);
-                        //currentRow.GetCell(23).SetCellType(CellType.String);
-
-                        
-
                         // Model validations.
                         List<ValidationResult> validations;
                         bool isModelValid = new ModelValidatorHelper<Empleado>(c).Validate(out validations);

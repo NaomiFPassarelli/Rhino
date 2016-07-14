@@ -53,7 +53,7 @@
 @Scripts.Render("~/bundles/jqueryui")
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#BtnSubmitSueldo').on("click", function () {
+        $(document).off("click", "#BtnSubmitSueldo").on("click", "#BtnSubmitSueldo", function () {
             var Mes = true;
             if ($('#Categoria').attr('checked') == "checked") {
                 sueldoBrutoSeleccionado = $('#Categoria').val();
@@ -63,14 +63,16 @@
                 sueldoBrutoSeleccionado = $('#Hora').val();
                 Mes = false;
             }
+
+            $('#RemuneracionBasica').val(sueldoBrutoSeleccionado);
+
             _OpenDialog.dialog('close');
 
             Recibo.AgregarSueldoBruto(Mes);
             EmpleadoAntiguedad = Recibo.CalcularAntiguedad(Recibo.EmpleadoFechaIngreso);
             Recibo.AgregarAntiguedad(EmpleadoAntiguedad);
-
             Recibo.AgregarAdicionalesIniciales();
-
+            
         });
     });
 </script>

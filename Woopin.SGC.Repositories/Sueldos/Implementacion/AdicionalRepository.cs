@@ -24,10 +24,20 @@ namespace Woopin.SGC.Repositories.Sueldos
             return this.GetSessionFactory().GetSession().QueryOver<Adicional>().GetFilterBySecurity().List();
         }
 
-        public IList<Adicional> GetAllByFilter(SelectComboRequest req)
+        public Adicional Get(int IdAdicional, int IdSindicato)
+        {
+
+            return this.GetSessionFactory().GetSession().QueryOver<Adicional>()
+                                                    //.Where(x => x.Id == IdAdicional && (IdSindicato == Convert.ToInt32(x.AdditionalDescription) || IdSindicato == 0))
+                                                    .Where(x => x.Id == IdAdicional && (IdSindicato == 0 || x.AdditionalDescription == null || IdSindicato.ToString() == x.AdditionalDescription))
+                                                    .GetFilterBySecurity().SingleOrDefault();
+        }
+
+        public IList<Adicional> GetAllByFilter(SelectComboRequest req, int IdSindicato)
         {
             return this.GetSessionFactory().GetSession().QueryOver<Adicional>()
                                                         .Where((Restrictions.On<Adicional>(x => x.Descripcion).IsLike('%' + req.where + '%')))
+                                                        .And(x => IdSindicato == 0 || x.AdditionalDescription == null || IdSindicato.ToString() == x.AdditionalDescription)
                                                         .GetFilterBySecurity()
                                                         .List();
         }

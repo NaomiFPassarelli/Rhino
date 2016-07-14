@@ -673,6 +673,8 @@
     <Content Include="Areas\Sueldos\Views\Adicionales\Index.cshtml" />
     <Content Include="Areas\Sueldos\Views\Recibos\SueldoBruto.cshtml" />
     <Content Include="Areas\Sueldos\Views\Adicionales\AdicionalesDefault.cshtml" />
+    <Content Include="Areas\Sueldos\Views\Recibos\js\_Detalle.cshtml" />
+    <Content Include="Areas\Sueldos\Views\Recibos\VersionImprimible.cshtml" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\WoopinSrv.pubxml" />
@@ -958,6 +960,7 @@
     <Folder Include="App_Data\Importaciones\Empleados\" />
     <Folder Include="App_Data\Importaciones\Proveedores\" />
     <Folder Include="App_Data\Organizacion\" />
+    <Folder Include="App_Data\Recibos\" />
     <Folder Include="Areas\AFIP\Models\" />
     <Folder Include="Areas\Compras\Views\Shared\" />
     <Folder Include="Areas\Configuracion\Views\Shared\" />

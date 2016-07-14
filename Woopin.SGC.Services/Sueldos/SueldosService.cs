@@ -51,6 +51,16 @@ namespace Woopin.SGC.Services
             return Recibo;
         }
 
+        public Recibo GetReciboCompleto(int Id)
+        {
+            Recibo Recibo = null;
+            this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+                {
+                    Recibo = this.ReciboRepository.GetCompleto(Id);
+                });
+            return Recibo;
+        }
+
         public IList<Recibo> GetAllRecibos()
         {
             IList<Recibo> Recibos = null;
@@ -71,6 +81,15 @@ namespace Woopin.SGC.Services
         }
         public void AddReciboNT(Recibo Recibo)
         {
+
+            foreach (var adicional in Recibo.AdicionalesRecibo)
+            {
+                adicional.Recibo = Recibo;
+                adicional.Organizacion = Security.GetOrganizacion();
+                //todo calcular totales
+            }
+
+
             this.ReciboRepository.Add(Recibo);
         }
 
@@ -186,13 +205,33 @@ namespace Woopin.SGC.Services
         public int GetProximoNumeroReferencia()
         {
             int ProximoNumeroReferencia = 1;
-            this.ReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
             {
                 ProximoNumeroReferencia = this.ReciboRepository.GetProximoNumeroReferencia();
             });
             return ProximoNumeroReferencia;
         }
 
+        public Recibo GetReciboAnterior(int IdEmpleado)
+        {
+            Recibo ReciboAnterior = null;
+            this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                ReciboAnterior = this.ReciboRepository.GetReciboAnterior(IdEmpleado);
+                ReciboAnterior.AdicionalesRecibo = null;
+            });
+            return ReciboAnterior;
+        }
+
+        public decimal GetMejorRemuneracion(int IdEmpleado)
+        {
+            decimal MejorRemuneracion = 0;
+            this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                MejorRemuneracion = this.ReciboRepository.GetMejorRemuneracion(IdEmpleado);
+            });
+            return MejorRemuneracion;
+        }
 
         #endregion
 

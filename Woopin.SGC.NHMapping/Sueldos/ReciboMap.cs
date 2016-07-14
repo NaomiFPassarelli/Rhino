@@ -29,10 +29,15 @@ namespace Woopin.SGC.NHMapping.Sueldos
             this.Map(c => c.Total).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.Observacion).Nullable().Not.LazyLoad();
             this.Map(c => c.NumeroReferencia).Not.Nullable().Not.LazyLoad();
-            this.References(c => c.TipoRecibo).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.TipoRecibo).Not.Nullable().Not.LazyLoad();
             //this.HasMany(c => c.AdicionalXAdicionales).AsBag().KeyColumn("Recibo_Id").Cascade.AllDeleteOrphan();
             this.HasMany(c => c.AdicionalesRecibo).AsBag().KeyColumn("Recibo_Id").Cascade.AllDeleteOrphan();
             this.Map(c => c.DomicilioEmpresa).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.DiasTrabajados).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.RemuneracionBasica).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.PeriodoAnterior).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.FechaPago).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.FechaPagoAnterior).Not.Nullable().Not.LazyLoad();
         }
     }
 }

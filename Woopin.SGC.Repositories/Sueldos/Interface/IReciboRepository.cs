@@ -13,6 +13,9 @@ namespace Woopin.SGC.Repositories.Sueldos
     {
         IList<Recibo> GetAllByFilter(SelectComboRequest req);
         IList<Recibo> GetAllByFilter(PagingRequest req);
+        Recibo GetCompleto(int Id);
         int GetProximoNumeroReferencia();
+        Recibo GetReciboAnterior(int IdEmpleado);
+        decimal GetMejorRemuneracion(int IdEmpleado);
     }
 }

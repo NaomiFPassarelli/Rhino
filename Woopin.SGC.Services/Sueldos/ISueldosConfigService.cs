@@ -30,12 +30,11 @@ namespace Woopin.SGC.Services
         #region Adicional
         void AddAdicional(Adicional Adicional);
         void AddAdicionalNT(Adicional Adicional);
-        Adicional GetAdicional(int Id);
-        Adicional GetAdicionalNT(int Id);
+        Adicional GetAdicional(int Id, int IdSindicato);
         void UpdateAdicional(Adicional Adicional, IList<AdicionalAdicionales> Adicionales = null);
         IList<Adicional> GetAllAdicionales();
         void DeleteAdicionales(List<int> Ids);
-        SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req);
+        SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req, int IdSindicato);
         SelectCombo GetAdicionalCombos();
         void AddAdicionalConAdicionales(Adicional Adicional, IList<Adicional> Adicionales);
         #endregion

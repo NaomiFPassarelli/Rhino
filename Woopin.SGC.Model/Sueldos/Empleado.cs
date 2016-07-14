@@ -99,8 +99,10 @@ namespace Woopin.SGC.Model.Sueldos
         [DisplayName("Banco de Deposito")]
         [DoNotValidate]
         public virtual ComboItem BancoDeposito { get; set; }
-        
 
+        [DisplayName("Beneficiario Obra Social")]
+        [RegularExpression("^[0-9]+[0-9]*(.[0-9]{0,2})?$", ErrorMessage = "El Beneficiario de la Obra Social debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales")]
+        public virtual decimal? BeneficiarioObraSocial { get; set; }
         public Empleado()
         {
             this.Activo = true;

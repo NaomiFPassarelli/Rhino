@@ -128,6 +128,7 @@ namespace Woopin.SGC.Services
                 ToUpdate.FechaIngreso = Empleado.FechaIngreso;
                 ToUpdate.FechaNacimiento = Empleado.FechaNacimiento;
                 ToUpdate.FechaAntiguedadReconocida = Empleado.FechaAntiguedadReconocida;
+                ToUpdate.BeneficiarioObraSocial = Empleado.BeneficiarioObraSocial;
                 if ((ToUpdate.Localizacion == null && Empleado.Localizacion != null) || (ToUpdate.Localizacion != null && Empleado.Localizacion != null && ToUpdate.Localizacion.Id != Empleado.Localizacion.Id))
                 {
                     ToUpdate.Localizacion = new Localizacion();
@@ -332,19 +333,12 @@ namespace Woopin.SGC.Services
         #endregion
 
         #region Adicional
-        public Adicional GetAdicionalNT(int Id)
-        {
-            Adicional Adicional = null;
-            Adicional = this.AdicionalRepository.Get(Id);
-            return Adicional;
-        }
-
-        public Adicional GetAdicional(int Id)
+        public Adicional GetAdicional(int Id, int IdSindicato)
         {
             Adicional Adicional = null;
             this.AdicionalRepository.GetSessionFactory().SessionInterceptor(() =>
             {
-                Adicional = this.AdicionalRepository.Get(Id);
+                Adicional = this.AdicionalRepository.Get(Id, IdSindicato);
             });
             return Adicional;
         }
@@ -484,12 +478,12 @@ namespace Woopin.SGC.Services
             return SelectAdicionalCombos;
         }
 
-        public SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req)
+        public SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req, int IdSindicato)
         {
             SelectCombo SelectAdicionalCombos = new SelectCombo();
             this.AdicionalRepository.GetSessionFactory().SessionInterceptor(() =>
             {
-                SelectAdicionalCombos.Items = this.AdicionalRepository.GetAllByFilter(req)
+                SelectAdicionalCombos.Items = this.AdicionalRepository.GetAllByFilter(req, IdSindicato)
                                                               .Select(x => new SelectComboItem()
                                                               {
                                                                   id = x.Id,
