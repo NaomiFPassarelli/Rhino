@@ -50,6 +50,8 @@ namespace Woopin.SGC.Services
         //SelectCombo GetAllAdicionalReciboesByFilterCombo(SelectComboRequest req);
         //SelectCombo GetAdicionalReciboCombos();
         //void AddAdicionalReciboConAdicionalReciboes(AdicionalRecibo AdicionalRecibo, IList<AdicionalRecibo> AdicionalReciboes);
+        IList<AdicionalRecibo> GetAdicionalesDelPeriodoByEmpleado(string Periodo, int IdEmpleado);
+        
         #endregion
 
 

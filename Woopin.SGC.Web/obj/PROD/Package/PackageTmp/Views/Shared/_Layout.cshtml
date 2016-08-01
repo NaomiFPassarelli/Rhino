@@ -734,6 +734,57 @@
                             </li>
 
 
+                        <li class="hoe-has-menu">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-male"></i>
+                                <span class="menu-text">Cooperativa</span>
+                                <span class="selected"></span>
+                            </a>
+                            <ul class="hoe-sub-menu">
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Archivos</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Nuevo", "Asociados", new { Area = "Cooperativa" })">
+                                                <span class="menu-text"> Nuevo Asociado</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Pagos", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Pagos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hoe-has-menu">
+                                    <a href="javascript:void(0)">
+                                        <span class="menu-text">Consultas</span>
+                                        <span class="selected"></span>
+                                    </a>
+                                    <ul class="hoe-sub-menu">
+                                        <li>
+                                            <a href="@Url.Action("Index", "Asociados", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Asociados</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("IndexDetalle", "Pagos", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Pagos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+
                             <li class="nav-level">Configuración</li>
 
                             <li class="hoe-has-menu">

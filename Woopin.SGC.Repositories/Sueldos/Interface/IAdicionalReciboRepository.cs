@@ -13,5 +13,6 @@ namespace Woopin.SGC.Repositories.Sueldos
     {
         IList<AdicionalRecibo> GetAllByFilter(SelectComboRequest req);
         IList<AdicionalRecibo> GetAllByFilter(PagingRequest req);
+        IList<AdicionalRecibo> GetAdicionalesDelPeriodoByEmpleado(string Periodo, int IdEmpleado);
     }
 }

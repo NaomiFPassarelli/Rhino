@@ -9,6 +9,8 @@ using Woopin.SGC.Common.HtmlModel;
 using NHibernate.Criterion;
 using Woopin.SGC.Repositories.Helpers;
 using Woopin.SGC.Model.Sueldos;
+using NHibernate.Transform;
+using Woopin.SGC.CommonApp.Security;
 
 namespace Woopin.SGC.Repositories.Sueldos
 {
@@ -100,6 +102,52 @@ namespace Woopin.SGC.Repositories.Sueldos
                 return reciboMejorRemuneracion.TotalRemunerativo;
             }
             return 0;
+        }
+
+        public decimal[] GetPromedioRemunerativo(int IdEmpleado)
+        {
+            DateTime today = DateTime.Now;
+            DateTime meses6 = DateTime.Now;
+            meses6 = meses6.AddMonths(-6);
+            DateTime meses12 = DateTime.Now;
+            meses12 = meses12.AddMonths(-12);
+            decimal[] promedio = new decimal[2];
+
+            //TODO SQL antiguedad, premios, hs extras, dif sindical, dif obra social
+            int[] adicionales = {6,7,8,9,10,11,12,13,14,15,16,17,18, 1004, 1005, 4008, 4009, 4007, 3007, 3008, 3009, 3010, 3011, 3012};
+            Recibo c = null;
+            AdicionalRecibo dcc = null;
+            Adicional rub = null;
+
+            Recibo promedio6 = this.GetSessionFactory().GetSession().QueryOver<Recibo>(() => c)
+                                                .Where(() => c.FechaFin >= meses6
+                                                    && (c.Empleado.Id == IdEmpleado || IdEmpleado == 0)
+                                                    && (rub.Id.IsIn(adicionales)))
+                                                .GetFilterBySecurity()
+                                                .JoinAlias(() => c.AdicionalesRecibo, () => dcc)
+                                                .JoinAlias(() => dcc.Adicional, () => rub)
+                                                .Select(
+                                                Projections.Sum(() => dcc.Total).WithAlias(() => c.Total)).TransformUsing(Transformers.AliasToBean<Recibo>()).SingleOrDefault();
+
+            Recibo promedio12 = this.GetSessionFactory().GetSession().QueryOver<Recibo>(() => c)
+                                                .Where(() => c.FechaFin >= meses12
+                                                    && (c.Empleado.Id == IdEmpleado || IdEmpleado == 0)
+                                                    && (rub.Id.IsIn(adicionales)))
+                                                .GetFilterBySecurity()
+                                                .JoinAlias(() => c.AdicionalesRecibo, () => dcc)
+                                                .JoinAlias(() => dcc.Adicional, () => rub)
+                                                .Select(
+                                                Projections.Sum(() => dcc.Total).WithAlias(() => c.Total)).TransformUsing(Transformers.AliasToBean<Recibo>()).SingleOrDefault();
+            
+            if (promedio6 != null)
+            {
+                 promedio[0] = promedio6.Total/6;
+            }
+            if (promedio12 != null && promedio6.Total != promedio12.Total)
+            {
+                promedio[1] = promedio12.Total/12;
+            }
+            return promedio;
         }
 
     }

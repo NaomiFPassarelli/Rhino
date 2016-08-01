@@ -20,15 +20,17 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
     public class RecibosController : BaseController
     {
         private readonly ISueldosService SueldosService;
+        private readonly ISueldosConfigService SueldosConfigService;
         private readonly ISystemService SystemService;
         private readonly ICommonConfigService commonConfigService;
 
-        public RecibosController(ISueldosService SueldosService, ICommonConfigService commonConfigService, 
-            ISystemService SystemService)
+        public RecibosController(ISueldosService SueldosService, ICommonConfigService commonConfigService,
+            ISystemService SystemService, ISueldosConfigService SueldosConfigService)
         {
             this.SueldosService = SueldosService;
             this.SystemService = SystemService;
             this.commonConfigService = commonConfigService;
+            this.SueldosConfigService = SueldosConfigService;
         }
 
         //
@@ -191,11 +193,23 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             return View();
         }
 
+        public ActionResult TipoRecibo()
+        {
+            return View();
+        }
+
         [HttpPost]
         public JsonResult GetReciboAnterior(int IdEmpleado)
         {
             Recibo rAnterior = this.SueldosService.GetReciboAnterior(IdEmpleado);
             return Json(new { Data = rAnterior, Success = true });
+        }
+
+        [HttpPost]
+        public JsonResult GetPromedioRemunerativo(int IdEmpleado)
+        { 
+            decimal[] Promedio = this.SueldosService.GetPromedioRemunerativo(IdEmpleado);
+            return Json(new { Data = Promedio, Success = true });
         }
 
         /* Funcion para impresion de Recibo. */
@@ -237,6 +251,16 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         {
             decimal mejorRemuneracion = this.SueldosService.GetMejorRemuneracion(IdEmpleado);
             return Json(new { Data = mejorRemuneracion, Success = true });
+        }
+
+        public JsonResult GetAdicionalesDelPeriodoByEmpleado(string Periodo, int IdEmpleado)
+        {
+            IList<AdicionalRecibo> ARs = this.SueldosConfigService.GetAdicionalesDelPeriodoByEmpleado(Periodo, IdEmpleado);
+            foreach (AdicionalRecibo AR in ARs)
+            {
+                AR.Recibo = null;
+            }
+            return Json(new { Data = ARs , Success = true });            
         }
 
     }

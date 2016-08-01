@@ -701,7 +701,15 @@ namespace Woopin.SGC.Services
         //        }
         //    });
         //}
-
+        public IList<AdicionalRecibo> GetAdicionalesDelPeriodoByEmpleado(string Periodo, int IdEmpleado)
+        {
+            IList<AdicionalRecibo> ARs = null;
+            this.AdicionalReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                ARs = this.AdicionalReciboRepository.GetAdicionalesDelPeriodoByEmpleado(Periodo, IdEmpleado);
+            });
+            return ARs;
+        }
 
         #endregion
 

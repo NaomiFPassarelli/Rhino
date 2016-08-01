@@ -22,6 +22,7 @@ namespace Woopin.SGC.Web.App_Start
     using Woopin.SGC.Repositories.Reporting;
     using Woopin.SGC.Repositories.Stock;
     using Woopin.SGC.Repositories.Sueldos;
+    using Woopin.SGC.Repositories.Cooperativa;
 
     public static class NinjectWebCommon
     {
@@ -159,6 +160,11 @@ namespace Woopin.SGC.Web.App_Start
             kernel.Bind<IReciboRepository>().To<ReciboRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IAdicionalReciboRepository>().To<AdicionalReciboRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
 
+            // Cooperativa
+            kernel.Bind<IAsociadoRepository>().To<AsociadoRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IPagoRepository>().To<PagoRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            
+
             //Reporting
             kernel.Bind<IGrupoIngresoRepository>().To<GrupoIngresoRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IGrupoEgresoRepository>().To<GrupoEgresoRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
@@ -252,6 +258,11 @@ namespace Woopin.SGC.Web.App_Start
                 .WithConstructorArgument("IAdicionalAdicionalesRepository", kernel.GetService(typeof(IAdicionalAdicionalesRepository)));
             kernel.Bind<ISueldosService>().To<SueldosService>().InSingletonScope()
                 .WithConstructorArgument("IReciboRepository", kernel.GetService(typeof(IReciboRepository)));
+
+            kernel.Bind<ICooperativaConfigService>().To<CooperativaConfigService>().InSingletonScope()
+                .WithConstructorArgument("IAsociadoRepository", kernel.GetService(typeof(IAsociadoRepository)));
+            kernel.Bind<ICooperativaService>().To<CooperativaService>().InSingletonScope()
+                .WithConstructorArgument("IPagoRepository", kernel.GetService(typeof(IPagoRepository)));
             
             //Reporting
             kernel.Bind<IReportingService>().To<ReportingService>().InSingletonScope()

@@ -17,5 +17,6 @@ namespace Woopin.SGC.Repositories.Sueldos
         int GetProximoNumeroReferencia();
         Recibo GetReciboAnterior(int IdEmpleado);
         decimal GetMejorRemuneracion(int IdEmpleado);
+        decimal[] GetPromedioRemunerativo(int IdEmpleado);
     }
 }

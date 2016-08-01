@@ -42,5 +42,18 @@ namespace Woopin.SGC.Repositories.Sueldos
                                                         .List();
         }
 
+        public IList<AdicionalRecibo> GetAdicionalesDelPeriodoByEmpleado(string Periodo, int IdEmpleado)
+        {
+            AdicionalRecibo ar = null;
+            Recibo r = null;
+            //TODO SQL
+            //obra social = 1007, cuotasindical = 1010 
+            int[] IdssAdicionalesBuscados = { 1007, 1010, 3007, 3008, 3009, 3010, 3011, 3012 };
+            return this.GetSessionFactory().GetSession().QueryOver<AdicionalRecibo>(() => ar)
+                                                                            .JoinAlias(() => ar.Recibo, () => r)
+                                                                            .Where(() => r.Periodo == Periodo && r.Empleado.Id == IdEmpleado && ar.Adicional.Id.IsIn(IdssAdicionalesBuscados))
+                                                                            .List();
+        }
+
     }
 }

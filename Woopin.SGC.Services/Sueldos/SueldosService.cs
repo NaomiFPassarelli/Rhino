@@ -233,6 +233,18 @@ namespace Woopin.SGC.Services
             return MejorRemuneracion;
         }
 
+        public decimal[] GetPromedioRemunerativo(int IdEmpleado)
+        {
+            decimal[] Promedio = null;
+            this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+                {
+                    Promedio = this.ReciboRepository.GetPromedioRemunerativo(IdEmpleado);
+                });
+            return Promedio;
+        
+        }
+        
+
         #endregion
 
 

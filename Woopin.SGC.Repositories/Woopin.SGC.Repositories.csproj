@@ -85,6 +85,8 @@
     <Compile Include="Common\Interface\ILocalizacionRepository.cs" />
     <Compile Include="Compras\Helpers\OrdenPagoQueryOverHelper.cs" />
     <Compile Include="Compras\Helpers\OtroEgresoQueryOverHelper.cs" />
+    <Compile Include="Cooperativa\Implementacion\PagoRepository.cs" />
+    <Compile Include="Cooperativa\Interface\IPagoRepository.cs" />
     <Compile Include="Helpers\SecurityQueryOverHelper.cs" />
     <Compile Include="Compras\Helpers\ProveedorQueryOverHelper.cs" />
     <Compile Include="Compras\Helpers\ComprasQueryOverHelper.cs" />
@@ -131,6 +133,8 @@
     <Compile Include="Reporting\Implementacion\GrupoEgresoRepository.cs" />
     <Compile Include="Reporting\Interface\IGrupoEgresoRepository.cs" />
     <Compile Include="Reporting\Interface\IGrupoIngresoRepository.cs" />
+    <Compile Include="Cooperativa\Implementacion\AsociadoRepository.cs" />
+    <Compile Include="Cooperativa\Interface\IAsociadoRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalAdicionalesRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalReciboRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalRepository.cs" />

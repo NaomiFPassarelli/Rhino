@@ -1,0 +1,394 @@
+﻿@model Woopin.SGC.Model.Sueldos.Recibo
+@using Woopin.SGC.Common.Helpers           
+@using Woopin.SGC.Model.Negocio
+@{
+    Layout = null;
+    var tipo = "";
+    switch (Model.TipoRecibo)
+    {
+        case 0:
+            tipo = "Recibo";
+            break;
+        default:
+            tipo = "Recibo";
+            break;
+    }
+    //var logoUrl = ViewBag.BaseLogoOrg;
+    //var cbUrl = ViewBag.BaseURL;
+}
+
+<div style="width: 790px; background-color: #ffffff;padding-left:4px;">
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr>
+            <td>
+                <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div>
+						<div style="font-weight:bold;padding-top:7px;">@Model.Organizacion.RazonSocial - @Model.Organizacion.Categoria.Data</div>
+                        <div style="padding-top: 7px;">CUIT: @Model.Organizacion.CUIT</div>
+
+                        </div>
+                </div>
+                <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div style="padding-top:7px;">@Model.Organizacion.Domicilio</div>
+                    <div style="padding-top:7px;">@Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre</div>
+                </div>
+                <div style="padding: 8px; width: 190px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div style="padding-top:7px;">Original del empleador</div>
+                    <div style="padding-top:7px;">Legajo Empleado Nro: @Model.Empleado.Id</div>
+                    <div style="padding-top:7px;">Nro Recibo  @Model.NumeroReferencia</div>
+                    <div style="clear: both;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    
+    
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 310px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Nombre y Apellido</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Antiguedad Reconocida</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">CUIL</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Obra Social</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Sindicato</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 120px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Remuneracion Basica</td>
+        </tr>
+        <tr>
+                        <td style="font-weight:bold;padding-top:7px;">@Model.Empleado.Apellido @Model.Empleado.Nombre</td>
+                        @if (Model.Empleado.FechaAntiguedadReconocida != null)
+                        {
+                            <td style="padding-top:7px;">@Model.Empleado.FechaAntiguedadReconocida.GetValueOrDefault().ToString("dd/MM/yyyy")</td>
+                        }
+                        else
+                        {
+                            <td style="padding-top:7px;">@Model.Empleado.FechaIngreso.ToString("dd/MM/yyyy")</td>
+                        }
+                        <td style="padding-top:7px;">@Model.Empleado.CUIT</td>
+                        <td style="padding-top:7px;">@Model.ObraSocial</td>
+                        <td style="padding-top:7px;">@Model.Sindicato</td>
+                        <td style="padding-top:7px;">@Model.RemuneracionBasica.ToString("C")</td> 
+            </tr>
+    </table>
+
+
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold;  width: 230px;padding-right: 10px; padding-left: 10px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Periodo depositado</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Banco de deposito</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Fecha de ultimo deposito</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Categoria</td>
+        </tr>
+        <tr>
+            <td style="padding-top: 7px;">@Model.PeriodoAnterior</td>
+            <td style="padding-top: 7px;">@Model.BancoDeposito</td>
+            <td style="padding-top: 7px;">@Model.FechaPagoAnterior.ToString("dd/MM/yyyy")</td>
+            <td style="padding-top:7px;">@Model.Empleado.Categoria.Data</td>
+            <td style="clear: both;"></td>
+        </tr>
+    </table>
+
+
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 230px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Periodo abonado</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Domicilio de Pago</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Fecha de pago</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Tarea Desempeñada</td>
+        </tr>
+        <tr>
+            <td style="padding-top: 7px;">@Model.Periodo</td>
+            <td style="padding-top:7px;">@Model.Organizacion.Domicilio</td>
+            <td style="padding-top:7px;">@Model.FechaPago.ToString("dd/MM/yyyy")</td>
+            <td style="padding-top:7px;">@Model.Empleado.Tarea.Data</td>
+            <td style="clear: both;"></td>
+        </tr>
+    </table>
+
+
+
+
+
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr>
+            <td>
+                @*<div style="padding: 20px; width: 350px; float: left; position: relative; min-height: 1px; padding-right: 15px; padding-left: 15px; border: 2px solid #000; ">
+                    <div>
+                        <div style="padding-top:7px;">@Model.FechaCreacion</div>
+                    </div>
+                </div>*@
+                <div style="padding: 10px; width: 350px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div style="padding-top:7px;">Observacion: @Model.Observacion</div>
+                    <div style="clear: both;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    
+    <table style="padding: 10px; height: 500px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 300px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descripción</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Unidades</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Porcentaje</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Remunerativo</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 120px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">No Remunerativo</td>
+        </tr>
+        @foreach (var item in Model.AdicionalesRecibo)
+        {
+            <tr style="margin-top: 10px;border: 1px solid #000;font-size:12px;">
+                <td style="width: 350px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Adicional.Descripcion</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Unidades.GetValueOrDefault().ToString("0.00")</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Adicional.Porcentaje.GetValueOrDefault().ToString("0.00")</td>
+                @if((int)item.Adicional.TipoLiquidacion == 0)
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                }
+                else
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                }
+                @if ((int)item.Adicional.TipoLiquidacion == 1)
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                }
+                else
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                }
+                @if ((int)item.Adicional.TipoLiquidacion == 2)
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                }
+                else
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                }
+
+            </tr>
+        }
+
+    </table>
+    <table style="padding: 10px; height: 80px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:15px;">
+            <td style="font-weight: bold; height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Remunerativo</td>
+            <td style="font-weight: bold;height:15px; width: 170px;padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">No Remunerativo</td>
+            <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
+            <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;background-color:#f3f3f3;">Total</td>
+        </tr>
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.TotalRemunerativo.ToStringArCurrency()</td>
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.TotalNoRemunerativo.ToStringArCurrency()</td>
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.TotalDescuento.ToStringArCurrency()</td>
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;">@Model.Total.ToStringArCurrency()</td>
+        </tr>
+    </table>
+    <table style="width: 790px;border:1px solid #000;height: 50px;margin-left:2px;padding:5px;font-size:12px;">
+        <tr>
+            <td>
+                <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                    Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model.Total) PESOS
+                </div>
+                <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                    en concepto de mis haberes correspondientes al periodo arriba indicado y según la presente
+                    liquidación, dejando constancia de haber recibido un duplicado de este recibo
+                </div>
+            </td>
+            <td style="border-left:1px solid #000; width: 150px; float: left; min-height:110px; position: relative;padding:0 10px;vertical-align:top; display:inline-block;">
+                    Firma del Empleado
+            </td>
+
+        </tr>
+    </table>
+
+</div>
+
+<p style="page-break-after:always;"></p>
+
+
+<div style="width: 790px; background-color: #ffffff;padding-left:4px;">
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr>
+            <td>
+                <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div>
+                        <div style="font-weight:bold;padding-top:7px;">@Model.Organizacion.RazonSocial - @Model.Organizacion.Categoria.Data</div>
+                        <div style="padding-top: 7px;">CUIT: @Model.Organizacion.CUIT</div>
+
+                    </div>
+                </div>
+                <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div style="padding-top:7px;">@Model.Organizacion.Domicilio</div>
+                    <div style="padding-top:7px;">@Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre</div>
+                </div>
+                <div style="padding: 8px; width: 190px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div style="padding-top:7px;">Duplicado del empleado</div>
+                    <div style="padding-top:7px;">Legajo Empleado Nro: @Model.Empleado.Id</div>
+                    <div style="padding-top:7px;">Nro Recibo  @Model.NumeroReferencia</div>
+                    <div style="clear: both;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 310px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Nombre y Apellido</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Antiguedad Reconocida</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">CUIL</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Obra Social</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Sindicato</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 120px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Remuneracion Basica</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold;padding-top:7px;">@Model.Empleado.Apellido @Model.Empleado.Nombre</td>
+            @if (Model.Empleado.FechaAntiguedadReconocida != null)
+            {
+                <td style="padding-top:7px;">@Model.Empleado.FechaAntiguedadReconocida.GetValueOrDefault().ToString("dd/MM/yyyy")</td>
+            }
+            else
+            {
+                <td style="padding-top:7px;">@Model.Empleado.FechaIngreso.ToString("dd/MM/yyyy")</td>
+            }
+            <td style="padding-top:7px;">@Model.Empleado.CUIT</td>
+            <td style="padding-top:7px;">@Model.ObraSocial</td>
+            <td style="padding-top:7px;">@Model.Sindicato</td>
+            <td style="padding-top:7px;">@Model.RemuneracionBasica.ToString("C")</td>
+        </tr>
+    </table>
+
+
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold;  width: 230px;padding-right: 10px; padding-left: 10px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Periodo depositado</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Banco de deposito</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Fecha de ultimo deposito</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Categoria</td>
+        </tr>
+        <tr>
+            <td style="padding-top: 7px;">@Model.PeriodoAnterior</td>
+            <td style="padding-top: 7px;">@Model.BancoDeposito</td>
+            <td style="padding-top: 7px;">@Model.FechaPagoAnterior.ToString("dd/MM/yyyy")</td>
+            <td style="padding-top:7px;">@Model.Empleado.Categoria.Data</td>
+            <td style="clear: both;"></td>
+        </tr>
+    </table>
+
+
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 230px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Periodo abonado</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Domicilio de Pago</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Fecha de pago</td>
+            <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Tarea Desempeñada</td>
+        </tr>
+        <tr>
+            <td style="padding-top: 7px;">@Model.Periodo</td>
+            <td style="padding-top:7px;">@Model.Organizacion.Domicilio</td>
+            <td style="padding-top:7px;">@Model.FechaPago.ToString("dd/MM/yyyy")</td>
+            <td style="padding-top:7px;">@Model.Empleado.Tarea.Data</td>
+            <td style="clear: both;"></td>
+        </tr>
+    </table>
+
+
+
+
+
+    <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+        <tr>
+            <td>
+                @*<div style="padding: 20px; width: 350px; float: left; position: relative; min-height: 1px; padding-right: 15px; padding-left: 15px; border: 2px solid #000; ">
+                        <div>
+                            <div style="padding-top:7px;">@Model.FechaCreacion</div>
+                        </div>
+                    </div>*@
+                <div style="padding: 10px; width: 350px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                    <div style="padding-top:7px;">Observacion: @Model.Observacion</div>
+                    <div style="clear: both;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+
+    <table style="padding: 10px; height: 500px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 300px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descripción</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Unidades</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Porcentaje</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Remunerativo</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
+            <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 120px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">No Remunerativo</td>
+        </tr>
+        @foreach (var item in Model.AdicionalesRecibo)
+        {
+            <tr style="margin-top: 10px;border: 1px solid #000;font-size:12px;">
+                <td style="width: 350px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Adicional.Descripcion</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Unidades.GetValueOrDefault().ToString("0.00")</td>
+                <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Adicional.Porcentaje.GetValueOrDefault().ToString("0.00")</td>
+                @if ((int)item.Adicional.TipoLiquidacion == 0)
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                }
+                else
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                }
+                @if ((int)item.Adicional.TipoLiquidacion == 1)
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                }
+                else
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                }
+                @if ((int)item.Adicional.TipoLiquidacion == 2)
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                }
+                else
+                {
+                    <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 100px;border-right: 1px solid #000;"></td>
+                }
+
+            </tr>
+        }
+
+    </table>
+    <table style="padding: 10px; height: 80px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+        <tr style="border: 1px solid #000;height:15px;">
+            <td style="font-weight: bold; height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Remunerativo</td>
+            <td style="font-weight: bold;height:15px; width: 170px;padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">No Remunerativo</td>
+            <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
+            <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;background-color:#f3f3f3;">Total</td>
+        </tr>
+        <tr style="border: 1px solid #000;height:40px;">
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.TotalRemunerativo.ToStringArCurrency()</td>
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.TotalNoRemunerativo.ToStringArCurrency()</td>
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model.TotalDescuento.ToStringArCurrency()</td>
+            <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;">@Model.Total.ToStringArCurrency()</td>
+        </tr>
+    </table>
+    <table style="width: 790px;border:1px solid #000;height: 50px;margin-left:2px;padding:5px;font-size:12px;">
+        <tr>
+            <td>
+                <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                    Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model.Total) PESOS
+                </div>
+                <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                    en concepto de mis haberes correspondientes al periodo arriba indicado y según la presente
+                    liquidación, dejando constancia de haber recibido un duplicado de este recibo
+                </div>
+            </td>
+            <td style="border-left:1px solid #000; width: 150px; float: left; min-height:110px; position: relative;padding:0 10px;vertical-align:top; display:inline-block;">
+                Firma del Empleado
+            </td>
+
+        </tr>
+    </table>
+
+
+</div>
+
+

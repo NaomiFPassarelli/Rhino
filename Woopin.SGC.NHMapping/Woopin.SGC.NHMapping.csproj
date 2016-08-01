@@ -75,9 +75,11 @@
     <Compile Include="Contabilidad\AsientoMap.cs" />
     <Compile Include="Contabilidad\RetencionMap.cs" />
     <Compile Include="Contabilidad\EjercicioMap.cs" />
+    <Compile Include="Cooperativa\PagoMap.cs" />
     <Compile Include="Helpers\NHibernateConfigurationExtensions.cs" />
     <Compile Include="Reporting\GrupoEgresoMap.cs" />
     <Compile Include="Reporting\GrupoIngresoMap.cs" />
+    <Compile Include="Cooperativa\AsociadoMap.cs" />
     <Compile Include="Sueldos\AdicionalAdicionalesMap.cs" />
     <Compile Include="Sueldos\AdicionalReciboMap.cs" />
     <Compile Include="Sueldos\AdicionalMap.cs" />

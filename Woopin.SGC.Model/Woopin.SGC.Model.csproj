@@ -122,6 +122,7 @@
     <Compile Include="Contabilidad\AsientoItem.cs" />
     <Compile Include="Contabilidad\MayorItem.cs" />
     <Compile Include="Contabilidad\Retencion.cs" />
+    <Compile Include="Cooperativa\Pago.cs" />
     <Compile Include="Exceptions\SecurityException.cs" />
     <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Exceptions\BusinessException.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Negocio\ValoresHelper.cs" />
     <Compile Include="Reporting\GrupoEgreso.cs" />
     <Compile Include="Reporting\GrupoIngreso.cs" />
+    <Compile Include="Cooperativa\Asociado.cs" />
     <Compile Include="Sueldos\AdicionalRecibo.cs" />
     <Compile Include="Sueldos\AdicionalAdicionales.cs" />
     <Compile Include="Sueldos\Adicional.cs" />

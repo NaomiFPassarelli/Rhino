@@ -292,6 +292,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\AFIP\AFIPAreaRegistration.cs" />
     <Compile Include="Areas\AFIP\Controllers\WSFEVController.cs" />
+    <Compile Include="Areas\Cooperativa\Controllers\PagosController.cs" />
     <Compile Include="Areas\Reporting\ReportingAreaRegistration.cs" />
     <Compile Include="Areas\Compras\Controllers\ComprobantesComprasController.cs" />
     <Compile Include="Areas\Compras\Controllers\OrdenesPagosController.cs" />
@@ -306,6 +307,8 @@
     <Compile Include="Areas\Contabilidad\Controllers\RetencionesController.cs" />
     <Compile Include="Areas\Reporting\Controllers\GruposIngresosController.cs" />
     <Compile Include="Areas\Reporting\Controllers\GruposEgresosController.cs" />
+    <Compile Include="Areas\Cooperativa\Controllers\AsociadosController.cs" />
+    <Compile Include="Areas\Cooperativa\CooperativaAreaRegistration.cs" />
     <Compile Include="Areas\Sueldos\Controllers\AdicionalesController.cs" />
     <Compile Include="Areas\Sueldos\Controllers\RecibosController.cs" />
     <Compile Include="Areas\Sueldos\Controllers\EmpleadosController.cs" />
@@ -675,6 +678,19 @@
     <Content Include="Areas\Sueldos\Views\Adicionales\AdicionalesDefault.cshtml" />
     <Content Include="Areas\Sueldos\Views\Recibos\js\_Detalle.cshtml" />
     <Content Include="Areas\Sueldos\Views\Recibos\VersionImprimible.cshtml" />
+    <Content Include="Areas\Sueldos\Views\Recibos\TipoRecibo.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\Editar.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\Importar.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\Index.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\Nuevo.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Web.config" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\Index.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\IndexDetalle.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\VersionImprimible.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\SolicitudIngreso.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\AnticipoDeRetorno.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\ActaIngreso.cshtml" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\WoopinSrv.pubxml" />
@@ -965,6 +981,8 @@
     <Folder Include="Areas\Compras\Views\Shared\" />
     <Folder Include="Areas\Configuracion\Views\Shared\" />
     <Folder Include="Areas\Contabilidad\Views\Shared\" />
+    <Folder Include="Areas\Cooperativa\Models\" />
+    <Folder Include="Areas\Cooperativa\Views\Shared\" />
     <Folder Include="Areas\Reporting\Views\Shared\" />
     <Folder Include="Areas\Stock\Models\" />
     <Folder Include="Areas\Stock\Views\Shared\" />
@@ -1031,7 +1049,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>1283</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2000/</IISUrl>
+          <IISUrl>http://localhost:2020/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

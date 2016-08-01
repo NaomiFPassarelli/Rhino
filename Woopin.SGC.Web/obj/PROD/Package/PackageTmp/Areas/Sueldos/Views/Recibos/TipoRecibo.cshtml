@@ -1,0 +1,38 @@
+﻿@{
+    Layout = null;
+}
+<div class="form-group" style="margin:0px;">
+    @Html.Label("Sueldo")
+    <div class="col-md-12 input-container">
+        <input class="col-md-5" name="TipoRecibo" type="radio" value="Sueldo"> <p class="col-md-7"> Sueldo </p>
+        <input class="col-md-5" name="TipoRecibo" type="radio" value="SAC"><p class="col-md-7"> SAC </p>
+        <input class="col-md-5" name="TipoRecibo" type="radio" value="Despido"> <p class="col-md-7"> Despido </p>
+        <input class="col-md-5" name="TipoRecibo" type="radio" value="Renuncia"> <p class="col-md-7"> Renuncia </p>
+        <input class="col-md-5" name="TipoRecibo" type="radio" value="Vacaciones"> <p class="col-md-7"> Vacaciones </p>
+    </div>
+</div>
+
+<div class="button-pane clearfix">
+    <div class="button-set">
+        <a class="boton place-left" id="BtnSubmitTipoRecibo" title="Guardar">
+            <i class="fa fa-check-circle-o i-green"></i> Aceptar
+        </a>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jqueryui")
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).off("click", "#BtnSubmitTipoRecibo").on("click", "#BtnSubmitTipoRecibo", function () {
+            $($("input:radio")[2]).attr("checked")
+            $.each($("input:radio"), function (i, item) {
+                if ($(item).attr("checked") == "checked" || $(item).attr("checked") == true) {
+                    Recibo.TipoRecibo = $(item).attr("value");
+                }
+            });
+
+            _OpenDialog.dialog('close');
+        });
+    });
+</script>

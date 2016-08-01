@@ -8,6 +8,28 @@ function SelectCheckboxFormatter(cellvalue, options, rowObject)
     return '<input type="checkbox" value="' + rowObject.Id + '" class="SelectCheckboxes" />'
 }
 
+function Drop_Number(cellvalue, options, rowObject)
+{
+    var CantidadCoutasRestantes = parseFloat(rowObject.CantidadCuotas) - parseFloat(rowObject.CantidadCuotasAbonadas);
+    var drop = '<select id=' + options.colModel.formatoptions.nameSelect + ' name=' + options.colModel.formatoptions.nameSelect + ' onchange=changeselected(this,this.value);>';
+    for (var i = 1; i <= CantidadCoutasRestantes; i++)
+    {
+        if (i == 1) {
+            drop += '<option value=' + i + ' selected="selected">' + i + '</option>';
+        } else {
+            drop += '<option value=' + i + '>' + i + '</option>';
+        }
+    }
+    drop += '</select>';
+    return drop;
+}
+
+function changeselected(e, value)
+{
+    $($("select#"+ e.name + " option")).removeAttr("selected");
+    $($("select#" + e.name + " option")[--value]).attr("selected", "selected");
+}
+
 /*
     Formatter para armar el checkbox con el valor del id del modelo
     Chequeado o no dependiendo de otros id que vienen en formatoptions: { GridRestringida: } como array
@@ -105,7 +127,10 @@ function formatterNumberToString(cellvalue,opt,row)
 }
 
 function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
-    if(rowObject.TipoLiquidacion == "Footer"){
+    if (rowObject.Adicional_Id >= 6 && rowObject.Adicional_Id <= 18) {
+        debugger;
+    }
+    if (rowObject.TipoLiquidacion == "Footer") {
         return cellvalue;
     }
 
@@ -136,10 +161,39 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
     } else {
         if (importe == 0) {
             if (/*IdAdicional >= 3007 && IdAdicional <= 3012 || */ (ValorMin != null && ($.isNumeric(ValorMin)) && ValorSobre != null && ($.isNumeric(ValorSobre)))) {
-                importeMin = parseFloat(ValorMin) + parseFloat(ValorSobre); // porque el valorSobre esta en negativo
-                if (importeMin > 0) {
-                    importe = importeMin;
+                //es util para diferencia de obra socia, diferencia de cuota sindical
+                debugger;
+                if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && (-1 * ValorSobre >= ValorMin)){
+                    //devuelvo diferencia sindical anterior
+                    importe = -1 * Recibo.ValorAnteriorDiferenciaSindical;
+                    Suma = true;
+                } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) < Recibo.ValorAnteriorDiferenciaSindical)) {
+                    //devuelvo diferencia sindical anterior
+                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
+                    importe *= -1;
+                    Suma = true;
+                } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) > Recibo.ValorAnteriorDiferenciaSindical)) {
+                    //no devuelve hay diferencia nueva
+                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
+                } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && (-1 * ValorSobre >= ValorMin)) {
+                    //devuelvo diferencia ObraSocial anterior
+                    importe = -1 * Recibo.ValorAnteriorDiferenciaObraSocial;
+                    Suma = true;
+                } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) < Recibo.ValorAnteriorDiferenciaObraSocial)) {
+                    //devuelvo diferencia ObraSocial anterior
+                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
+                    importe *= -1;
+                    Suma = true;
+                } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) > Recibo.ValorAnteriorDiferenciaObraSocial)) {
+                    //no devuelve hay diferencia nueva
+                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
+                } else {
+                    importeMin = parseFloat(ValorMin) + parseFloat(ValorSobre); // porque el valorSobre esta en negativo
+                    if (importeMin > 0) {
+                        importe = importeMin;
+                    }
                 }
+                
             } else if (ValorSobre != null && ($.isNumeric(ValorSobre)) && rowObject.Unidades != null && ($.isNumeric(rowObject.Unidades))) {
                 //es util para sueldo, dias, horas
                 importe = rowObject.Unidades * ValorSobre;
@@ -198,6 +252,9 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
                 case 4009:
                     valorHorasExtras = importe;
                     break;
+                case 9011:
+                    valorDiaCortador = importe;
+                    break;
                 default:
                     break;
             }
@@ -220,6 +277,23 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
         //        break;
         //}
     }
+}
+
+function Action_Aceptar(cellvalue, options, rowObject)
+{
+    return "<a class='boton boton-i place-right RealizarPago' title='RealizarPago'><span><i class='fa fa-check-circle-o'></i></span></a>";
+}
+
+function Action_Imprimir(cellvalue, options, rowObject)
+{
+        var ret = '';
+        var url = options.colModel.formatoptions.urlAction + "/" + rowObject.Id;
+        ret += '<a class="boton boton-i BtnImprimir" title="Imprimir" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-print i-blue"></i></a>';
+        return ret;
+        //a = "<a class='boton boton-i BtnImprimir place-left' style='border-bottom-color: #2a7442;' title='Imprimir' href=";
+        //a += "'" + "@Url.Action(" + options.colModel.formatoptions.View + "," + options.colModel.formatoptions.Controller + ")?Id=" + rowObject.Id + "'"
+        //a += "><i class='fa fa-print' style='padding: 2px 5px 0px 5px; color: #666666;'><br /><span style='color: #666666; font-size: 12px; padding: 0px; margin: 0px;'></span></i></a>";
+        //return a;
 }
 
 //function formatterRecibo_Adicionales(cellvalue, options, rowObject) {

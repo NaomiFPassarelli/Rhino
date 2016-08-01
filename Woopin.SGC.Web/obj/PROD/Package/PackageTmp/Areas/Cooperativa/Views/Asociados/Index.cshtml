@@ -1,0 +1,220 @@
+﻿@{
+    ViewBag.Title = "Asociados";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Listado de Asociados";
+}
+@*<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImportar" title="Importación">
+        <i class="fa fa-file-excel-o i-blue"></i>  Importar
+    </a>
+</div>*@
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Asociado" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Asociado
+    </a>
+    <a class="boton place-left" id="BtnDownloadActaIngreso" title="Descargar Acta Ingreso" href="@Url.Action("DescargarPDFActaIngreso")">
+        <i class="fa fa-plus-circle i-green"></i>  Descargar Acta Ingreso
+    </a>
+    <div class="col-md-6 input-container">
+        <input class="text-box textinput" id="FechaActaIngreso" name="FechaActaIngreso" type="text" >
+    </div>
+
+    @*<a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>*@
+    <a class="boton place-left" id="BtnBajaSelected" title="Baja Seleccionados">
+            <i class="fa fa-trash-o i-red"></i>  Baja Seleccionados
+        </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Asociado..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    @*<a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>*@
+</div>
+<div class="table-container">
+    <table id="GridAsociados"></table>
+    <div id="GridAsociados_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+@*<div id="importar-Asociados-dialog"></div>*@
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+    var ListadoAsociados = {
+
+        init: function () {
+            $("#FechaActaIngreso").datepicker({ dateFormat: 'dd/mm/yy' });
+            //TODO validar que sea el ultimo dia del mes ese por ejemplo si selecciona el dia de hoy es
+            //muy probable que en realidad se descargue el del mes anterior proque este mes no termino
+            $('#BtnDownloadActaIngreso').click(ListadoAsociados.DownloadActaIngreso);
+
+            //$('#BtnImportar').bind('click', ListadoAsociados.OpenImportar);
+            $('#BtnExportXLS').click(ListadoAsociados.ExportToExcel);
+            /* Binding de los checkbox, contador de seleccionados */
+            $.SetupSelectCount('GridAsociados');
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridAsociados', ["Nombre", "Apellido", "CUIT"]);
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', ListadoAsociados.Refresh);
+
+            /* Eliminar Seleccionados */
+            //$('#BtnDeleteSelected').click(ListadoAsociados.OnEliminarSeleccionadosClick);
+            //TODO
+            $('#BtnBajaSelected').click(ListadoAsociados.OnBajarSeleccionadosClick);
+
+            /* Eliminar de Grilla */
+            //$(document).on('click', '.BtnEliminar', ListadoAsociados.EliminarAsociado);
+            /* Editar de la grilla */
+            // Abre nueva ventana
+            $(document).on('click', '.BtnEditar', ListadoAsociados.EditarAsociado);
+
+            /* Armo la grilla del ABM */
+            $('#GridAsociados').CreateCommonGrid({
+                url: '@Url.Action("GetAll")',
+                colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre', 'Apellido', 'CUIT', 'Fecha Ingreso', 'Fecha Egreso', 'Abonado', 'Falta Abonar', 'Acta Ingreso', 'Acta Egreso', '', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'Nombre', index: 'Nombre', width: 25, align: "center", sortable: true },
+                    { name: 'Apellido', index: 'Apellido', width: 30, align: "center", sortable: true },
+                    { name: 'CUIT', index: 'CUIT', width: 30, align: "center", sortable: true },
+                    { name: 'FechaIngreso', index: 'FechaIngreso', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'FechaEgreso', index: 'FechaEgreso', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'Abonado', index: 'Abonado', width: 25, align: "center", sortable: true },
+                    { name: 'FaltaPorAbonar', index: 'FaltaPorAbonar', width: 25, align: "center", sortable: true },
+                    { name: 'ActaIngreso', index: 'ActaIngreso', width: 25, align: "center", sortable: true },
+                    { name: 'ActaEgreso', index: 'ActaEgreso', width: 25, align: "center", sortable: true },
+                    { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" },
+                    //{ name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: Action_Imprimir, align: "center", formatoptions: { Controller: 'Asociados', View: 'DescargarPDFSolicitud', withId: true } }
+                    { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: DetalleFormatter, formatoptions: { urlAction: '@Url.Action("DescargarPDFSolicitud", "Asociados")'}, align: "center" }
+                ],
+                sortname: 'Nombre',
+                sortorder: "asc",
+                pager: '#GridAsociados_pager',
+            });
+            $('#GridAsociados').trigger("reloadGrid");
+        },
+
+        @*OpenImportar: function () {
+                $('#importar-Asociados-dialog').OpenFormDialog('@Url.Action("Importar")', 'Importación de Asociados');
+            },*@
+
+            //ExportToExcel: function () {
+            //    JQGridExportExcel.Export('GridAsociados', 'Listado de Asociados');
+            //},
+
+            DownloadActaIngreso: function()
+            {
+                fechaActa = new Date($('FechaActaIngreso').val());
+                var mes = fechaActa.getMonth();
+                var año = fechaActa.getFullYear();
+
+                var params = {
+                    url: '@Url.Action("DescargarPDFActaIngreso")',
+                    data: { Mes: mes, Año: año },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            
+                        } else {
+                            //$('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                            $('#Alert-Container').NewAlert('error', $.makeErrorMsgList("La fecha no es correcta"));
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+
+
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridAsociados');
+                ListadoAsociados.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridAsociados").setGridParam({ datatype: 'json' });
+                $('#GridAsociados').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            @*OnEliminarSeleccionadosClick: function(){
+                var SelectedIds = $.GetSelectedRows('GridAsociados');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Asociados seleccionadas?",
+                        function () { ListadoAsociados.EliminarSeleccionados(SelectedIds) });
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridAsociados').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            EliminarAsociado: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Asociado?",
+                    function () { ListadoAsociados.EliminarSeleccionados(Id) });
+            },*@
+
+        OnBajarSeleccionadosClick: function () {
+            var SelectedIds = $.GetSelectedRows('GridAsociados');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea Bajar los Asociados seleccionadas?",
+                    function () { ListadoAsociados.BajarSeleccionados(SelectedIds) });
+            }
+        },
+
+        BajarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Bajar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridAsociados').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        BajarAsociado: function () {
+            var Id = [$(this).closest('tr').attr('id')];
+            ConfirmationDialog.Show("Esta seguro que desea Bajar el Asociado?",
+                function () { ListadoAsociados.BajarSeleccionados(Id) });
+        },
+
+
+        EditarAsociado: function () {
+            var Id = $(this).closest('tr').attr('id');
+            $.ShowLoader();
+            window.location = '@Url.Action("Editar")/' + Id;
+        }
+    }
+    $(document).ready(function () {
+        ListadoAsociados.init();
+    });
+    </script>
+}
