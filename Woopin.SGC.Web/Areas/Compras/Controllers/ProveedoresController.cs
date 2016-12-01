@@ -39,7 +39,9 @@ namespace Woopin.SGC.Web.Areas.Compras.Controllers
         {
             ViewBag.CategoriasIva = this.commonConfigService.GetAllCategoriaIVAs().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Abreviatura + " (" + x.Nombre + ")", Selected = x.Predeterminado }).ToList();
             ViewBag.Localizaciones = this.commonConfigService.GetAllLocalizaciones().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();
+            ViewBag.Localidades = this.commonConfigService.GetAllLocalidades().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();
             ViewBag.Condiciones = this.commonConfigService.GetItemsByCombo(ComboType.CondicionCompraVenta).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
+            ViewBag.Paises = this.commonConfigService.GetItemsByCombo(ComboType.Paises).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
             return View();
         }
 
@@ -97,7 +99,9 @@ namespace Woopin.SGC.Web.Areas.Compras.Controllers
             Proveedor Proveedor = this.ComprasConfigService.GetProveedor(Id);
             ViewBag.CategoriasIva = this.commonConfigService.GetAllCategoriaIVAs().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Abreviatura + " (" + x.Nombre + ")", Selected = x.Predeterminado }).ToList();
             ViewBag.Localizaciones = this.commonConfigService.GetAllLocalizaciones().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();
+            ViewBag.Localidades = this.commonConfigService.GetAllLocalidades().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();
             ViewBag.Condiciones = this.commonConfigService.GetItemsByCombo(ComboType.CondicionCompraVenta).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
+            ViewBag.Paises = this.commonConfigService.GetItemsByCombo(ComboType.Paises).Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Data }).ToList();
             return View(Proveedor);
         }
 

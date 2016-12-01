@@ -14,17 +14,22 @@ namespace Woopin.SGC.Services
         #region VariablesyConstructor
         private readonly ISucursalRepository sucursalRepository;
         private readonly ILocalizacionRepository localizacionRepository;
+        private readonly ILocalidadRepository LocalidadRepository;
         private readonly IMonedaRepository monedaRepository;
         private readonly ICategoriaIVARepository categoriaIVARepository;
         private readonly IComboRepository comboRepository;
         private readonly IComboItemRepository comboItemRepository;
-        public CommonConfigService(ISucursalRepository sucursalRepository, ILocalizacionRepository localizacionRepository, IMonedaRepository monedaRepository, ICategoriaIVARepository categoriaIVARepository, IComboRepository comboRepository, IComboItemRepository comboItemRepository)
+        public CommonConfigService(ISucursalRepository sucursalRepository, ILocalizacionRepository localizacionRepository, 
+            IMonedaRepository monedaRepository, ICategoriaIVARepository categoriaIVARepository,
+            IComboRepository comboRepository, IComboItemRepository comboItemRepository, 
+            ILocalidadRepository localidadRepository)
         {
             this.sucursalRepository = sucursalRepository;
             this.localizacionRepository = localizacionRepository;
             this.monedaRepository = monedaRepository;
             this.categoriaIVARepository = categoriaIVARepository;
             this.comboRepository = comboRepository;
+            this.LocalidadRepository = localidadRepository;
             this.comboItemRepository = comboItemRepository;
         }
         #endregion
@@ -153,6 +158,66 @@ namespace Woopin.SGC.Services
             });
         }
         #endregion
+
+        #region Localidad
+        public Localidad GetLocalidad(int Id)
+        {
+            Localidad Localidad = null;
+            this.LocalidadRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                Localidad = this.LocalidadRepository.Get(Id);
+            });
+            return Localidad;
+        }
+        public void DeleteLocalidades(List<int> Ids)
+        {
+            this.LocalidadRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                foreach (var Id in Ids)
+                {
+                    Localidad Localidad = this.LocalidadRepository.Get(Id);
+                    Localidad.Activo = false;
+                    this.LocalidadRepository.Update(Localidad);
+                }
+            });
+        }
+        public IList<Localidad> GetAllLocalidades()
+        {
+            IList<Localidad> Localidades = null;
+            this.LocalidadRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                Localidades = this.LocalidadRepository.GetAll();
+            });
+            return Localidades;
+        }
+        public void AddLocalidad(Localidad Localidad)
+        {
+            this.LocalidadRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.LocalidadRepository.Add(Localidad);
+            });
+        }
+        public Localidad UpdateLocalidad(Localidad Localidad)
+        {
+            Localidad ToUpdate = new Localidad();
+            this.LocalidadRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                ToUpdate = this.LocalidadRepository.Get(Localidad.Id);
+                ToUpdate.Nombre = Localidad.Nombre;
+                ToUpdate.Provincia = Localidad.Provincia;
+                this.LocalidadRepository.Update(ToUpdate);
+            });
+            return ToUpdate;
+        }
+        public void SetDefaultLocalidad(int Id)
+        {
+            this.LocalidadRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.LocalidadRepository.SetDefault(Id);
+            });
+        }
+        #endregion
+
 
         #region Moneda
         public Moneda GetMoneda(int Id)

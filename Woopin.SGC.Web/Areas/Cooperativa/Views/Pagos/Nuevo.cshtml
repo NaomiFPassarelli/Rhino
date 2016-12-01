@@ -1,0 +1,2104 @@
+﻿@*@model Woopin.SGC.Model.Sueldos.Pago*@
+@model Woopin.SGC.Model.Cooperativa.Pago
+@using Woopin.SGC.Common.HtmlHelper
+@using Woopin.SGC.Common.HtmlModel
+@using Woopin.SGC.Model.Common
+@using Woopin.SGC.Model.Negocio
+@{
+    ViewBag.Title = "Nuevo Pago";
+    ViewBag.SectionIcon = "file-text-o";
+    ViewBag.SectionTitle = "Nuevo Pago";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "Pago-header" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="">
+            <div class="col-md-12">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-plus-circle i-green"></i> Crear Pago</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="Pago">
+
+            <div class="col-md-12">
+                <div class="col-md-5">
+                    @Html.LabelFor(model => model.Organizacion.RazonSocial, new { @class = "col-md-4 horizontal-label padding-left-2 readonly-label" })
+                    <div class="col-md-8 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Organizacion.RazonSocial, new { @class = "textinput padding-left-2", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Organizacion.RazonSocial, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-7 ">
+                    <label class="col-md-5 horizontal-label readonly-label">Domicilio Empresa</label>
+                    <div class="col-md-7 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.DomicilioEmpresa, new { @class = "textinput", @readonly = "readonly", @Value = ViewBag.DomicilioEmpresa.ToString() })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-7 ">
+                    @Html.LabelFor(model => model.Asociado, new { @class = "col-md-3 horizontal-label" })
+                    <div class="col-md-9 input-container">
+                        <div class="row">
+                            <input type="number" id="AsociadoID" name="AsociadoID" class="col-md-2" style="margin-top: 7px;" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Asociado_Id" name="Asociado.Id" class="selectinput" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 padding-left-2">
+                    @Html.Label("Documento", new { @class = "col-md-4 horizontal-label padding-left-2 readonly-label" })
+                    <div class="col-md-8 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Asociado.CUIT, new { @class = "textinput padding-left-2", @id = "CUIT", @readonly = "readonly" })
+                        @*@Html.ValidationMessageFor(model => model.Asociado.CUIT, null, new { @class = "help-block" })*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-3 padding-left-2">
+                    @Html.LabelFor(model => model.FechaPago, new { @class = "col-md-6 horizontal-label" })
+                    <div class="col-md-6 input-container padding-left-2">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de pago es requerida" id="datepago" name="FechaPago" type="text">
+                        @Html.ValidationMessageFor(model => model.FechaPago, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3 padding-left-2">
+                    @Html.LabelFor(model => model.FechaPeriodo, new { @class = "col-md-6 horizontal-label" })
+                    <div class="col-md-6 input-container padding-left-2">
+                        <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de periodo es requerida" id="dateperiodo" name="FechaPeriodo" type="text">
+                        @Html.ValidationMessageFor(model => model.FechaPeriodo, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3 padding-left-2">
+                    <label class="col-md-6 horizontal-label readonly-label">N° Referencia</label>
+                    <div class="col-md-5 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.NumeroRef.ToString() })
+                    </div>
+                </div>
+
+            </div>
+
+            @*<div class="col-md-12">
+                <div class="col-md-9 padding-left-2">
+                    @Html.LabelFor(model => model.Asociado.FechaIngreso, new { @class = "col-md-5 horizontal-label padding-left-2" })
+                    <div class="col-md-7 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Asociado.FechaIngreso, null, new { @class = "textinput" })
+                    </div>
+                </div>
+            </div>*@
+
+            <div class="col-md-12">
+                <div class="col-md-9 padding-left-2">
+                    @Html.LabelFor(model => model.Observacion, new { @class = "col-md-5 horizontal-label padding-left-2" })
+                    <div class="col-md-7 input-container padding-left-2">
+                        @Html.TextBoxFor(model => model.Observacion, null, new { @class = "textinput" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="margin-top:40px;">
+                <div class="col-md-3" style="padding:0px;">
+                    @Html.LabelFor(model => model.TotalAnticipo, new { @class = "col-md-6 horizontal-label readonly-label", @style = "padding:0px;" })
+                    <div class="col-md-6 input-container">
+                        @Html.TextBoxFor(model => model.TotalAnticipo, "{0:0.00}", new { @class = "textinput", @id = "TotalAnticipo", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.TotalAnticipo, null, new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-3" style="padding:0px;">
+                    @Html.LabelFor(model => model.TotalDescuentos, new { @class = "col-md-6 horizontal-label readonly-label", @style = "padding:0px;" })
+                    <div class="col-md-6 input-container">
+                        @Html.TextBoxFor(model => model.TotalDescuentos, "{0:0.00}", new { @class = "textinput", @id = "TotalDescuentos", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.TotalDescuentos, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-3" style="padding:0px;">
+                    @Html.LabelFor(model => model.Total, new { @class = "col-md-6 horizontal-label readonly-label", @style = "padding:0px;" })
+                    <div class="col-md-6 input-container">
+                        @Html.TextBoxFor(model => model.Total, "{0:0.00}", new { @class = "textinput", @id = "TotalPago", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Total, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "Pago-detalle" }))
+{
+    <fieldset class="form-horizontal">
+        <div class="Pago detalle">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.AdicionalesPago.First().Concepto, new { @class = " horizontal-label" })
+                    <div class="input-container col-md-12">
+                        <div class="row">
+                            <input type="number" id="ConceptoID" name="ConceptoID" class="col-md-2" style="margin-top: 7px;" data-val="true" data-val-required="Es necesario un Concepto" />
+                            <div class="col-md-10" style="padding:0;">
+                                <input type="hidden" id="Concepto_Id" name="Concepto.Id" class="selectinput" />
+                                @Html.ValidationMessage("Concepto.Id", new { @class = "help-block valid-custom Concepto" })
+                            </div>
+                            @Html.ValidationMessage("ConceptoID", new { @class = "help-block" })
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="col-md-2">
+                    @Html.LabelFor(model => model.AdicionalesPago.First().Concepto.Porcentaje, new { @class = " horizontal-label readonly-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.AdicionalesPago.First().Concepto.Porcentaje, null, new { @class = "textinput", @readonly = "readonly" })
+                        @Html.ValidationMessage("Porcentaje", new { @class = "help-block" })
+                    </div>
+                </div>*@
+
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.AdicionalesPago.First().Concepto.Valor, new { @class = " horizontal-label readonly-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.AdicionalesPago.First().Concepto.Valor, null, new { @class = "textinput", @readonly = "readonly" })
+                        @Html.ValidationMessage("Valor", new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    @Html.LabelFor(model => model.AdicionalesPago.First().Unidades, new { @class = " horizontal-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.AdicionalesPago.First().Unidades, null, new { @class = "textinput", @id="Concepto_Unidades" })
+                        @Html.ValidationMessage("Unidades", new { @class = "help-block" })
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.AdicionalesPago.First().Total, new { @class = " horizontal-label" })
+                    <div class="input-container">
+                        @Html.TextBoxFor(model => model.AdicionalesPago.First().Total, null, new { @class = "textinput", @id = "Concepto_Total" })
+                        @Html.ValidationMessage("Total", new { @class = "help-block" })
+                    </div>
+                </div>
+                
+                <div class="input-container">
+                    @Html.TextBoxFor(model => model.AdicionalesPago.First().Concepto.TipoConcepto, null, new { @class = "textinput", @hidden = true })
+                </div>
+
+                <div class="input-container">
+                    @Html.TextBoxFor(model => model.AdicionalesPago.First().Concepto.Suma, null, new { @class = "textinput", @hidden = true, @id = "Concepto_Suma" })
+                </div>
+
+    @* TODO Checkbox con todos los que ya estan agregados de los adicionales *@
+
+            <div class="col-md-1">
+                    <a class="boton place-left" id="agregarDetalle">
+                        <i class="fa fa-check i-green"></i>Agregar
+                    </a>
+                </div>
+            </div>
+
+            @*<div class="col-md-12">
+                @Html.ValidationMessageFor(model => model.Detalle.First().Total, null, new { @class = "help-block" })
+                @Html.ValidationMessageFor(model => model.Detalle.First().IVA, null, new { @class = "help-block" })
+            </div>*@
+        </div>
+    </fieldset>
+}
+<div class="table-container detalles">
+    <table id="GridDetallesPago"></table>
+    <div id="GridDetallesPago_pager"></div>
+</div>
+
+
+
+<div id="seleccionar-sueldoBruto-dialog"></div>
+<div id="seleccionar-tipoPago-dialog"></div>
+<div class="clearfix"></div>
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqgrid")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    <script type="text/javascript">
+    var PagoDetalleId = 0;
+    
+    //TODO que funcione: SetupUniqueNonQuitableForm needrefresh
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de Pago. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        Pago.init();
+    });
+
+    var Pago = {
+        //Data_AAs: new Array(),
+
+        //AsociadoFechaIngreso: 0,
+
+        //AsociadoFechaAntiguedadReconocida: 0,
+        valorCuotaAsociado: 0,
+
+        SelectedRows: null,
+
+        OnCheckboxChange: function () {
+            var existeEnGrillaMismoTipo = false;
+            if ($(this).is(":checked")) {
+                //TODO recontra ojo con esto!
+                var IdConcepto = $($(this).parent().parent().find("td")[1]).html();
+                //buscamos entre los que son varios de un mismo tipo
+                if (IdConcepto >= 1 && IdConcepto <= 2) {
+                    //sueldos
+                    //buscamos otro del mismo tipo
+                    //TODO SQL faltaria revisar bien el tema de los sueldos, porque tenemos mensual y basico
+                    mismoTipo = [1, 2];
+                    $.each(mismoTipo, function (i, item) {
+                        if (Pago.SelectedRows.indexOf(item) >= 0 && item != IdConcepto) {
+                            //TODO notificar que ya se encuentra uno de este tipo en la grilla
+                            existeEnGrillaMismoTipo = true;
+                        }
+                    });
+                } else if (IdConcepto >= 6 && IdConcepto <= 18) {
+                    //antiguedades
+                    //buscamos otro del mismo tipo
+                    mismoTipo = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+                    $.each(mismoTipo, function (i, item) {
+                        if (Pago.SelectedRows.indexOf(item) >= 0 && item != IdConcepto) {
+                            //TODO notificar que ya se encuentra uno de este tipo en la grilla
+                            existeEnGrillaMismoTipo = true;
+                        }
+                    });
+                }
+                //else {
+                //    //no buscamos porque no tienen del mismo tipo, son unicos
+                //    Pago.SelectedRows.push(parseFloat(IdConcepto));
+                //    return;
+                //Con el return aca no hace el calcular totales
+                //}
+
+                //si se encontro del mismo tipo sacar el check porque no pueden haber dos
+                if (existeEnGrillaMismoTipo) {
+                    $(this).removeAttr("checked");
+                } else {
+                    Pago.SelectedRows.push(parseFloat(IdConcepto));
+                }
+            }
+            else {
+                //TODO recontra ojo con esto!
+                var Concepto_Id_Eliminar = $($(this).parent().parent().find("td")[1]).html();
+                var indexDel = Pago.SelectedRows.indexOf(parseFloat(Concepto_Id_Eliminar));
+                if (indexDel >= 0) {
+                    Pago.SelectedRows.splice(indexDel, 1);
+                    //TODO habria que editar el campo de seleccionado mandadrlo a false, de esta fila en la grilla
+                }
+            }
+            Pago.CalcularTotales();
+            Pago.ChangeValorDiasHoras(true);
+            Pago.CalcularTotales();
+        },
+
+        init: function () {
+            Pago.SelectedRows = new Array();
+
+            $('#GridDetallesPago').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', '', 'Descripcion', 'Unidades', '', '', 'Anticipo', 'Descuentos', '', '', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Concepto_Id', index: 'Concepto_Id', width: 0, sortable: false, hidden: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: Pago.CheckboxFormatterConcepto, /*formatoptions: { GridRestringida: Pago.SelectedRows },*/ align: "center" },
+                    //{ name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_Eliminar_EsDefault, align: "center" },
+                    //{ name: 'Actions', index: 'Actions', width: 10, sortable: false, formatter: ABM_Eliminar, align: "center" },
+                    { name: 'Descripcion', index: 'Descripcion', width: 25, align: "center", sortable: true },
+                    //{ name: 'Porcentaje', index: 'Porcentaje', width: 15, align: "center", sortable: true },
+                    { name: 'Unidades', index: 'Unidades', width: 15, align: "center", sortable: true, /*editable: true, edittype: 'text'*/ },
+                    //TODO por ahora prohibida la edicion
+                    //{ name: 'Unidades', index: 'Unidades', width: 15, align: "center", sortable: true, editable: true, edittype: 'text' },
+                    { name: 'ValorMin', index: 'ValorMin', width: 0, sortable: false, hidden: true },
+                    { name: 'Valor', index: 'Valor', width: 0, sortable: false, hidden: true },
+                    //{ name: 'Remunerativo', index: 'Remunerativo', width: 20, align: "center", sortable: true, formatter: formatterPago_AntiDesc },
+                    { name: 'Anticipo', index: 'Anticipo', width: 20, align: "center", sortable: true, formatter: formatterPago_AntiDesc },
+                    { name: 'Descuentos', index: 'Descuentos', width: 20, align: "center", sortable: true, formatter: formatterPago_AntiDesc },
+                    { name: 'TipoConcepto', index: 'TipoConcepto', width: 0, sortable: false, hidden: true },
+                    { name: 'Suma', index: 'Suma', width: 0, sortable: false, hidden: true },
+                    { name: 'AdicionalAdicionales', index: 'AdicionalAdicionales', width: 0, sortable: false, hidden: true }
+                ],
+                sortname: 'Concepto.Descripcion',
+                sortorder: "asc",
+                pager: '#GridDetallesPago_pager',
+                cellEdit: true,
+                cellsubmit: 'clientArray',
+                footerrow: true,
+                gridComplete: function () {
+                    var $grid = $('#GridDetallesPago');
+                    //var colSumRem = $grid.jqGrid('getCol', 'Remunerativo', true);
+                    var colSumAntic = $grid.jqGrid('getCol', 'Anticipo', true);
+                    var colSumDes = $grid.jqGrid('getCol', 'Descuentos', true);
+                    var colId = $grid.jqGrid('getCol', 'Concepto_Id', true);
+
+                    var totalRem = 0;
+                    var totalNoRem = 0;
+                    var totalDes = 0;
+                    for (var m = 0; m < colSumAntic.length; m++) {
+                        //si esta seleccionado
+                        if (Pago.SelectedRows.indexOf(parseFloat(colId[m].value)) >= 0)
+                        {
+                            if (colSumAntic[m].value != "" && $.isNumeric(colSumAntic[m].value)) {
+                                totalNoRem += parseFloat(colSumAntic[m].value);
+                            }
+                            if (colSumDes[m].value != "" && $.isNumeric(colSumDes[m].value)) {
+                                totalDes += parseFloat(colSumDes[m].value);
+                            }
+                        }
+                    }
+
+                    $grid.jqGrid('footerData', 'set', { /*Remunerativo: totalRem.toFixed(2),*/ Anticipo: totalNoRem.toFixed(2), Descuentos: totalDes.toFixed(2), TipoConcepto: "Footer" });
+                }
+                //afterSaveCell: function (rowId, cellname, value, iRow, iCol) {
+                //    Pago.SaveUnidades(rowId, cellname, value, iRow, iCol);
+                //}
+            });
+
+            //inicializacion de fechas
+            //TODO que pasa si es diciembre o enero - limites
+            today = new Date();
+            date_start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            date_end = new Date(today.getFullYear(), today.getMonth(), 0);
+            $('#datestart').val(date_start.format("dd/mm/yyyy"));
+            $('#dateend').val(date_end.format("dd/mm/yyyy"));
+
+            $('#DiasTrabajados').val(30);
+
+            $(document).off('change', '#GridDetallesPago .SelectCheckboxes').on('change', '#GridDetallesPago .SelectCheckboxes', Pago.OnCheckboxChange);
+
+            $('#GridDetallesPago').trigger("reloadGrid");
+            $("#GridDetallesPago").parents('div.ui-jqgrid-bdiv').css("max-height", "300px");
+
+            $(document).off('click', '#agregarDetalle').on('click', '#agregarDetalle', Pago.AgregarDetalleAGrilla);
+
+            $(document).off('click', '.BtnEliminar').on('click', '.BtnEliminar', Pago.OnEliminarDetalleClick);
+
+            Pago.CambiarErroresForm();
+            $(document).off('change', '#AsociadoID').on('change', '#AsociadoID', Pago.GetAsociadoByID);
+
+            $(document).off('change', '#ConceptoID').on('change', '#ConceptoID', Pago.GetConceptoByID);
+
+            $('#Concepto_Id').prepend('<option></option>');
+            $('#Concepto_Id').select2(
+                {
+                    width: '100%',
+                    placeholder: "Seleccione Un Concepto",
+                    minimumInputLength: 0,
+                    ajax: {
+                        url: "@Url.Action("GetConceptos", "Conceptos")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { page: 0, where: t, IdSindicato: Pago.Sindicato != null ? Pago.Sindicato : 0 };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+            //$('#Concepto_Id').on("select2-selecting", Pago.OnSelectAdicional);
+            $(document).off('select2-selecting', '#Concepto_Id').on('select2-selecting', '#Concepto_Id', Pago.OnSelectConcepto);
+
+            $('#Asociado_Id').prepend('<option></option>');
+            $('#Asociado_Id').select2(
+                {
+                    width: '100%',
+                    placeholder: "Seleccione Un Asociado",
+                    ajax: {
+                        url: "@Url.Action("GetAsociados", "Asociados")",
+                        dataType: 'json',
+                        params: { type: "POST" },
+                        data: function (t, p) {
+                            return { where: t };
+                        },
+                        results: function (data, page) {
+                            return { results: data.Data.Items };
+                        }
+                    }
+                });
+            //$('#Asociado_Id').on("select2-selecting", Pago.OnAsociadoSeleccionado);
+            $(document).off('select2-selecting', '#Asociado_Id').on('select2-selecting', '#Asociado_Id', Pago.OnAsociadoSeleccionado);
+
+            $(document).off('click', '#BtnSubmit').on('click', '#BtnSubmit', Pago.Save);
+
+            $('#datepago').datepicker({ dateFormat: 'dd/mm/yy' });
+        },
+
+        CompletarPeriodo: function () {
+            //Fecha de Pago sugerida
+            var DatePago = new Date();
+            var DatePeriodo = new Date(DatePago.getFullYear(), DatePago.getMonth(), 0);
+            
+            $('#datepago').val(DatePago.format("dd/mm/yyyy"));
+            $('#dateperiodo').val(DatePeriodo.format("dd/mm/yyyy"));
+
+            //Periodo Actual
+            //if ($('#DiasTrabajados').val() != null && $('#DiasTrabajados').val() > 0) {
+            //    //TODO cartel para que revise los dias trabajados y eso
+            //}
+            var monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+            //dateStartPeriodo = $('#datestart').val();
+            //day = ((dateStartPeriodo).split("/"))[0];
+            //month = ((dateStartPeriodo).split("/"))[1];
+            //year = ((dateStartPeriodo).split("/"))[2];
+            //TODO que pasa en los limites - diciembre/enero
+            //var DatePeriodo = new Date(year, month - 1, day);
+            //var NameMonth = monthNames[DatePeriodo.getMonth()];
+            //$('#FechaPeriodo').val(NameMonth + "/" + year);
+
+            var Id = $('#AsociadoID').val();
+            //var Periodo = $('#FechaPeriodo').val();
+        },
+
+        //SaveUnidades: function (rowId, cellname, value, iRow, iCol) {
+        //    //TODO ver si no hay forma de pasar la row entre los parametros de la funcion, o el row.Valor
+        //    //para no tener que hacer el getRowData
+        //    var row = $("#GridDetallesPago").getRowData(rowId);
+        //    Pago.TakeAndAddConcepto(rowId, row.Valor, value, null);
+
+        //    //Si se esta modificando en la grilla los dias trabajados o no trabajados, cambiar tambien
+        //    //en el encabezado
+
+        //    //TODO hacer lo mismo pero inverso, si se modifica el encabezado, modificar el valor de la grilla
+        //    //este todo seria dentro de takeandaddadicional la parte de si existe, entonces editar
+
+        //    switch(rowId)
+        //    {
+        //        case 2:
+        //            //sueldo bruto
+        //            $('#DiasTrabajados').val(value);
+        //            break;
+        //        case 3:
+        //            //dias no trabajados justificados
+        //            $('#DiasJustificados').val(value);
+        //            break;
+        //        case 4:
+        //            //dias no trabajados no justificados
+        //            $('#DiasNoJustificados').val(value);
+        //            break;
+        //        case 5:
+        //            //horas no trabajadas
+        //            $('#HorasNoJustificadas').val(value);
+        //            break;
+        //        default:
+        //            break;
+        //    }
+
+        //    $('#GridDetallesPago').trigger("reloadGrid");
+
+
+        //    //$("#CuentaCorrienteCompras").setGridParam({ datatype: 'json' });
+        //    //$('#CuentaCorrienteCompras').setGridParam({ page: 1 }).trigger("reloadGrid");
+
+        //},
+
+        ChangeValorDiasHoras: function (onlyPorcentajesFijos) {
+            //onlyPorcentajesFijos por ejemplo cuando se hace el cambio de los dias trabajados literal
+            //solo hay que cambiar los porcentajes de cuota sindical, obra social, ley, jubilacion
+
+            //ojo en este con los loops como habia pasado con el ChangeDiasHorasNoJustificados
+            diasTrabajados = parseFloat($('#DiasTrabajados').val()); //siempre 30
+            diasJustificados = parseFloat($('#DiasJustificados').val());
+            licEnfermedad = parseFloat($('#LicenciaEnfermedad').val());
+            art = parseFloat($('#ART').val());
+            diasNoJustificados = parseFloat($('#DiasNoJustificados').val());
+            diasSuspension = parseFloat($('#Suspension').val());
+            diasTrabajadosLiteral = parseFloat($('#DiasTrabajadosLiterales').val());
+
+            diasSueldoBasico = diasTrabajados - diasJustificados - licEnfermedad - art - diasNoJustificados - diasSuspension;
+
+            //TODO, es sobr horas extras tambien, no?
+            horasExtras = parseFloat($('#HorasExtras').val());
+
+            dias = diasTrabajados /*+ diasJustificados + licEnfermedad + art*/ - diasNoJustificados - diasSuspension;
+            horas = $('#HorasNoJustificadas').val();
+            valorDias = dias * sueldoBrutoSeleccionado;
+            valorHoras = horas * horasNoJustificadasSeleccionado;
+            //valorHoras += horasExtras * ;
+            valorHoras += valorHorasExtras;
+
+            valueDiasHoras = valorDias - valorHoras;
+
+            var idConceptoPremioPorProduccion = 0;
+            var idConceptoDiaCortador = 0;
+
+            switch (Pago.Sindicato) {
+                case 251:
+                    idConceptoPremioPorProduccion = 4008;
+                    idConceptoRefrigerio = 1006;
+                    idConceptoViatico = 5014;
+                    idConceptoDiaCortador = 9011;
+                    break;
+                case 252:
+                    idConceptoRefrigerio = 5012;
+                    idConceptoViatico = 5015;
+                    break;
+                case 253:
+                    idConceptoRefrigerio = 5013;
+                    idConceptoViatico = 5016;
+                    idConceptoPremioPorProduccion = 4009;
+                    break;
+            }
+
+            if (!onlyPorcentajesFijos) {
+
+                //TODO SQL
+                idConceptoSueldoBasico = 2;
+                Pago.TakeAndAddConcepto(idConceptoSueldoBasico, sueldoBrutoSeleccionado, diasSueldoBasico, false);
+
+
+                //Porque tiene validaciones
+                Pago.ChangeDiasHorasNoJustificados();
+
+                Pago.TakeAndAddConcepto(idConceptoRefrigerio, null, diasTrabajadosLiteral, false);
+                
+                Pago.TakeAndAddConcepto(idConceptoViatico, null, diasTrabajadosLiteral, false);
+
+                //si existe el dia del cortador en grilla 
+                if (idConceptoDiaCortador != 0) {
+                    var indexEnArrayYGrillaDiaCortador = Pago.SelectedRows.indexOf(idConceptoDiaCortador);
+                    if (indexEnArrayYGrillaDiaCortador >= 0) {
+                        Pago.TakeAndAddConcepto(idConceptoDiaCortador, null, valueDiasHoras, false);
+
+                        var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                        $.each(allGridData, function (i, item) {
+                            if (item.Concepto_Id == idConceptoDiaCortador) {
+                                //valorDiaCortador = item.Remunerativo;
+                            }
+                        });
+                    }
+                }
+
+                if (idConceptoPremioPorProduccion != 0) {
+                    //TODO SQL
+                    //Si existe el premioPorProduccion entonces modificarlo
+                    var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoPremioPorProduccion);
+                    if (indexEnArrayYGrilla >= 0) {
+                        var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                        $.each(allGridData, function (i, item) {
+                            if (item.Concepto_Id == idConceptoPremioPorProduccion) {
+                                row = item;
+                            }
+                        });
+                        row.Valor = valueDiasHoras;
+                        $('#GridDetallesPago').trigger("reloadGrid");
+                    }
+                }
+            }
+
+            valorDiasHorasAntiguedadPremiosRefrigerio = valorDias - valorHoras + valorAntiguedad + valorPremioAsistenciaPerfecta + valorPremioAsistenciaYPuntualidad + valorRefrigerio + valorDiaCortador;
+
+            var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoPremioPorProduccion);
+            var valorPremioProduccion = 0;
+            if (indexEnArrayYGrilla >= 0) {
+                var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                $.each(allGridData, function (i, item) {
+                    if (item.Concepto_Id == idConceptoPremioPorProduccion) {
+                        row = item;
+                        //valorPremioProduccion = item.Remunerativo;
+                    }
+                });
+            }
+
+            valorDiasHorasAntiguedadPremiosRefrigerio += valorPremioProduccion;
+
+            //TODO SQL
+            idConceptoObraSocial = 1007;
+            //valorRemunerativo = $('#TotalRemunerativo').val();
+            if (Pago.SelectedRows.indexOf(idConceptoObraSocial) >= 0) {
+                //Pago.TakeAndAddConcepto(idConceptoObraSocial, valorRemunerativo, null, false);
+                //Pago.TakeAndAddConcepto(idConceptoObraSocial, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
+            }
+
+            //TODO SQL
+            idConceptoCuotaSindical = 1010;
+            if (Pago.SelectedRows.indexOf(idConceptoCuotaSindical) >= 0) {
+                //Pago.TakeAndAddConcepto(idConceptoCuotaSindical, valorRemunerativo, null, false);
+                //Pago.TakeAndAddConcepto(idConceptoCuotaSindical, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
+            }
+
+
+            //TODO SQL
+            ValorTotalObraSocial = 0;
+            ValorTotalSindical = 0;
+            ValorDiferenciaSindical = 0;
+            ValorDiferenciaObraSocial = 0;
+            var indexEnArrayOS = Pago.SelectedRows.indexOf(idConceptoObraSocial);
+            var indexEnArrayS = Pago.SelectedRows.indexOf(idConceptoCuotaSindical);
+            if (indexEnArrayOS >= 0 || indexEnArrayS >= 0) {
+                var allGridData = $('#GridDetallesPago').jqGrid('getRowData');
+                $.each(allGridData, function (i, item) {
+                    if (indexEnArrayOS >= 0 && item.Concepto_Id == idConceptoObraSocial) {
+                        ValorTotalObraSocial = item.Descuentos;
+                    }
+                    if (indexEnArrayS >= 0 && item.Concepto_Id == idConceptoCuotaSindical) {
+                        ValorTotalSindical = item.Descuentos;
+                    }
+                });
+            }
+
+            //var ValorTotalAnteriorObraSocial = 0;
+            //var ValorTotalAnteriorSindical = 0;
+            //var Pago.ValorAnteriorDiferenciaSindical = 0;
+            //var Pago.ValorAnteriorDiferenciaObraSocial = 0;
+
+
+            //si esta la os y no esta en grilla el diferencial takeandadd
+            //si esta la os y esta en grilla pero deseleccionado no lo agrego
+            //si esta la os y esta  en grilla y seleccionado takeandadd
+            var diferencias = Pago.CalcularDiferencias();
+
+            if (Pago.SelectedRows.indexOf(idConceptoObraSocial) >= 0) {
+                if (ValorTotalAnteriorObraSocial != 0 || Pago.ValorAnteriorDiferenciaObraSocial != 0) {
+                    ValorTotalObraSocial = parseFloat(ValorTotalAnteriorObraSocial) + parseFloat(ValorTotalObraSocial);
+                } else {
+                    ValorTotalObraSocial = parseFloat(ValorTotalObraSocial);
+                }
+                if (Pago.SelectedRows.indexOf(diferencias.idConceptoDiferenciaObraSocial) >= 0)
+                {
+                    Pago.TakeAndAddConcepto(diferencias.idConceptoDiferenciaObraSocial, ValorTotalObraSocial, null, false);
+                } else {
+                    var existeEnGrilla = false;
+                    var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                    $.each(allGridData, function (i, item) {
+                        if (item.Concepto_Id == diferencias.idConceptoDiferenciaObraSocial) {
+                            existeEnGrilla = true;
+                        }
+                    });
+                    if (!existeEnGrilla)
+                    {
+                        Pago.TakeAndAddConcepto(diferencias.idConceptoDiferenciaObraSocial, ValorTotalObraSocial, null, false);
+                    }
+                    
+                }
+            }
+
+            if (Pago.SelectedRows.indexOf(idConceptoCuotaSindical) >= 0) {
+                if (ValorTotalAnteriorSindical != 0 || Pago.ValorAnteriorDiferenciaSindical != 0) {
+                    ValorTotalSindical = parseFloat(ValorTotalAnteriorSindical) + parseFloat(ValorTotalSindical);
+                } else {
+                    ValorTotalObraSocial = parseFloat(ValorTotalObraSocial);
+                }
+
+                if (Pago.SelectedRows.indexOf(diferencias.idConceptoDiferenciaSindical) >= 0) {
+                    Pago.TakeAndAddConcepto(diferencias.idConceptoDiferenciaSindical, ValorTotalSindical, null, false);
+                } else {
+                    var existeEnGrilla = false;
+                    var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                    $.each(allGridData, function (i, item) {
+                        if (item.Concepto_Id == diferencias.idConceptoDiferenciaSindical) {
+                            existeEnGrilla = true;
+                        }
+                    });
+                    if (!existeEnGrilla) {
+                        Pago.TakeAndAddConcepto(diferencias.idConceptoDiferenciaSindical, ValorTotalSindical, null, false);
+                    }
+
+                }
+            }
+
+            if (ValorTotalAnteriorSindical != 0 || Pago.ValorAnteriorDiferenciaSindical != 0) {
+                ValorTotalSindical = parseFloat(ValorTotalAnteriorSindical) + parseFloat(ValorTotalSindical);
+
+                if (Pago.SelectedRows.indexOf(idConceptoCuotaSindical) >= 0) {
+                    Pago.TakeAndAddConcepto(diferencias.idConceptoDiferenciaSindical, ValorTotalSindical, null, false);
+                }
+
+            }
+
+            //TODO SQL
+            idConceptoJubilacion = 1008;
+            if (Pago.SelectedRows.indexOf(idConceptoJubilacion) >= 0) {
+                //Pago.TakeAndAddConcepto(idConceptoJubilacion, valorRemunerativo, null, false);
+                //Pago.TakeAndAddConcepto(idConceptoJubilacion, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
+            }
+
+            //TODO SQL
+            idConceptoLey19032 = 1009;
+            if (Pago.SelectedRows.indexOf(idConceptoLey19032) >= 0) {
+                //Pago.TakeAndAddConcepto(idConceptoLey19032, valorRemunerativo, null, false);
+                //Pago.TakeAndAddConcepto(idConceptoLey19032, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
+            }
+
+            ////TODO SQL
+            //idConceptoCuotaSindical = 1010;
+            //Pago.TakeAndAddConcepto(idConceptoCuotaSindical, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
+
+        },
+
+        AgregarConceptosIniciales: function () {
+
+            //agregar todo aca
+            idServiciosPrestados = 1;
+            Pago.TakeAndAddConcepto(idServiciosPrestados, Pago.valorCuotaAsociado, null, false);
+        },
+
+        ChangeDiasTrabajadosLiterales: function () {
+            var diasTrabajadosLiteral = $('#DiasTrabajadosLiterales').val();
+
+            if (diasTrabajadosLiteral != "" && (!$.isNumeric(diasTrabajadosLiteral) || diasTrabajadosLiteral <= 0)) {
+                $('#DiasTrabajadosLiterales').val(1);
+            }
+
+            //TODO SQL
+            switch (Pago.Sindicato) {
+                case 251:
+                    idConceptoRefrigerio = 1006;
+                    idConceptoViatico = 5014;
+                    break;
+                case 252:
+                    idConceptoRefrigerio = 5012;
+                    idConceptoViatico = 5015;
+                    break;
+                case 253:
+                    idConceptoRefrigerio = 5013;
+                    idConceptoViatico = 5016;
+                    break;
+            }
+            Pago.TakeAndAddConcepto(idConceptoRefrigerio, null, diasTrabajadosLiteral, false);
+
+            Pago.TakeAndAddConcepto(idConceptoViatico, null, diasTrabajadosLiteral, false);
+
+            Pago.ChangeValorDiasHoras(true);
+        },
+
+        ChangeHorasExtras: function () {
+            var horasExtras = $('#HorasExtras').val();
+            idConceptoHorasExtras = 4007;
+
+            if (horasExtras != "" && (!$.isNumeric(horasExtras) || horasExtras <= 0)) {
+                $('#HorasExtras').val(0);
+                Pago.EliminarDetalle(null, idConceptoHorasExtras);
+                valorHorasExtras = 0;
+            } else {
+                //TODO SQL
+                Pago.TakeAndAddConcepto(idConceptoHorasExtras, null, horasExtras, false);
+            }
+            Pago.ChangeValorDiasHoras(true);
+        },
+
+        ChangeDiasTrabajados: function () {
+            var diasTrabajados = $('#DiasTrabajados').val(); //siempre 30
+
+            //if (diasTrabajados != "" && (!$.isNumeric(diasTrabajados) || diasTrabajados <= 0)) {
+            //    $('#DiasTrabajados').val(1);
+            //}
+
+            //TODO SQL
+            idConceptoSueldoBasico = 2;
+            Pago.TakeAndAddConcepto(idConceptoSueldoBasico, sueldoBrutoSeleccionado, diasTrabajados, false);
+
+            Pago.ChangeValorDiasHoras(false);
+        },
+
+        ChangeDiasJustificados: function (e) {
+            var cantDias = 0;
+            //TODO SQL
+            var idConceptoDias = 0;
+
+            //puede ser licencia por enfermedad o dias justificados o ART
+            switch (e.currentTarget.getAttribute("Id")) {
+                case "DiasJustificados":
+                    cantDias = $(this).val();
+                    idConceptoDias = 3;
+                    break;
+                case "LicenciaEnfermedad":
+                    cantDias = $(this).val();
+                    idConceptoDias = 6013;
+                    break;
+                case "ART":
+                    cantDias = $(this).val();
+                    idConceptoDias = 6012;
+                    break;
+            }
+
+            if (!$.isNumeric(cantDias) || cantDias <= 0) {
+                $(this).val(0);
+                cantDias = 0;
+
+                //eliminar de la grilla si es que esta
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoDias);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Concepto_Id == idConceptoDias) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    Pago.EliminarDetalle(idEnGrilla, idConceptoDias);
+                }
+
+            } else if (cantDias > 0) {
+                Pago.TakeAndAddConcepto(idConceptoDias, sueldoBrutoSeleccionado, cantDias, false);
+            }
+
+            Pago.ChangeValorDiasHoras(false);
+        },
+
+        ChangeDiasHorasNoJustificados: function (event) {
+            var checkBoth = false;
+            var checkDias = false;
+            if (event == undefined) {
+                //se deben checkear los dos
+                checkBoth = true;
+            } else {
+                checkDias = event.data.checkDias;
+            }
+
+            diasNoJustificados = $('#DiasNoJustificados').val();
+            diasSuspension = $('#Suspension').val();
+            horasNoJustificados = $('#HorasNoJustificadas').val();
+            //checkDias es un bool, si es true es que se modifico/changeDiasNoJustificados
+            //si es false se modifico/changeHorasNoJustificados
+
+            //var diasNoJustificados = $(this).val();
+            //TODO SQL
+            var idConceptoDiasNoJustificados = 4;
+            var idConceptoSuspension = 6011;
+            //TODO SQL
+            var idConceptoHorasNoJustificadas = 5;
+            //if ((checkDias || checkBoth) && diasNoJustificados != "" && (!$.isNumeric(diasNoJustificados) || diasNoJustificados <= 0)) {
+            if ((checkDias || checkBoth) && (!$.isNumeric(diasNoJustificados) || diasNoJustificados <= 0)) {
+                diasNoJustificados = 0;
+                $('#DiasNoJustificados').val(diasNoJustificados);
+
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //eliminar de la grilla si es que esta
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                //Elimino De la Grilla el Concepto de DiasNoJustificados
+                var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoDiasNoJustificados);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Concepto_Id == idConceptoDiasNoJustificados) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    if (idEnGrilla != -1) {
+                        Pago.EliminarDetalle(idEnGrilla, idConceptoDiasNoJustificados);
+                    }
+                }
+            }
+
+            if ((checkDias || checkBoth) && (!$.isNumeric(diasSuspension) || diasSuspension <= 0)) {
+                diasSuspension = 0;
+                $('#Suspension').val(diasSuspension);
+
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //eliminar de la grilla si es que esta
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                //Elimino De la Grilla el Concepto de Suspension
+                var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoSuspension);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Concepto_Id == idConceptoSuspension) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    if (idEnGrilla != -1) {
+                        Pago.EliminarDetalle(idEnGrilla, idConceptoSuspension);
+                    }
+                }
+            }
+
+            //if ((!checkDias || checkBoth) && horasNoJustificados != "" && (!$.isNumeric(horasNoJustificados) || horasNoJustificados <= 0)) {
+            if ((!checkDias || checkBoth) && (!$.isNumeric(horasNoJustificados) || horasNoJustificados <= 0)) {
+                horasNoJustificados = 0;
+                $('#HorasNoJustificadas').val(horasNoJustificados);
+
+                //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+                //eliminar de la grilla si es que esta
+                //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                //Elimino De la Grilla el Concepto de horasNoJustificados
+                var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoHorasNoJustificadas);
+                if (indexEnArrayYGrilla >= 0) {
+                    var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                    var idEnGrilla = -1;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Concepto_Id == idConceptoHorasNoJustificadas) {
+                            idEnGrilla = item.id;
+                        }
+                    });
+                    if (idEnGrilla != -1) {
+                        Pago.EliminarDetalle(idEnGrilla, idConceptoHorasNoJustificadas);
+                    }
+                }
+            }
+
+            if (!(diasNoJustificados === "") && !(diasSuspension === "") && !(horasNoJustificados === "")) {
+                //Dejar esto, porque al inicializarse esta como "" y toma como que es un valor
+                if (diasNoJustificados == 0 && diasSuspension == 0 && horasNoJustificados == 0) {
+                    //TODO SQL
+                    idConceptoPremioAsistenciaYPuntualidad = 1004;
+                    //dias = parseFloat($('#DiasTrabajados').val()) + parseFloat($('#DiasJustificados').val()) - parseFloat($('#DiasNoJustificados').val());
+                    dias = parseFloat($('#DiasTrabajados').val()) - parseFloat($('#DiasNoJustificados').val()) - parseFloat($('#Suspension').val());
+                    horas = $('#HorasNoJustificadas').val();
+                    valorDias = dias * sueldoBrutoSeleccionado;
+                    valorHoras = horas * horasNoJustificadasSeleccionado;
+
+                    var valueDiasHoras = valorDias - valorHoras;
+
+                    Pago.TakeAndAddConcepto(idConceptoPremioAsistenciaYPuntualidad, valueDiasHoras, null, false);
+                    //TODO SQL
+                    idConceptoPremioAsistenciaPerfecta = 1005;
+                    //Se sabe que lo no jusificado es cero
+                    Pago.TakeAndAddConcepto(idConceptoPremioAsistenciaPerfecta, valorDias, null, false);
+
+                } else if ((diasNoJustificados == 1 && diasSuspension == 0 && horasNoJustificados == 0) || (diasNoJustificados == 0 && diasSuspension == 1 && horasNoJustificados == 0) || (diasNoJustificados == 0 && diasSuspension == 0 && horasNoJustificados <= 8)) {
+                    //TODO preguntarle a emi si estaria bien tomar como horas menor o igual a 8 igual a una falta
+                    //Hasta una falta tiene premio por asistencia y puntualidad
+                    //Para el premio por asistencia perfecta debe no tener ni faltas ni horas no justificadas
+
+                    //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                    var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoPremioAsistenciaPerfecta);
+                    if (indexEnArrayYGrilla >= 0) {
+                        var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                        idEnGrilla = -1;
+                        $.each(allGridData, function (i, item) {
+                            if (item.Concepto_Id == idConceptoPremioAsistenciaPerfecta) {
+                                idEnGrilla = item.id;
+                            }
+                        });
+                        if (idEnGrilla != -1) {
+                            Pago.EliminarDetalle(idEnGrilla, idConceptoPremioAsistenciaPerfecta);
+                            valorPremioAsistenciaPerfecta = 0;
+                        }
+                    }
+                    //TODO SQL
+                    idConceptoPremioAsistenciaYPuntualidad = 1004;
+                    //dias = parseFloat($('#DiasTrabajados').val()) + parseFloat($('#DiasJustificados').val()) - parseFloat($('#DiasNoJustificados').val());
+                    dias = parseFloat($('#DiasTrabajados').val()) - parseFloat($('#DiasNoJustificados').val()) - parseFloat($('#Suspension').val());
+                    horas = $('#HorasNoJustificadas').val();
+                    valorDias = dias * sueldoBrutoSeleccionado;
+                    valorHoras = horas * horasNoJustificadasSeleccionado;
+
+                    var valueDiasHoras = valorDias - valorHoras;
+
+                    Pago.TakeAndAddConcepto(idConceptoPremioAsistenciaYPuntualidad, valueDiasHoras, null, false);
+                } else if (diasNoJustificados > 1 || diasSuspension > 1 || horasNoJustificados > 8 || (diasNoJustificados >= 1 && horasNoJustificados >= 1) || (diasSuspension >= 1 && horasNoJustificados >= 1) || (diasSuspension >= 1 && diasNoJustificados >= 1)) {
+                    //No hay premio eliminar si es que esta en la grilla los adicionales
+                    //TODO SQL
+                    idConceptoPremioAsistenciaYPuntualidad = 1004;
+                    idConceptoPremioAsistenciaPerfecta = 1005;
+
+                    //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                    var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoPremioAsistenciaYPuntualidad);
+                    if (indexEnArrayYGrilla >= 0) {
+                        var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                        var idEnGrilla = -1;
+                        $.each(allGridData, function (i, item) {
+                            if (item.Concepto_Id == idConceptoPremioAsistenciaYPuntualidad) {
+                                idEnGrilla = item.id;
+                            }
+                        });
+                        if (idEnGrilla != -1) {
+                            Pago.EliminarDetalle(idEnGrilla, idConceptoPremioAsistenciaYPuntualidad);
+                            valorPremioAsistenciaYPuntualidad = 0;
+                        }
+
+                    }
+                    //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+
+                    //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+                    var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoPremioAsistenciaPerfecta);
+                    if (indexEnArrayYGrilla >= 0) {
+                        var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                        idEnGrilla = -1;
+                        $.each(allGridData, function (i, item) {
+                            if (item.Concepto_Id == idConceptoPremioAsistenciaPerfecta) {
+                                idEnGrilla = item.id;
+                            }
+                        });
+                        if (idEnGrilla != -1) {
+                            Pago.EliminarDetalle(idEnGrilla, idConceptoPremioAsistenciaPerfecta);
+                            valorPremioAsistenciaPerfecta = 0;
+                        }
+                    }
+
+                }
+
+                if (diasNoJustificados > 0) {
+                    Pago.TakeAndAddConcepto(idConceptoDiasNoJustificados, sueldoBrutoSeleccionado, diasNoJustificados, false);
+                }
+                if (diasSuspension > 0) {
+                    Pago.TakeAndAddConcepto(idConceptoSuspension, sueldoBrutoSeleccionado, diasSuspension, false);
+                }
+                if (horasNoJustificados > 0) {
+                    Pago.TakeAndAddConcepto(idConceptoHorasNoJustificadas, horasNoJustificadasSeleccionado, horasNoJustificados, false);
+                }
+            }
+            //si toque alguno de estos dos, primero valido y despues modifico el resto
+            if (event != undefined) {
+                Pago.ChangeValorDiasHoras(false);
+            }
+        },
+
+        //ChangeHorasNoJustificadas: function () {
+        //    var horasNoJustificados = $(this).val();
+        //    //TODO SQL
+        //    var idConceptoHorasNoJustificadas = 5;
+
+        //    if (horasNoJustificados != "" && (!$.isNumeric(horasNoJustificados) || horasNoJustificados <= 0)) {
+        //        $(this).val(0);
+        //        horasNoJustificados = 0;
+
+        //        //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+        //        //eliminar de la grilla si es que esta
+        //        //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+        //        var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoHorasNoJustificadas);
+        //        if (indexEnArrayYGrilla >= 0) {
+        //            var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //            var idEnGrilla = -1;
+        //            $.each(allGridData, function (i, item) {
+        //                if (item.Concepto_Id == idConceptoHorasNoJustificadas) {
+        //                    idEnGrilla = item.id;
+        //                }
+        //            });
+        //            if (idEnGrilla != -1) {
+        //                Pago.EliminarDetalle(idEnGrilla, idConceptoHorasNoJustificadas);
+        //            }
+        //        }
+        //    }
+
+        //    if (horasNoJustificados == 0 && $('#DiasNoJustificados').val() == 0) {
+        //        //Hay premio agregar o editar adicionales no se si es editar porque creo que es a todo o nada pero habria que ver si cambio el sueldo por ejemplo
+
+        //        //TODO SQL
+        //        idConceptoPremioAsistenciaYPuntualidad = 1004;
+        //        Pago.TakeAndAddConcepto(idConceptoPremioAsistenciaYPuntualidad, null, null, false);
+
+        //        //TODO SQL
+        //        idConceptoPremioAsistenciaPerfecta = 1005;
+        //        Pago.TakeAndAddConcepto(idConceptoPremioAsistenciaPerfecta, null, null, false);
+
+        //        //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+        //        var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoHorasNoJustificadas);
+        //        if (indexEnArrayYGrilla >= 0) {
+        //            var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //            var idEnGrilla = -1;
+        //            $.each(allGridData, function (i, item) {
+        //                if (item.Concepto_Id == idConceptoHorasNoJustificadas) {
+        //                    idEnGrilla = item.id;
+        //                }
+        //            });
+        //            Pago.EliminarDetalle(idEnGrilla, idConceptoHorasNoJustificadas);
+        //        }
+
+
+        //        //eliminar de la grilla si es que esta
+        //        //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+        //        //var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //        //var idEnGrilla = -1;
+        //        //$.each(allGridData, function (i, item) {
+        //        //    if (item.Concepto_Id == idConceptoHorasNoJustificadas) {
+        //        //        idEnGrilla = item.id;
+        //        //    }
+        //        //});
+        //        //if (idEnGrilla != -1) {
+        //        //    Pago.EliminarDetalle(idEnGrilla, idConceptoHorasNoJustificadas);
+        //        //}
+
+        //    } else if (horasNoJustificados > 0){
+        //        //No hay premio eliminar si es que esta en la grilla los adicionales
+        //        //TODO SQL
+        //        idConceptoPremioAsistenciaYPuntualidad = 1004;
+        //        idConceptoPremioAsistenciaPerfecta = 1005;
+
+        //        //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+        //        var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoPremioAsistenciaYPuntualidad);
+        //        if (indexEnArrayYGrilla >= 0) {
+        //            var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //            var idEnGrilla = -1;
+        //            $.each(allGridData, function (i, item) {
+        //                if (item.Concepto_Id == idConceptoPremioAsistenciaYPuntualidad) {
+        //                    idEnGrilla = item.id;
+        //                }
+        //            });
+        //            Pago.EliminarDetalle(idEnGrilla, idConceptoPremioAsistenciaYPuntualidad);
+        //        }
+
+
+        //        //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+        //        //var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //        //var idEnGrilla = -1;
+        //        //$.each(allGridData, function (i, item) {
+        //        //    if (item.Concepto_Id == idConceptoPremioAsistenciaYPuntualidad) {
+        //        //        idEnGrilla = item.id;
+        //        //    }
+        //        //});
+        //        //if (idEnGrilla != -1) {
+        //        //    Pago.EliminarDetalle(idEnGrilla, idConceptoPremioAsistenciaYPuntualidad);
+        //        //}
+
+        //        //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
+        //        var indexEnArrayYGrilla = Pago.SelectedRows.indexOf(idConceptoPremioAsistenciaPerfecta);
+        //        if (indexEnArrayYGrilla >= 0) {
+        //            var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //            idEnGrilla = -1;
+        //            $.each(allGridData, function (i, item) {
+        //                if (item.Concepto_Id == idConceptoPremioAsistenciaPerfecta) {
+        //                    idEnGrilla = item.id;
+        //                }
+        //            });
+        //            Pago.EliminarDetalle(idEnGrilla, idConceptoPremioAsistenciaPerfecta);
+        //        }
+
+
+        //        //TODO SQL
+        //        //TODO poner en common funcionts si existeEnGrilla pero que retorne -1 o el valor del id no bool y cambiarlo en los lugares que se usa
+        //        //var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //        //idEnGrilla = -1;
+        //        //$.each(allGridData, function (i, item) {
+        //        //    if (item.Concepto_Id == idConceptoPremioAsistenciaPerfecta) {
+        //        //        idEnGrilla = item.id;
+        //        //    }
+        //        //});
+        //        //if (idEnGrilla != -1) {
+        //        //    Pago.EliminarDetalle(idEnGrilla, idConceptoPremioAsistenciaPerfecta);
+        //        //}
+
+        //        //TODO agregar es igual a sueldo basico mismo valor del sueldo basico por unidades
+        //        Pago.TakeAndAddConcepto(idConceptoHorasNoJustificadas, horasNoJustificadasSeleccionado, horasNoJustificados , false);
+
+
+        //    }
+        //},
+
+        CambiarErroresForm: function () {
+            //$('#CondicionCompra_Id').attr('data-val-required', 'Es necesario una condición de compra');
+            //$('#Pago-header').reParseForm();
+
+            //$('#TotalRubro').attr('data-val-number', 'El Total debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+            //$('#IVARubro').attr('data-val-number', 'El Total debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+            //$('#Pago-detalle').reParseForm();
+
+        },
+
+        @*VerDetalleDialog: function () {
+            var IdEntidad = $(this).data('id');
+            var RowId = $(this).closest('tr').attr('id');
+            var row = $("#GridAcumuladoCompras").getRowData(RowId);
+            if ($(this).data('entidad') == 'ComprobanteVenta') {
+                var opt = {
+                    width: 850, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesVenta').resizeGrid('GridDetallesVenta_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Comprobante ' + row.LetraNumero, opt);
+            }
+            else {
+                var opt = {
+                    width: 900, height: 600,
+                    openCallback: function () {
+                        $('#GridDetallesCobranza').resizeGrid('GridDetallesCobranza_Container');
+                        $('#GridCobrosCobranza').resizeGrid('GridCobrosCobranza_Container');
+                    }
+                };
+                $('#cuentacorriente-detalle-dialog').OpenFormDialog('@Url.Action("Detalle","Cobranzas")?Id=' + IdEntidad + '&opensDialog=true', 'Detalle Cobranza ' + row.LetraNumero, opt);
+            }
+        },*@
+
+        GetAsociadoByID: function () {
+            var Id = $('#AsociadoID').val();
+            if (Id == "") {
+                Pago.CamposNoEditables(true);
+                return;
+            }
+            valid = Pago.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            var params = {
+                url: '@Url.Action("GetAsociado", "Asociados")',
+                data: { IdAsociado: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        Pago.LoadAsociado(ret.Data);
+                        $('#Asociado_Id').select2('data', { id: Id, text: ret.Data.Nombre + " " + ret.Data.Apellido + " " + '(' + ret.Data.CUIT + ')' });
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('Asociado no existe, vuelva a intentarlo!');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ValidateFilters: function () {
+            var Id = $('#AsociadoID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return { success: false, message: 'El N° de Asociado no es correcto' };
+            } else {
+                return { success: true };
+            }
+            //return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        //CompletarFiltros: function () {
+        //    $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        //},
+
+        GetConceptoByID: function () {
+            var Id = $('#ConceptoID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return $.WarningDialog('El N° de Concepto no es correcto');
+            }
+            Pago.LoadConcepto(Id);
+        },
+
+        //OnTipoPagoChange: function () {
+        //    $('#Pago-header').reParseForm();
+        //},
+
+        OnEliminarDetalleClick: function () {
+            var Id = $(this).closest('tr').attr('id');
+            //TODO recontra ojo con esto!
+            var Concepto_Id_Eliminar = $($(this).parent().parent().find("td")[1]).html();
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el adicional?",
+                                    function () { Pago.EliminarDetalle(Id, Concepto_Id_Eliminar) });
+        },
+
+        EliminarDetalle: function (IdEnGrilla, Concepto_Id_Eliminar) {
+            var indexDel = Pago.SelectedRows.indexOf(parseFloat(Concepto_Id_Eliminar));
+            if (indexDel >= 0) {
+                Pago.SelectedRows.splice(indexDel, 1);
+            }
+            if (IdEnGrilla == null) {
+                var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                $.each(allGridData, function (i, item) {
+                    if (item.Concepto_Id == Concepto_Id_Eliminar) {
+                        IdEnGrilla = item.id;
+                    }
+                });
+            }
+            $('#GridDetallesPago').jqGrid('delRowData', IdEnGrilla);
+            $('#SelectCount').html('0');
+            Pago.CalcularTotales();
+        },
+
+        OnSelectConcepto: function (e) {
+            Pago.LoadConcepto(e.val);
+        },
+
+        LoadConcepto: function (IdConcepto) {
+            //si existe para determinados items agarrar el valor sobre el que se hace y recalcular el total
+            var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+            var indexEnArray = Pago.SelectedRows.indexOf(IdConcepto);
+            var idEnGrilla = -1;
+            var valorSobreEnGrilla = 0;
+            $.each(allGridData, function (i, item) {
+                if (item.Concepto_Id == IdConcepto) {
+                    idEnGrilla = item.id;
+                    valorSobreEnGrilla = item.Valor.toFixed(2);
+                    row = item;
+                }
+            });
+
+
+            
+            var params = {
+                url: '@Url.Action("GetConcepto", "Conceptos")',
+                data: { IdConcepto: IdConcepto, IdSindicato: Pago.Sindicato != null ? Pago.Sindicato : 0 },
+                success: function (ret) {
+                    if (ret.Success && ret.Data) {
+                        $('#ConceptoID').val(ret.Data.Id);
+                        $('#Concepto_Id').select2('data', { id: IdConcepto, text: ret.Data.Descripcion });
+                        //$('#Concepto_Porcentaje').val(ret.Data.Porcentaje);
+                        if (IdConcepto >= 1007 && IdConcepto <= 1010) {
+                            //Obra social / cuota sindical / ley / jubilacion
+                            //$('#Concepto_Valor').val($('#TotalRemunerativo').val());
+                        } else if (valorSobreEnGrilla != 0) {
+                            //si existe en grilla
+                            $('#Concepto_Valor').val(valorSobreEnGrilla);
+                        } else {
+                            $('#Concepto_Valor').val(ret.Data.Valor);
+                        }
+                        $('#Concepto_TipoConcepto').val(ret.Data.TipoConcepto);
+                        $('#Concepto_Suma').val(ret.Data.Suma);
+
+                        //TODO SQL
+                        //Aca poner todos los premios por ejemplo que dependen de lo mismo
+                        //o todos los adicionales que dependan de esto
+                        if (IdConcepto >= 4008 && IdConcepto <= 4009) {
+                            //TODO PASARLO A OTRO LADO
+                            //dias = parseFloat($('#DiasTrabajados').val()) + parseFloat($('#DiasJustificados').val()) - parseFloat($('#DiasNoJustificados').val());
+                            dias = parseFloat($('#DiasTrabajados').val()) - parseFloat($('#DiasNoJustificados').val()) - parseFloat($('#Suspension').val());
+                            horas = $('#HorasNoJustificadas').val();
+                            valorDias = dias * sueldoBrutoSeleccionado;
+                            valorHoras = horas * horasNoJustificadasSeleccionado;
+                            //diasTrabajados = parseFloat($('#DiasTrabajados').val());
+                            horasExtras = parseFloat($('#HorasExtras').val());
+                            //valorHorasExtras = horasExtras *;
+                            valorHorasExtras = parseFloat(valorHorasExtras);
+
+                            var valueDiasHoras = valorDias - valorHoras + valorHorasExtras;
+                            $('#Concepto_Valor').val(parseFloat(valueDiasHoras).toFixed(2));
+                        }
+
+                        //TODO ESTO ESTA MAL PORQUE ESTOY AGREGANDO A LOS HIJOS
+                        //Y TODAVIA EL USUARIO NO PUSO QUE EFECTIVAMENTE QUERIA AGREGAR ESTE ADICIONAL
+                        //$('#AdicionalAdicionales').val(ret.Data_AAs);
+                        if (ret.Data_AAs != null) {
+                            Pago.Data_AAs = ret.Data_AAs;
+
+                            var valorDelConceptoSeleccionado = 0;
+                            var tienenTodosLosHijosValor = true;
+
+                            for (var u = 0; u < Pago.Data_AAs.length; u++) {
+                                var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                                var indexEnArray = Pago.SelectedRows.indexOf(Pago.Data_AAs[u].Id);
+                                var idEnGrilla = -1;
+                                $.each(allGridData, function (i, item) {
+                                    if (item.Concepto_Id == Pago.Data_AAs[u].Id) {
+                                        idEnGrilla = item.id;
+                                        valorEnGrillaPorUsuario = item.Concepto_Valor;
+                                        row = item;
+                                    }
+                                });
+
+                                //TODO de aca para abajo, no es el .Valor del hijo lo que hay que sumar
+                                //hay que sumar/restar el valor del hijo pero el que tiene en la grilla
+                                //porque si es calculado, no es el mismo el que esta en la base que el
+                                //de la grilla, es mas es probable que en la base sea null
+                                //y solo en la grilla tenga el valor
+
+                                //TODO si no existe en grilla, y NO EXISTE UNO DEL MISMO TIPO
+                                //TODO no lo agregaria, que tome los valores como cero
+                                if (!existeEnGrilla) {
+                                    //agrego a grilla y recalculo
+                                    var detalleHijo = {
+                                        Id: PagoDetalleId,
+                                        //Porcentaje: Pago.Data_AAs[u].Porcentaje,
+                                        Valor: Pago.Data_AAs[u].Valor,
+                                        Concepto_Id: Pago.Data_AAs[u].Id,
+                                        Descripcion: Pago.Data_AAs[u].Descripcion,
+                                        TipoConcepto: Pago.Data_AAs[u].TipoConcepto,
+                                        Suma: Pago.Data_AAs[u].Suma,
+                                        //AdicionalAdicionales: Pago.Data_AAs,
+                                        Padre: $('#Concepto_Id').val()
+                                        //TODO NO ES PADRE: ID porque va a ser un array con todos los padres
+                                    };
+                                    //TODO revisar si es !Pago.Data_AAs[u].Valor porque me parece que habria que agarrar
+                                    //el valor que esta de este en grilla, no en base, porque algunos ne base no van  atener el valor
+                                    if (!Pago.Data_AAs[u].Valor) {
+                                        tienenTodosLosHijosValor = false;
+                                    }
+
+                                    if (Pago.Data_AAs[u].Valor && Pago.Data_AAs[u].Suma) {
+                                        valorDelConceptoSeleccionado += Pago.Data_AAs[u].Valor;
+                                    }
+                                    else if (Pago.Data_AAs[u].Valor && !Pago.Data_AAs[u].Suma) {
+                                        valorDelConceptoSeleccionado -= Pago.Data_AAs[u].Valor;
+                                    }
+                                    PagoDetalleId++;
+                                    $('#GridDetallesPago').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
+                                    Pago.CalcularTotales();
+                                }
+
+                                //Colocarle el valor final al Padre
+                                if (tienenTodosLosHijosValor) {
+                                    //if (ret.Data.Porcentaje != null && ret.Data.Valor != null) {
+                                    //    $('#Concepto_Total').val(ret.Data.Porcentaje * ret.Data.Valor);
+                                    //} else 
+                                    if (ret.Data.Valor != null && ret.Data.Unidades != null) {
+                                        $('#Concepto_Total').val(ret.Data.Unidades * ret.Data.Valor);
+                                    }
+                                }
+                            }
+
+
+
+                            //Fin de los hijos
+                            //limpiar form de detalle
+                            $('#Pago-detalle').ClearForm();
+                            $('#Concepto_Id').select2('data', null);
+                        }
+                    } else {
+                        $.WarningDialog('El Concepto no existe, vuelva a intentarlo!');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnAsociadoSeleccionado: function (e) {
+            var params = {
+                url: '@Url.Action("GetAsociado", "Asociados")',
+                data: { IdAsociado: e.val },
+                success: function (ret) {
+                    if (ret.Success) {
+                        Pago.LoadAsociado(ret.Data);
+                    } else {
+                        Pago.CamposNoEditables(false);
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        CalcularDiferencias: function () {
+            //asi o que agarre de entre los adicionales el que corresponda a que el AdicionalData sea el
+            //valor del sindicato correspondiente
+
+            //TODO SQL
+            switch (Pago.Sindicato) {
+                case 251:
+                    idConceptoDiferenciaSindical = 3007;
+                    idConceptoDiferenciaObraSocial = 3010;
+                    break;
+                case 252:
+                    idConceptoDiferenciaSindical = 3008;
+                    idConceptoDiferenciaObraSocial = 3011;
+                    break;
+                case 253:
+                    idConceptoDiferenciaSindical = 3009;
+                    idConceptoDiferenciaObraSocial = 3012;
+                    break;
+            }
+            return { idConceptoDiferenciaSindical: idConceptoDiferenciaSindical, idConceptoDiferenciaObraSocial: idConceptoDiferenciaObraSocial }
+        },
+
+        OpenSeleccionarSueldo: function (SueldoCategoria, SueldoMes, SueldoHora) {
+            $('#seleccionar-sueldoBruto-dialog').OpenFormDialog('@Url.Action("SueldoBruto")?SueldoCategoria=' + SueldoCategoria + '&SueldoMes=' + SueldoMes + '&SueldoHora=' + SueldoHora, 'Seleccionar el Sueldo Bruto a utilizar');
+        },
+
+        OpenSeleccionarTipoPago: function () {
+            $('#seleccionar-tipoPago-dialog').OpenFormDialog('@Url.Action("TipoPago")', 'Seleccionar el Tipo de Pago a utilizar');
+        },
+
+        CamposNoEditables: function (Readonly) {
+            
+        },
+
+        InicializarVariables: function(){
+            //inicializo variables
+            PagoDetalleId = 0;
+            Pago.AsociadoFechaIngreso = 0;
+            Pago.AsociadoFechaAntiguedadReconocida = 0;
+            Pago.SelectedRows = new Array();
+            Pago.valorCuotaAsociado = 0;
+        },
+
+        LoadAsociado: function (Asociado) {
+            Pago.InicializarVariables();
+            $('#GridDetallesPago').jqGrid('clearGridData');
+            $('#AsociadoID').val(Asociado.Id);
+            if (Asociado.CUIT != null) {
+                $('#CUIT').val(Asociado.CUIT);
+            }else if (Asociado.DNI) {
+                $('#CUIT').val(Asociado.DNI);
+            }else if(Asociado.LE) {
+                $('#CUIT').val(Asociado.LE);
+            } else if (Asociado.LI) {
+                $('#CUIT').val(Asociado.LI);
+            } else {
+                $('#CUIT').val(Asociado.CI);
+            }
+
+            Pago.valorCuotaAsociado = Asociado.ImporteCuota.toFixed(2);
+
+            //var FechaIngreso = new Date(Asociado.FechaIngreso != null ? Asociado.FechaIngreso : new Date());
+            //$('#FechaIngreso').val(FechaIngreso.format("dd/mm/yyyy"));
+
+            Pago.CamposNoEditables(false);
+
+            //Pago.CompletarFiltros();
+            Pago.CompletarPeriodo();
+            //Pago.AgregarConceptosIniciales(); se paso a la vista de SueldoBruto por una cuestion de necesidad de informacion antes
+
+            Pago.AsociadoFechaIngreso = Asociado.FechaIngreso;
+
+            //TODO SQL
+            //idConceptoSueldoBasico = 2;
+            //unidades = $('#DiasTrabajados').val() - $('#DiasJustificados').val() - $('#LicenciaEnfermedad').val() - $('#ART').val() - $('#DiasNoJustificados').val() - $('#Suspension').val();
+            //sueldoBrutoSeleccionado = Asociado.Categoria.AdditionalData;
+            //Pago.TakeAndAddConcepto(idConceptoSueldoBasico, sueldoBrutoSeleccionado, unidades, false);
+
+            Pago.AgregarConceptosIniciales();
+
+            //limpiar form de detalle
+            $('#Pago-detalle').ClearForm();
+            $('#Concepto_Id').select2('data', null);
+
+        },
+
+        //ChangeTotalesGrid: function () {
+        //    //valorRemunerativo = $('#TotalRemunerativo').val();
+        //    //cambiar todos los value sobre que van sobre el total remunerativo si es que estan en grilla
+        //    //TODO SQL
+        //    idConceptoObraSocial = 1007;
+        //    //TODO SQL
+        //    idConceptoCuotaSindical = 1010;
+        //    //TODO SQL
+        //    idConceptoJubilacion = 1008;
+        //    //TODO SQL
+        //    idConceptoLey19032 = 1009;
+
+        //    //TODO SQL
+        //    ValorTotalObraSocial = 0;
+        //    ValorTotalSindical = 0;
+        //    ValorDiferenciaSindical = 0;
+        //    ValorDiferenciaObraSocial = 0;
+        //    var indexEnArrayOS = Pago.SelectedRows.indexOf(idConceptoObraSocial);
+        //    var indexEnArrayS = Pago.SelectedRows.indexOf(idConceptoCuotaSindical);
+        //    var indexEnArrayJ = Pago.SelectedRows.indexOf(idConceptoJubilacion);
+        //    var indexEnArrayL = Pago.SelectedRows.indexOf(idConceptoLey19032);
+        //    var diferencias = Pago.CalcularDiferencias();
+
+        //    var indexEnArrayDOS = Pago.SelectedRows.indexOf(diferencias.idConceptoDiferenciaObraSocial);
+        //    var indexEnArrayDS = Pago.SelectedRows.indexOf(diferencias.idConceptoDiferenciaSindical);
+        //    var rowOS, rowS, rowJ, rowL = null;
+
+        //    if (indexEnArrayOS >= 0 || indexEnArrayS >= 0 || indexEnArrayJ >= 0 || indexEnArrayL >= 0
+        //        || indexEnArrayDOS >= 0 || indexEnArrayDS >= 0) {
+        //        var allGridData = $('#GridDetallesPago').jqGrid('getRowData');
+        //        $.each(allGridData, function (i, item) {
+        //            if (indexEnArrayOS >= 0 && item.Concepto_Id == idConceptoObraSocial) {
+        //                //rowOS = item;
+        //                var ind = $('#GridDetallesPago').getInd(item.Id);
+        //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
+                        
+        //                //ValorTotalObraSocial = localRowData.Valor * localRowData.Porcentaje / 100;
+
+        //            } else if (indexEnArrayS >= 0 && item.Concepto_Id == idConceptoCuotaSindical) {
+        //                var ind = $('#GridDetallesPago').getInd(item.Id);
+        //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
+                        
+        //                //ValorTotalSindical = localRowData.Valor * localRowData.Porcentaje / 100;
+        //            } else if (indexEnArrayJ >= 0 && item.Concepto_Id == idConceptoJubilacion) {
+        //                var ind = $('#GridDetallesPago').getInd(item.Id);
+        //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
+        //            } else if (indexEnArrayL >= 0 && item.Concepto_Id == idConceptoLey19032) {
+        //                var ind = $('#GridDetallesPago').getInd(item.Id);
+        //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
+        //            } else if (indexEnArrayDOS >= 0 && item.Concepto_Id == diferencias.idConceptoDiferenciaObraSocial) {
+        //                var ind = $('#GridDetallesPago').getInd(item.Id);
+        //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
+        //                //localRowData.Valor = ("-1" * ValorTotalObraSocial.toFixed(2)).toString();
+
+        //                //TODO revisar si esto esta bien para todos los casos
+        //                if (ValorTotalObraSocial < localRowData.ValorMin)
+        //                {
+        //                    ValorTotalObraSocial *= -1;
+        //                }
+                        
+        //                if (ValorTotalAnteriorObraSocial != 0 || Pago.ValorAnteriorDiferenciaObraSocial != 0) {
+        //                    ValorTotalObraSocial = parseFloat(ValorTotalAnteriorObraSocial) + parseFloat(ValorTotalObraSocial);
+        //                } else {
+        //                    ValorTotalObraSocial = parseFloat(ValorTotalObraSocial);
+        //                }
+
+        //                var importe = 0;
+        //                if (Pago.ValorAnteriorDiferenciaObraSocial != 0 && (-1 * localRowData.Valor >= localRowData.ValorMin))
+        //                {
+        //                    //devuelvo diferencia ObraSocial anterior
+        //                    importe = -1 * Pago.ValorAnteriorDiferenciaObraSocial;
+        //                    if (importe < 0) {
+        //                        importe *= -1;
+        //                    }
+        //                    Suma = true;
+        //                } else if (Pago.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * localRowData.Valor < localRowData.ValorMin && parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor)) < Pago.ValorAnteriorDiferenciaObraSocial)) {
+        //                    //devuelvo diferencia ObraSocial anterior
+        //                    importe = parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor) + parseFloat(Pago.ValorAnteriorDiferenciaObraSocial);
+        //                    if (importe < 0) {
+        //                        importe *= -1;
+        //                    }
+        //                    Suma = true;
+        //                } else if (Pago.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * localRowData.Valor < localRowData.ValorMin && parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor)) > Pago.ValorAnteriorDiferenciaObraSocial)) {
+        //                    //no devuelve hay diferencia nueva
+        //                    importe = parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor) + parseFloat(Pago.ValorAnteriorDiferenciaObraSocial);
+        //                } else {
+        //                    //no se llego al minimo
+        //                    importeMin = parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor); // porque el ValorSobre esta en negativo
+        //                    if (importeMin > 0) {
+        //                        importe = importeMin;
+        //                    }
+        //                    //si es mayor a cero es porque ya se saldo y no hay que devolver ni agregar diferencia
+        //                }
+        //                localRowData.Descuentos = ("-1" * importe.toFixed(2)).toString();
+        //            } else if (indexEnArrayDS >= 0 && item.Concepto_Id == diferencias.idConceptoDiferenciaSindical) {
+        //                var ind = $('#GridDetallesPago').getInd(item.Id);
+        //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
+        //                //localRowData.Valor = ("-1" * ValorTotalSindical.toFixed(2)).toString();
+        //                //$('#GridDetallesPago').trigger("reloadGrid");
+        //                //TODO if ValorTotalObraSocial porque no esta en tabla la cuota sindical
+
+        //                var importe = 0;
+        //                if (Pago.ValorAnteriorDiferenciaSindical != 0 && (-1 * localRowData.Valor >= localRowData.ValorMin)) {
+        //                    //devuelvo diferencia Sindical anterior
+        //                    importe = -1 * Pago.ValorAnteriorDiferenciaSindical;
+        //                    if (importe < 0) {
+        //                        importe *= -1;
+        //                    }
+        //                    Suma = true;
+        //                } else if (Pago.ValorAnteriorDiferenciaSindical != 0 && ((-1 * localRowData.Valor < localRowData.ValorMin && parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor)) < Pago.ValorAnteriorDiferenciaSindical)) {
+        //                    //devuelvo diferencia Sindical anterior
+        //                    importe = parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor) + parseFloat(Pago.ValorAnteriorDiferenciaSindical);
+        //                    if (importe < 0) {
+        //                        importe *= -1;
+        //                    }
+        //                    Suma = true;
+        //                } else if (Pago.ValorAnteriorDiferenciaSindical != 0 && ((-1 * localRowData.Valor < localRowData.ValorMin && parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor)) > Pago.ValorAnteriorDiferenciaSindical)) {
+        //                    //no devuelve hay diferencia nueva
+        //                    importe = parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor) + parseFloat(Pago.ValorAnteriorDiferenciaSindical);
+        //                } else {
+        //                    //no se llego al minimo
+        //                    importeMin = parseFloat(localRowData.ValorMin) + parseFloat(localRowData.Valor); // porque el ValorSobre esta en negativo
+        //                    if (importeMin > 0) {
+        //                        importe = importeMin;
+        //                    }
+        //                    //si es mayor a cero es porque ya se saldo y no hay que devolver ni agregar diferencia
+        //                }
+        //                localRowData.Descuentos = ("-1" * importe.toFixed(2)).toString();
+        //            }
+
+        //        });
+        //        $('#GridDetallesPago').trigger("reloadGrid");
+
+        //    }
+
+        //    Pago.CalcularTotales();
+        //},
+
+        //TODO hacer que sea util el withSobreConceptos si es que vale la pena porque estamos calculando todo como desde afuera
+        //TODO ver si todos los parametros son utilizadas por alguna funcion alguna vez, sino sacar.
+        TakeAndAddConcepto: function (IdConcepto, valueCalculated, unidadesCalculated, withSobreConceptos) {
+            debugger;
+
+            //Inicio del mismo/padre
+            //Primero me fijo sino esta en la grilla
+            //si ya esta en la grilla habria que editar los valores
+            var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+            //var existeEnGrilla = false;
+            var existeEnGrillaDelMismoTipo = false;
+            var valorEnGrillaPorUsuario = valueCalculated;
+            var row;
+            var idEnGrilla = -1;
+
+            //TODO deberia ser lo mismo mirar en la selectedRows que en toda la grilla
+            //pero obvio que es menos trabajo mirar en la selectedRows
+            //por ahora pongo las dos funciones, pero la idea es eliminar el each allgriddata
+
+            //No es lo mismo que este en SelectedRows que en grilla
+            //porque en SelectedRows no va a estar si no esta chequeado
+            //en grilla si va a estar
+            var indexEnArray = Pago.SelectedRows.indexOf(IdConcepto);
+            $.each(allGridData, function (i, item) {
+                if (item.Concepto_Id == IdConcepto) {
+                    idEnGrilla = item.id;
+                    valorEnGrillaPorUsuario = item.Concepto_Unidades;
+                    row = item;
+                }
+            });
+
+            //valueCalculated es el que el sistema toma como inicial o calcula automaticamente
+            //el valorEnGrillaPorUsuario es el valor que coloco manualmente el usuario
+            if (valorEnGrillaPorUsuario != null && valorEnGrillaPorUsuario != valueCalculated) {
+                valueCalculated = valorEnGrillaPorUsuario;
+            }
+
+            if (indexEnArray < 0 && idEnGrilla == -1 && /*!existeEnGrilla &&*/ !existeEnGrillaDelMismoTipo) {
+                //Si no esta lo agrego
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetConcepto", "Conceptos")',
+                    data: { IdConcepto: IdConcepto },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data) {
+                            if (withSobreConceptos) {
+                                Pago.Data_AAs = ret.Data_AAs;
+                            }
+
+                            var detalleConcepto = {
+                                Id: PagoDetalleId,
+                                //Porcentaje: ret.Data.Porcentaje,
+                                Unidades: (unidadesCalculated != null) ? unidadesCalculated : "",
+                                Valor: (valueCalculated != null) ? valueCalculated : ret.Data.Valor ,
+                                Concepto_Id: IdConcepto,
+                                Descripcion: ret.Data.Descripcion,
+                                TipoConcepto: ret.Data.TipoConcepto,
+                                Suma: ret.Data.Suma,
+                                Seleccionados: true
+                            };
+
+                            $('#GridDetallesPago').jqGrid('addRowData', detalleConcepto.Id, detalleConcepto);
+                            //Para agregar necesita la cantidad que hay, para eliminar necesita el Id correspondiente
+                            cant = $($('.SelectCheckboxes')).length;
+                            $($('.SelectCheckboxes')[--cant]).attr('checked', 'checked');
+                            //$($('.SelectCheckboxes')[PagoDetalleId]).attr('checked', 'checked');
+                            PagoDetalleId++;
+                            Pago.SelectedRows.push(parseFloat(IdConcepto)); //TODO revisar que cuando se haga esto solo sea por id, Id Adicional
+                            Pago.CalcularTotales();
+                        }
+                    },
+                    dataType: 'json',
+                    async: false
+                });
+
+            } else if (idEnGrilla != -1 /*&& existeEnGrilla*/ && !existeEnGrillaDelMismoTipo) {
+                //existe En Grilla entonces editamos los campos necesarios
+                if (indexEnArray < 0) {
+                    Pago.SelectedRows.push(parseFloat(IdConcepto));
+                }
+
+                if (unidadesCalculated != null && unidadesCalculated != "" && $.isNumeric(unidadesCalculated) && row.Unidades != unidadesCalculated) {
+                    row.Unidades = unidadesCalculated;
+                }
+
+                if (valueCalculated != null && valueCalculated != "" && $.isNumeric(valueCalculated) && row.Unidades != valueCalculated) {
+                    row.Valor = valueCalculated;
+                }
+
+                //TODO porcentaje/valorMin ? ver si alguno necesita esa edicion
+                $('#GridDetallesPago').trigger("reloadGrid");
+            }
+
+            //TODO todo lo que es de los hijos hay que revisarlo, estaba en la funcion vieja: AgregarAGrillaAutomatico
+            //Inicio de los hijos del que se va a agregar
+            if (withSobreConceptos && !existeEnGrillaDelMismoTipo) {
+                var valorDelConceptoSeleccionado = 0;
+                var tienenTodosLosHijosValor = true;
+
+                for (var u = 0; u < Pago.Data_AAs.length; u++) {
+                    //TODO que se fije en la selectedRow
+                    //si ya esta en la grilla listo
+                    var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+                    var existeEnGrilla = false;
+                    $.each(allGridData, function (i, item) {
+                        if (item.Concepto_Id == Pago.Data_AAs[u].Id) {
+                            existeEnGrilla = true;
+                        }
+                    });
+
+                    if (!existeEnGrilla) {
+                        //agrego a grilla y recalculo
+                        var detalleHijo = {
+                            Id: PagoDetalleId,
+                            //Porcentaje: Pago.Data_AAs[u].Porcentaje,
+                            Valor: Pago.Data_AAs[u].Valor,
+                            Concepto_Id: Pago.Data_AAs[u].Id,
+                            Descripcion: Pago.Data_AAs[u].Descripcion,
+                            TipoConcepto: Pago.Data_AAs[u].TipoConcepto,
+                            Suma: Pago.Data_AAs[u].Suma,
+                            //AdicionalAdicionales: Pago.Data_AAs,
+                            Padre: $('#Concepto_Id').val()
+                        };
+                        if (!Pago.Data_AAs[u].Valor) {
+                            tienenTodosLosHijosValor = false;
+                        }
+
+                        if (Pago.Data_AAs[u].Valor && Pago.Data_AAs[u].Suma) {
+                            valorDelConceptoSeleccionado += Pago.Data_AAs[u].Valor;
+                        }
+                        else if (Pago.Data_AAs[u].Valor && !Pago.Data_AAs[u].Suma) {
+                            valorDelConceptoSeleccionado -= Pago.Data_AAs[u].Valor;
+                        }
+                        PagoDetalleId++;
+                        $('#GridDetallesPago').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
+
+                    }
+
+                    //Colocarle el valor final al Padre
+                    if (tienenTodosLosHijosValor) {
+
+                    }
+                }
+
+            }
+            Pago.CalcularTotales();
+            //Fin de los hijos
+            //limpiar form de detalle
+            $('#Pago-detalle').ClearForm();
+            $('#Concepto_Id').select2('data', null);
+        },
+
+        AgregarSueldoBruto: function (Mes) {
+            if (Mes) {
+                sueldoBrutoSeleccionado = sueldoBrutoSeleccionado / 30;
+                horasNoJustificadasSeleccionado = sueldoBrutoSeleccionado / 200;
+            } else {
+                sueldoBrutoSeleccionado = sueldoBrutoSeleccionado / 200;
+                horasNoJustificadasSeleccionado = sueldoBrutoSeleccionado;
+            }
+
+            //TODO SQL
+            idConceptoSueldoBasico = 2;
+            unidades = $('#DiasTrabajados').val() - $('#DiasJustificados').val() - $('#LicenciaEnfermedad').val() - $('#ART').val() - $('#DiasNoJustificados').val() - $('#Suspension').val();
+            Pago.TakeAndAddConcepto(idConceptoSueldoBasico, sueldoBrutoSeleccionado, unidades, false);
+
+            return true;
+        },
+
+
+        //AgregarAGrillaAutomatico: function (Adicional) {
+        //    if (Pago.SelectedRows.indexOf(Adicional.Id) >= 0) {
+        //        return;
+        //    }
+
+        //    //modificar desde aca, hice pausa para probar todo lo anterior. Todo depende aca del Adicional
+        //    var Descripcion = $('#Concepto_Id').select2('data').text;
+        //    var detalle = {
+        //        Id: PagoDetalleId,
+        //        Porcentaje: $('#Porcentaje').val(),
+        //        Valor: $('#Valor').val(),
+        //        Concepto_Id: $('#Concepto_Id').val(),
+        //        Descripcion: Descripcion,
+        //        TipoConcepto: $('#TipoConcepto').val(),
+        //        Suma: $('#Suma').val(),
+        //        AdicionalAdicionales: Pago.Data_AAs,
+        //        Seleccionados: true
+        //        //Padre:
+
+        //    };
+        //    $('#GridDetallesPago').jqGrid('addRowData', detalle.Id, detalle);
+        //    Pago.CalcularTotales();
+        //    $($('.SelectCheckboxes')[PagoDetalleId]).attr('checked', 'checked');
+        //    PagoDetalleId++;
+        //    Pago.SelectedRows.push($('#Concepto_Id').val()); // PagoDetalleId o $('#Concepto_Id').val()
+
+        //    var valorDelConceptoSeleccionado = 0;
+        //    var tienenTodosLosHijosValor = true;
+
+        //    for (var u = 0; u < Pago.Data_AAs.length; u++) {
+        //        //si ya esta en la grilla listo
+        //        var allGridData = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+        //        var existeEnGrilla = false;
+        //        $.each(allGridData, function (i, item) {
+        //            if (item.Concepto_Id == Pago.Data_AAs[u].Id) {
+        //                existeEnGrilla = true;
+        //            }
+        //        });
+
+        //        if (!existeEnGrilla) {
+        //            //agrego a grilla y recalculo
+        //            var detalleHijo = {
+        //                Id: PagoDetalleId,
+        //                Porcentaje: Pago.Data_AAs[u].Porcentaje,
+        //                Valor: Pago.Data_AAs[u].Valor,
+        //                Concepto_Id: Pago.Data_AAs[u].Id,
+        //                Descripcion: Pago.Data_AAs[u].Descripcion,
+        //                TipoConcepto: Pago.Data_AAs[u].TipoConcepto,
+        //                Suma: Pago.Data_AAs[u].Suma,
+        //                //AdicionalAdicionales: Pago.Data_AAs,
+        //                Padre: $('#Concepto_Id').val()
+        //            };
+        //            if (!Pago.Data_AAs[u].Valor) {
+        //                tienenTodosLosHijosValor = false;
+        //            }
+
+        //            if (Pago.Data_AAs[u].Valor && Pago.Data_AAs[u].Suma) {
+        //                valorDelConceptoSeleccionado += Pago.Data_AAs[u].Valor;
+        //            }
+        //            else if (Pago.Data_AAs[u].Valor && !Pago.Data_AAs[u].Suma) {
+        //                valorDelConceptoSeleccionado -= Pago.Data_AAs[u].Valor;
+        //            }
+
+        //            PagoDetalleId++;
+        //            $('#GridDetallesPago').jqGrid('addRowData', detalleHijo.Id, detalleHijo);
+        //            Pago.CalcularTotales();
+
+
+        //        }
+
+        //        //Colocarle el valor final
+        //        if (tienenTodosLosHijosValor) {
+
+        //        }
+
+
+        //        //limpiar form de detalle
+        //        $('#Pago-detalle').ClearForm();
+        //        $('#Concepto_Id').select2('data', null);
+        //    }
+        //},
+
+        CalcularTotales: function () {
+            var Detalles = $('#GridDetallesPago').jqGrid('getRowData');
+            //var TotalRemunerativo = 0;
+            var TotalAnticipo = 0;
+            var TotalDescuentos = 0;
+
+            for (var i = 0; i < Detalles.length; i++) {
+                //No se necesita preguntar por Detalles[i].Suma porque cada uno ya tiene su signo en su columna
+                if (Pago.SelectedRows.indexOf(parseInt(Detalles[i].Concepto_Id)) >= 0) {
+                    switch (Detalles[i].TipoConcepto) {
+                        case "0":
+                            TotalAnticipo += parseFloat(Detalles[i].Anticipo);
+                            break;
+                        case "1":
+                            TotalDescuentos += parseFloat(Detalles[i].Descuentos);
+                            break;
+                    }
+                }
+            }
+            //TotalRemunerativo = $.parseCurrency(TotalRemunerativo);
+            //TotalAnticipo = $.parseCurrency(TotalAnticipo);
+            //TotalDescuentos = $.parseCurrency(TotalDescuentos);
+
+            //$('#TotalRemunerativo').val(TotalRemunerativo.toFixed(2));
+            $('#TotalAnticipo').val(TotalAnticipo.toFixed(2));
+            $('#TotalDescuentos').val(TotalDescuentos.toFixed(2));
+            var TotalPago = /*TotalRemunerativo +*/ TotalAnticipo + TotalDescuentos;
+            $('#TotalPago').val(TotalPago.toFixed(2));
+        },
+
+        AgregarDetalleAGrilla: function (e) {
+            jQuery.extend(jQuery.validator.messages, {
+                required: "Este campo es necesario"
+            });
+            if (!($('#Concepto_Id').val() > 0 || $('#ConceptoID').val() <= 0)) {
+                $('.valid-custom.Concepto').removeClass('field-validation-valid');
+                $('.valid-custom.Concepto').addClass('field-validation-error');
+                $('.valid-custom.Concepto').append("<span for='Concepto_Id' generated='true' class=''>Este campo es necesario</span>");
+                return;
+            } else {
+                $('.valid-custom.Concepto').removeClass('field-validation-error');
+                $('.valid-custom.Concepto').addClass('field-validation-valid');
+                $('.valid-custom.Concepto span').remove();
+            }
+            var valor = $('#Concepto_Valor').val();
+            //var porcentaje = $('#Concepto_Porcentaje').val();
+            var unidades = $('#Concepto_Unidades').val();
+            var total = $('#Concepto_Total').val();
+ 
+            //TODO pasar a cuando cambian/tocan/modifican estos campos no antes de agregar!
+            //solo para mostrar
+            //if ($.isNumeric(porcentaje) && porcentaje != null && $.isNumeric(valor) && valor != null) {
+            //    porcentaje = parseFloat(porcentaje);
+            //    valor = parseFloat(valor);
+            //    $('#Concepto_Total').val((porcentaje * valor).toFixed(2));
+
+            //} else 
+            debugger;
+            if ($.isNumeric(valor) && valor != null && $.isNumeric(unidades) && unidades != null) {
+                unidades = parseFloat(unidades);
+                valor = parseFloat(valor);
+                $('#Concepto_Total').val(unidades * valor);
+            }
+
+            //if ((porcentaje == null || porcentaje == "") && (valor == null || valor == "")
+            if ((valor == null || valor == "") && (unidades == null || unidades == "")
+                && ($.isNumeric(total) && total != null && $.isNumeric(total) && total != null)) {
+                valor = total;
+                valor = parseFloat(valor);
+            }
+            
+            if ($('#Pago-detalle').valid()) {
+                var Descripcion = $('#Concepto_Id').select2('data').text;
+                Pago.TakeAndAddConcepto($('#Concepto_Id').val(), valor, unidades, false);
+                //Pago.ChangeTotalesGrid();
+
+                ////limpiar form de detalle
+                //$('#Pago-detalle').ClearForm();
+                //$('#Concepto_Id').select2('data', null);
+            }
+        },
+
+        CheckboxFormatterConcepto: function (cellvalue, options, rowObject) {
+            if (Pago.SelectedRows.indexOf(parseFloat(rowObject.Concepto_Id)) >= 0) {
+                return '<input type="checkbox" value="' + rowObject.Id + '" class="SelectCheckboxes" checked="checked"/>'
+            }
+            else {
+                return '<input type="checkbox" value="' + rowObject.Id + '" class="SelectCheckboxes" />'
+            }
+        },
+
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
+
+            $('#BtnSubmit').attr('disabled', 'disabled');
+            //if (!$('#Pago-header').valid()) {
+            //    $('#BtnSubmit').removeAttr('disabled');
+            //    return;
+            //}
+            var PagoComprobante = $('#Pago-header').serializeFormJSON();
+
+            //Pago.CompletarFiltros();
+            valid = Pago.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+
+            //var detalles2 = $('#GridDetallesPago').jqGrid('getGridParam', 'data');
+            var detalles = $('#GridDetallesPago').jqGrid('getRowData');
+            if (detalles.length == 0) {
+                $('#BtnSubmit').removeAttr('disabled');
+                return $.WarningDialog('Es necesario que agregue al menos un adicional al Pago.');
+            }
+            PagoComprobante.AdicionalesPago = new Array();
+            for (var i = 0; i < detalles.length; i++) {
+                //Solo si esta seleccionado
+                if (Pago.SelectedRows.indexOf(parseInt(detalles[i].Concepto_Id)) >= 0) {
+                    var item = {
+                        Concepto: {
+                            Id: detalles[i].Concepto_Id
+                        },
+                        Total: (detalles[i].Remunerativo != null && detalles[i].Remunerativo != undefined && detalles[i].Remunerativo != "" && $.isNumeric(detalles[i].Remunerativo)) ? detalles[i].Remunerativo : ((detalles[i].Anticipo != null && detalles[i].Anticipo != undefined && detalles[i].Anticipo != "" && $.isNumeric(detalles[i].Anticipo)) ? detalles[i].Anticipo : detalles[i].Descuentos),
+                        Unidades: detalles[i].Unidades
+                    };
+                    PagoComprobante.AdicionalesPago.push(item);
+                }
+            }
+
+            //TotalRemunerativo: detalles[i].TotalRemunerativo,
+            //TotalAnticipo: detalles[i].TotalAnticipo,
+            //TotalDescuentos: detalles[i].TotalDescuentos,
+
+            var postParams = {
+                url: "@Url.Action("Nuevo", "Pagos")",
+                data: { Pago: PagoComprobante },
+                success: function (data) {
+                    if (data.Success) {
+                        if (data.NuevoNumero == null && data.NumeroRef == null) {
+                            Pago.OnFinishSave(data.Pago);
+                        }
+                        else {
+                            var msg = "";
+                            if (data.NuevoNumero != null) {
+                                msg += '<p>El N° de Pago ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                            }
+                            if (data.NumeroRef != null) {
+                                msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                            }
+                            $.WarningDialog(msg, 'warning', function () {
+                                Pago.OnFinishSave(data.Pago)
+                            });
+                        }
+                    }
+                    else {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(postParams);
+        },
+
+        OnFinishSave: function (Pago) {
+            window.onbeforeunload = null;
+            $.ShowLoader();
+            window.location = '@Url.Action("Index")';
+            //TODO que vaya a detalle de como se va a imprimir podria ser
+            //window.location = '@@ Url.Action("Detalle")/' + Pago.Id;
+        }
+    }
+    </script>
+}

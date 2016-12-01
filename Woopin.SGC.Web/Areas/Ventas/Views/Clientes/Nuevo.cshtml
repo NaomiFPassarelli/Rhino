@@ -91,7 +91,7 @@
                         { @Html.Raw("has-error");}">
             @Html.LabelFor(model => model.Localidad, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.Localidad, new { @class = "textinput" })
+                @Html.DropDownListFor(model => model.Localidad.Id, (IEnumerable<SelectListItem>)ViewBag.Localidades, new { @class = "textinput" })
                 @Html.ValidationMessageFor(model => model.Localidad, null, new { @class = "help-block" })
             </div>
         </div>
@@ -104,6 +104,16 @@
                 @Html.ValidationMessageFor(model => model.Localizacion, null, new { @class = "help-block" })
             </div>
         </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Pais"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Pais, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Pais.Id, (IEnumerable<SelectListItem>)ViewBag.Paises, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Pais, null, new { @class = "help-block" })
+            </div>
+        </div>
+
 
         <div class="form-group @if (!ViewData.ModelState.IsValidField("Telefono"))
                         { @Html.Raw("has-error");}">

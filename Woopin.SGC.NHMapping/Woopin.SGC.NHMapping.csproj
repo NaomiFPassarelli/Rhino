@@ -57,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\DireccionMap.cs" />
+    <Compile Include="Common\LocalidadMap.cs" />
     <Compile Include="Common\LogMap.cs" />
     <Compile Include="Common\OrganizacionMap.cs" />
     <Compile Include="Common\UsuarioOrganizacionMap.cs" />
@@ -75,6 +77,11 @@
     <Compile Include="Contabilidad\AsientoMap.cs" />
     <Compile Include="Contabilidad\RetencionMap.cs" />
     <Compile Include="Contabilidad\EjercicioMap.cs" />
+    <Compile Include="Cooperativa\ActaPuntoExtraMap.cs" />
+    <Compile Include="Cooperativa\ActaMap.cs" />
+    <Compile Include="Cooperativa\ConceptoMap.cs" />
+    <Compile Include="Cooperativa\AdicionalPagoMap.cs" />
+    <Compile Include="Cooperativa\AporteMap.cs" />
     <Compile Include="Cooperativa\PagoMap.cs" />
     <Compile Include="Helpers\NHibernateConfigurationExtensions.cs" />
     <Compile Include="Reporting\GrupoEgresoMap.cs" />

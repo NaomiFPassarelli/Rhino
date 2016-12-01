@@ -35,9 +35,11 @@ namespace Woopin.SGC.NHMapping.Sueldos
             this.Map(c => c.DomicilioEmpresa).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.DiasTrabajados).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.RemuneracionBasica).Not.Nullable().Not.LazyLoad();
-            this.Map(c => c.PeriodoAnterior).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.PeriodoAnterior).Nullable().Not.LazyLoad();
             this.Map(c => c.FechaPago).Not.Nullable().Not.LazyLoad();
-            this.Map(c => c.FechaPagoAnterior).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.FechaPagoAnterior).Nullable().Not.LazyLoad();
+            this.Map(c => c.Activo).Not.Nullable().Not.LazyLoad();
+            this.References(c => c.Asiento).Nullable().LazyLoad();
         }
     }
 }

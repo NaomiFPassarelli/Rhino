@@ -19,7 +19,10 @@ namespace Woopin.SGC.NHMapping.Sueldos
             this.Map(c => c.Valor).Nullable().Not.LazyLoad();
             this.References(c => c.Organizacion).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.Suma).Not.Nullable().Not.LazyLoad();
+            //this.References(c => c.Cuenta).Not.Nullable().Not.LazyLoad();//TODO
+            this.References(c => c.Cuenta).Nullable().Not.LazyLoad();
             this.Map(c => c.TipoLiquidacion).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.OnlyAutomatic).Not.Nullable().Not.LazyLoad();
         }
     }
 }

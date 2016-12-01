@@ -37,6 +37,8 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
 
         public ActionResult Nuevo()
         {
+            ViewBag.NumeroRef = this.SueldosConfigService.GetProximoNumeroReferencia();
+
             List<SelectListItem> Localizaciones = this.commonConfigService.GetAllLocalizaciones().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();
             Localizaciones.Insert(0, (new SelectListItem() { Value = "0", Text = "Seleccione una localizacion" }));
             ViewBag.Localizaciones = Localizaciones;
@@ -122,6 +124,10 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
                         Empleado.Tarea = null;
                     }
                     this.SueldosConfigService.AddEmpleado(Empleado);
+                    if (Empleado.Id != Empleado.NumeroReferencia)
+                    {
+                        return Json(new { Success = true, NumeroRef = Empleado.Id, Empleado = Empleado });
+                    }
                     return Json(new { Success = true, Empleado = Empleado });
                 }
                 else

@@ -1,12 +1,12 @@
 ﻿@{
     Layout = null;
 }
-@using (Html.BeginForm("Importar", "Empleados", FormMethod.Post, new { enctype = "multipart/form-data", Area = "Sueldos" }))
+@using (Html.BeginForm("Importar", "Asociados", FormMethod.Post, new { enctype = "multipart/form-data", Area = "Cooperativa" }))
 {
     <div class="row">
-        <h2>¿Como importar los empleados?</h2>
+        <h2>¿Como importar los Asociados?</h2>
         <span style="text-align: justify;display: block;">
-            Para importar los Empleados que posee, debe descargarse el excel desde <a href="@Url.Action("DescargarTemplate")" style="text-decoration:underline;color:blue;">este vinculo</a>.
+            Para importar los Asociados que posee, debe descargarse el excel desde <a href="@Url.Action("DescargarTemplate")" style="text-decoration:underline;color:blue;">este vinculo</a>.
             Este contiene el formato y los valores que puede seleccionar para configurar los mismos. Una vez completo el archivo, debe volver a esta sección y en la parte inferior seleccionar el archivo para importar. Una vez que el proceso de importación se complete, le aparecera una alerta comentandole el estado y un nuevo link al resultado del excel.
         </span>
     </div>

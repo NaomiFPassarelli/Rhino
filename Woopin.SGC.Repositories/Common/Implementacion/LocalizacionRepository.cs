@@ -25,15 +25,15 @@ namespace Woopin.SGC.Repositories.Common
 
         public void SetDefault(int Id)
         {
-            var localizacion = this.GetSessionFactory().GetSession().QueryOver<Localizacion>().Where(m => m.Predeterminado).SingleOrDefault();
-            if (localizacion != null)
+            var Localizacion = this.GetSessionFactory().GetSession().QueryOver<Localizacion>().Where(m => m.Predeterminado).SingleOrDefault();
+            if (Localizacion != null)
             {
-                localizacion.Predeterminado = false;
-                this.GetSessionFactory().GetSession().Update(localizacion);
+                Localizacion.Predeterminado = false;
+                this.GetSessionFactory().GetSession().Update(Localizacion);
             }
-            var localizacionDefault = (Localizacion)this.GetSessionFactory().GetSession().Get(typeof(Localizacion), Id);
-            localizacionDefault.Predeterminado = true;
-            this.GetSessionFactory().GetSession().Update(localizacionDefault);
+            var LocalizacionDefault = (Localizacion)this.GetSessionFactory().GetSession().Get(typeof(Localizacion), Id);
+            LocalizacionDefault.Predeterminado = true;
+            this.GetSessionFactory().GetSession().Update(LocalizacionDefault);
         }
 
         public Localizacion GetByNombre(string nombre)

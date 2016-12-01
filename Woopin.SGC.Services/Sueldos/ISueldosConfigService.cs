@@ -18,6 +18,8 @@ namespace Woopin.SGC.Services
         Empleado GetEmpleadoCompleto(int Id);
         void UpdateEmpleado(Empleado Empleado);
         IList<Empleado> GetAllEmpleados();
+        int GetProximoNumeroReferencia();
+
         void DeleteEmpleados(List<int> Ids);
         SelectCombo GetAllEmpleadosByFilterCombo(SelectComboRequest req);
         SelectCombo GetEmpleadoCombos();
@@ -30,11 +32,11 @@ namespace Woopin.SGC.Services
         #region Adicional
         void AddAdicional(Adicional Adicional);
         void AddAdicionalNT(Adicional Adicional);
-        Adicional GetAdicional(int Id, int IdSindicato);
+        Adicional GetAdicional(int Id, int IdSindicato, bool OnlyManual);
         void UpdateAdicional(Adicional Adicional, IList<AdicionalAdicionales> Adicionales = null);
         IList<Adicional> GetAllAdicionales();
         void DeleteAdicionales(List<int> Ids);
-        SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req, int IdSindicato);
+        SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req, int IdSindicato, bool OnlyManual);
         SelectCombo GetAdicionalCombos();
         void AddAdicionalConAdicionales(Adicional Adicional, IList<Adicional> Adicionales);
         #endregion

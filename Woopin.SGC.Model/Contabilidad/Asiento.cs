@@ -61,6 +61,7 @@ namespace Woopin.SGC.Model.Contabilidad
         OP, // Orden de Pago
         MOVF, // Movimiento de fondos
         DEP, // Deposito
-        CTC //Cancelacion Tarjeta Credito
+        CTC, //Cancelacion Tarjeta Credito
+        RS //Recibo de Sueldo
     }
 }

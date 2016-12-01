@@ -129,6 +129,9 @@ namespace Woopin.SGC.Services
                 ToUpdate.FechaNacimiento = Empleado.FechaNacimiento;
                 ToUpdate.FechaAntiguedadReconocida = Empleado.FechaAntiguedadReconocida;
                 ToUpdate.BeneficiarioObraSocial = Empleado.BeneficiarioObraSocial;
+                ToUpdate.VacacionesYaGozadas = Empleado.VacacionesYaGozadas;
+                ToUpdate.VacacionesInicial = Empleado.VacacionesInicial;
+                ToUpdate.SACInicial = Empleado.SACInicial;
                 if ((ToUpdate.Localizacion == null && Empleado.Localizacion != null) || (ToUpdate.Localizacion != null && Empleado.Localizacion != null && ToUpdate.Localizacion.Id != Empleado.Localizacion.Id))
                 {
                     ToUpdate.Localizacion = new Localizacion();
@@ -330,15 +333,25 @@ namespace Woopin.SGC.Services
             return this.EmpleadoRepository.ExistCUIT(cuit, IdUpdate);
         }
 
+        public int GetProximoNumeroReferencia()
+        {
+            int ProximoNumeroReferencia = 1;
+            this.EmpleadoRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                ProximoNumeroReferencia = this.EmpleadoRepository.GetProximoNumeroReferencia();
+            });
+            return ProximoNumeroReferencia;
+        }
+
         #endregion
 
         #region Adicional
-        public Adicional GetAdicional(int Id, int IdSindicato)
+        public Adicional GetAdicional(int Id, int IdSindicato, bool OnlyManual)
         {
             Adicional Adicional = null;
             this.AdicionalRepository.GetSessionFactory().SessionInterceptor(() =>
             {
-                Adicional = this.AdicionalRepository.Get(Id, IdSindicato);
+                Adicional = this.AdicionalRepository.Get(Id, IdSindicato, OnlyManual);
             });
             return Adicional;
         }
@@ -478,12 +491,12 @@ namespace Woopin.SGC.Services
             return SelectAdicionalCombos;
         }
 
-        public SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req, int IdSindicato)
+        public SelectCombo GetAllAdicionalesByFilterCombo(SelectComboRequest req, int IdSindicato, bool OnlyManual)
         {
             SelectCombo SelectAdicionalCombos = new SelectCombo();
             this.AdicionalRepository.GetSessionFactory().SessionInterceptor(() =>
             {
-                SelectAdicionalCombos.Items = this.AdicionalRepository.GetAllByFilter(req, IdSindicato)
+                SelectAdicionalCombos.Items = this.AdicionalRepository.GetAllByFilter(req, IdSindicato, OnlyManual)
                                                               .Select(x => new SelectComboItem()
                                                               {
                                                                   id = x.Id,

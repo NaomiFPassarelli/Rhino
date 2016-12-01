@@ -9,6 +9,7 @@ using Woopin.SGC.Common.HtmlModel;
 using NHibernate.Criterion;
 using Woopin.SGC.Repositories.Helpers;
 using Woopin.SGC.Model.Cooperativa;
+using NHibernate.Transform;
 
 namespace Woopin.SGC.Repositories.Cooperativa
 {
@@ -73,12 +74,67 @@ namespace Woopin.SGC.Repositories.Cooperativa
             return e;
         }
 
+        public IList<Asociado> GetAsociados(IList<int> Ids)
+        {
+            return this.GetSessionFactory().GetSession().QueryOver<Asociado>()
+                        .Where(c => c.Activo)
+                        .WhereRestrictionOn(c => c.Id).IsIn(Ids.ToArray())
+                        .GetFilterBySecurity().List();
+        }
+
+
         public IList<Asociado> GetAsociadosMes(int Mes, int Año)
         {
+            DateTime inicio = new DateTime(Año, Mes, 01);
+            DateTime fin = new DateTime(Año, Mes, DateTime.DaysInMonth(Año, Mes));
             IList<Asociado> As = null;
+            //TODO en realidad es FechaActaIngreso
             As = this.GetSessionFactory().GetSession().QueryOver<Asociado>()
-                .Where(x => x.FechaIngreso.Month == Mes && x.Activo && x.FechaIngreso.Year == Año).GetFilterBySecurity().List();
+                .Where(x => x.FechaIngreso >= inicio && x.Activo && x.FechaIngreso <= fin).GetFilterBySecurity().List();
             return As;
+        }
+
+        public IList<Asociado> GetAsociadosMesEgreso(int Mes, int Año)
+        {
+            DateTime inicio = new DateTime(Año, Mes, 01);
+            DateTime fin = new DateTime(Año, Mes, DateTime.DaysInMonth(Año, Mes));
+            IList<Asociado> As = null;
+            //TODO en realidad es FechaActaEgreso
+            As = this.GetSessionFactory().GetSession().QueryOver<Asociado>()
+                .Where(x => x.FechaEgreso >= inicio && x.Activo && x.FechaEgreso <= fin).GetFilterBySecurity().List();
+            return As;
+        }
+
+        //public Asociado LoadHeader()
+        //{
+        //    Asociado h = null;
+
+        //    Asociado A = this.GetSessionFactory().GetSession().QueryOver<Asociado>()
+        //                                                .GetFilterBySecurity()
+        //                                                .Select(
+        //                                                Projections.Sum<Asociado>(x => x.CantidadCuotas)
+        //                                                .WithAlias(() => h.CantidadCuotas),
+        //                                                Projections.Sum<Asociado>(x => x.CantidadPagosAbonadas)
+        //                                                .WithAlias(() => h.CantidadPagosAbonadas),
+        //                                                Projections.Sum<Asociado>(x => x.ImportePago)
+        //                                                .WithAlias(() => h.ImportePago)
+        //                                                )
+        //                                                .TransformUsing(Transformers.AliasToBean<Asociado>())
+        //                                                .Take(1)
+        //                                                .SingleOrDefault<Asociado>();
+        //    return A;
+        //}
+
+
+        public int GetProximoNumeroReferencia()
+        {
+            Asociado ultimo = this.GetSessionFactory().GetSession().QueryOver<Asociado>()
+                                                                                      .GetFilterBySecurity()
+                                                                                      .OrderBy(x => x.NumeroReferencia).Desc
+                                                                                      .Take(1)
+                                                                                      .SingleOrDefault();
+
+            return ultimo != null ? ultimo.NumeroReferencia + 1 : 1;
         }
 
     }

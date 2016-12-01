@@ -702,12 +702,12 @@
                                                     <span class="selected"></span>
                                                 </a>
                                             </li>
-                                            @*<li>
+                                            <li>
                                                 <a href="@Url.Action("Index", "Adicionales", new { Area = "Sueldos" })">
                                                     <span class="menu-text">Adicionales</span>
                                                     <span class="selected"></span>
                                                 </a>
-                                            </li>*@
+                                            </li>
                                         </ul>
                                     </li>
                                     <li>
@@ -736,7 +736,7 @@
 
                         <li class="hoe-has-menu">
                             <a href="javascript:void(0)">
-                                <i class="fa fa-male"></i>
+                                <i class="fa fa-users"></i>
                                 <span class="menu-text">Cooperativa</span>
                                 <span class="selected"></span>
                             </a>
@@ -754,8 +754,14 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="@Url.Action("Index", "Pagos", new { Area = "Cooperativa" })">
-                                                <span class="menu-text">Pagos</span>
+                                            <a href="@Url.Action("Nuevo", "Pagos", new { Area = "Cooperativa" })">
+                                                <span class="menu-text"> Nuevo Pago</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Nuevo", "Aportes", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Nuevos Aportes</span>
                                                 <span class="selected"></span>
                                             </a>
                                         </li>
@@ -774,8 +780,32 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="@Url.Action("IndexDetalle", "Pagos", new { Area = "Cooperativa" })">
+                                            <a href="@Url.Action("Index", "Pagos", new { Area = "Cooperativa" })">
                                                 <span class="menu-text">Pagos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Aportes", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Aportes</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("PorVencer", "Pagos", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Pagos Por Vencer</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Vencidos", "Pagos", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Ultimos Pagos Vencidos</span>
+                                                <span class="selected"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Index", "Actas", new { Area = "Cooperativa" })">
+                                                <span class="menu-text">Actas</span>
                                                 <span class="selected"></span>
                                             </a>
                                         </li>

@@ -39,53 +39,77 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         }
 
         [HttpPost]
-        public JsonResult Nuevo(Adicional Adicional, IList<Adicional> Adicionales = null)
+        public JsonResult Nuevo(Adicional Adicional)
         {
             try
             {
-
                 //TODO mejorar este validador 
-                if (Adicional.Descripcion != null && 
-                    (Adicional.Porcentaje != null || Adicional.Valor != null) 
-                    && Adicional.Suma != null && Adicional.TipoLiquidacion != null)
+                if (Adicional.Descripcion != null &&
+                    Adicional.Suma != null && Adicional.TipoLiquidacion != null)
                 {
-                    if (Adicionales != null && Adicionales.Count > 0)
-                    {
-                        this.SueldosConfigService.AddAdicionalConAdicionales(Adicional, Adicionales);
-                    }
-                    else
-                    {
-                        this.SueldosConfigService.AddAdicional(Adicional);
-                    }
+                    this.SueldosConfigService.AddAdicional(Adicional);
                     return Json(new { Success = true, Adicional = Adicional });
                 }
                 else
                 {
                     return Json(new { Success = false, ErrorMessage = "Hay errores en el formulario de creación de Adicional", Errors = ModelState.Values.SelectMany(v => v.Errors) });
                 }
-
-                //ClearNotValidatedProperties(Adicional);
-                //for (int j = 0; j < Adicionales.Count(); j++ )
-                //{
-                //    string cleanmodel = "Adicionales[" + j + "]Descripcion";
-                //    ModelState[cleanmodel].Errors.Clear();
-                //}
-                
-
-                //if (ModelState.IsValid)
-                //{
-                    
-                //}
-                //else
-                //{
-                //    return Json(new { Success = false, ErrorMessage = "Hay errores en el formulario de creación de Adicional", Errors = ModelState.Values.SelectMany(v => v.Errors) });
-                //}
             }
             catch
             {
                 return Json(new { Success = false, ErrorMessage = "Ha ocurrido un error, vuelva a intentarlo." });
             }
         }
+
+
+        //[HttpPost]
+        //public JsonResult Nuevo(Adicional Adicional, IList<Adicional> Adicionales = null)
+        //{
+        //    try
+        //    {
+
+        //        //TODO mejorar este validador 
+        //        if (Adicional.Descripcion != null && 
+        //            (Adicional.Porcentaje != null || Adicional.Valor != null) 
+        //            && Adicional.Suma != null && Adicional.TipoLiquidacion != null)
+        //        {
+        //            if (Adicionales != null && Adicionales.Count > 0)
+        //            {
+        //                this.SueldosConfigService.AddAdicionalConAdicionales(Adicional, Adicionales);
+        //            }
+        //            else
+        //            {
+        //                this.SueldosConfigService.AddAdicional(Adicional);
+        //            }
+        //            return Json(new { Success = true, Adicional = Adicional });
+        //        }
+        //        else
+        //        {
+        //            return Json(new { Success = false, ErrorMessage = "Hay errores en el formulario de creación de Adicional", Errors = ModelState.Values.SelectMany(v => v.Errors) });
+        //        }
+
+        //        //ClearNotValidatedProperties(Adicional);
+        //        //for (int j = 0; j < Adicionales.Count(); j++ )
+        //        //{
+        //        //    string cleanmodel = "Adicionales[" + j + "]Descripcion";
+        //        //    ModelState[cleanmodel].Errors.Clear();
+        //        //}
+                
+
+        //        //if (ModelState.IsValid)
+        //        //{
+                    
+        //        //}
+        //        //else
+        //        //{
+        //        //    return Json(new { Success = false, ErrorMessage = "Hay errores en el formulario de creación de Adicional", Errors = ModelState.Values.SelectMany(v => v.Errors) });
+        //        //}
+        //    }
+        //    catch
+        //    {
+        //        return Json(new { Success = false, ErrorMessage = "Ha ocurrido un error, vuelva a intentarlo." });
+        //    }
+        //}
 
         [HttpPost]
         public JsonResult Eliminar(List<int> Ids)
@@ -111,7 +135,7 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
 
         public ActionResult Editar(int Id)
         {
-            Adicional Adicional = this.SueldosConfigService.GetAdicional(Id, 0);
+            Adicional Adicional = this.SueldosConfigService.GetAdicional(Id, 0, false);
             ViewBag.TypeLiquidaciones = Enum.GetNames(typeof(TypeLiquidacion)).Select(x => new SelectListItem() { Text = x, Value = (Enum.Parse(typeof(TypeLiquidacion), x)).ToString(), Selected = (x == Adicional.TipoLiquidacion.ToString() ? true : false)  }).ToList();
             return View(Adicional);
         }
@@ -158,19 +182,20 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetAdicionales(SelectComboRequest req, int IdSindicato)
+        public JsonResult GetAdicionales(SelectComboRequest req, int IdSindicato, bool OnlyManual)
         {
-            return Json(new { Data = this.SueldosConfigService.GetAllAdicionalesByFilterCombo(req, IdSindicato), Success = true });
+            return Json(new { Data = this.SueldosConfigService.GetAllAdicionalesByFilterCombo(req, IdSindicato, OnlyManual), Success = true });
         }
 
         [HttpPost]
-        public JsonResult GetAdicional(int idAdicional, int IdSindicato)
+        public JsonResult GetAdicional(int idAdicional, int IdSindicato, bool OnlyManual)
         {
-            Adicional a = this.SueldosConfigService.GetAdicional(idAdicional, IdSindicato);
+            Adicional a = this.SueldosConfigService.GetAdicional(idAdicional, IdSindicato, OnlyManual);
             //TODO buscar sobre los que va
             //IList<AdicionalAdicionales> AAs = this.SueldosConfigService.GetAdicionalAdicionalesByAdicional(idAdicional);
-            IEnumerable<Adicional> AAs = this.SueldosConfigService.GetAdicionalAdicionalesByAdicional(idAdicional).Select(x => x.AdicionalSobre);
-            return Json(new { Data = (a != null ) ? a : null, Data_AAs = (AAs.Count() > 0) ? AAs : null, Success = true });
+            //IEnumerable<Adicional> AAs = this.SueldosConfigService.GetAdicionalAdicionalesByAdicional(idAdicional).Select(x => x.AdicionalSobre);
+            //return Json(new { Data = (a != null) ? a : null, Data_AAs = (AAs.Count() > 0) ? AAs : null, Success = true });
+            return Json(new { Data = (a != null) ? a : null, Success = true });
         }
 
         public ActionResult AdicionalesDefault(/*int IdAdicional*/)

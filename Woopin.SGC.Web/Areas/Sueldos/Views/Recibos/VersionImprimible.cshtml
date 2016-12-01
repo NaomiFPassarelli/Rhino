@@ -13,8 +13,6 @@
             tipo = "Recibo";
             break;
     }
-    //var logoUrl = ViewBag.BaseLogoOrg;
-    //var cbUrl = ViewBag.BaseURL;
 }
 
 <div style="width: 790px; background-color: #ffffff;padding-left:4px;">
@@ -80,7 +78,16 @@
         <tr>
             <td style="padding-top: 7px;">@Model.PeriodoAnterior</td>
             <td style="padding-top: 7px;">@Model.BancoDeposito</td>
-            <td style="padding-top: 7px;">@Model.FechaPagoAnterior.ToString("dd/MM/yyyy")</td>
+            <td style="padding-top: 7px;">
+                @if (Model.FechaPagoAnterior.HasValue)
+                {
+                    Model.FechaPagoAnterior.Value.ToString("dd/MM/yyyyy");
+                }
+                else
+                {
+
+                }
+            </td>
             <td style="padding-top:7px;">@Model.Empleado.Categoria.Data</td>
             <td style="clear: both;"></td>
         </tr>
@@ -268,7 +275,15 @@
         <tr>
             <td style="padding-top: 7px;">@Model.PeriodoAnterior</td>
             <td style="padding-top: 7px;">@Model.BancoDeposito</td>
-            <td style="padding-top: 7px;">@Model.FechaPagoAnterior.ToString("dd/MM/yyyy")</td>
+            <td style="padding-top: 7px;">
+                @if (Model.FechaPagoAnterior.HasValue)
+                   {
+                        Model.FechaPagoAnterior.Value.ToString("dd/MM/yyyyy");
+                   }else
+                    {
+                         
+                   }
+            </td>
             <td style="padding-top:7px;">@Model.Empleado.Categoria.Data</td>
             <td style="clear: both;"></td>
         </tr>

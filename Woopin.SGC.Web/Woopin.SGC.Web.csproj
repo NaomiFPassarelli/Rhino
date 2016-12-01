@@ -292,6 +292,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\AFIP\AFIPAreaRegistration.cs" />
     <Compile Include="Areas\AFIP\Controllers\WSFEVController.cs" />
+    <Compile Include="Areas\Cooperativa\Controllers\ActasController.cs" />
+    <Compile Include="Areas\Cooperativa\Controllers\ConceptosController.cs" />
+    <Compile Include="Areas\Cooperativa\Controllers\AportesController.cs" />
     <Compile Include="Areas\Cooperativa\Controllers\PagosController.cs" />
     <Compile Include="Areas\Reporting\ReportingAreaRegistration.cs" />
     <Compile Include="Areas\Compras\Controllers\ComprobantesComprasController.cs" />
@@ -372,6 +375,7 @@
     <Compile Include="Scheduler\Scheduler.cs" />
     <Compile Include="Scheduler\ComprobanteVentaJobs.cs" />
     <Compile Include="Scheduler\ComprasJob.cs" />
+    <Compile Include="Scheduler\CooperativaJobs.cs" />
     <Compile Include="Scheduler\SueldosJobs.cs" />
     <Compile Include="Scheduler\VentasJobs.cs" />
     <Compile Include="StartUp.cs" />
@@ -652,7 +656,6 @@
     <Content Include="App_Data\Importaciones\Templates\Clientes.xlsx" />
     <Content Include="Areas\Compras\Views\Proveedores\Importar.cshtml" />
     <Content Include="App_Data\Importaciones\Templates\Datos Instalacion.xlsx" />
-    <Content Include="App_Data\Importaciones\Templates\Proveedores.xlsx" />
     <Content Include="Areas\Compras\Views\Reportes\Citi.cshtml" />
     <Content Include="Areas\Ventas\Views\ComprobantesVentas\Acumulados.cshtml" />
     <Content Include="Areas\Compras\Views\ComprobantesCompras\Acumulados.cshtml" />
@@ -686,11 +689,26 @@
     <Content Include="Areas\Cooperativa\Views\Asociados\Nuevo.cshtml" />
     <Content Include="Areas\Cooperativa\Views\Web.config" />
     <Content Include="Areas\Cooperativa\Views\Pagos\Index.cshtml" />
-    <Content Include="Areas\Cooperativa\Views\Pagos\IndexDetalle.cshtml" />
-    <Content Include="Areas\Cooperativa\Views\Pagos\VersionImprimible.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\VersionImprimibles.cshtml" />
     <Content Include="Areas\Cooperativa\Views\Asociados\SolicitudIngreso.cshtml" />
     <Content Include="Areas\Cooperativa\Views\Pagos\AnticipoDeRetorno.cshtml" />
-    <Content Include="Areas\Cooperativa\Views\Asociados\ActaIngreso.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\Bajar.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\CompletarActaAlta.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\CompletarActaBaja.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Actas\Index.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Actas\Nuevo.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Actas\Acta.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\Nuevo.cshtml" />
+    <Content Include="App_Data\Importaciones\Templates\Asociados.xlsx" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\PorVencer.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\Vencidos.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Aportes\Index.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Aportes\Nuevo.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Pagos\VersionImprimible.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Actas\VersionImprimibles.cshtml" />
+    <Content Include="Areas\Cooperativa\Views\Asociados\VersionImprimibles.cshtml" />
+    <Content Include="Areas\Sueldos\Views\Recibos\VersionImprimibles.cshtml" />
+    <Content Include="App_Data\Importaciones\Templates\Proveedores.xlsx" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\WoopinSrv.pubxml" />
@@ -972,11 +990,13 @@
   <ItemGroup>
     <Folder Include="App_Data\ComprobantesVenta\2\" />
     <Folder Include="App_Data\HtmlToPDF\" />
+    <Folder Include="App_Data\Importaciones\Asociados\" />
     <Folder Include="App_Data\Importaciones\Clientes\" />
     <Folder Include="App_Data\Importaciones\Empleados\" />
     <Folder Include="App_Data\Importaciones\Proveedores\" />
     <Folder Include="App_Data\Organizacion\" />
     <Folder Include="App_Data\Recibos\" />
+    <Folder Include="App_Data\SolicitudIngreso\1\" />
     <Folder Include="Areas\AFIP\Models\" />
     <Folder Include="Areas\Compras\Views\Shared\" />
     <Folder Include="Areas\Configuracion\Views\Shared\" />
@@ -1049,7 +1069,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>1283</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2020/</IISUrl>
+          <IISUrl>http://localhost:3240/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

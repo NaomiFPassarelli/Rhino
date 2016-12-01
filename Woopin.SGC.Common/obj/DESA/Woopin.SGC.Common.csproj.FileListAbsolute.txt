@@ -45,3 +45,4 @@ C:\Woopin\App_Rhino\Woopin.SGC.Common\bin\Debug\System.Web.WebPages.Deployment.x
 C:\Woopin\App_Rhino\Woopin.SGC.Common\bin\Debug\System.Web.WebPages.Razor.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Common\obj\DESA\Woopin.SGC.Common.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Common\obj\DESA\Woopin.SGC.Common.pdb
+C:\Woopin\App_Rhino\Woopin.SGC.Common\obj\DESA\Woopin.SGC.Common.csprojResolveAssemblyReference.cache

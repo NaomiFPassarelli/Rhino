@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Woopin.SGC.Common.Validations;
 using Woopin.SGC.Model.Common;
+using Woopin.SGC.Model.Contabilidad;
 
 namespace Woopin.SGC.Model.Sueldos
 {
@@ -27,7 +28,6 @@ namespace Woopin.SGC.Model.Sueldos
         //[DoNotValidate]
         public virtual string BancoDeposito { get; set; }
         public virtual Organizacion Organizacion { get; set; }
-        //public virtual IList<Adicional> Adicionales { get; set; }
         public virtual IList<AdicionalRecibo> AdicionalesRecibo { get; set; }
         [DisplayName("Total Remunerativo")]
         public virtual decimal TotalRemunerativo { get; set; }
@@ -47,16 +47,10 @@ namespace Woopin.SGC.Model.Sueldos
         [Required(ErrorMessage = "Es Necesario una Fecha de Pago")]
         public virtual DateTime FechaPago { get; set; } //en la que se va a pagar este recibo
 
-        [DisplayName("Periodo Anterior")]
-        [Required(ErrorMessage = "Es Necesario un Periodo Anterior")] 
-        //TODO si es anterior a la fecha de comienzo de actividad de la organizacion que muestre null
-        //pero poner como required porque solo el primer recibo de cada empleado va a ser null
+        [DisplayName("Periodo Anterior")] 
         public virtual string PeriodoAnterior { get; set; }
         [DisplayName("Fecha de Pago Anterior")]
-        [Required(ErrorMessage = "Es Necesario una Fecha de Pago Anterior")]
-        //TODO si es anterior a la fecha de comienzo de actividad de la organizacion que muestre null
-        //pero poner como required porque solo el primer recibo de cada empleado va a ser null
-        public virtual DateTime FechaPagoAnterior { get; set; } //en la que se pago el recibo anterior
+        public virtual DateTime? FechaPagoAnterior { get; set; } 
 
         public virtual string Observacion { get; set; }
         [DisplayName("Numero Referencia")]
@@ -74,11 +68,15 @@ namespace Woopin.SGC.Model.Sueldos
         [DisplayName("Remuneración Básica")]
         [Required(ErrorMessage = "Es Necesario una Remuneración Básica")]
         public virtual decimal RemuneracionBasica { get; set; }
+        public virtual bool Activo { get; set; }
+        [DoNotValidate]
+        public virtual Asiento Asiento { get; set; }
 
         public Recibo()
         {
             TipoRecibo = TypeRecibo.Sueldo;
             FechaCreacion = DateTime.Now;
+            Activo = true;
         }
     }
     public enum TypeRecibo

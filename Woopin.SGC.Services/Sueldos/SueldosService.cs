@@ -30,11 +30,14 @@ namespace Woopin.SGC.Services
 
         private readonly IEmpleadoRepository EmpleadoRepository;
         private readonly IReciboRepository ReciboRepository;
+        private readonly IContabilidadService ContabilidadService;
 
-        public SueldosService(IEmpleadoRepository EmpleadoRepository, IReciboRepository ReciboRepository)
+        public SueldosService(IEmpleadoRepository EmpleadoRepository, IReciboRepository ReciboRepository,
+                            IContabilidadService ContabilidadService)
         {
             this.EmpleadoRepository = EmpleadoRepository;
             this.ReciboRepository = ReciboRepository;
+            this.ContabilidadService = ContabilidadService;
         }
 
         #endregion
@@ -60,6 +63,17 @@ namespace Woopin.SGC.Services
                 });
             return Recibo;
         }
+        public IList<Recibo> GetRecibos(IList<int> Ids)
+        {
+            IList<Recibo> Recibos = null;
+            this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                Recibos = this.ReciboRepository.GetRecibos(Ids);
+            });
+            return Recibos;
+
+        }
+
 
         public IList<Recibo> GetAllRecibos()
         {
@@ -76,6 +90,7 @@ namespace Woopin.SGC.Services
         {
             this.ReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
             {
+                
                 this.AddReciboNT(Recibo);
             });
         }
@@ -87,9 +102,15 @@ namespace Woopin.SGC.Services
                 adicional.Recibo = Recibo;
                 adicional.Organizacion = Security.GetOrganizacion();
                 //todo calcular totales
+                if(adicional.Id == 8011) //Adicional es Vacaciones entonces sumar al empleado
+                {
+                    Empleado E = this.EmpleadoRepository.Get(Recibo.Empleado.Id);
+                    E.VacacionesYaGozadas += adicional.Unidades;
+                    this.EmpleadoRepository.Update(E);
+                }
             }
-
-
+            //TODO
+            //Recibo.Asiento = this.ContabilidadService.NuevoAsientoReciboSueldo(Recibo);
             this.ReciboRepository.Add(Recibo);
         }
 
@@ -159,18 +180,28 @@ namespace Woopin.SGC.Services
         //        this.ReciboRepository.Update(ToUpdate);
         //    });
         //}
-        //public void DeleteRecibos(List<int> Ids)
-        //{
-        //    this.ReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
-        //    {
-        //        foreach (var Id in Ids)
-        //        {
-        //            Recibo Recibo = this.ReciboRepository.Get(Id);
-        //            Recibo.Activo = false;
-        //            this.ReciboRepository.Update(Recibo);
-        //        }
-        //    });
-        //}
+        public void DeleteRecibos(List<int> Ids)
+        {
+            this.ReciboRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                foreach (var Id in Ids)
+                {
+                    Recibo Recibo = this.ReciboRepository.Get(Id);
+                    foreach(AdicionalRecibo AR in Recibo.AdicionalesRecibo)
+                    {
+                        if(AR.Id == 8011) //Adicional es Vacaciones entonces sumar al empleado
+                        {
+                            Empleado E = this.EmpleadoRepository.Get(Recibo.Empleado.Id);
+                            E.VacacionesYaGozadas -= AR.Unidades;
+                            this.EmpleadoRepository.Update(E);
+                        }
+                    }
+
+                    Recibo.Activo = false;
+                    this.ReciboRepository.Update(Recibo);
+                }
+            });
+        }
 
         public SelectCombo GetReciboCombos()
         {
@@ -218,7 +249,10 @@ namespace Woopin.SGC.Services
             this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
             {
                 ReciboAnterior = this.ReciboRepository.GetReciboAnterior(IdEmpleado);
-                ReciboAnterior.AdicionalesRecibo = null;
+                if (ReciboAnterior != null)
+                {
+                    ReciboAnterior.AdicionalesRecibo = null;
+                }
             });
             return ReciboAnterior;
         }

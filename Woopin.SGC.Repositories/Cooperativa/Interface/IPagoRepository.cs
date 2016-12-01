@@ -12,5 +12,10 @@ namespace Woopin.SGC.Repositories.Cooperativa
     public interface IPagoRepository : IRepository<Pago>
     {
         IList<Pago> GetAllPagosByAsociado(int IdAsociado);
+        int GetProximoNumeroReferencia();
+        IList<Pago> GetAll(DateTime _start, DateTime _end);
+        IList<Pago> GetPagos(IList<int> Ids);
+        IList<Asociado> GetAllPorVencer();
+        IList<Asociado> GetAllVencidos();
     }
 }

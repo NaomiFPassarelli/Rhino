@@ -19,27 +19,28 @@ namespace Woopin.SGC.Model.Ventas
         [DisplayName("Razón Social")]
         public virtual string RazonSocial { get; set; }
 
-        [Required(ErrorMessage = "Es Necesario una Dirección")]
-        [DisplayName("Dirección")]
+        [DisplayName("Calle")]
         public virtual string Direccion { get; set; }
 
-        [Required(ErrorMessage = "Es Necesario un Numero")]
         [DisplayName("Número")]
         public virtual string Numero { get; set; }
         public virtual string Piso { get; set; }
         public virtual string Departamento { get; set; }
 
         [DisplayName("Codigo Postal")]
-        [Required(ErrorMessage = "Es Necesario un Codigo Postal")]
         [DataType(DataType.PostalCode,ErrorMessage="Codigo postal invalido")]
         public virtual string CodigoPostal { get; set; }
 
-        [Required(ErrorMessage = "Es Necesario una Localidad")]
-        public virtual string Localidad { get; set; }
+        [DoNotValidateOnlyId]
+        public virtual Localidad Localidad { get; set; }
 
         [DoNotValidateOnlyId]
-        [Required(ErrorMessage = "Es Necesario una Localizacion")]
+        [DisplayName("Provincia")]
         public virtual Localizacion Localizacion { get; set; }
+
+        [DisplayName("Pais")]
+        [DoNotValidateOnlyId]
+        public virtual ComboItem Pais { get; set; }
 
         public virtual string Telefono { get; set; }
 
@@ -75,9 +76,12 @@ namespace Woopin.SGC.Model.Ventas
         [DoNotValidate]
         public virtual Organizacion Organizacion { get; set; }
 
+        public virtual IList<Direccion> DireccionesEntrega { get; set; }
+
         public Cliente()
         {
             this.Activo = true;
         }
+
     }
 }

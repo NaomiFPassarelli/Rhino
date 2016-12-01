@@ -15,7 +15,11 @@ namespace Woopin.SGC.Repositories.Cooperativa
         IList<Asociado> GetAllByFilter(PagingRequest req);
         bool ExistCUIT(string cuit, int? IdUpdate);
         Asociado GetCompleto(int IdAsociado);
+        IList<Asociado> GetAsociados(IList<int> Ids);
         IList<Asociado> GetAsociadosMes(int Mes, int Año);
+        IList<Asociado> GetAsociadosMesEgreso(int Mes, int Año);
+        //Asociado LoadHeader();
+        int GetProximoNumeroReferencia();
 
     }
 }

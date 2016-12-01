@@ -23,20 +23,21 @@ namespace Woopin.SGC.Repositories.Sueldos
 
         public override IList<Recibo> GetAll()
         {
-            return this.GetSessionFactory().GetSession().QueryOver<Recibo>().GetFilterBySecurity().List();
+            return this.GetSessionFactory().GetSession().QueryOver<Recibo>().Where(c => c.Activo).GetFilterBySecurity().List();
         }
 
         public IList<Recibo> GetAllByFilter(SelectComboRequest req)
         {
             return this.GetSessionFactory().GetSession().QueryOver<Recibo>()
                                                         .Where((Restrictions.On<Recibo>(x => x.Empleado.Nombre).IsLike('%' + req.where + '%')))
+                                                        .And(x => x.Activo)
                                                         .GetFilterBySecurity()
                                                         .List();
         }
         public Recibo GetCompleto(int Id)
         {
             Recibo recibo = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
-                                                        .Where(x => x.Id == Id)
+                                                        .Where(x => x.Id == Id && x.Activo)
                                                         .GetFilterBySecurity()
                                                         .Fetch(x => x.AdicionalesRecibo).Eager
                                                         .Fetch(x => x.Empleado).Eager
@@ -60,6 +61,7 @@ namespace Woopin.SGC.Repositories.Sueldos
 
             return this.GetSessionFactory().GetSession().QueryOver<Recibo>()
                                                         .Where((Restrictions.On<Recibo>(x => x.Empleado.Nombre).IsLike('%' + req.where + '%')))
+                                                        .And(x => x.Activo)
                                                         .GetFilterBySecurity()
                                                         .List();
         }
@@ -68,40 +70,85 @@ namespace Woopin.SGC.Repositories.Sueldos
         {
             Recibo ultimoRecibo = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
                                                                                       .GetFilterBySecurity()
-                                                                                      .OrderBy(x => x.Id).Desc
+                                                                                      .Where(x => x.Activo)
+                                                                                      .OrderBy(x => x.NumeroReferencia).Desc
                                                                                       .Take(1)
                                                                                       .SingleOrDefault();
 
-            return ultimoRecibo != null ? ultimoRecibo.Id + 1 : 1;
+            return ultimoRecibo != null ? ultimoRecibo.NumeroReferencia + 1 : 1;
         }
 
         public Recibo GetReciboAnterior(int IdEmpleado)
         {
             return this.GetSessionFactory().GetSession().QueryOver<Recibo>()
                                                                         .GetFilterBySecurity()
+                                                                        .Where(x => x.Activo)
                                                                        .OrderBy(x => x.Id).Desc
                                                                        .Take(1)
                                                                        .SingleOrDefault();
         }
 
+        public IList<Recibo> GetRecibos(IList<int> Ids)
+        {
+            IList<Recibo> Recibos = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
+                .Where(c => c.Activo)
+                .WhereRestrictionOn(c => c.Id).IsIn(Ids.ToArray())
+                //.Fetch(c => c.AdicionalesRecibo).Eager
+                //.Fetch(c => c.Empleado).Eager
+                //.Fetch(c => c.Organizacion).Eager
+                .GetFilterBySecurity().List();
+            
+
+
+            foreach (Recibo recibo in Recibos)
+            {
+                foreach (var adicional in recibo.AdicionalesRecibo)
+                {
+                    adicional.Recibo = null;
+                }
+            }
+            return Recibos;
+        }
+            
+
         public decimal GetMejorRemuneracion(int IdEmpleado)
         { 
             DateTime today = DateTime.Now;
-            DateTime mitadAño = new DateTime(today.Year, 6, 30);
+            DateTime mitadAño = new DateTime(today.Year, 6, DateTime.DaysInMonth(today.Year, 6));
             Recibo reciboMejorRemuneracion = null;
-            DateTime primerDia = new DateTime(today.Year, 1, 1);
-            reciboMejorRemuneracion = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
-                                                                                  .GetFilterBySecurity()
-                                                                                  .Where(c => c.Empleado.Id == IdEmpleado && (c.FechaInicio >= primerDia && c.FechaInicio <= mitadAño))
-                                                                                  .OrderBy(c => c.TotalRemunerativo).Desc
-                                                                                  .Take(1)
-                                                                                  .SingleOrDefault();
+            if (today.Month > 7)
+            {
+                //desde la mitad a fin de año
+                DateTime ultimoDia = new DateTime(today.Year, 12, DateTime.DaysInMonth(today.Year, 12));
+                reciboMejorRemuneracion = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
+                                                                                      .GetFilterBySecurity()
+                                                                                      .Where(c => c.Empleado.Id == IdEmpleado && (c.FechaInicio >= mitadAño && c.FechaInicio <= ultimoDia) && c.Activo)
+                                                                                      .OrderBy(c => c.TotalRemunerativo).Desc
+                                                                                      .Take(1)
+                                                                                      .SingleOrDefault();
+
+            }
+            else
+            {
+                //desde el inicio a mitad de año
+                DateTime primerDia = new DateTime(today.Year, 1, 1);
+                reciboMejorRemuneracion = this.GetSessionFactory().GetSession().QueryOver<Recibo>()
+                                                                                      .GetFilterBySecurity()
+                                                                                      .Where(c => c.Empleado.Id == IdEmpleado && (c.FechaInicio >= primerDia && c.FechaInicio <= mitadAño) && c.Activo)
+                                                                                      .OrderBy(c => c.TotalRemunerativo).Desc
+                                                                                      .Take(1)
+                                                                                      .SingleOrDefault();
+            
+            }
 
             if (reciboMejorRemuneracion != null)
             {
                 return reciboMejorRemuneracion.TotalRemunerativo;
             }
-            return 0;
+            else {
+                return 0;
+            }
+            
         }
 
         public decimal[] GetPromedioRemunerativo(int IdEmpleado)
@@ -122,7 +169,7 @@ namespace Woopin.SGC.Repositories.Sueldos
             Recibo promedio6 = this.GetSessionFactory().GetSession().QueryOver<Recibo>(() => c)
                                                 .Where(() => c.FechaFin >= meses6
                                                     && (c.Empleado.Id == IdEmpleado || IdEmpleado == 0)
-                                                    && (rub.Id.IsIn(adicionales)))
+                                                    && (rub.Id.IsIn(adicionales)) && c.Activo)
                                                 .GetFilterBySecurity()
                                                 .JoinAlias(() => c.AdicionalesRecibo, () => dcc)
                                                 .JoinAlias(() => dcc.Adicional, () => rub)
@@ -132,7 +179,7 @@ namespace Woopin.SGC.Repositories.Sueldos
             Recibo promedio12 = this.GetSessionFactory().GetSession().QueryOver<Recibo>(() => c)
                                                 .Where(() => c.FechaFin >= meses12
                                                     && (c.Empleado.Id == IdEmpleado || IdEmpleado == 0)
-                                                    && (rub.Id.IsIn(adicionales)))
+                                                    && (rub.Id.IsIn(adicionales)) && c.Activo)
                                                 .GetFilterBySecurity()
                                                 .JoinAlias(() => c.AdicionalesRecibo, () => dcc)
                                                 .JoinAlias(() => dcc.Adicional, () => rub)

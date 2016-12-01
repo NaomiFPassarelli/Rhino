@@ -314,3 +314,5 @@ C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Services.Afip.XmlSerializers.d
 C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.csprojResolveAssemblyReference.cache
 C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.pdb
+C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Web.pssym
+C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\DESA\Woopin.SGC.Web.dll.postsharp

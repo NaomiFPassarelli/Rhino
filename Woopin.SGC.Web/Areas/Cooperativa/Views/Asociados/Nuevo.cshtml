@@ -5,7 +5,7 @@
     ViewBag.SectionIcon = "truck";
     ViewBag.SectionTitle = "Nuevo Asociado";
 }
-@using (Html.BeginForm())
+@using (Html.BeginForm("Nuevo", "Asociados", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
@@ -36,6 +36,15 @@
             </div>
         </div>
 
+
+        <div class="form-group">
+            @*<label class="col-md-6 horizontal-label readonly-label">N° Referencia</label>*@
+            @Html.LabelFor(model => model.NumeroReferencia, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.NumeroRef.ToString() })
+            </div>
+        </div>
+
         <div class="form-group @if (!ViewData.ModelState.IsValidField("CUIT"))
                         { @Html.Raw("has-error");}">
             @Html.LabelFor(model => model.CUIT, new { @class = "col-md-2 horizontal-label" })
@@ -54,7 +63,34 @@
             </div>
         </div>
 
-        @*<div class="form-group @if (!ViewData.ModelState.IsValidField("Direccion"))
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("CI"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.CI, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CI, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CI, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("LE"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.LE, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.LE, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.LE, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("LC"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.LC, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.LC, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.LC, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Direccion"))
                         { @Html.Raw("has-error");}">
             @Html.LabelFor(model => model.Direccion, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
@@ -62,6 +98,7 @@
                 @Html.ValidationMessageFor(model => model.Direccion, null, new { @class = "help-block" })
             </div>
         </div>
+        
 
         <div class="form-group">
             <div class="col-md-4">
@@ -105,12 +142,48 @@
             </div>
         </div>
 
+
         <div class="form-group @if (!ViewData.ModelState.IsValidField("Nacionalidad"))
                         { @Html.Raw("has-error");}">
             @Html.LabelFor(model => model.Nacionalidad, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
                 @Html.DropDownListFor(model => model.Nacionalidad.Id, (IEnumerable<SelectListItem>)ViewBag.Nacionalidades, null, new { @class = "textinput" })
                 @Html.ValidationMessageFor(model => model.Nacionalidad, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        @*<div class="form-group @if (!ViewData.ModelState.IsValidField("LugarNacimiento"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.LugarNacimiento, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.LugarNacimiento.Id, (IEnumerable<SelectListItem>)ViewBag.Localizaciones, null, new { @class = "textinput", @data_val_required = false, @data_val_number = false })
+                @Html.ValidationMessageFor(model => model.LugarNacimiento, null, new { @class = "help-block" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FechaNacimiento, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" id="FechaNacimiento" name="FechaNacimiento" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.FechaNacimiento, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Padre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Padre, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Padre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Padre, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Madre"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Madre, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Madre, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Madre, null, new { @class = "help-block" })
             </div>
         </div>
 
@@ -121,13 +194,77 @@
                 @Html.TextBoxFor(model => model.Telefono, new { @class = "textinput" })
                 @Html.ValidationMessageFor(model => model.Telefono, null, new { @class = "help-block" })
             </div>
-        </div>*@
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EstadoCivil, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.EstadoCivil.Id, (IEnumerable<SelectListItem>)ViewBag.EstadosCivil, null, new { @class = "textinput" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("NroCarnetConductor"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.NroCarnetConductor, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NroCarnetConductor, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.NroCarnetConductor, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("CategoriaConductor"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.CategoriaConductor, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CategoriaConductor, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CategoriaConductor, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("MarcaVehiculo"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.MarcaVehiculo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.MarcaVehiculo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.MarcaVehiculo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("ModeloVehiculo"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.ModeloVehiculo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.ModeloVehiculo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.ModeloVehiculo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("NroChapaVehiculo"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.NroChapaVehiculo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NroChapaVehiculo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.NroChapaVehiculo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
 
         <div class="form-group">
             @Html.LabelFor(model => model.FechaIngreso, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
                 <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Ingreso es requerida" id="FechaIngreso" name="FechaIngreso" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
                 @Html.ValidationMessageFor(model => model.FechaIngreso, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FechaNotificacion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Notificacion es requerida" id="FechaNotificacion" name="FechaNotificacion" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.FechaNotificacion, null, new { @class = "help-block" })
             </div>
         </div>
 
@@ -139,146 +276,65 @@
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             @Html.LabelFor(model => model.FechaActaIngreso, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
                 <input class="text-box single-line textinput" data-val="true" id="FechaActaIngreso" name="FechaActaIngreso" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
                 @Html.ValidationMessageFor(model => model.FechaActaIngreso, null, new { @class = "help-block" })
             </div>
-        </div>
-
-
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.FechaAntiguedadReconocida, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                <input class="text-box single-line textinput" id="FechaAntiguedadReconocida" name="FechaAntiguedadReconocida" type="text" >
-                @Html.ValidationMessageFor(model => model.FechaAntiguedadReconocida, null, new { @class = "help-block" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.FechaNacimiento, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                <input class="text-box single-line textinput" data-val="true" id="FechaNacimiento" name="FechaNacimiento" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
-                @Html.ValidationMessageFor(model => model.FechaNacimiento, null, new { @class = "help-block" })
-            </div>
-        </div>
-
-        <div class="form-group" id="SueldoBrutoHoraDiv">
-            @Html.LabelFor(model => model.SueldoBrutoHora, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.SueldoBrutoHora, "{0:0.00}", new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.SueldoBrutoHora, null, new { @class = "help-block" })
-            </div>
-        </div>
-
-        <div class="form-group" id="SueldoBrutoMesDiv">
-            @Html.LabelFor(model => model.SueldoBrutoMensual, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.SueldoBrutoMensual, "{0:0.00}", new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.SueldoBrutoMensual, null, new { @class = "help-block" })
-            </div>
-        </div>
-
-        <div class="form-group @if (!ViewData.ModelState.IsValidField("Email"))
-                        { @Html.Raw("has-error");}">
-            @Html.LabelFor(model => model.Email, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.Email, new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-block" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Categoria, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.DropDownListFor(model => model.Categoria.Id, (IEnumerable<SelectListItem>)ViewBag.Categorias, null, new { @class = "textinput" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Tarea, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.DropDownListFor(model => model.Tarea.Id, (IEnumerable<SelectListItem>)ViewBag.Tareas, null, new { @class = "textinput" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EstadoCivil, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.DropDownListFor(model => model.EstadoCivil.Id, (IEnumerable<SelectListItem>)ViewBag.EstadosCivil, null, new { @class = "textinput" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Sindicato, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.DropDownListFor(model => model.Sindicato.Id, (IEnumerable<SelectListItem>)ViewBag.Sindicatos, null, new { @class = "textinput" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ObraSocial, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.DropDownListFor(model => model.ObraSocial.Id, (IEnumerable<SelectListItem>)ViewBag.ObrasSociales, null, new { @class = "textinput" })
-            </div>
-        </div>
-        
-        <div class="form-group">
-            @Html.LabelFor(model => model.BancoDeposito, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.DropDownListFor(model => model.BancoDeposito.Id, (IEnumerable<SelectListItem>)ViewBag.BancosDepositos, null, new { @class = "textinput" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Sexo, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.DropDownListFor(model => model.Sexo.Id, (IEnumerable<SelectListItem>)ViewBag.Sexos, null, new { @class = "textinput" })
-            </div>
-        </div>
-
-        <div class="form-group" >
-            @Html.LabelFor(model => model.BeneficiarioObraSocial, new { @class = "col-md-2 horizontal-label" })
-            <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.BeneficiarioObraSocial, "{0:0.00}", new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.BeneficiarioObraSocial, null, new { @class = "help-block" })
-            </div>
         </div>*@
 
-
-
         <div class="form-group">
-            @Html.LabelFor(model => model.ActaAlta, new { @class = "col-md-2 horizontal-label" })
+            @Html.LabelFor(model => model.CantidadAbonos, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.ActaAlta, new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.ActaAlta, null, new { @class = "help-block" })
+                @Html.TextBoxFor(model => model.CantidadAbonos, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CantidadAbonos, null, new { @class = "help-block" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ActaBaja, new { @class = "col-md-2 horizontal-label" })
+            @Html.LabelFor(model => model.ImporteAbono, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.ActaBaja, new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.ActaBaja, null, new { @class = "help-block" })
+                @Html.TextBoxFor(model => model.ImporteAbono, "{0:0.00}", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.ImporteAbono, null, new { @class = "help-block" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.CantidadCuotas, new { @class = "col-md-2 horizontal-label" })
+            @Html.LabelFor(model => model.ImportePago, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.CantidadCuotas, new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.CantidadCuotas, null, new { @class = "help-block" })
+                @Html.TextBoxFor(model => model.ImportePago, "{0:0.00}", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.ImportePago, null, new { @class = "help-block" })
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ImporteCuota, new { @class = "col-md-2 horizontal-label" })
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("RecomendadoPor"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.RecomendadoPor, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                @Html.TextBoxFor(model => model.ImporteCuota, "{0:0.00}", new { @class = "textinput" })
-                @Html.ValidationMessageFor(model => model.ImporteCuota, null, new { @class = "help-block" })
+                @Html.TextBoxFor(model => model.RecomendadoPor, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.RecomendadoPor, null, new { @class = "help-block" })
             </div>
         </div>
+
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Cargo"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Cargo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Cargo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Cargo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        @*TODO ver de poner un aviso de que hasta 4MB se puede*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.ImagePath, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input id="ImagePath" type="file" name="ImagePath" />
+                @Html.ValidationMessageFor(model => model.ImagePath, null, new { @class = "help-block" })
+            </div>
+        </div>
+
 
     </fieldset>
 }
@@ -290,37 +346,75 @@
     @Scripts.Render("~/Scripts/jquery.mask.min.js")
     @Scripts.Render("~/bundles/jqueryui")
     <script type="text/javascript">
-        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de Asociado. Si presiona Aceptar, todos los cambios realizados se perderan.');
-        $(document).ready(function () {
-            $("#FechaIngreso").datepicker({ dateFormat: 'dd/mm/yy' });
-            $("#FechaEgreso").datepicker({ dateFormat: 'dd/mm/yy' });
-            $("#FechaActaIngreso").datepicker({ dateFormat: 'dd/mm/yy' });
-            $('#CUIT').mask('99-99999999-9');
-            $('#DNI').mask('99999999');
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de Asociado. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        $("#FechaIngreso").datepicker({ dateFormat: 'dd/mm/yy' });
+        $("#FechaEgreso").datepicker({ dateFormat: 'dd/mm/yy' });
+        $("#FechaActaIngreso").datepicker({ dateFormat: 'dd/mm/yy' });
+        $("#FechaNacimiento").datepicker({ dateFormat: 'dd/mm/yy' });
+        $("#FechaNotificacion").datepicker({ dateFormat: 'dd/mm/yy' });
+        $('#CUIT').mask('99-99999999-9');
+        $('#DNI').mask('99999999');
 
-            $('#BtnSubmit').FormSubmit({
-                enter: true,
-                success: function (data) {
-                    if (data.Success) {
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    $.ShowLoader();
+                    if (data.NuevoNumero == null && data.NumeroRef == null) {
                         window.onbeforeunload = null;
-                        $.ShowLoader();
-                        window.location = '@Url.Action("Index")'
+                        window.location = '@Url.Action("Index")';
                     }
                     else {
-                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                        var msg = "";
+                        if (data.NuevoNumero != null) {
+                            msg += '<p>El N° de Asociado ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                        }
+                        if (data.NumeroRef != null) {
+                            msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                        }
+                        //$.WarningDialog(msg, 'warning', function () {
+                        //    Asociado.OnFinishSave(data.Asociado)
+                        //});
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+
                     }
+                } else {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+
                 }
-            });
+            }
+        });
             $('#BtnSubmitAndBack').FormSubmit({
                 enter: true,
                 success: function (data) {
                     if (data.Success) {
-                        $('form').ClearForm();
-                        $('#Alert-Container').NewAlert('success', 'Se ha creado el Asociado con exito! ');
+                        $.ShowLoader();
+                        if (data.NuevoNumero == null && data.NumeroRef == null) {
+                            $('form').ClearForm();
+                            $('#Alert-Container').NewAlert('success', 'Se ha creado el Asociado con exito! ');
+                        }
+                        else {
+                            var msg = "";
+                            if (data.NuevoNumero != null) {
+                                msg += '<p>El N° de Asociado ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                            }
+                            if (data.NumeroRef != null) {
+                                msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                            }
+                            //$.WarningDialog(msg, 'warning', function () {
+                            //    Asociado.OnFinishSave(data.Asociado)
+                            //});
+                            $('#BtnSubmit').removeAttr('disabled');
+                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                            //$('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+
+                        }
                     }
-                    else {
-                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
-                    }
+
+
                 }
             });
         });

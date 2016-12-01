@@ -11,9 +11,9 @@ namespace Woopin.SGC.Repositories.Sueldos
 {
     public interface IAdicionalRepository : IRepository<Adicional>
     {
-        IList<Adicional> GetAllByFilter(SelectComboRequest req, int IdSindicato);
+        IList<Adicional> GetAllByFilter(SelectComboRequest req, int IdSindicato, bool OnlyManual);
         IList<Adicional> GetAllByFilter(PagingRequest req);
-        Adicional Get(int IdAdicional, int IdSindicato);
+        Adicional Get(int IdAdicional, int IdSindicato, bool OnlyManual);
 
     }
 }

@@ -41,6 +41,10 @@ namespace Woopin.SGC.NHMapping.Sueldos
             this.References(c => c.Sexo).Nullable().Not.LazyLoad();
             this.Map(c => c.DNI).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.BeneficiarioObraSocial).Nullable().Not.LazyLoad();
+            this.Map(c => c.SACInicial).Nullable().Not.LazyLoad();
+            this.Map(c => c.VacacionesInicial).Nullable().Not.LazyLoad();
+            this.Map(c => c.NumeroReferencia).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.VacacionesYaGozadas).Nullable().Not.LazyLoad();
         }
     }
 }

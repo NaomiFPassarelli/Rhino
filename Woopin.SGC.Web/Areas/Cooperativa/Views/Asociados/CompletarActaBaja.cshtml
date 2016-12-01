@@ -1,0 +1,53 @@
+﻿@model Woopin.SGC.Model.Cooperativa.Asociado
+@{
+    Layout = null;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "completar-acta-baja" }))
+{
+@Html.AntiForgeryToken()
+@Html.ValidationSummary(true)
+@Html.HiddenFor(model => model.Id)
+    <fieldset class="form-horizontal">
+        <div class="form-group" style="">
+            <div class="col-md-12">
+                <div class="col-md-9">
+                    @Html.Label("Nro de Acta de Baja", new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.ActaBaja, new { @class = "textinput" })
+                </div>
+            </div>
+        </div>
+
+        <div class="button-pane clearfix">
+            <div class="button-set">
+                <a class="boton place-left" id="BtnSubmitCompletarBaja" title="Guardar">
+                    <i class="fa fa-check-circle-o i-green"></i> Aceptar
+                </a>
+            </div>
+        </div>
+    </fieldset>
+}
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        <script type="text/javascript">
+            
+            $(document).ready(function () {
+                $(document).off("click", "#BtnSubmitCompletarBaja").on("click", "#BtnSubmitCompletarBaja", function () {
+                    var params = {
+                    url: '@Url.Action("CompletarActaBaja")',
+                        data: {
+                            Asociado: $("#completar-acta-baja").serializeFormJSON(),
+                            Mes: $("#FechaActaEgreso").val().split("/")[1],
+                            Anio: $("#FechaActaEgreso").val().split("/")[2]
+                        },
+                    success: function (ret) {
+                        if (ret.Success) {
+
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+
+                _OpenDialog.dialog('close');
+                });
+            });
+        </script>

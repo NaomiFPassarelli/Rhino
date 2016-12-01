@@ -12,6 +12,7 @@ namespace Woopin.SGC.Repositories.Sueldos
     public interface IEmpleadoRepository : IRepository<Empleado>
     {
         IList<Empleado> GetAllByFilter(SelectComboRequest req);
+        int GetProximoNumeroReferencia();
         IList<Empleado> GetAllByFilter(PagingRequest req);
         bool ExistCUIT(string cuit, int? IdUpdate);
         Empleado GetCompleto(int IdEmpleado);

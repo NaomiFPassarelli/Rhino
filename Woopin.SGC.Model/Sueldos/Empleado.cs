@@ -13,8 +13,11 @@ namespace Woopin.SGC.Model.Sueldos
     public class Empleado : ISecuredEntity
     {
         public virtual int Id { get; set; }
+        public virtual int NumeroReferencia { get; set; }
+
 
         [Required(ErrorMessage = "Es Necesario un Nombre")]
+
         public virtual string Nombre { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Apellido")]
@@ -103,6 +106,12 @@ namespace Woopin.SGC.Model.Sueldos
         [DisplayName("Beneficiario Obra Social")]
         [RegularExpression("^[0-9]+[0-9]*(.[0-9]{0,2})?$", ErrorMessage = "El Beneficiario de la Obra Social debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales")]
         public virtual decimal? BeneficiarioObraSocial { get; set; }
+        [DisplayName("SAC Inicial")]
+        public virtual decimal? SACInicial { get; set; }
+        [DisplayName("Vacaciones Iniciales")]
+        public virtual decimal? VacacionesInicial { get; set; }
+        [DisplayName("Vacaciones Anteriormente gozadas")]
+        public virtual decimal? VacacionesYaGozadas { get; set; }
         public Empleado()
         {
             this.Activo = true;

@@ -44,4 +44,14 @@ namespace Woopin.SGC.Model.Common
         Cancelados = 1
     }
 
+    public enum EstadosGenericoFilter
+    { 
+        Todos = 0,
+        Cobrados = 1,
+        Pagados = 2,
+        Vencidos = 3,
+        PorVencer = 4,
+        Anulados = 5
+    }
+
 }

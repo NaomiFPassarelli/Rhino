@@ -34,6 +34,9 @@ namespace Woopin.SGC.Model.Negocio
                     cuentas.Add(new Cuenta("2.1.1.0", "Deudas Comerciales")); 
                         cuentas.Add(new Cuenta("2.1.1.001", "Proveedores"));
                     cuentas.Add(new Cuenta("2.1.2.0", "Deudas Sociales"));
+                        cuentas.Add(new Cuenta("2.1.2.001", "Sueldos A Pagar"));
+                        cuentas.Add(new Cuenta("2.1.2.002", "Cargas Sociales A Pagar"));
+                        cuentas.Add(new Cuenta("2.1.2.003", "Sindicato A Pagar"));
                     cuentas.Add(new Cuenta("2.1.3.0", "Deudas Fiscales"));
                         cuentas.Add(new Cuenta("2.1.3.001", "IVA Debito Fiscal"));
                     cuentas.Add(new Cuenta("2.1.4.0", "Deudas Bancarias"));

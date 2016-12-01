@@ -94,6 +94,7 @@
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\ISecuredEntity.cs" />
     <Compile Include="Common\JobHeader.cs" />
+    <Compile Include="Common\Localidad.cs" />
     <Compile Include="Common\Log.cs" />
     <Compile Include="Common\Notificacion.cs" />
     <Compile Include="Common\Organizacion.cs" />
@@ -122,6 +123,11 @@
     <Compile Include="Contabilidad\AsientoItem.cs" />
     <Compile Include="Contabilidad\MayorItem.cs" />
     <Compile Include="Contabilidad\Retencion.cs" />
+    <Compile Include="Cooperativa\ActaPuntoExtra.cs" />
+    <Compile Include="Cooperativa\Concepto.cs" />
+    <Compile Include="Cooperativa\AdicionalPago.cs" />
+    <Compile Include="Cooperativa\Acta.cs" />
+    <Compile Include="Cooperativa\Aporte.cs" />
     <Compile Include="Cooperativa\Pago.cs" />
     <Compile Include="Exceptions\SecurityException.cs" />
     <Compile Include="Exceptions\ValidationException.cs" />
@@ -149,6 +155,7 @@
     <Compile Include="Stock\IngresoStock.cs" />
     <Compile Include="Stock\RubroArticulo.cs" />
     <Compile Include="Tesoreria\Chequera.cs" />
+    <Compile Include="Common\Direccion.cs" />
     <Compile Include="Ventas\ImputacionVenta.cs" />
     <Compile Include="Ventas\ObservComprobanteVenta.cs" />
     <Compile Include="Ventas\ListaPreciosItem.cs" />

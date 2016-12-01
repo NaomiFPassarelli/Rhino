@@ -1,0 +1,208 @@
+﻿@{
+    ViewBag.Title = "Aportes";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Listado de Aportes";
+}
+@*<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImportar" title="Importación">
+        <i class="fa fa-file-excel-o i-blue"></i>  Importar
+    </a>
+</div>*@
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    @*<a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>*@
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Aporte..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    @*<a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>*@
+</div>
+<div class="table-container">
+    <table id="GridAportes"></table>
+    <div id="GridAportes_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+@*<div id="importar-Aportes-dialog"></div>*@
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+    var ListadoAportes = {
+
+        init: function () {
+            //$('#BtnImportar').bind('click', ListadoAportes.OpenImportar);
+            //$('#BtnExportXLS').click(ListadoAportes.ExportToExcel);
+            /* Binding de los checkbox, contador de seleccionados */
+            $.SetupSelectCount('GridAportes');
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridAportes', ["Nombre", "Apellido", "CUIT"]);
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', ListadoAportes.Refresh);
+
+            /* Eliminar Seleccionados */
+            //$('#BtnDeleteSelected').click(ListadoAportes.OnEliminarSeleccionadosClick);
+
+            $(document).off('click', '#GridAportes .Realizar').on('click', '#GridAportes .Realizar', ListadoAportes.OnClickRealizarAporte);
+
+            /* Eliminar de Grilla */
+            //$(document).on('click', '.BtnEliminar', ListadoAportes.EliminarAporte);
+            /* Editar de la grilla */
+            // Abre nueva ventana
+            //$(document).on('click', '.BtnEditar', ListadoAportes.EditarAporte);
+
+            /* Armo la grilla del ABM */
+            $('#GridAportes').CreateCommonGrid({
+                url: '@Url.Action("GetAll", "Asociados")',
+                colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre', 'Apellido', 'CUIT', 'Cantidad Cuotas', 'Cuotas Abonadas', 'Cuotas Restantes', 'Importe Cuota', 'Cuotas A Pagar Ahora', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'Nombre', index: 'Nombre', width: 25, align: "center", sortable: true },
+                    { name: 'Apellido', index: 'Apellido', width: 30, align: "center", sortable: true },
+                    { name: 'CUIT', index: 'CUIT', width: 30, align: "center", sortable: true },
+                    { name: 'CantidadAbonos', index: 'CantidadAbonos', width: 20, align: "center" },
+                    { name: 'CantidadAbonosEfectivos', index: 'CantidadAbonosEfectivos', width: 20, align: "center" },
+                    { name: 'CantidadAbonosRestantes', index: 'CantidadAbonosRestantes', width: 20, align: "center", formatter: ListadoAportes.CantidadAbonosEfectivos },
+                    { name: 'ImporteAbono', index: 'ImporteAbono', width: 20, align: "center" },
+                    { name: 'cantidadAAportar', index: 'cantidadAAportar', width: 25, align: "center", formatter: Drop_Number, formatoptions: { nameSelect: 'Aportes' } },
+                    { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: Action_Aceptar, align: "center" }
+                ],
+                sortname: 'Nombre',
+                sortorder: "asc",
+                pager: '#GridAportes_pager',
+            });
+            $('#GridAportes').trigger("reloadGrid");
+        },
+
+        @*OpenImportar: function () {
+                $('#importar-Aportes-dialog').OpenFormDialog('@Url.Action("Importar")', 'Importación de Aportes');
+            },*@
+
+            //ExportToExcel: function () {
+            //    JQGridExportExcel.Export('GridAportes', 'Listado de Aportes');
+            //},
+
+            Refresh: function () {
+                ClearSelectedRows('GridAportes');
+                ListadoAportes.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridAportes").setGridParam({ datatype: 'json' });
+                $('#GridAportes').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            OnClickRealizarAporte: function () {
+                var IdAsociado = $(this).closest('tr').attr('Id');
+                var rowData = $("#GridAportes").getRowData(IdAsociado);
+                var strUser = $(rowData.cantidadAAportar);
+                var options = $(strUser).find("option");
+                var cantidadAAportar = 0;
+                $.each(options, function (i, v) {
+                    IsSelected = $(v).attr("selected");
+                    if(IsSelected == true || IsSelected == "selected"){
+                        cantidadAAportar = i;
+                        return false;
+                    }
+                });
+                var params = {
+                    url: '@Url.Action("NuevoAutomatico")',
+                    data: {
+                        Aporte: { Asociado: { Id: IdAsociado }, Total: rowData.ImporteAbono }, CantidadCuotasAPagar: ++cantidadAAportar
+                    },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            //Todo cartel avisando asociado - cuanto Aporte y cuanto le falta pagar
+                            ListadoAportes.ReloadGrid();
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+        CantidadAbonosEfectivos: function (cellvalue, options, rowObject){
+            return parseFloat(rowObject.CantidadAbonos) - parseFloat(rowObject.CantidadAbonosEfectivos);
+        },
+
+            @*OnEliminarSeleccionadosClick: function(){
+                var SelectedIds = $.GetSelectedRows('GridAportes');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Aportes seleccionadas?",
+                        function () { ListadoAportes.EliminarSeleccionados(SelectedIds) });
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridAportes').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            EliminarAporte: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Aporte?",
+                    function () { ListadoAportes.EliminarSeleccionados(Id) });
+            },*@
+
+        @*OnBajarSeleccionadosClick: function(){
+            var SelectedIds = $.GetSelectedRows('GridAportes');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea Bajar los Aportes seleccionadas?",
+                    function () { ListadoAportes.BajarSeleccionados(SelectedIds) });
+            }
+        },
+
+        BajarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Bajar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridAportes').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },*@
+
+        //BajarAporte: function () {
+        //    var Id = [$(this).closest('tr').attr('id')];
+        //    ConfirmationDialog.Show("Esta seguro que desea Bajar el Aporte?",
+        //        function () { ListadoAportes.BajarSeleccionados(Id) });
+        //},
+
+
+        @*EditarAporte: function () {
+            var Id = $(this).closest('tr').attr('id');
+            $.ShowLoader();
+            window.location = '@Url.Action("Editar")/' + Id;
+        }*@
+    }
+    $(document).ready(function () {
+        ListadoAportes.init();
+    });
+    </script>
+}

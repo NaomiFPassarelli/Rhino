@@ -12,10 +12,12 @@ namespace Woopin.SGC.Repositories.Sueldos
     public interface IReciboRepository : IRepository<Recibo>
     {
         IList<Recibo> GetAllByFilter(SelectComboRequest req);
+        int GetProximoNumeroReferencia();
         IList<Recibo> GetAllByFilter(PagingRequest req);
         Recibo GetCompleto(int Id);
-        int GetProximoNumeroReferencia();
         Recibo GetReciboAnterior(int IdEmpleado);
+        IList<Recibo> GetRecibos(IList<int> Ids);
+
         decimal GetMejorRemuneracion(int IdEmpleado);
         decimal[] GetPromedioRemunerativo(int IdEmpleado);
     }

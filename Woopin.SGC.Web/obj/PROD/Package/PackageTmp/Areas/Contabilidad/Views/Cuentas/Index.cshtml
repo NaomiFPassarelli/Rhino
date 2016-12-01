@@ -44,7 +44,6 @@
                     "plugins": ["contextmenu", "search"]
                 });
                 $('#PlanCuentas').on('changed.jstree', function (obj, event, open) {
-                    debugger;
                     if ($('#' + event.node.id).hasClass('AddCodigo')) {
                         $('#create-dialog').OpenFormDialog('@Url.Action("NuevaCodigo", "Cuentas")' + '?Codigo=' + event.node.data.codigo, '<i class="fa fa-sitemap"></i> Crear Cuenta', null);
                     }

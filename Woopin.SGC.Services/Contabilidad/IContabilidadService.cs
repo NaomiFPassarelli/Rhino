@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Woopin.SGC.Common.HtmlModel;
 using Woopin.SGC.Model.Compras;
 using Woopin.SGC.Model.Contabilidad;
+using Woopin.SGC.Model.Sueldos;
 using Woopin.SGC.Model.Tesoreria;
 using Woopin.SGC.Model.Ventas;
 
@@ -24,6 +25,11 @@ namespace Woopin.SGC.Services
         Asiento NuevoAsientoCobranza(Cobranza Cobranza);
         Asiento NuevoAsientoDeposito(Deposito Deposito);
         Asiento NuevoAsientoCanjeCheques(ChequePropio newCheque, ChequePropio chequeAnterior);
+        Asiento NuevoAsientoReciboSueldo(Recibo Recibo);
+
+
+
+
 
 
         void AddAsiento(Asiento asiento);

@@ -185,6 +185,8 @@
                     url: '@Url.Action("GetAdicional")',
                     data: {
                         idAdicional: Id != "" ? Id : 0,
+                        IdSindicato: 0,
+                        OnlyManual: false
                     },
                     success: function (ret) {
                         for(var i = 0; i < ret.Data_AAs.length; i++)

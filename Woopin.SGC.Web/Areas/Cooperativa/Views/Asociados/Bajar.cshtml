@@ -1,0 +1,84 @@
+﻿@model Woopin.SGC.Model.Cooperativa.Asociado
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+
+@Html.AntiForgeryToken()
+@Html.ValidationSummary(true)
+@Html.HiddenFor(model => model.Id)
+    <fieldset class="form-horizontal">
+
+        <div class="form-group" style="">
+
+            <div class="col-md-12">
+                @{
+                    var fechaEgreso = Model.FechaEgreso.HasValue ? Model.FechaEgreso.Value.ToString("dd/MM/yyyy") : "";
+                }
+                @Html.LabelFor(model => model.FechaEgreso, new { @class = "col-md-6 horizontal-label" })
+                <div class="col-md-6">
+                    <input class="text-box single-line textinput" data-val="true" id="FechaEgreso" name="FechaEgreso" type="text" value="@fechaEgreso">
+                </div>
+            </div>
+
+            @*<div class="col-md-12">
+                @Html.LabelFor(model => model.ActaBaja, new { @class = "col-md-6 horizontal-label" })
+                <div class="col-md-6">
+                    @Html.TextBoxFor(model => model.ActaBaja, new { @class = "textinput" })
+                </div>
+            </div>*@
+
+
+        </div>
+
+
+        <div class="button-pane clearfix">
+            <div class="button-set">
+                <a class="boton place-left" id="BtnSubmitBajar" title="Guardar">
+                    <i class="fa fa-check-circle-o i-green"></i> Aceptar
+                </a>
+            </div>
+        </div>
+
+    </fieldset>
+}
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        <script type="text/javascript">
+            $("#FechaEgreso").datepicker({ dateFormat: 'dd/mm/yy' });
+
+            $(document).ready(function () {
+                $('#BtnSubmitBajar').FormSubmit({
+                    enter: true,
+                    success: function (data) {
+                        if (data.Success) {
+                            _OpenDialog.dialog('close');
+
+                        }
+                        else {
+                            $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                        }
+                    }
+                });
+
+
+                //$(document).off("click", "#BtnSubmitBajar").on("click", "#BtnSubmitBajar", function () {
+                @*var params = {
+                url: '@Url.Action("Bajar")',
+                data: { Id: Id, FechaEgreso: $('#FechaEgreso').val(), ActaBaja: $('') },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridAsociados').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);*@
+
+                //_OpenDialog.dialog('close');
+                //});
+            });
+        </script>

@@ -62,6 +62,7 @@
     <Compile Include="BaseSecuredRepository.cs" />
     <Compile Include="BaseRepository.cs" />
     <Compile Include="Common\Implementacion\ComboItemRepository.cs" />
+    <Compile Include="Common\Implementacion\LocalizacionRepository.cs" />
     <Compile Include="Common\Implementacion\OrganizacionRepository.cs" />
     <Compile Include="Common\Implementacion\ComboRepository.cs" />
     <Compile Include="Common\Implementacion\CategoriaIVARepository.cs" />
@@ -71,8 +72,9 @@
     <Compile Include="Common\Implementacion\UsuarioRepository.cs" />
     <Compile Include="Common\Implementacion\SucursalRepository.cs" />
     <Compile Include="Common\Implementacion\MonedaRepository.cs" />
-    <Compile Include="Common\Implementacion\LocalizacionRepository.cs" />
+    <Compile Include="Common\Implementacion\LocalidadRepository.cs" />
     <Compile Include="Common\Interface\IComboItemRepository.cs" />
+    <Compile Include="Common\Interface\ILocalidadRepository.cs" />
     <Compile Include="Common\Interface\IOrganizacionRepository.cs" />
     <Compile Include="Common\Interface\IComboRepository.cs" />
     <Compile Include="Common\Interface\ICategoriaIVAReository.cs" />
@@ -85,7 +87,17 @@
     <Compile Include="Common\Interface\ILocalizacionRepository.cs" />
     <Compile Include="Compras\Helpers\OrdenPagoQueryOverHelper.cs" />
     <Compile Include="Compras\Helpers\OtroEgresoQueryOverHelper.cs" />
+    <Compile Include="Cooperativa\Implementacion\ActaPuntoExtraRepository.cs" />
+    <Compile Include="Cooperativa\Implementacion\ActaRepository.cs" />
+    <Compile Include="Cooperativa\Implementacion\AdicionalPagoRepository.cs" />
+    <Compile Include="Cooperativa\Implementacion\ConceptoRepository.cs" />
+    <Compile Include="Cooperativa\Implementacion\AporteRepository.cs" />
     <Compile Include="Cooperativa\Implementacion\PagoRepository.cs" />
+    <Compile Include="Cooperativa\Interface\IActaPuntoExtraRepository.cs" />
+    <Compile Include="Cooperativa\Interface\IActaRepository.cs" />
+    <Compile Include="Cooperativa\Interface\IAdicionalPagoRepository.cs" />
+    <Compile Include="Cooperativa\Interface\IConceptoRepository.cs" />
+    <Compile Include="Cooperativa\Interface\IAporteRepository.cs" />
     <Compile Include="Cooperativa\Interface\IPagoRepository.cs" />
     <Compile Include="Helpers\SecurityQueryOverHelper.cs" />
     <Compile Include="Compras\Helpers\ProveedorQueryOverHelper.cs" />

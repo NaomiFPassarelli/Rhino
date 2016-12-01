@@ -1,0 +1,318 @@
+﻿@{
+    ViewBag.Title = "Actas";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Listado de Actas";
+}
+@*<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImportar" title="Importación">
+        <i class="fa fa-file-excel-o i-blue"></i>  Importar
+    </a>
+</div>*@
+<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImprimirGrid" title="Imprimir Todos">
+        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Todos
+    </a>
+    <a class="boton place-left" id="BtnImprimirSeleccionados" title="Imprimir Seleccionados">
+        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Seleccionados
+    </a>
+</div>
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    @*<a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>*@
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Acta..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+
+    <div class="col-md-12">
+        <a class="boton place-right" id="BtnDownloadActa" title="Crear Acta">
+            <i class="fa fa-plus-circle i-green"></i>  Crear Acta
+        </a>
+        <div class="col-md-3 place-right input-container">
+            <input class="text-box textinput" id="FechaActa" name="FechaActa" type="text" placeholder="Fecha del Acta">
+        </div>
+    </div>
+
+
+</div>
+<div class="table-container">
+    <table id="GridActas"></table>
+    <div id="GridActas_pager"></div>
+</div>
+
+@*<div id="seleccionar-completar-dialog"></div>*@
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+    var ListadoActas = {
+
+        init: function () {
+            $("#FechaActa").datepicker({ dateFormat: 'dd/mm/yy' });
+            //TODO validar que sea el ultimo dia del mes ese por ejemplo si selecciona el dia de hoy es
+            //muy probable que en realidad se descargue el del mes anterior proque este mes no termino
+
+            $('#BtnDownloadActa').click(ListadoActas.DownloadActa);
+
+            //$('#BtnImportar').bind('click', ListadoActas.OpenImportar);
+            $('#BtnImprimirGrid').bind('click', ListadoActas.ImprimirGrid);
+            $('#BtnImprimirSeleccionados').bind('click', ListadoActas.ImprimirSeleccionados);
+            $('#BtnExportXLS').click(ListadoActas.ExportToExcel);
+
+            /* Binding de los checkbox, contador de seleccionados */
+            $.SetupSelectCount('GridActas');
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridActas', ["NumeroActa"]);
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', ListadoActas.Refresh);
+
+            /* Eliminar Seleccionados */
+            //$('#BtnDeleteSelected').click(ListadoActas.OnEliminarSeleccionadosClick);
+
+            $(document).off('click', '#GridActas .RealizarActa').on('click', '#GridActas .RealizarActa', ListadoActas.OnClickRealizarActa);
+
+            /* Eliminar de Grilla */
+            //$(document).on('click', '.BtnEliminar', ListadoActas.EliminarActa);
+            /* Editar de la grilla */
+            // Abre nueva ventana
+            //$(document).on('click', '.BtnEditar', ListadoActas.EditarActa);
+
+            /* Armo la grilla del ABM */
+            $('#GridActas').CreateCommonGrid({
+                url: '@Url.Action("GetAll", "Actas")',
+                colNames: ['', '', 'Fecha Creacion', 'Numero Acta', 'Cantidad Egresos', 'Cantidad Ingresos', '', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'FechaActa', index: 'FechaActa', width: 25, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'NumeroActa', index: 'NumeroActa', width: 30, align: "center", sortable: true },
+                    { name: 'AsociadosEgreso', index: 'AsociadosEgreso', width: 30, align: "center", sortable: true, formatter: ListadoActas.CountRows },
+                    { name: 'AsociadosIngreso', index: 'AsociadosIngreso', width: 30, align: "center", sortable: true, formatter: ListadoActas.CountRows },
+                    { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: FreeFormatter, formatoptions: { urlAction: '@Url.Action("DescargarPDF", "Actas")', icon: 'fa fa-download', title: 'Descargar' }, align: "center" },
+                    { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: ABM_Eliminar, align: "center" }
+                ],
+                sortname: 'FechaActa',
+                sortorder: "asc",
+                pager: '#GridActas_pager',
+            });
+            $('#GridActas').trigger("reloadGrid");
+            $(document).on('click', '.BtnEliminar', ListadoActas.OnEliminarSeleccionadosClick);
+
+        },
+
+        OnEliminarSeleccionadosClick: function () {
+            var SelectedIds = $.GetSelectedRows('GridActas');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea eliminar las actas seleccionadas?",
+                    function () { ListadoActas.EliminarSeleccionados(SelectedIds) });
+            }
+        },
+
+        EliminarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Eliminar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridActas').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ImprimirSeleccionados: function () {
+            var SelectedIds = $.GetSelectedRows('GridActas');
+            window.open('@Url.Action("DescargarPDFs")?' + "IdsString=" + SelectedIds, '_blank');
+        },
+
+        ImprimirGrid: function () {
+            var SelectedIds = $('#GridActas').jqGrid("getCol", "Id");
+            window.open('@Url.Action("DescargarPDFs")?' + "IdsString=" + SelectedIds, '_blank');
+        },
+
+
+        @*OpenImportar: function () {
+                $('#importar-Actas-dialog').OpenFormDialog('@Url.Action("Importar")', 'Importación de Actas');
+            },*@
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridActas', 'Listado de Actas');
+        },
+
+        CountRows: function (cellvalue, options, rowObject) {
+            debugger;
+            var btns = cellvalue.length;
+            return btns;
+            //if(options.colModel.name)
+            //    rowObject.AsociadosEgreso
+            //rowObject.AsociadosIngreso
+        },
+
+        Refresh: function () {
+            ClearSelectedRows('GridActas');
+            ListadoActas.ReloadGrid();
+        },
+
+        ReloadGrid: function () {
+            $("#GridActas").setGridParam({ datatype: 'json' });
+            $('#GridActas').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        DownloadActa: function () {
+            debugger;
+            var fechaActa = $('#FechaActa').val();
+            if (fechaActa != null && fechaActa != "") {
+                dayActa = ((fechaActa).split("/"))[0];
+                monthActa = ((fechaActa).split("/"))[1];
+                yearActa = ((fechaActa).split("/"))[2];
+
+                var params = {
+                    url: '@Url.Action("ValidarDescarga")',
+                    data: { Mes: monthActa, Año: yearActa },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            debugger;
+                            window.open('@Url.Action("DescargarPDF")?' + "Mes=" + monthActa + "&Año=" + yearActa, '_blank');
+                        } else {
+                            debugger;
+                            $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(ret.ErrorMessage));
+
+                            if (ret.FaltaInformacion) {
+                                debugger;
+                                window.open('@Url.Action("Nuevo")?FechaActa=' + ret.FechaActa, '_blank');
+
+                                //$('#seleccionar-completar-dialog').OpenFormDialog('Url.Action("Nuevo")?FechaActa=' + ret.FechaActa, 'Complete la informacion del acta finalizada');
+                            }
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+
+
+            } else {
+                $('#Alert-Container').NewAlert('error', $.makeErrorMsgList("Debe colocar la fecha del acta que desea descargar"));
+            }
+
+
+        },
+
+
+        OnClickRealizarActa: function () {
+            var IdAsociado = $(this).closest('tr').attr('Id');
+            var rowData = $("#GridActas").getRowData(IdAsociado);
+            var strUser = $(rowData.CantidadAPagar);
+            var options = $(strUser).find("option");
+            var cantidadAPagar = 0;
+            $.each(options, function (i, v) {
+                aPagarIsSelected = $(v).attr("selected");
+                if (aPagarIsSelected == true || aPagarIsSelected == "selected") {
+                    cantidadAPagar = i;
+                    return false;
+                }
+            });
+            var params = {
+                url: '@Url.Action("Nuevo")',
+                data: {
+                    Acta: { Asociado: { Id: IdAsociado } }, CantidadCuotasAPagar: ++cantidadAPagar
+                },
+                success: function (ret) {
+                    if (ret.Success) {
+                        //Todo cartel avisando asociado - cuanto Acta y cuanto le falta pagar
+                        ListadoActas.ReloadGrid();
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        CantidadCoutasRestantes: function (cellvalue, options, rowObject) {
+            return parseFloat(rowObject.CantidadCuotas) - parseFloat(rowObject.CantidadCuotasAbonadas);
+        },
+
+        @*OnEliminarSeleccionadosClick: function(){
+                var SelectedIds = $.GetSelectedRows('GridActas');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Actas seleccionadas?",
+                        function () { ListadoActas.EliminarSeleccionados(SelectedIds) });
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridActas').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            EliminarActa: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Acta?",
+                    function () { ListadoActas.EliminarSeleccionados(Id) });
+            },*@
+
+        @*OnBajarSeleccionadosClick: function(){
+            var SelectedIds = $.GetSelectedRows('GridActas');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea Bajar los Actas seleccionadas?",
+                    function () { ListadoActas.BajarSeleccionados(SelectedIds) });
+            }
+        },
+
+        BajarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Bajar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridActas').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },*@
+
+        //BajarActa: function () {
+        //    var Id = [$(this).closest('tr').attr('id')];
+        //    ConfirmationDialog.Show("Esta seguro que desea Bajar el Acta?",
+        //        function () { ListadoActas.BajarSeleccionados(Id) });
+        //},
+
+
+        @*EditarActa: function () {
+            var Id = $(this).closest('tr').attr('id');
+            $.ShowLoader();
+            window.location = '@Url.Action("Editar")/' + Id;
+        }*@
+    }
+    $(document).ready(function () {
+        ListadoActas.init();
+    });
+    </script>
+}

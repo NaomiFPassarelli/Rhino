@@ -138,13 +138,16 @@
                 <div class="col-md-4 padding-left-2">
                     @Html.LabelFor(model => model.FechaPago, new { @class = "col-md-4 horizontal-label" })
                     <div class="col-md-8 input-container padding-left-2">
-                        <input class="text-box single-line textinput" type="text">
+                        <input class="text-box single-line textinput" readonly type="text" value="@Model.FechaPago.ToString("dd/MM/yyyy")">
                     </div>
                 </div>
                 <div class="col-md-4 padding-left-2">
                     @Html.LabelFor(model => model.FechaPagoAnterior, new { @class = "col-md-4 horizontal-label" })
                     <div class="col-md-8 input-container padding-left-2">
-                        <input class="text-box single-line textinput" type="text" readonly="readonly">
+                        @{
+                            var fechaPagoAnterior = Model.FechaPagoAnterior.HasValue ? Model.FechaPagoAnterior.Value.ToString("dd/MM/yyyy") : "";
+                        }
+                        <input class="text-box single-line textinput" readonly type="text" value="@fechaPagoAnterior">
                     </div>
                 </div>
                 <div class="col-md-4 padding-left-2">
@@ -159,7 +162,7 @@
                 <div class="col-md-9">
                     @Html.LabelFor(model => model.Observacion, new { @class = "col-md-5 horizontal-label readonly-label padding-left-2" })
                     <div class="col-md-7 input-container padding-left-2">
-                        @Html.TextBoxFor(model => model.Observacion, null, new { @class = "textinput" })
+                        @Html.TextBoxFor(model => model.Observacion, null, new { @class = "textinput", @readonly = "readonly" })
                     </div>
                 </div>
             </div>
@@ -168,25 +171,25 @@
                 <div class="col-md-3" style="padding:0px;">
                     @Html.LabelFor(model => model.TotalRemunerativo, new { @class = "col-md-6 horizontal-label readonly-label", @style = "padding:0px;" })
                     <div class="col-md-6 input-container">
-                        @Html.TextBoxFor(model => model.TotalRemunerativo, new { @class = "textinput", @id = "TotalRemunerativo", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.TotalRemunerativo, "{0:0.00}", new { @class = "textinput", @id = "TotalRemunerativo", @readonly = "readonly" })
                     </div>
                 </div>
                 <div class="col-md-3" style="padding:0px;">
                     @Html.LabelFor(model => model.TotalNoRemunerativo, new { @class = "col-md-6 horizontal-label readonly-label", @style = "padding:0px;" })
                     <div class="col-md-6 input-container">
-                        @Html.TextBoxFor(model => model.TotalNoRemunerativo, new { @class = "textinput", @id = "TotalNoRemunerativo", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.TotalNoRemunerativo, "{0:0.00}", new { @class = "textinput", @id = "TotalNoRemunerativo", @readonly = "readonly" })
                     </div>
                 </div>
                 <div class="col-md-3" style="padding:0px;">
                     @Html.LabelFor(model => model.TotalDescuento, new { @class = "col-md-6 horizontal-label readonly-label", @style = "padding:0px;" })
                     <div class="col-md-6 input-container">
-                        @Html.TextBoxFor(model => model.TotalDescuento, new { @class = "textinput", @id = "TotalDescuento", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.TotalDescuento, "{0:0.00}", new { @class = "textinput", @id = "TotalDescuento", @readonly = "readonly" })
                     </div>
                 </div>
                 <div class="col-md-3" style="padding:0px;">
                     @Html.LabelFor(model => model.Total, new { @class = "col-md-6 horizontal-label readonly-label", @style = "padding:0px;" })
                     <div class="col-md-6 input-container">
-                        @Html.TextBoxFor(model => model.Total, new { @class = "textinput", @id = "TotalRecibo", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.Total, "{0:0.00}", new { @class = "textinput", @id = "TotalRecibo", @readonly = "readonly" })
                     </div>
                 </div>
             </div>

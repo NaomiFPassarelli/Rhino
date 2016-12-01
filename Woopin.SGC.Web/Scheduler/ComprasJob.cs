@@ -72,8 +72,8 @@ namespace Woopin.SGC.Web.Scheduler
                 if (currentRow != null && Cuit != null && Cuit.Length > 0)
                 {
                     // Creates the comment cell
-                    ICell statusCell = currentRow.CreateCell(13);
-                    sheet.AutoSizeColumn(13);
+                    ICell statusCell = currentRow.CreateCell(15);
+                    sheet.AutoSizeColumn(15);
                     statusCell.CellStyle.WrapText = true;
 
                     try
@@ -93,15 +93,16 @@ namespace Woopin.SGC.Web.Scheduler
                             CUIT = Cuit,
                             CategoriaIva = new CategoriaIVA() { Nombre = currentRow.GetCell(2).StringCellValue },
                             Email = currentRow.GetCell(3).StringCellValue,
-                            Localizacion = new Localizacion() { Nombre = currentRow.GetCell(4).StringCellValue },
-                            CodigoPostal = currentRow.GetCell(9).StringCellValue,
-                            Direccion = currentRow.GetCell(5).StringCellValue,
-                            Numero = currentRow.GetCell(6).StringCellValue,
-                            Piso = currentRow.GetCell(8).StringCellValue,
+                            Direccion = currentRow.GetCell(4).StringCellValue,
+                            Numero = currentRow.GetCell(5).StringCellValue,
+                            Piso = currentRow.GetCell(6).StringCellValue,
                             Departamento = currentRow.GetCell(7).StringCellValue,
-                            CondicionCompra = new ComboItem() { Data = currentRow.GetCell(12).StringCellValue },
-                            Telefono = currentRow.GetCell(11).StringCellValue,
-                            Localidad = currentRow.GetCell(10).StringCellValue
+                            CodigoPostal = currentRow.GetCell(8).StringCellValue,
+                            Localidad = new Localidad() { Nombre = currentRow.GetCell(9).StringCellValue },
+                            Localizacion = new Localizacion() { Nombre = currentRow.GetCell(10).StringCellValue },
+                            Pais = new ComboItem() { Data = currentRow.GetCell(11).StringCellValue },
+                            Telefono = currentRow.GetCell(12).StringCellValue,
+                            CondicionCompra = new ComboItem() { Data = currentRow.GetCell(13).StringCellValue },
                         };
 
                         // Model validations.

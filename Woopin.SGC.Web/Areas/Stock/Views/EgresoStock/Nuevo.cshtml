@@ -101,7 +101,6 @@
             $('#Articulo_Id').on("select2-selecting", function (e) { $('#ArticuloID').val(e.val); $('#ArticuloID').change(); });
             $('#Cantidad').change(
                 function () {
-                    debugger;
                     if ($('#Cantidad').val() == "" || ($('#Cantidad').val() != "" && (!$.isNumeric($('#Cantidad').val())) || $('#Cantidad').val() < 0)) {
                         $('#Cantidad').val(0);
                     }

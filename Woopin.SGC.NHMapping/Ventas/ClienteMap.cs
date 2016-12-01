@@ -16,12 +16,12 @@ namespace Woopin.SGC.NHMapping
             this.Id(c => c.Id).GeneratedBy.Identity();
             this.Map(c => c.RazonSocial).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.CUIT).Not.Nullable().Not.LazyLoad().UniqueKey("UX_CUIT");
-            this.Map(c => c.Direccion).Not.Nullable().Not.LazyLoad();
-            this.Map(c => c.Numero).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.Direccion).Nullable().Not.LazyLoad();
+            this.Map(c => c.Numero).Nullable().Not.LazyLoad();
             this.Map(c => c.Departamento).Nullable().Not.LazyLoad();
             this.Map(c => c.Piso).Nullable().Not.LazyLoad();
-            this.Map(c => c.CodigoPostal).Not.Nullable().Not.LazyLoad();
-            this.Map(c => c.Localidad).Not.Nullable().Not.LazyLoad();  
+            this.Map(c => c.CodigoPostal).Nullable().Not.LazyLoad();
+            this.References(c => c.Localidad).Nullable().Not.LazyLoad();  
             this.Map(c => c.Telefono).Nullable().Not.LazyLoad();
             this.Map(c => c.Email).Nullable().Not.LazyLoad();
             this.Map(c => c.CondicionVentaContratada).Nullable().Not.LazyLoad();
@@ -30,8 +30,9 @@ namespace Woopin.SGC.NHMapping
             this.References(c => c.CategoriaIva).Not.Nullable().Not.LazyLoad();
             this.References(c => c.Master).Nullable().Not.LazyLoad();
             this.References(c => c.CondicionVenta).Nullable().Not.LazyLoad();
-            this.References(c => c.Localizacion).Not.Nullable().Not.LazyLoad();
+            this.References(c => c.Localizacion).Nullable().Not.LazyLoad();
             this.References(c => c.Organizacion).Not.Nullable().LazyLoad().UniqueKey("UX_CUIT");
+            this.HasMany(c => c.DireccionesEntrega).AsBag().KeyColumn("DireccionesEntrega_Id").Cascade.AllDeleteOrphan();
         }
     }
 }

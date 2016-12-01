@@ -24,25 +24,26 @@ namespace Woopin.SGC.Model.Compras
         [DoNotValidateOnlyId]
         public virtual ComboItem CondicionCompra { get; set; }
 
-        [Required(ErrorMessage = "Es Necesario una Dirección")]
-        [DisplayName("Dirección")]
+        [DisplayName("Calle")]
         public virtual string Direccion { get; set; }
 
-        [Required(ErrorMessage = "Es Necesario un Numero")]
         [DisplayName("Número")]
         public virtual string Numero { get; set; }
         public virtual string Piso { get; set; }
         public virtual string Departamento { get; set; }
 
-        [Required(ErrorMessage = "Es Necesario un Codigo Postal")]
         [DisplayName("Codigo Postal")]
+        [DataType(DataType.PostalCode, ErrorMessage = "Codigo postal invalido")]
         public virtual string CodigoPostal { get; set; }
-
-        [Required(ErrorMessage = "Es Necesario una Localidad")]
-        public virtual string Localidad { get; set; }
-
-        [Required(ErrorMessage = "Es Necesario una Localizacion")]
         [DoNotValidateOnlyId]
+        public virtual Localidad Localidad { get; set; }
+
+        [DisplayName("Pais")]
+        [DoNotValidateOnlyId]
+        public virtual ComboItem Pais { get; set; }
+
+        [DoNotValidateOnlyId]
+        [DisplayName("Provincia")]
         public virtual Localizacion Localizacion { get; set; }
 
         public virtual string Telefono { get; set; }
@@ -72,5 +73,6 @@ namespace Woopin.SGC.Model.Compras
         {
             this.Activo = true;
         }
+        
     }
 }

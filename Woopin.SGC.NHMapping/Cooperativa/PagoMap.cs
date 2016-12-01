@@ -16,7 +16,17 @@ namespace Woopin.SGC.NHMapping.Cooperativa
             this.References(c => c.Asociado).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.FechaCreacion).Not.Nullable().Not.LazyLoad();
             this.Map(c => c.FechaPago).Not.Nullable().Not.LazyLoad();
-            this.References(c => c.Organizacion).Not.Nullable().LazyLoad(); 
+            this.References(c => c.Organizacion).Not.Nullable().LazyLoad();
+            this.Map(c => c.FechaPeriodo).Not.Nullable().Not.LazyLoad();
+            this.HasMany(c => c.AdicionalesPago).AsBag().KeyColumn("Pago_Id").Cascade.AllDeleteOrphan();
+            this.Map(c => c.DomicilioEmpresa).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.NumeroPago).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.NumeroReferencia).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.Observacion).Nullable().Not.LazyLoad();
+            this.Map(c => c.Total).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.TotalAnticipo).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.TotalDescuentos).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.Activo).Not.Nullable().Not.LazyLoad();
         }
     }
 }

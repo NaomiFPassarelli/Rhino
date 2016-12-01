@@ -3,6 +3,14 @@
     ViewBag.SectionIcon = "truck";
     ViewBag.SectionTitle = "Listado de Recibos";
 }
+<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImprimirGrid" title="Imprimir Todos">
+        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Todos
+    </a>
+    <a class="boton place-left" id="BtnImprimirSeleccionados" title="Imprimir Seleccionados">
+        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Seleccionados
+    </a>
+</div>
 <div class="action-bar row">
     <div class="select-count">
         <span id="SelectCount">0</span>
@@ -38,6 +46,9 @@
         var ListadoRecibos = {
 
             init: function () {
+                $('#BtnImprimirGrid').bind('click', ListadoRecibos.ImprimirGrid);
+                $('#BtnImprimirSeleccionados').bind('click', ListadoRecibos.ImprimirSeleccionados);
+
                 $('#BtnExportXLS').click(ListadoRecibos.ExportToExcel);
                 /* Binding de los checkbox, contador de seleccionados */
                 $.SetupSelectCount('GridRecibos');
@@ -57,25 +68,64 @@
                 /* Armo la grilla del ABM */
                 $('#GridRecibos').CreateCommonGrid({
                     url: '@Url.Action("GetAll")',
-                    colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nro Referencia', 'Fecha Creacion', 'Periodo', 'Remunerativo', 'No Remunerativo', 'Descuento', 'Total', '' ],
+                    colNames: ['', '', 'Nro Referencia', 'Nombre', 'Apellido', 'Fecha Creacion', 'Periodo', 'Remunerativo', 'No Remunerativo', 'Descuento', 'Total', '', '' ],
                     colModel: [
                         { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
-                        { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
                         { name: 'NumeroReferencia', index: 'NumeroReferencia', width: 15, align: "center", sortable: true },
+                        { name: 'Empleado.Nombre', index: 'Empleado.Nombre', width: 15, align: "center", sortable: true },
+                        { name: 'Empleado.Apellido', index: 'Empleado.Apellido', width: 15, align: "center", sortable: true },
                         { name: 'FechaCreacion', index: 'FechaCreacion', width: 30, align: "center", sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
                         { name: 'Periodo', index: 'Periodo', width: 30, align: "center", sortable: true },
                         { name: 'TotalRemunerativo', index: 'TotalRemunerativo', width: 30, align: "center", sortable: true },
                         { name: 'TotalNoRemunerativo', index: 'TotalNoRemunerativo', width: 30, align: "center", sortable: true },
                         { name: 'TotalDescuento', index: 'TotalDescuento', width: 30, align: "center", sortable: true },
                         { name: 'Total', index: 'Total', width: 30, align: "center", sortable: true },
-                        { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: DetalleFormatter, formatoptions: { urlAction: '@Url.Action("Detalle")'}, align: "center" }
+                        { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: FreeFormatter, formatoptions: { urlAction: '@Url.Action("Detalle")', icon: 'fa fa-search-plus', title: 'Detalle' }, align: "center" },
+                        { name: 'Delete', index: 'Delete', width: 15, sortable: false, formatter: ABM_Eliminar, align: "center" }
                     ],
                     sortname: 'FechaCreacion',
                     sortorder: "asc",
                     pager: '#GridRecibos_pager',
                 });
                 $('#GridRecibos').trigger("reloadGrid");
+                $(document).on('click', '.BtnEliminar', ListadoRecibos.OnEliminarSeleccionadosClick);
             },
+
+            OnEliminarSeleccionadosClick: function () {
+                var SelectedIds = $.GetSelectedRows('GridRecibos');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los recibos seleccionadas?",
+                        function () { ListadoRecibos.EliminarSeleccionados(SelectedIds) });
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridRecibos').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            ImprimirSeleccionados: function () {
+                var SelectedIds = $.GetSelectedRows('GridRecibos');
+                window.open('@Url.Action("DescargarPDFs")?' + "IdsString=" + SelectedIds, '_blank');
+            },
+
+            ImprimirGrid: function () {
+                var SelectedIds = $('#GridRecibos').jqGrid("getCol", "Id");
+                window.open('@Url.Action("DescargarPDFs")?' + "IdsString=" + SelectedIds, '_blank');
+            },
+
 
             ExportToExcel: function () {
                 JQGridExportExcel.Export('GridRecibos', 'Listado de Recibos');

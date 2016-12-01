@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Woopin.SGC.Common.Validations;
 using Woopin.SGC.Model.Common;
+using Woopin.SGC.Model.Contabilidad;
 
 namespace Woopin.SGC.Model.Sueldos
 {
@@ -28,9 +29,14 @@ namespace Woopin.SGC.Model.Sueldos
         [Required(ErrorMessage = "El tipo es requerido")]
         [DisplayName("Tipo de Liquidacion")]
         public virtual TypeLiquidacion TipoLiquidacion { get; set; }
+        [DoNotValidate]
+        public virtual Cuenta Cuenta { get; set; }
+
+        public virtual bool OnlyAutomatic { get; set; } //true se puede agregar solo automaticamente por el sistema
 
         public Adicional()
         {
+            this.OnlyAutomatic = false;
         }
 
         

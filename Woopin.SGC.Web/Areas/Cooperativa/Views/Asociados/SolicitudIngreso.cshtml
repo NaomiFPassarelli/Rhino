@@ -1,569 +1,614 @@
-﻿<div style="line-height: 170%;">
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                <div class="titulo" style="text-align:center; text-transform:uppercase; margin: 20px 0px; font-weight:bold; text-decoration:underline;">SOLICITUD DE INGRESO</div>
-                                Señor Presidente de la <div>Cooperativa de trabajo - @Model.Organizacion.RazonSocial.</div>
-                                </br>
-                                Tengo el agrado de dirigirme a Uds., solicitándole quieran aprobar mi ingreso como asociado a
-                                esa entidad, a cuyo efecto me comprometo a suscribir e integrar la cantidad de cuotas sociales
-                                fijadas por el estatuto social, cuyas normas declaro conocer y acatar en cuanto a lo que me
-                                compete.
-                            </div>
-                            <div class="Cuerpo-SI" style="text-align:left; ">
-                                A continuación, pongo a vuestra disposición mis datos personales:
-                                </br>
-                                DATOS DEL SOLICITANTE:
-                                </br>
-                                Apellido y Nombres / Denominación Social <div style="padding-top:7px;"> @Model.Apellido @Model.Nombre .</div>
-                                Domicilio <div style="padding-top:7px;"> @Model.Domicilio .</div>
-                                Documento de Identidad (C.I, D.N.I,L.E,L.C.)/CUIT <div style="padding-top:7px;"> @ViewBag.Documento .</div>
-                                Teléfono <div style="padding-top:7px;"> @Model.Telefono .</div>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:center; ">
-                                Lugar:………………………………
-                                Fecha: <div style="padding-top:7px;"> @Model.FechaCreacion .</div>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:right; ">
-                                </br>
-                                …………………………………
-                                </br>
-                                Firma del Asociado
-                            </div>
-                            <div class="titulo" style="text-align:center; text-transform:uppercase; margin: 20px 0px; font-weight:bold; text-decoration:underline;">RESOLUCION DEL CONSEJO DE ADMINISTRACION</div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify; ">
-                                Por haberse tratado la presente solicitud de la Reunión del Consejo de Administración Nro
-                                …...... de fecha ……………………… y siendo aprobado por unanimidad su ingreso como asociado
-                                Nro ……………………, COMUNIQUESE AL INTERESADO Y ARCHIVESE.
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:right; ">
-                                Lugar……………………………
-                                Fecha: <div style="padding-top:7px;"> @Model.FechaCreacion .</div>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:center; ">
-                                .……………………….. ………………………….
-                                </br>
-                                Secretario Presidente
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left; ">
-                                NOTIFICADO:
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:right; ">
-                                </br>
-                                Lugar:……………………………… Fecha……………………………….
-                                </br>
-                                …………………………………
-                                </br>
-                                Firma del Asociado
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="titulo" style="text-align:left; text-transform:uppercase; margin: 20px 0px; font-weight:bold; ">
-                                LEGAJO PERSONAL DEL ASOCIADO
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;text-transform:uppercase;margin-bottom:20px;">
-                                REPRESENTANTES
-                                </br>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;text-transform:uppercase;">
-                                1.	APELLIDO / DENOMINACION SOCIAL: @Model.Apellido
-                                </br>
-                                2.	NOMBRE: @Model.Nombre
-                                </br>
-                                3.	EDAD: @ViewBag.Edad . NACIO EL: @Model.FechaNacimiento .
-                                </br>
-                                4.	LUGAR: @Model.Provincia.Nombre . PROV.: @Model.Provincia.Nombre .
-                                </br>
-                                5.	CI / LE / LC / DNI /CUIT Nº @ViewBag.Documento. POL:…………………...
-                                </br>
-                                6.	CARNET DE CONDUCTOR Nº:…………………………………………..CATEGORIA: ……………………
-                                </br>
-                                7.	MARCA DE COCHE:……………………………….. MODELO: ……………… CHAPA Nº ……………...
-                                </br>
-                                8.	DOMICILIO: @Model.Domicilio PISO: @Model.Piso DPTO: @Model.Departamento
-                                </br>
-                                9.	CODIGO POSTAL: @Model.CodigoPostal TELEFONO Nº: @Model.Telefono
-                                </br>
-                                10.	RECOMENDADO POR: ……………………………………            FIRMA …………………………………………
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;text-transform:uppercase;margin-bottom:20px;">
-                                DATOS DE LA COOPERATIVA:
-                                </br>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                1.	Ingreso el: …………………………………. Cargo: …………………………….. Asoc Nº:…………………..
-                                </br>
-                                2.	Doy fe que conozco la Ley 20337, el Estatuto y reglamento interno y no tengo inhibición alguna para desarrollar tareas.
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:right; ">
-                                </br>
-                                …………………………………..
-                                </br>
-                                Firma del Asociado
-                            </div>
-
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="titulo" style="text-align:left; text-transform:uppercase; margin: 10px 0px;">
-                                ACTA DE CAPACITACION DE COOPERATIVISMO Nº 2
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                </br>
-                                En Buenos Aires, a los ………………. del mes de ……………………………… de 20__ el que suscribe asociado Nº ………..……….. D.S ……………………………………………………..(DNI / CUIT ………………………………….) manifiesta y declara conocer la presente instrucción firmando al pie como prueba de conformidad.
-                                </br>
-                                La presente instrucción corresponde al cursillo interno de capacitación e ilustración sobre el tema cooperativismo cuya clase Nº 1 ha sido comunicada oportunamente a los asociados.
-                                </br>
-                                En el presente capitulo desarrollaremos la clase Nº 2, referida específicamente al ACTO COOPERATIVO, conceptuado por el Art. 4 de la Ley 20.337.
-                                </br>
-                                Antes de definir y comprender el acto cooperativo, nos parece prudente conocer el espíritu que motivo al legislador en la sanción de la ley que analizamos y que rige con otras normas legales vigentes.
-                                </br>
-                                El espíritu del que hablamos, es el rasgo característico de la Ley de Cooperativas y se trata de la solidaridad, la Ley 20.337 propone un programa de vida solidaria que se manifiesta a través de los modos de prestar ayuda mutua entre asociados.
-                                </br>
-                                Comprender este concepto tan sencillo resulta fundamental, toda vez que las normas contenidas en la Ley serán de aplicación permanente a lo largo de la vida de la cooperativa.
-                                </br>
-                                ACTO COOPERATIVO. El artículo 4 de la Ley 20.337, define al mismo de la siguiente manera: “Son actos cooperativos los realizados entre las cooperativas y sus asociados y por aquellos entre sí en el cumplimiento del objeto social y la consecución de los fines institucionales”. La última parte de este artículo no se reproduce, dado que se trata de un concepto de corte netamente jurídico, sin interés práctico para el asociado.
-                                </br>
-                                Bien, comentamos brevemente la definición transcripta.
-                                </br>
-                                Lo primero que observamos, es que se habla de dos personas, por un lado de la Cooperativa y por el otro, los asociado ¿significa esta separación entre cooperativa y asociado, que sean personas distintas?
-                                </br>
-                                Evidentemente no, lo que quiere significar la Ley cuando habla de actos cooperativos, se refiere que son realizados conjuntamente y al precisar el concepto dice: “… son los actos realizados entre cooperativas y sus asociados”.
-                                </br>
-                                A este tipo de actos se refiere la ley. A  cualquiera. La respuesta es que sólo a los actos que se obliguen a  una de las partes o que otorguen algún derecho a los mismos.
-                                </br>
-                            </div>
-
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                Si bien no está expresado en el concepto, completa la noción analizada en el artículo 2do, cuando dice “…son entidades fundadas en el esfuerzo propio y la ayuda mutua para organizar y prestar servicios…”
-                                <br />
-                                En BUENOS AIRES, a los …………. Días del mes de …………… de 20 ……….. declaro bajo juramento que previo mi presentación formal en la Cooperativa de Trabajo SCI LTDA he sido debidamente capacitado sobre los aspectos fundamentales de la legislación vigente y aplicable a todas las relaciones que se susciten entre los asociados y de los asociados con la cooperativa, en particular sobre la Ley 20.337 y Reglamento de Disciplina que juntamente con el Estatuto Social, son los instrumentos legales específicos en la materia, que desde ya reconozco y acepto mientras subsista mi relación de asociado de la Cooperativas.
-                                <br />
-                                Asimismo, manifiesto que he sido informado sobre los aspectos que caracterizan la activada y los Actos Cooperativos, en particular sobre las siguientes situaciones.
-                                <br />
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify; margin-left:20px;">
-                                1.	– Conforme a la Resolución Nº 360+75 Art. 1º, realizaré mis presentaciones de servicio a la Cooperativa, sin que exista relación de dependencia.
-                                <br />
-                                2.	– Los ingresos que percibiré mensualmente, serán en proporción a mi trabajo efectivamente prestado, no existiendo así, pagos por aguinaldo, vacaciones, ausencias ni salario familiar.
-                                <br />
-                                3.	– Si al ingresar a esta Cooperativa no poseo Obra Social, debo inscribirme a la Obra Social o Medicina Pre-paga de mi preferencia. En caso de no cumplir con el requisito exigido, sus consecuencias serán de mi exclusiva responsabilidad.
-                                <br />
-                                4.	– Es condición indispensable por Ley inscribirme en el Caja Nacional de Trabajadores Autónomos y presentar dicho comprobante a la Cooperativa dentro de los 10 (diez) días de plazo a partir de mi ingreso. Estas erogaciones son de mi exclusiva responsabilidad. Hago expreso pedido y otorgo autorización en este acto a la Cooperativa de efectuar los pagos de los aportes correspondientes, para que actuando como agente mediador e informador no se vea afectado el normal desempeño de los servicios de esta cooperativa.
-                                <br />
-                                5.	– Se me otorgara un seguro por Accidentes o Muerte, que me cubrirá las 24 horas. El seguro será tramitado y cubierto por la cooperativa.
-                                <br />
-                                6.	– Puedo trabajar las horas que deseo, en los horarios que establezca y en aquellos objetivos vacantes, que considere más convenientes, por el cual el retorno será en proporción a las horas efectivamente trabajadas, dentro de las posibilidades que ofrezca cada servicio y que posea la Cooperativa para efectuar cambios o modificaciones interservicios. De igual forma funciona el concepto de Excedentes repartibles a quien tienen derecho los asociados de conformidad a lo expresado por el art 42 de la LEY 20337 QUE DICE: “determinado el excedente repartible y una vez
-                                constituida la reserva legal, los fondos asistenciales, y de educación cooperativa,
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify; margin-left: 20px;">
-                                queda un remanente denominado retorno que debe devolverse a los asociados en proporción al uso de sus servicios sociales.
-                                <br />
-                                7.	En caso de renunciar a la Cooperativa, o bien en caso de que no desee continuar en un determinado objetivo, me comprometo a dar un preaviso no inferior a los 30 días de modo que el servicio proporcionado a terceros no resulte perjudicado.
-                                <br />
-                                8.	En relación a la idoneidad requerida para ser asociado a la Cooperativa (art. 9, A.C.) acepto un periodo de prueba de 60 (sesenta) días corridos para determinar fehacientemente la misma, con independencia de los avales escritos por mi presentados. En cualquier caso no pierdo el derecho a la asignación de ese periodo.
-                                <br />
-                                9.	A fin de evitar malas interpretaciones o reclamos que no correspondan, reconozco tener presente que de suscitarse en el futuro algún reclamo laboral, en la Cooperativa no rige la Ley de Contrato de Trabajo y que el Ministerio de Trabajo ni sindicato alguno, tienen competencia legal en esta entidad.
-                                <br />
-                                10.	– Como asociado gozo de los siguientes derechos:
-                                <br />
-                                a) Ser elector libre y elegible.
-                                <br />
-                                b) Percibir una proporción de la facturación total del servicio en el que aporto mi trabajo y cuyo monto será determinado en cada caso por el Consejo de Administración.
-                                <br />
-                                c) Conocer y que se me exhiba toda la documentación relacionada con liquidaciones, balances, memorias y estado de tesorería, que desee.
-                                <br />
-                                d) Hacer uso de los Recursos administrativos y judiciales en ocasión de ser sancionado por aplicación del Régimen de Disciplina, a fin que se clarifique mi intervención y responsabilidad en los hechos que se investiguen.
-                                <br />
-                                e) No aceptar órdenes, instrucciones ni disposiciones que constituyan subordinación personal en la prestación de servicios hacia terceros, admitiendo tan solo aquellas que hagan a la armonía de todos los asociados, el más efectivo trabajo organizado de la Cooperativa y a los requerimientos que formule el cliente dentro de las pautas contractuales pactadas.
-                                <br />
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;">
-                                <br />
-                                Firmo de conformidad frente al Consejero: ………………………………………………………….
-                                <br />
-                                Aclaración: ……………………………………………………………………………………………………………
-                                <br />
-                                Documento De identidad: …………………………………………………………………………………….
-                                <br />
-                                Domicilio actual: ……………………………………………………………………………………………………
-                                <br />
-                                Localidad: ………………………………………………………………………………………………………………
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:right; ">
-                                </br>
-                                …………………………………
-                                </br>
-                                Firma del Consejero
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                Tomé conocimiento de los siguientes documentos relativos a la capacitación y educación cooperativas:
-                            </div>
-                            <div class="Cuerpo-SI" style="text-align:left; margin-left:10px;">
-                                <br />
-                                •	Texto de la Ley 20.337/73.
-                                <br />
-                                •	Estatuto Social de la Cooperativa.
-                                <br />
-                                •	Reglamento Interno.
-                                <br />
-                                •	Hoja de Capacitación de Cooperativa Nº1.
-                                <br />
-                                •	Hoja de Capacitación de Cooperativa Nº2.
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;left;center;right;">
-                                <br />
-                                Buenos Aires, ..............de......de 20.....
-                                <br />
-
-                                Firma:……………………………………………………………….
-                                <br />
-                                Aclaración:……………………………………………………….
-                                <br />
-                                Documento de Identidad: ………………………………..
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="titulo" style="text-align:center; text-transform:uppercase; margin: 20px 0px; text-decoration:underline;">
-                                ACLARACION PARA ASOCIADOS
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                Se lleva a conocimiento de los señores asociados a esta Cooperativa, que se abonarán únicamente los Aportes Previsionales correspondientes a la AFIP, Servicios Médicos y Seguro cuando los asociados se encuentren cubriendo funciones asignadas.
-                                <br />
-                                Caso contrario, se aclara que se podrá continuar en condiciones de socio pero debiendo afrontar en forma personal los aportes correspondientes, quedando el asociado obligado a mantener en forma directa su relación administrativa con cada uno de los respectivos entes.
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;">
-                                <br />
-                                Firmo de Conformidad:……………………………………………………………………..
-                                <br />
-                                Aclaración: …………………………………………………………………………………..
-                                <br />
-                                Documento de Identidad:……………………………………………………………………
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="titulo" style="text-align:center; text-transform:uppercase; margin: 20px 0px; text-decoration:underline;">
-                                EXAMEN DE ALCOHOLEMIA
-                            </div>
-                            
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                <br />
-                                <br />
-                                Por la presente acepto someterme voluntariamente y en cualquier oportunidad que sea solicitado por personal de supervisión de esta Cooperativa a un análisis de alcoholemia.
-                                <br />
-                                Caso contrario, es decir de negarme a tal examen, podrá darse fehacientemente por constatado un estado de embriaguez.
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;">
-                                <br />
-                                <br />
-                                Firmo de Conformidad:……………………………………………………………………..
-                                <br />
-                                Aclaración: …………………………………………………………………………………..
-                                <br />
-                                Documento de Identidad:……………………………………………………………………
-                            </div>
-
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="titulo" style="text-align:center; text-transform:uppercase; margin: 20px 0px; text-decoration:underline;">
-                                NOTA RENUNCIA VOLUNTARIA COMO ASOCIADO
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:right;">
-                                CABA, ….de ………de 20….
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;">
-                                AL CONSEJO DE
-                                ADMINISTRACION DE LA
-                                COOPERATIVA DE TRABAJO
-                                SCI LTDA
-                                MATRICULA INAES Nº 47180
-                                Nogoyá 5285, C1427DMA -CABA
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                Comunico a Uds. que por propia voluntad y razones particulares presento mi renuncia en forma indeclinable como asociado de la Cooperativa  a partir del día …………….., cesando indefectiblemente en las tareas que desempeñaba como asociado, debido a problemas personales, percibiendo en concepto de toda liquidación final de retornos la suma de $.................( pesos……………………………………………………………) dejando asentado que nuestro vinculo asociativo siempre fue acorde a lo regulado por normativa, habiendo ejercido mis derechos como asociados, por lo que nada mas tengo que reclamar por ningún concepto.
-                                <br />
-                                Sin otro particular, saludo a Uds. Muy atentamente,
-                                <br />
-                                <br />
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:justify;">
-                                .......................
-                                <br />
-                                Asociado
-                                <br />
-                                Aclaración de la firma: ……………………………………
-                                <br />
-                                DNI: ………..………………………………………………..  
-                                <br />
-                            </div>
-
-                            <div class="Cuerpo-SI" style="border: 1px solid #000000;">
-                                <div class="Cuerpo-SI" style="text-align:center;">
-                                    ACEPTADA Y NOTIFICADO
-                                    <br />
-                                    <br />
-                                    Presidente
+﻿@model Woopin.SGC.Model.Cooperativa.Asociado
+@{
+    Layout = null;
+}
+@{
+    var LocalizacionNombre = "";
+    if (Model.Localizacion != null)
+    {
+        LocalizacionNombre = Model.Localizacion.Nombre;
+    }
+    var EstadoCivilData = "";
+    if(Model.EstadoCivil != null)
+    {
+        EstadoCivilData = Model.EstadoCivil.Data;
+    }
+    var FechaNacimiento = "";
+    if (Model.FechaNacimiento.HasValue && Model.FechaNacimiento != null)
+    {
+        FechaNacimiento = Model.FechaNacimiento.Value.ToString("dd/MM/yyyy");
+    }
+    var FechaActaIngreso = "";
+    if(Model.FechaActaIngreso.HasValue && Model.FechaActaIngreso != null)
+    {
+        FechaActaIngreso = Model.FechaActaIngreso.Value.ToString("dd/MM/yyyy");
+    }
+    var FechaEgreso = "";
+    if (Model.FechaEgreso.HasValue && Model.FechaEgreso != null)
+    {
+        FechaEgreso = Model.FechaEgreso.Value.ToString("dd/MM/yyyy");
+    }
+}
+<div style="width: 790px; padding: 0px 90px; background-color: #ffffff; font-family: Calibri; color: #000000; ">
+@*        <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px;margin-left:2px;font-size:16px; ">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; line-height: 500px; display: inline-block;">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
                                 </div>
+                                <div class="Cuerpo-SI" style="text-align:justify;">
+                                    <div class="titulo" style="text-align:center; text-transform:uppercase; padding-top: 50px; padding-bottom: 40px; font-weight:bold; text-decoration:underline;">SOLICITUD DE INGRESO</div>
+                                    Señor Presidente de la Cooperativa de trabajo - @Model.Organizacion.RazonSocial.
+                                    <br style="padding-top: 10px; " />
+                                    Tengo el agrado de dirigirme a Uds., solicitándole quieran aprobar mi ingreso como asociado a
+                                    esa entidad, a cuyo efecto me comprometo a suscribir e integrar la cantidad de cuotas sociales
+                                    fijadas por el estatuto social, cuyas normas declaro conocer y acatar en cuanto a lo que me
+                                    compete.
+                                </div>
+                                <div class="Cuerpo-SI" style="text-align:left; ">
+                                    <br />    
+                                    A continuación, pongo a vuestra disposición mis datos personales:
+                                    <br style="padding-top: 20px; " />
+                                    DATOS DEL SOLICITANTE:
+                                    <br />
+                                    Apellido y Nombres / Denominación Social:  @Model.Apellido @Model.Nombre .
+                                    <br />
+                                    Domicilio:  @Model.Direccion  @Model.Numero  @Model.Piso   @Model.Departamento .
+                                    <br />
+                                    Documento de Identidad (C.I, D.N.I,L.E,L.C.)/CUIT:  @ViewBag.Documento .
+                                    <br />
+                                    Teléfono: @Model.Telefono .
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:center; padding-top: 20px; padding-bottom: 20px;">
+                                    Lugar: @LocalizacionNombre
+                                    Fecha: @Model.FechaCreacion.ToString("dd/MM/yyyy") .
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:right; padding-top: 10px; ">
+                                    <br />
+                                    …………………………………
+                                    <br />
+                                    Firma del Asociado
+                                </div>
+                                <div class="titulo" style="text-align:center; text-transform:uppercase; padding-top: 50px; padding-bottom: 40px;  font-weight:bold; text-decoration:underline;">RESOLUCION DEL CONSEJO DE ADMINISTRACION</div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify; padding-top: 5px; padding-bottom: 5px;">
+                                    Por haberse tratado la presente solicitud de la Reunión del Consejo de Administración Nro
+                                    @Model.ActaAlta de fecha @Model.FechaIngreso.ToString("dd/MM/yyyy") y siendo aprobado por unanimidad su ingreso como asociado
+                                    Nro @Model.NumeroReferencia, COMUNIQUESE AL INTERESADO Y ARCHIVESE.
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:right; padding-top: 10px; padding-bottom: 10px; ">
+                                    Lugar @LocalizacionNombre
+                                    Fecha:  @Model.FechaCreacion.ToString("dd/MM/yyyy") .
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:center; padding-top: 10px;">
+                                    .……………………….. ………………………….
+                                    <br />
+                                    Secretario Presidente
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left; padding-top: 10px; padding-bottom: 10px;">
+                                    NOTIFICADO:
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:right; padding-top: 10px; padding-bottom: 10px;">
+                                    <br />
+                                    Lugar: @LocalizacionNombre Fecha: @Model.FechaCreacion.ToString("dd/MM/yyyy")
+                                    <br style="padding-top: 20px;" />
+                                    …………………………………
+                                    <br />
+                                    Firma del Asociado
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="titulo" style="text-align:left; text-transform:uppercase; padding-top: 50px; padding-bottom: 40px;  font-weight:bold; ">
+                                    LEGAJO PERSONAL DEL ASOCIADO
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;text-transform:uppercase;margin-bottom:20px;">
+                                    REPRESENTANTES
+                                    <br />
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;text-transform:uppercase;">
+                                    1.	APELLIDO / DENOMINACION SOCIAL: @Model.Apellido
+                                    <br />
+                                    2.	NOMBRE: @Model.Nombre
+                                    <br />
+                                    3.	EDAD: @ViewBag.Edad . NACIO EL: @FechaNacimiento .
+                                    <br />
+                                    4.	LUGAR: @LocalizacionNombre . PROV.: @LocalizacionNombre .
+                                    <br />
+                                    5.	CI / LE / LC / DNI /CUIT Nº @ViewBag.Documento. POL: @Model.NroPolicia .
+                                    <br />
+                                    6.	CARNET DE CONDUCTOR Nº: @Model.NroCarnetConductor. CATEGORIA: @Model.CategoriaConductor
+                                    <br />
+                                    7.	MARCA DE COCHE: @Model.MarcaVehiculo MODELO: @Model.ModeloVehiculo CHAPA Nº @Model.NroChapaVehiculo
+                                    <br />
+                                    8.	DOMICILIO: @Model.Direccion  @Model.Numero PISO: @Model.Piso DPTO: @Model.Departamento
+                                    <br />
+                                    9.	CODIGO POSTAL: @Model.CodigoPostal TELEFONO Nº: @Model.Telefono
+                                    <br />
+                                    10.	RECOMENDADO POR: @Model.RecomendadoPor FIRMA …………………………………………
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;text-transform:uppercase; padding-bottom:30px; padding-top:80px;">
+                                    DATOS DE LA COOPERATIVA:
+                                    <br />
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;">
+                                    1.	Ingreso el: @FechaActaIngreso Cargo: @Model.Cargo Asoc Nº: @Model.NumeroReferencia
+                                    <br />
+                                    2.	Doy fe que conozco la Ley 20337, el Estatuto y reglamento interno y no tengo inhibición alguna para desarrollar tareas.
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:right; padding-top:90px;">
+                                    <br />
+                                    …………………………………..
+                                    <br />
+                                    Firma del Asociado
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @* </div> *@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="titulo" style="text-align:left; text-transform:uppercase; margin: 10px 0px;padding-bottom:30px; padding-top:40px;">
+                                    ACTA DE CAPACITACION DE COOPERATIVISMO Nº 2
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;">
+                                    <br />
+                                    En Buenos Aires, a los @Model.FechaCreacion.Day del mes de @Model.FechaCreacion.Month de @Model.FechaCreacion.Year el que suscribe asociado Nº @Model.NumeroReferencia D.S ……………………………………………………..(DNI / CUIT @ViewBag.Documento ) manifiesta y declara conocer la presente instrucción firmando al pie como prueba de conformidad.
+                                    <br />
+                                    La presente instrucción corresponde al cursillo interno de capacitación e ilustración sobre el tema cooperativismo cuya clase Nº 1 ha sido comunicada oportunamente a los asociados.
+                                    <br />
+                                    En el presente capitulo desarrollaremos la clase Nº 2, referida específicamente al ACTO COOPERATIVO, conceptuado por el Art. 4 de la Ley 20.337.
+                                    <br />
+                                    Antes de definir y comprender el acto cooperativo, nos parece prudente conocer el espíritu que motivo al legislador en la sanción de la ley que analizamos y que rige con otras normas legales vigentes.
+                                    <br />
+                                    El espíritu del que hablamos, es el rasgo característico de la Ley de Cooperativas y se trata de la solidaridad, la Ley 20.337 propone un programa de vida solidaria que se manifiesta a través de los modos de prestar ayuda mutua entre asociados.
+                                    <br />
+                                    Comprender este concepto tan sencillo resulta fundamental, toda vez que las normas contenidas en la Ley serán de aplicación permanente a lo largo de la vida de la cooperativa.
+                                    <br />
+                                    ACTO COOPERATIVO. El artículo 4 de la Ley 20.337, define al mismo de la siguiente manera: “Son actos cooperativos los realizados entre las cooperativas y sus asociados y por aquellos entre sí en el cumplimiento del objeto social y la consecución de los fines institucionales”. La última parte de este artículo no se reproduce, dado que se trata de un concepto de corte netamente jurídico, sin interés práctico para el asociado.
+                                    <br />
+                                    Bien, comentamos brevemente la definición transcripta.
+                                    <br />
+                                    Lo primero que observamos, es que se habla de dos personas, por un lado de la Cooperativa y por el otro, los asociado ¿significa esta separación entre cooperativa y asociado, que sean personas distintas?
+                                    <br />
+                                    Evidentemente no, lo que quiere significar la Ley cuando habla de actos cooperativos, se refiere que son realizados conjuntamente y al precisar el concepto dice: “… son los actos realizados entre cooperativas y sus asociados”.
+                                    <br />
+                                    A este tipo de actos se refiere la ley. A  cualquiera. La respuesta es que sólo a los actos que se obliguen a  una de las partes o que otorguen algún derecho a los mismos.
+                                    <br />
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;padding-top:40px;">
+                                    Si bien no está expresado en el concepto, completa la noción analizada en el artículo 2do, cuando dice “…son entidades fundadas en el esfuerzo propio y la ayuda mutua para organizar y prestar servicios…”
+                                    <br />
+                                    En BUENOS AIRES, a los @Model.FechaCreacion.Day Días del mes de @Model.FechaCreacion.Month de @Model.FechaCreacion.Year . declaro bajo juramento que previo mi presentación formal en la Cooperativa de Trabajo SCI LTDA he sido debidamente capacitado sobre los aspectos fundamentales de la legislación vigente y aplicable a todas las relaciones que se susciten entre los asociados y de los asociados con la cooperativa, en particular sobre la Ley 20.337 y Reglamento de Disciplina que juntamente con el Estatuto Social, son los instrumentos legales específicos en la materia, que desde ya reconozco y acepto mientras subsista mi relación de asociado de la Cooperativas.
+                                    <br />
+                                    Asimismo, manifiesto que he sido informado sobre los aspectos que caracterizan la activada y los Actos Cooperativos, en particular sobre las siguientes situaciones.
+                                    <br />
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify; margin-left:20px;">
+                                    1.	– Conforme a la Resolución Nº 360+75 Art. 1º, realizaré mis presentaciones de servicio a la Cooperativa, sin que exista relación de dependencia.
+                                    <br />
+                                    2.	– Los ingresos que percibiré mensualmente, serán en proporción a mi trabajo efectivamente prestado, no existiendo así, pagos por aguinaldo, vacaciones, ausencias ni salario familiar.
+                                    <br />
+                                    3.	– Si al ingresar a esta Cooperativa no poseo Obra Social, debo inscribirme a la Obra Social o Medicina Pre-paga de mi preferencia. En caso de no cumplir con el requisito exigido, sus consecuencias serán de mi exclusiva responsabilidad.
+                                    <br />
+                                    4.	– Es condición indispensable por Ley inscribirme en el Caja Nacional de Trabajadores Autónomos y presentar dicho comprobante a la Cooperativa dentro de los 10 (diez) días de plazo a partir de mi ingreso. Estas erogaciones son de mi exclusiva responsabilidad. Hago expreso pedido y otorgo autorización en este acto a la Cooperativa de efectuar los pagos de los aportes correspondientes, para que actuando como agente mediador e informador no se vea afectado el normal desempeño de los servicios de esta cooperativa.
+                                    <br />
+                                    5.	– Se me otorgara un seguro por Accidentes o Muerte, que me cubrirá las 24 horas. El seguro será tramitado y cubierto por la cooperativa.
+                                    <br />
+                                    6.	– Puedo trabajar las horas que deseo, en los horarios que establezca y en aquellos objetivos vacantes, que considere más convenientes, por el cual el retorno será en proporción a las horas efectivamente trabajadas, dentro de las posibilidades que ofrezca cada servicio y que posea la Cooperativa para efectuar cambios o modificaciones interservicios. De igual forma funciona el concepto de Excedentes repartibles a quien tienen derecho los asociados de conformidad a lo expresado por el art 42 de la LEY 20337 QUE DICE: “determinado el excedente repartible y una vez
+                                    constituida la reserva legal, los fondos asistenciales, y de educación cooperativa,
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify; margin-left: 20px;padding-top:40px;">
+                                    queda un remanente denominado retorno que debe devolverse a los asociados en proporción al uso de sus servicios sociales.
+                                    <br />
+                                    7.	En caso de renunciar a la Cooperativa, o bien en caso de que no desee continuar en un determinado objetivo, me comprometo a dar un preaviso no inferior a los 30 días de modo que el servicio proporcionado a terceros no resulte perjudicado.
+                                    <br />
+                                    8.	En relación a la idoneidad requerida para ser asociado a la Cooperativa (art. 9, A.C.) acepto un periodo de prueba de 60 (sesenta) días corridos para determinar fehacientemente la misma, con independencia de los avales escritos por mi presentados. En cualquier caso no pierdo el derecho a la asignación de ese periodo.
+                                    <br />
+                                    9.	A fin de evitar malas interpretaciones o reclamos que no correspondan, reconozco tener presente que de suscitarse en el futuro algún reclamo laboral, en la Cooperativa no rige la Ley de Contrato de Trabajo y que el Ministerio de Trabajo ni sindicato alguno, tienen competencia legal en esta entidad.
+                                    <br />
+                                    10.	– Como asociado gozo de los siguientes derechos:
+                                    <br />
+                                    a) Ser elector libre y elegible.
+                                    <br />
+                                    b) Percibir una proporción de la facturación total del servicio en el que aporto mi trabajo y cuyo monto será determinado en cada caso por el Consejo de Administración.
+                                    <br />
+                                    c) Conocer y que se me exhiba toda la documentación relacionada con liquidaciones, balances, memorias y estado de tesorería, que desee.
+                                    <br />
+                                    d) Hacer uso de los Recursos administrativos y judiciales en ocasión de ser sancionado por aplicación del Régimen de Disciplina, a fin que se clarifique mi intervención y responsabilidad en los hechos que se investiguen.
+                                    <br />
+                                    e) No aceptar órdenes, instrucciones ni disposiciones que constituyan subordinación personal en la prestación de servicios hacia terceros, admitiendo tan solo aquellas que hagan a la armonía de todos los asociados, el más efectivo trabajo organizado de la Cooperativa y a los requerimientos que formule el cliente dentro de las pautas contractuales pactadas.
+                                    <br />
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;padding-top:40px;">
+                                    <br />
+                                    Firmo de conformidad frente al Consejero: ………………………………………………………….
+                                    <br />
+                                    Aclaración: ……………………………………………………………………………………………………………
+                                    <br />
+                                    Documento De identidad: …………………………………………………………………………………….
+                                    <br />
+                                    Domicilio actual: ……………………………………………………………………………………………………
+                                    <br />
+                                    Localidad: ………………………………………………………………………………………………………………
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:right;padding-top:70px; ">
+                                    <br />
+                                    …………………………………
+                                    <br />
+                                    Firma del Consejero
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;padding-top:40px;">
+                                    Tomé conocimiento de los siguientes documentos relativos a la capacitación y educación cooperativas:
+                                </div>
+                                <div class="Cuerpo-SI" style="text-align:left; margin-left:10px;padding-top:40px;">
+                                    <br />
+                                    •	Texto de la Ley 20.337/73.
+                                    <br />
+                                    •	Estatuto Social de la Cooperativa.
+                                    <br />
+                                    •	Reglamento Interno.
+                                    <br />
+                                    •	Hoja de Capacitación de Cooperativa Nº1.
+                                    <br />
+                                    •	Hoja de Capacitación de Cooperativa Nº2.
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;padding-top:40px;">
+                                    <br />
+                                    Buenos Aires, @Model.FechaCreacion.Date.Day de @Model.FechaCreacion.Date.Month de @Model.FechaCreacion.Year
+                                    <br />
+
+                                    Firma:……………………………………………………………….
+                                    <br />
+                                    Aclaración: @Model.Apellido @Model.Nombre
+                                    <br />
+                                    Documento de Identidad: @ViewBag.Documento
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="titulo" style="text-align:center; text-transform:uppercase; padding-top: 50px; padding-bottom: 40px;  text-decoration:underline;">
+                                    ACLARACION PARA ASOCIADOS
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;">
+                                    Se lleva a conocimiento de los señores asociados a esta Cooperativa, que se abonarán únicamente los Aportes Previsionales correspondientes a la AFIP, Servicios Médicos y Seguro cuando los asociados se encuentren cubriendo funciones asignadas.
+                                    <br />
+                                    Caso contrario, se aclara que se podrá continuar en condiciones de socio pero debiendo afrontar en forma personal los aportes correspondientes, quedando el asociado obligado a mantener en forma directa su relación administrativa con cada uno de los respectivos entes.
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;padding-top:40px;">
+                                    <br />
+                                    Firmo de Conformidad:……………………………………………………………………..
+                                    <br />
+                                    Aclaración: @Model.Apellido @Model.Nombre
+                                    <br />
+                                    Documento de Identidad: @ViewBag.Documento
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="titulo" style="text-align:center; text-transform:uppercase; padding-top: 50px; padding-bottom: 40px;  text-decoration:underline;">
+                                    EXAMEN DE ALCOHOLEMIA
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;">
+                                    <br />
+                                    <br />
+                                    Por la presente acepto someterme voluntariamente y en cualquier oportunidad que sea solicitado por personal de supervisión de esta Cooperativa a un análisis de alcoholemia.
+                                    <br />
+                                    Caso contrario, es decir de negarme a tal examen, podrá darse fehacientemente por constatado un estado de embriaguez.
+                                </div>
+
                                 <div class="Cuerpo-SI" style="text-align:left;">
                                     <br />
-                                    Aclaración de Firma:
+                                    <br />
+                                    Firmo de Conformidad:……………………………………………………………………..
+                                    <br />
+                                    Aclaración: @Model.Apellido @Model.Nombre
+                                    <br />
+                                    Documento de Identidad: @ViewBag.Documento
                                 </div>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
+
+        <p style="page-break-after:always;"></p>
+
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="titulo" style="text-align:center; text-transform:uppercase; padding-top: 35px; padding-bottom: 35px;  text-decoration:underline;">
+                                    NOTA RENUNCIA VOLUNTARIA COMO ASOCIADO
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:right;">
+                                    CABA, @Model.FechaCreacion.Day de @Model.FechaCreacion.Month de @Model.FechaCreacion.Year
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;padding-bottom:50px;">
+                                    AL CONSEJO DE
+                                    <br />
+                                    ADMINISTRACION DE LA
+                                    <br />
+                                    COOPERATIVA DE TRABAJO
+                                    <br />
+                                    SCI LTDA
+                                    <br />
+                                    MATRICULA INAES Nº 47180
+                                    <br />
+                                    Nogoyá 5285, C1427DMA -CABA
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;padding-top:40px;">
+                                    Comunico a Uds. que por propia voluntad y razones particulares presento mi renuncia en forma indeclinable como asociado de la Cooperativa  a partir del día @FechaEgreso, cesando indefectiblemente en las tareas que desempeñaba como asociado, debido a problemas personales, percibiendo en concepto de toda liquidación final de retornos la suma de $ @Model.CantidadAbonosEfectivos * @Model.ImporteAbono ( pesos ……………………………………………………………) dejando asentado que nuestro vinculo asociativo siempre fue acorde a lo regulado por normativa, habiendo ejercido mis derechos como asociados, por lo que nada mas tengo que reclamar por ningún concepto.
+                                    <br />
+                                    Sin otro particular, saludo a Uds. Muy atentamente,
+                                    <br />
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:justify;">
                                     
-                            </div>
+                                    <br />
+                                    Asociado ………………………………………………
+                                    <br />
+                                    Aclaración de la firma: @Model.Apellido @Model.Nombre
+                                    <br />
+                                    DNI: @ViewBag.Documento
+                                    <br />
+                                </div>
+
+                                <div class="Cuerpo-SI" style="border: 1px solid #000000;">
+                                    <div class="Cuerpo-SI" style="text-align:center;padding-bottom:50px; padding-top:40px;">
+                                        ACEPTADA Y NOTIFICADO
+                                        <br />
+                                        <br />
+                                        Presidente
+                                    </div>
+                                    <div class="Cuerpo-SI" style="text-align:left;">
+                                        <br />
+                                        Aclaración de Firma:
+                                    </div>
+
+                                </div>
 
 
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <p style="page-break-after:always;"></p>
-
-    <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">
-        <table style="margin-left:2px;font-size:13px;">
-            <tr>
-                <td>
-                    <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
-                        <div>
-                            <div class="Header-SI" style="padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
-                                <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
-                                MATRICULA INAES Nº 47180
-                                <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
-                            </div>
-
-                            <div class="titulo" style="text-align:center; text-transform:uppercase; margin: 20px 0px; ">
-                                SOLICITUD DE ANTECEDENTES
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align:left;">
-                                <br />
-                                Apellido / Denominación:
-                                <br />
-                                Documento de Identidad / CUIT:
-                                <br />
-                                Hijo de:                                                                   y de:
-                                <br />
-                                Nacido el:                                        del mes de:                                 año
-                                <br />
-                                Estado Civil:
-                                <br />
-                                Domicilio:
-                                <br />
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align: justify;">
-                                Presto mi conformidad para que se informen de mis antecedentes, en función de lo previsto en el artículo 5º del código Penal. (modificado por ley 23.057).
-                            </div>
-
-                            <div class="Cuerpo-SI" style="text-align: left;">
-                                ………………………………..
-                                <br />
-                                Firma del asociado
-                                <br />
-                                ………………………………..
-                                <br />
-                                Firma del Consejero
                             </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+                    </td>
+                </tr>
+            </table>
+        @*</div>*@
 
-    <p style="page-break-after:always;"></p>
+        <p style="page-break-after:always;"></p>
 
+        @*<div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
+            <table style="width: 610px; margin-left:2px;font-size:16px;">
+                <tr>
+                    <td>
+                        <div style="padding: 8px; float: left; position: relative; min-height: 1px; ">
+                            <div>
+                                <div class="Header-SI" style="padding-top:30px;padding-bottom:10px; border-bottom: 1px solid #47b6ec; color:#808080; text-transform:uppercase;text-align: left;">
+                                    <div style="padding-top:7px;">COOPERATIVA DE TRABAJO - @Model.Organizacion.RazonSocial</div>
+                                    MATRICULA INAES Nº 47180
+                                    <div style="padding-top:7px;">Domicilio: @Model.Organizacion.Domicilio - @Model.Organizacion.CodigoPostal - @Model.Organizacion.Provincia.Nombre </div>
+                                </div>
+
+                                <div class="titulo" style="text-align:center; text-transform:uppercase; padding-top: 50px; padding-bottom: 40px;  ">
+                                    SOLICITUD DE ANTECEDENTES
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align:left;">
+                                    <br />
+                                    Apellido / Denominación: @Model.Apellido @Model.Nombre
+                                    <br />
+                                    Documento de Identidad / CUIT: @ViewBag.Documento
+                                    <br />
+                                    Hijo de: @Model.Padre  y de: @Model.Madre
+                                    <br />
+                                    Nacido el: @FechaNacimiento
+                                    <br />
+                                    Estado Civil: @EstadoCivilData
+                                    <br />
+                                    Domicilio: @Model.Direccion @Model.Numero @Model.Piso @Model.Departamento
+                                    <br />
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align: justify;padding-top:40px;">
+                                    Presto mi conformidad para que se informen de mis antecedentes, en función de lo previsto en el artículo 5º del código Penal. (modificado por ley 23.057).
+                                </div>
+
+                                <div class="Cuerpo-SI" style="text-align: left;padding-top: 60px;">
+                                    ………………………………..
+                                    <br />
+                                    Firma del asociado
+                                    <br />
+                                </div>
+
+
+                                <div class="Cuerpo-SI" style="text-align: left;padding-top: 40px;">
+                                    ………………………………..
+                                    <br />
+                                    Firma del Consejero
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            @if (Model.ImagePath != null)
+            {
+                <img src="@Url.Content("~/" + Model.ImagePath)" />
+
+                    @*<img src=@Model.ImagePath alt="Imagen Asociado" style="width:500px;height:500px;">*@
+            }
+                    @*</div>*@
 </div>

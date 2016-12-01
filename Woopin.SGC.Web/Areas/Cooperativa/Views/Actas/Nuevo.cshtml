@@ -1,0 +1,276 @@
+﻿@model Woopin.SGC.Model.Cooperativa.Acta
+
+@{
+    ViewBag.Title = "Nuevo Acta";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Nuevo Acta";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "acta-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Acta</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+
+            @*<div class="col-md-6">
+            @Html.Label("Nro de Acta de Alta", new { @class = "col-md-12 horizontal-label" })
+            @Html.TextBoxFor(model => model.ActaAlta, new { @class = "textinput" })
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumeroActa, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NumeroActa, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.NumeroActa, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Presidente, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.Presidente, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.Presidente, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Secretario, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Secretario, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Secretario, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Tesorero, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Tesorero, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Tesorero, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FechaFinalizacionActa, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @*@Html.TextBoxFor(model => model.FechaFinalizacionActa, new { @class = "textinput" })*@
+                <input class="text-box single-line textinput value-def" data-val="true" data-val-required="La Fecha Finalizacion Acta es requerida" id="FechaFinalizacionActa" name="FechaFinalizacionActa" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")">
+                @Html.ValidationMessageFor(model => model.FechaFinalizacionActa, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+            @*<div class="col-md-6">
+            @Html.LabelFor(model => model.FechaActaIngreso, new { @class = "col-md-12 horizontal-label" })
+            @Html.TextBoxFor(model => model.FechaActaIngreso, new { @class = "textinput", @readonly = "readonly", @id = "FechaActaIngresoCompletar" })
+        </div>*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.OtroPresente, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.OtroPresente, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.OtroPresente, null, new { @class = "help-block" })
+            </div>
+        </div>
+            
+
+
+
+
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FechaActa, new { @class = "col-md-2 horizontal-label readonly" })
+                <div class="col-md-6 input-container">
+                    @*@Html.TextBoxFor(model => model.FechaActa, new { @class = "textinput", @value = @ViewBag.FechaActa, @readonly = "readonly" })*@
+                    <input class="text-box single-line textinput value-def" data-val="true" data-val-required="La Fecha Creacion es requerida" id="FechaActa" name="FechaActa" type="text" value="@ViewBag.FechaActa">
+                    @Html.ValidationMessageFor(model => model.FechaActa, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.OtrosPuntos.First().Encabezado, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.OtrosPuntos.First().Encabezado, new { @class = "textinput Encabezado" })
+                    @Html.ValidationMessageFor(model => model.OtrosPuntos.First().Encabezado, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.OtrosPuntos.First().Detalle, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.OtrosPuntos.First().Detalle, new { @class = "textinput Detalle" })
+                    @Html.ValidationMessageFor(model => model.OtrosPuntos.First().Detalle, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="AppendInputActa">
+
+            </div>
+
+            <a class="boton place-left " id="BtnAddNewPoint"><i class="fa fa-plus-circle i-green"></i> Agregar un punto nuevo </a>
+
+</fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante. Si presiona Aceptar, todos los cambios realizados se perderan.');
+        $(document).ready(function () {
+            debugger;
+            ActaNueva.init();
+            $("#FechaFinalizacionActa").datepicker({ dateFormat: 'dd/mm/yy 09:00' });
+            $("#FechaActa").datepicker({ dateFormat: 'dd/mm/yy' });
+            $("#FechaActa").attr('readonly', 'readonly');
+            //$("#FechaActaIngresoCompletar").val($("#FechaActaIngreso").val());
+
+        });
+
+        var ActaNueva = {
+            init: function () {
+                $(document).off("click", "#BtnSubmit").on("click", "#BtnSubmit", ActaNueva.Save);
+                $(document).off('click', '#BtnAddNewPoint').on('click', '#BtnAddNewPoint', ActaNueva.AddNewPoint);
+
+            },
+
+            AddNewPoint: function () {
+                $('.AppendInputActa').append('<div class="form-group"><label class="col-md-2 horizontal-label" for="Encabezado">Encabezado</label><div class="col-md-6 input-container"><input class="textinput Encabezado" name="Encabezado" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Encabezado" data-valmsg-replace="true"></span></div></div>');
+                $('.AppendInputActa').append('<div class="form-group"><label class="col-md-2 horizontal-label" for="Detalle">Detalle</label><div class="col-md-6 input-container"><input class="textinput Detalle" name="Detalle" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Detalle" data-valmsg-replace="true"></span></div></div>');
+            },
+
+            Save: function () {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                    return;
+
+                $('#BtnSubmit').attr('disabled', 'disabled');
+                if (!$('#acta-form').valid()) {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return;
+                }
+
+
+                var Acta = $('#acta-form').serializeFormJSON();
+                debugger;
+                Acta.OtrosPuntos = new Array();
+                var detalles = $('.Encabezado');
+                debugger;
+                for (var i = 0; i < detalles.length; i++) {
+                    if ($(detalles[i]).val() != null && $(detalles[i]).val() != "") {
+                        var item = {
+                            Encabezado: $(detalles[i]).val(),
+                            Detalle: $($('.Detalle')[i]).val()
+                        };
+                        Acta.OtrosPuntos.push(item);
+                    }
+                }
+            
+                @*var postParams = {
+                    url: "@Url.Action("Nuevo", "Actas")",
+                    data: { Acta: Acta },
+                success: function (data) {
+                    if (data.Success) {
+                        if (data.NuevoNumero == null && data.NumeroRef == null) {
+                            ComprobanteCompra.OnFinishSave(data.Comprobante);
+                        }
+                        else {
+                            var msg = "";
+                            if (data.NuevoNumero != null) {
+                                msg += '<p>El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                            }
+                            if (data.NumeroRef != null) {
+                                msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                            }
+                            $.WarningDialog(msg, 'warning', function(){
+                                ComprobanteCompra.OnFinishSave(data.Comprobante)
+                            });
+                        }
+                    }
+                    else {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                    }
+                }
+            }
+            $.AjaxPost(postParams);*@
+
+
+                
+                debugger;
+
+                var params = {
+                    url: '@Url.Action("Nuevo")',
+                    data: {
+                        Acta: Acta
+                        //FechaEgreso: $('#FechaEgreso').val(),
+                        //ActaBaja: $('')
+                    },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            debugger;
+                            console.log('se guardo');
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")';
+                            console.log('termino ');
+
+                        } else {
+                            debugger;
+
+                            $('#BtnSubmit').removeAttr('disabled');
+                            $('#Alert-Container').NewAlert('error', ret.ErrorMessage);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            }
+
+
+        }
+
+
+
+        //$(document).ready(function () {
+
+            @*$('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        window.onbeforeunload = null;
+                        $.ShowLoader();
+                        window.location = '@Url.Action("Index")'
+                    }
+                    else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });*@
+
+
+            @*$(document).off("click", "#BtnSubmit").on("click", "#BtnSubmitBajar", function () {
+                var params = {
+                    url: '@Url.Action("Bajar")',
+                    data: { Id: Id, FechaEgreso: $('#FechaEgreso').val(), ActaBaja: $('') },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridAsociados').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+            $.AjaxPost(params);
+
+            _OpenDialog.dialog('close');
+            });*@
+
+        //});
+
+    </script>
+}

@@ -24,6 +24,7 @@ namespace Woopin.SGC.Services
         Localizacion GetLocalizacion(int Id);
         Localizacion UpdateLocalizacion(Localizacion Localizacion);
         IList<Localizacion> GetAllLocalizaciones();
+        IList<Localidad> GetAllLocalidades();
         void DeleteLocalizaciones(List<int> Ids);
         void SetDefaultLocalizacion(int Id);
         #endregion

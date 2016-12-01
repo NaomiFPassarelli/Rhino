@@ -116,7 +116,6 @@
             },
 
             EditarGrupoIngreso: function () {
-                debugger;
                 var Id = $(this).closest('tr').attr('id');
                 $.ShowLoader();
                 window.location = '@Url.Action("Editar")/' + Id;

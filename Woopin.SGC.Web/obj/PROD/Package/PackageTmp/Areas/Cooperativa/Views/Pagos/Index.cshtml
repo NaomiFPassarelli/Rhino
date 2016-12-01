@@ -3,6 +3,14 @@
     ViewBag.SectionIcon = "truck";
     ViewBag.SectionTitle = "Listado de Pagos";
 }
+<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImprimirGrid" title="Imprimir Todos">
+        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Todos
+    </a>
+    <a class="boton place-left" id="BtnImprimirSeleccionados" title="Imprimir Seleccionados">
+        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Seleccionados
+    </a>
+</div>
 @*<div class="action-bar row" style="margin-bottom:20px;">
     <a class="boton place-left" id="BtnImportar" title="Importación">
         <i class="fa fa-file-excel-o i-blue"></i>  Importar
@@ -23,10 +31,47 @@
     <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
         <i class="fa fa-refresh i-blue"></i>
     </a>
-    @*<a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
         <span class="icon-xls"></span>
-    </a>*@
+    </a>
+
+
+    @*<div class="col-md-4">
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Abonado Teorico</label>
+            <span class="col-md-6" id="AbonadoTeorico">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Falta Abonar Teorico</label>
+            <span class="col-md-6" id="FaltanteTeorico">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Abonado Real</label>
+            <span class="col-md-6" id="AbonadoReal">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Deuda Teorica</label>
+            <span class="col-md-6" id="DeudaTeorica">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+    </div>*@
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+
 </div>
+
+
 <div class="table-container">
     <table id="GridPagos"></table>
     <div id="GridPagos_pager"></div>
@@ -35,111 +80,221 @@
 <div id="edit-dialog"></div>
 @*<div id="importar-Pagos-dialog"></div>*@
 @section Scripts{
+@Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/jqgrid")
     <script type="text/javascript">
-    var ListadoPagos = {
+    var ListadoPagosDetalle = {
 
         init: function () {
-            //$('#BtnImportar').bind('click', ListadoPagos.OpenImportar);
-            //$('#BtnExportXLS').click(ListadoPagos.ExportToExcel);
+            //$('#BtnImportar').bind('click', ListadoPagosDetalle.OpenImportar);
+            $('#BtnImprimirGrid').bind('click', ListadoPagosDetalle.ImprimirGrid);
+            $('#BtnImprimirSeleccionados').bind('click', ListadoPagosDetalle.ImprimirSeleccionados);
+
+            $('#BtnExportXLS').click(ListadoPagosDetalle.ExportToExcel);
             /* Binding de los checkbox, contador de seleccionados */
             $.SetupSelectCount('GridPagos');
             /* Buscador de arriba */
-            $.SetupSearchTextbox('#GridPagos', ["Nombre", "Apellido", "CUIT"]);
+            $.SetupSearchTextbox('#GridPagos', ["Asociado.Nombre", "Asociado.Apellido"]);
             /* Binding del boton de Refresh */
-            $('#BtnRefresh').bind('click', ListadoPagos.Refresh);
+            $('#BtnRefresh').bind('click', function () {
+                ListadoPagosDetalle.LoadData();
+            });
+            $('#datestart').datepicker({ dateFormat: 'dd/mm/yy' });
+            $('#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
 
             /* Eliminar Seleccionados */
-            //$('#BtnDeleteSelected').click(ListadoPagos.OnEliminarSeleccionadosClick);
+            //$('#BtnDeleteSelected').click(ListadoPagosDetalle.OnEliminarSeleccionadosClick);
 
-            $(document).off('click', '#GridPagos .RealizarPago').on('click', '#GridPagos .RealizarPago', ListadoPagos.OnClickRealizarPago);
+            $(document).off('click', '#GridPagos .Imprimir').on('click', '#GridPagos .Imprimir', ListadoPagosDetalle.OnClickImprimir);
 
             /* Eliminar de Grilla */
-            //$(document).on('click', '.BtnEliminar', ListadoPagos.EliminarPago);
+            //$(document).on('click', '.BtnEliminar', ListadoPagosDetalle.EliminarPago);
             /* Editar de la grilla */
             // Abre nueva ventana
-            //$(document).on('click', '.BtnEditar', ListadoPagos.EditarPago);
+            //$(document).on('click', '.BtnEditar', ListadoPagosDetalle.EditarPago);
 
             /* Armo la grilla del ABM */
             $('#GridPagos').CreateCommonGrid({
-                url: '@Url.Action("GetAll", "Asociados")',
-                colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre', 'Apellido', 'CUIT', 'Cantidad Cuotas', 'Cuotas Abonadas', 'Cuotas Restantes', 'Importe Cuota', 'Cuotas A Pagar Ahora', ''],
+                url: '@Url.Action("GetAll")',
+                serializeGridData: function (postData) {
+                    data = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                colNames: ['', '', 'Nombre', 'Apellido', 'Fecha Pago', 'Pagos Realizados', 'Importe Real del Pago', '', ''],
+                //colNames: ['', '', 'Nombre', 'Apellido', 'Fecha Pago', '', 'Cuotas Abonadas', 'Cuotas Restantes', 'Importe Cuota', 'Importe Real del Pago', '', ''],
                 colModel: [
                     { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
-                    { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
-                    { name: 'Nombre', index: 'Nombre', width: 25, align: "center", sortable: true },
-                    { name: 'Apellido', index: 'Apellido', width: 30, align: "center", sortable: true },
-                    { name: 'CUIT', index: 'CUIT', width: 30, align: "center", sortable: true },
-                    { name: 'CantidadCuotas', index: 'CantidadCuotas', width: 20, align: "center" },
-                    { name: 'CantidadCuotasAbonadas', index: 'CantidadCuotasAbonadas', width: 20, align: "center" },
-                    { name: 'CantidadCoutasRestantes', index: 'CantidadCoutasRestantes', width: 20, align: "center", formatter: ListadoPagos.CantidadCoutasRestantes },
-                    { name: 'ImporteCuota', index: 'ImporteCuota', width: 20, align: "center" },
-                    { name: 'CantidadAPagar', index: 'CantidadAPagar', width: 25, align: "center", formatter: Drop_Number, formatoptions: { nameSelect: 'Pagos' } },
-                    { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: Action_Aceptar, align: "center" }
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'Asociado.Nombre', index: 'Nombre', width: 25, align: "center", sortable: true },
+                    { name: 'Asociado.Apellido', index: 'Apellido', width: 30, align: "center", sortable: true },
+                    { name: 'FechaPago', index: 'FechaPago', width: 20, align: "center", formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    //{ name: 'Asociado.CantidadCuotas', index: 'CantidadCuotas', hidden: true, width: 20, align: "center" },
+                    //{ name: 'Asociado.CantidadCuotasAbonadas', index: 'CantidadCuotasAbonadas', width: 20, align: "center" },
+                    //{ name: 'Asociado.CantidadCoutasRestantes', index: 'CantidadCoutasRestantes', width: 20, align: "center", formatter: ListadoPagosDetalle.CantidadCoutasRestantes },
+                    //{ name: 'Asociado.ImporteCuota', index: 'ImporteCuota', width: 20, align: "center" },
+                    { name: 'CantidadPagosAbonados', index: 'CantidadPagosAbonados', width: 20, align: "center" },
+                    { name: 'Total', index: 'Total', width: 20, align: "center" },
+                    //{ name: 'TotalAbonado', index: 'TotalAbonado', width: 20, align: "center", formatter: ListadoPagosDetalle.TotalAbonado },
+                    //{ name: 'TotalRestante', index: 'TotalRestante', width: 20, align: "center", formatter: ListadoPagosDetalle.TotalRestante },
+                    { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: FreeFormatter, formatoptions: { urlAction: '@Url.Action("DescargarPDF")', icon: 'fa fa-print i-blue', title: 'Descargar' }, align: "center" },
+                    { name: 'Delete', index: 'Delete', width: 15, sortable: false, formatter: ABM_Eliminar, align: "center" }
                 ],
                 sortname: 'Nombre',
                 sortorder: "asc",
+                footerrow: true,
+                gridComplete: function () {
+                    var $grid = $('#GridPagos');
+                    var colSumCantidadCuotasAbonadas = $grid.jqGrid('getCol', 'Asociado.CantidadCuotasAbonadas', false, 'sum');
+                    var colSumCantidadCoutasRestantes = $grid.jqGrid('getCol', 'Asociado.CantidadCoutasRestantes', false, 'sum');
+                    var colSumImporteCuota = $grid.jqGrid('getCol', 'Asociado.ImporteCuota', false, 'sum');
+                    var colSumTotal = $grid.jqGrid('getCol', 'Total', false, 'sum');
+                    //var colSumAbonado = $grid.jqGrid('getCol', 'TotalAbonado', false, 'sum');
+                    //var colSumRestante = $grid.jqGrid('getCol', 'TotalRestante', false, 'sum');
+                    //$grid.jqGrid('footerData', 'set', { 'Asociado.CantidadCuotasAbonadas': colSumCantidadCuotasAbonadas, 'Asociado.CantidadCoutasRestantes': colSumCantidadCoutasRestantes, 'Asociado.ImporteCuota': colSumImporteCuota, 'Total': colSumTotal, 'TotalAbonado': colSumAbonado, 'TotalRestante': colSumRestante, 'Nombre': "Footer" });
+                    $grid.jqGrid('footerData', 'set', { 'Asociado.CantidadCuotasAbonadas': colSumCantidadCuotasAbonadas, 'Asociado.CantidadCoutasRestantes': colSumCantidadCoutasRestantes, 'Asociado.ImporteCuota': colSumImporteCuota, 'Total': colSumTotal, 'Nombre': "Footer" });
+                },
                 pager: '#GridPagos_pager',
             });
             $('#GridPagos').trigger("reloadGrid");
+            $(document).on('click', '.BtnEliminar', ListadoPagosDetalle.OnEliminarSeleccionadosClick);
+            ListadoPagosDetalle.LoadData();
+            //ListadoPagosDetalle.CompletarHeader();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        LoadData: function () {
+            ListadoPagosDetalle.CompletarFiltros();
+            valid = ListadoPagosDetalle.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            //ListadoPagosDetalle.headNeedsReload = true;
+            ListadoPagosDetalle.ReloadGrid();
+        },
+
+        @*CompletarHeader: function(){
+
+            var params = {
+                url: '@Url.Action("LoadHeader")',
+                data: {
+                    //start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                    //end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                },
+                success: function (ret) {
+
+                        $('#AbonadoTeorico').html($.formatCurrency(ret.Data.ImporteCuota * ret.Data.CantidadCuotasAbonadas));
+                        $('#FaltanteTeorico').html($.formatCurrency((ret.Data.CantidadCuotas-ret.Data.CantidadCuotasAbonadas)*ret.Data.ImporteCuota));
+                    //$('#AbonadoReal').html($.formatCurrency(ret.Data.AbonadoReal));
+                    //$('#DeudaTeorica').html($.formatCurrency(ret.Data.DeudaTeorica));
+                }
+            }
+            $.AjaxPost(params);
+
+        },*@
+
+        OnEliminarSeleccionadosClick: function () {
+            var SelectedIds = $.GetSelectedRows('GridPagos');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea eliminar los pagos seleccionadas?",
+                    function () { ListadoPagosDetalle.EliminarSeleccionados(SelectedIds) });
+            }
+        },
+
+        EliminarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Eliminar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridPagos').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        ImprimirSeleccionados: function () {
+            var SelectedIds = $.GetSelectedRows('GridPagos');
+            window.open('@Url.Action("DescargarPDFs")?' + "IdsString=" + SelectedIds, '_blank');
+        },
+
+        ImprimirGrid: function () {
+            var SelectedIds = $('#GridPagos').jqGrid("getCol", "Id");
+            window.open('@Url.Action("DescargarPDFs")?' + "IdsString=" + SelectedIds, '_blank');
         },
 
         @*OpenImportar: function () {
                 $('#importar-Pagos-dialog').OpenFormDialog('@Url.Action("Importar")', 'Importación de Pagos');
             },*@
 
-            //ExportToExcel: function () {
-            //    JQGridExportExcel.Export('GridPagos', 'Listado de Pagos');
-            //},
-
-            Refresh: function () {
-                ClearSelectedRows('GridPagos');
-                ListadoPagos.ReloadGrid();
-            },
-
-            ReloadGrid: function () {
-                $("#GridPagos").setGridParam({ datatype: 'json' });
-                $('#GridPagos').setGridParam({ page: 1 }).trigger("reloadGrid");
-            },
-
-            OnClickRealizarPago: function () {
-                var IdAsociado = $(this).closest('tr').attr('Id');
-                var rowData = $("#GridPagos").getRowData(IdAsociado);
-                var strUser = $(rowData.CantidadAPagar);
-                var options = $(strUser).find("option");
-                var cantidadAPagar = 0;
-                $.each(options, function (i, v) {
-                    aPagarIsSelected = $(v).attr("selected");
-                    if(aPagarIsSelected == true || aPagarIsSelected == "selected"){
-                        cantidadAPagar = i;
-                        return false;
-                    }
-                });
-                debugger;
-                var params = {
-                    url: '@Url.Action("Nuevo")',
-                    data: {
-                        Pago: { Asociado: { Id: IdAsociado } }, CantidadCuotasAPagar: ++cantidadAPagar
-                    },
-                    success: function (ret) {
-                        if (ret.Success) {
-                            //Todo cartel avisando asociado - cuanto pago y cuanto le falta pagar
-                            ListadoPagos.ReloadGrid();
-                        }
-                    }
-                }
-                $.AjaxPost(params);
-            },
-
-        CantidadCoutasRestantes: function (cellvalue, options, rowObject){
-            return parseFloat(rowObject.CantidadCuotas) - parseFloat(rowObject.CantidadCuotasAbonadas);
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridPagos', 'Listado de Pagos');
         },
 
-            @*OnEliminarSeleccionadosClick: function(){
+        Refresh: function () {
+            ClearSelectedRows('GridPagos');
+            ListadoPagosDetalle.ReloadGrid();
+        },
+
+        ReloadGrid: function () {
+            $("#GridPagos").setGridParam({ datatype: 'json' });
+            $('#GridPagos').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        OnClickImprimir: function () {
+            var IdAsociado = $(this).closest('tr').attr('Id');
+            var params = {
+                url: '@Url.Action("Imprimir")',
+                data: { Pago: IdPago },
+                success: function (ret) {
+                    if (ret.Success) {
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        CantidadCoutasRestantes: function (cellvalue, options, rowObject) {
+            if (rowObject.Nombre != "Footer") {
+                return parseFloat(rowObject.Asociado.CantidadCuotas) - parseFloat(rowObject.Asociado.CantidadCuotasAbonadas);
+            } else {
+                return parseFloat(cellvalue);
+            }
+        },
+
+        //TotalAbonado: function (cellvalue, options, rowObject) {
+        //    if (rowObject.Nombre != "Footer") {
+        //        return parseFloat(rowObject.Asociado.ImporteCuota) * parseFloat(rowObject.Asociado.CantidadCuotasAbonadas);
+        //    } else {
+        //        return rowObject.TotalAbonado;
+        //    }
+        //},
+
+        //TotalRestante: function (cellvalue, options, rowObject) {
+        //    if (rowObject.Nombre != "Footer") {
+        //        return parseFloat(rowObject.Asociado.ImporteCuota) * (parseFloat(rowObject.Asociado.CantidadCuotas) - parseFloat(rowObject.Asociado.CantidadCuotasAbonadas));
+        //    } else {
+        //        return rowObject.TotalRestante;
+        //    }
+        //},
+        @*OnEliminarSeleccionadosClick: function(){
                 var SelectedIds = $.GetSelectedRows('GridPagos');
                 if (SelectedIds.length > 0) {
                     ConfirmationDialog.Show("Esta seguro que desea eliminar los Pagos seleccionadas?",
-                        function () { ListadoPagos.EliminarSeleccionados(SelectedIds) });
+                        function () { ListadoPagosDetalle.EliminarSeleccionados(SelectedIds) });
                 }
             },
 
@@ -162,14 +317,14 @@
             EliminarPago: function () {
                 var Id = [$(this).closest('tr').attr('id')];
                 ConfirmationDialog.Show("Esta seguro que desea eliminar el Pago?",
-                    function () { ListadoPagos.EliminarSeleccionados(Id) });
+                    function () { ListadoPagosDetalle.EliminarSeleccionados(Id) });
             },*@
 
         @*OnBajarSeleccionadosClick: function(){
             var SelectedIds = $.GetSelectedRows('GridPagos');
             if (SelectedIds.length > 0) {
                 ConfirmationDialog.Show("Esta seguro que desea Bajar los Pagos seleccionadas?",
-                    function () { ListadoPagos.BajarSeleccionados(SelectedIds) });
+                    function () { ListadoPagosDetalle.BajarSeleccionados(SelectedIds) });
             }
         },
 
@@ -192,7 +347,7 @@
         //BajarPago: function () {
         //    var Id = [$(this).closest('tr').attr('id')];
         //    ConfirmationDialog.Show("Esta seguro que desea Bajar el Pago?",
-        //        function () { ListadoPagos.BajarSeleccionados(Id) });
+        //        function () { ListadoPagosDetalle.BajarSeleccionados(Id) });
         //},
 
 
@@ -203,7 +358,7 @@
         }*@
     }
     $(document).ready(function () {
-        ListadoPagos.init();
+        ListadoPagosDetalle.init();
     });
-    </script>
+</script>
 }

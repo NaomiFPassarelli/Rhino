@@ -76,5 +76,17 @@ namespace Woopin.SGC.Repositories.Sueldos
             return e;
         }
 
+        public int GetProximoNumeroReferencia()
+        {
+            Empleado ultimo = this.GetSessionFactory().GetSession().QueryOver<Empleado>()
+                                                                                      .GetFilterBySecurity()
+                                                                                      .OrderBy(x => x.NumeroReferencia).Desc
+                                                                                      .Take(1)
+                                                                                      .SingleOrDefault();
+
+            return ultimo != null ? ultimo.NumeroReferencia + 1 : 1;
+        }
+        
+
     }
 }

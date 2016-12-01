@@ -54,11 +54,28 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         {
             try
             {
+                foreach (AdicionalRecibo AR in Recibo.AdicionalesRecibo)
+                {
+                    decimal n;
+                    bool isNumeric = decimal.TryParse(AR.Total.ToString(), out n);
+                    if (!isNumeric)
+                    {
+                        return Json(new { Success = false });                    
+                    }
+                }
+                if (Recibo.FechaPagoAnterior.HasValue && Convert.ToInt32(Recibo.FechaPagoAnterior.Value.Year.ToString()) < 2000 && Recibo.FechaPagoAnterior.Value.Year.ToString() != "null")
+                {
+                    Recibo.FechaPagoAnterior = DateTime.Now;
+                }
                 ClearNotValidatedProperties(Recibo);
                 
                 //if (ModelState.IsValid)
                 //{
                     this.SueldosService.AddRecibo(Recibo);
+                    if (Recibo.Id != Recibo.NumeroReferencia)
+                    {
+                        return Json(new { Success = true, NumeroRef = Recibo.Id, Recibo = Recibo });
+                    }
                     return Json(new { Success = true, Recibo = Recibo });
                 //}
                 //else
@@ -72,26 +89,26 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
             }
         }
 
-        //[HttpPost]
-        //public JsonResult Eliminar(List<int> Ids)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            this.SueldosService.DeleteRecibos(Ids);
-        //            return Json(new { Success = true });
-        //        }
-        //        else
-        //        {
-        //            return Json(new { Success = false, ErrorMessage = "Hubo un problema en el pedido de eliminar la Recibo, vuelva a inetntarlo." });
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return Json(new { Success = false, ErrorMessage = "Ha ocurrido un error, vuelva a intentarlo." });
-        //    }
-        //}
+        [HttpPost]
+        public JsonResult Eliminar(List<int> Ids)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    this.SueldosService.DeleteRecibos(Ids);
+                    return Json(new { Success = true });
+                }
+                else
+                {
+                    return Json(new { Success = false, ErrorMessage = "Hubo un problema en el pedido de eliminar la Recibo, vuelva a inetntarlo." });
+                }
+            }
+            catch
+            {
+                return Json(new { Success = false, ErrorMessage = "Ha ocurrido un error, vuelva a intentarlo." });
+            }
+        }
 
 
         //public ActionResult Editar(int Id)
@@ -256,12 +273,55 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
         public JsonResult GetAdicionalesDelPeriodoByEmpleado(string Periodo, int IdEmpleado)
         {
             IList<AdicionalRecibo> ARs = this.SueldosConfigService.GetAdicionalesDelPeriodoByEmpleado(Periodo, IdEmpleado);
-            foreach (AdicionalRecibo AR in ARs)
+            if (ARs.Count > 0)
             {
-                AR.Recibo = null;
+                foreach (AdicionalRecibo AR in ARs)
+                {
+                    AR.Recibo = null;
+                }
             }
             return Json(new { Data = ARs , Success = true });            
         }
+
+
+        //TODOS o seleccionados LOS PDF
+        public void DescargarPDFs(string IdsString)
+        {
+            IList<int> Ids = IdsString.Split(',').Select(Int32.Parse).ToList();
+            string outpath = this.ArmarComprobantePDFs(Ids);
+            Response.Clear();
+            Response.AddHeader("content-disposition", "attachment; filename=\"" + Path.GetFileName(outpath) + "\"");
+            Response.WriteFile(outpath);
+            Response.ContentType = "";
+            Response.End();
+
+        }
+
+
+        private string ArmarComprobantePDFs(IList<int> Ids)
+        {
+            IList<Recibo> r = this.SueldosService.GetRecibos(Ids);
+            ViewBag.BaseURL = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "");
+            Organizacion o = this.SystemService.GetOrganizacion(r.First().Organizacion.Id);
+            if (o.ImagePath != null)
+            {
+                string logoorgpath = "/" + o.ImagePath;
+                ViewBag.BaseLogoOrg = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, logoorgpath);
+            }
+
+            string html = RenderViewToString("VersionImprimibles", r);
+            string filename = "RecibosCombinados" + " " + r.First().Organizacion.RazonSocial + ".pdf";
+            string OutputPath = HtmlToPDF.Generate(html, filename, "RecibosCombinados/" + o.Id.ToString());
+            return OutputPath;
+        }
+
+        public ActionResult VersionImprimibles(IList<int> Ids, bool? opensDialog)
+        {
+            IList<Recibo> r = this.SueldosService.GetRecibos(Ids);
+            ViewBag.OpensDialog = opensDialog.HasValue ? opensDialog.Value : false;
+            return View(r);
+        }
+
 
     }
 }

@@ -1,0 +1,118 @@
+﻿@model Woopin.SGC.Model.Cooperativa.Asociado
+@{
+    Layout = null;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "completar-acta-alta" }))
+{
+@Html.AntiForgeryToken()
+@Html.ValidationSummary(true)
+@Html.HiddenFor(model => model.Id)
+    <fieldset class="form-horizontal">
+        <div class="form-group" style="">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.Label("Nro de Acta de Alta", new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.ActaAlta, new { @class = "textinput" })
+                </div>
+
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Presidente, new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.Presidente, new { @class = "textinput" })
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Secretario, new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.Secretario, new { @class = "textinput" })
+                </div>
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.Tesorero, new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.Tesorero, new { @class = "textinput" })
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.FechaFinalizacionAlta, new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.FechaFinalizacionAlta, new { @class = "textinput" })
+                </div>
+
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.FechaActaIngreso, new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.FechaActaIngreso, new { @class = "textinput", @readonly = "readonly", @id = "FechaActaIngresoCompletar" })
+                </div>
+
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.OtroPresente, new { @class = "col-md-12 horizontal-label" })
+                    @Html.TextBoxFor(model => model.OtroPresente, new { @class = "textinput" })
+                </div>
+
+            </div>
+            
+        </div>
+
+        <div class="button-pane clearfix">
+            <div class="button-set">
+                <a class="boton place-left" id="BtnSubmitCompletar" title="Guardar">
+                    <i class="fa fa-check-circle-o i-green"></i> Aceptar
+                </a>
+            </div>
+        </div>
+
+    </fieldset>
+}
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        <script type="text/javascript">
+            debugger;
+            $("#FechaFinalizacionAlta").datepicker({ dateFormat: 'dd/mm/yy 09:00' });
+            $("#FechaActaIngresoCompletar").val($("#FechaActaIngreso").val());
+
+            $(document).ready(function () {
+                //$('#BtnSubmitCompletar').FormSubmit({
+                //    enter: true,
+                //    data: {
+                //        Asociado: $("#completar-acta-alta").serializeFormJSON(),
+                //        Mes: $("#FechaActaIngreso").val().split("/")[1],
+                //        Anio: $("#FechaActaIngreso").val().split("/")[2]
+                //    },
+                //    success: function (data) {
+                //        if (data.Success) {
+                //            _OpenDialog.dialog('close');
+                //        }
+                //        else {
+                //            $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                //        }
+                //    }
+                //});
+
+
+                $(document).off("click", "#BtnSubmitCompletar").on("click", "#BtnSubmitCompletar", function () {
+                    debugger;
+                    //var Asociado = $('#completar-acta-alta').serializeFormJSON();
+
+                    var params = {
+                    url: '@Url.Action("CompletarActaAlta")',
+                        data: {
+                            Asociado: $("#completar-acta-alta").serializeFormJSON(),
+                            Mes: $("#FechaActaIngreso").val().split("/")[1],
+                            Anio: $("#FechaActaIngreso").val().split("/")[2]
+                        },
+                    success: function (ret) {
+                        if (ret.Success) {
+
+
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+
+                _OpenDialog.dialog('close');
+                });
+            });
+        </script>

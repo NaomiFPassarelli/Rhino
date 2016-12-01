@@ -1,0 +1,372 @@
+﻿@{
+    ViewBag.Title = "Aportes";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Listado de Aportes";
+}
+
+@*<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImportar" title="Importación">
+        <i class="fa fa-file-excel-o i-blue"></i>  Importar
+    </a>
+</div>*@
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    @*<a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>*@
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Aporte..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+
+
+    @*<div class="col-md-4">
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Abonado Teorico</label>
+            <span class="col-md-6" id="AbonadoTeorico">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Falta Abonar Teorico</label>
+            <span class="col-md-6" id="FaltanteTeorico">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Abonado Real</label>
+            <span class="col-md-6" id="AbonadoReal">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+        <span class="col-md-12">
+            <label class="col-md-6 text-right">Deuda Teorica</label>
+            <span class="col-md-6" id="DeudaTeorica">0</span>
+            <span class="clearfix"></span>
+        </span>
+
+    </div>*@
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+
+</div>
+
+
+<div class="table-container">
+    <table id="GridAportes"></table>
+    <div id="GridAportes_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+@*<div id="importar-Aportes-dialog"></div>*@
+@section Scripts{
+@Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+    var ListadoAportesDetalle = {
+
+        init: function () {
+            //$('#BtnImportar').bind('click', ListadoAportesDetalle.OpenImportar);
+            $('#BtnExportXLS').click(ListadoAportesDetalle.ExportToExcel);
+            /* Binding de los checkbox, contador de seleccionados */
+            $.SetupSelectCount('GridAportes');
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridAportes', ["Asociado.Nombre", "Asociado.Apellido"]);
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', function () {
+                ListadoAportesDetalle.LoadData();
+            });
+            $('#datestart').datepicker({ dateFormat: 'dd/mm/yy' });
+            $('#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+
+            /* Eliminar Seleccionados */
+            //$('#BtnDeleteSelected').click(ListadoAportesDetalle.OnEliminarSeleccionadosClick);
+
+
+            /* Eliminar de Grilla */
+            //$(document).on('click', '.BtnEliminar', ListadoAportesDetalle.EliminarAporte);
+            /* Editar de la grilla */
+            // Abre nueva ventana
+            //$(document).on('click', '.BtnEditar', ListadoAportesDetalle.EditarAporte);
+
+            /* Armo la grilla del ABM */
+            $('#GridAportes').CreateCommonGrid({
+                url: '@Url.Action("GetAll")',
+                serializeGridData: function (postData) {
+                    data = {
+                        start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                        end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                    }
+                    return JSON.stringify($.extend(postData, data));
+                },
+                //colNames: ['', '', 'Nombre', 'Apellido', 'Fecha Aporte', '', 'Cuotas Abonadas', 'Cuotas Restantes', 'Importe Cuota', 'Importe Real del Aporte', '', ''],
+                colNames: ['', '', 'Nombre', 'Apellido', 'Fecha Periodo', 'Nro Aporte', '', 'Cuotas Abonadas', 'Cuotas Restantes', 'Importe Cuota', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'Asociado.Nombre', index: 'Nombre', width: 25, align: "center", sortable: true },
+                    { name: 'Asociado.Apellido', index: 'Apellido', width: 30, align: "center", sortable: true },
+                    { name: 'FechaPeriodo', index: 'FechaAporte', width: 20, align: "center", formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                    { name: 'NumeroAbono', index: 'NumeroAbono', width: 30, align: "center", sortable: true },
+                    { name: 'Asociado.CantidadAbonos', index: 'CantidadAbonos', hidden: true, width: 20, align: "center" },
+                    { name: 'Asociado.CantidadAbonosEfectivos', index: 'CantidadAbonosEfectivos', width: 20, align: "center" },
+                    { name: 'Asociado.CantidadAbonosRestantes', index: 'CantidadAbonosRestantes', width: 20, align: "center", formatter: ListadoAportesDetalle.CantidadAbonosRestantes },
+                    { name: 'Asociado.ImporteAbono', index: 'ImporteAbono', width: 20, align: "center" },
+                    //{ name: 'Total', index: 'Total', width: 20, align: "center" },
+                    //{ name: 'TotalAbonado', index: 'TotalAbonado', width: 20, align: "center", formatter: ListadoAportesDetalle.TotalAbonado },
+                    //{ name: 'TotalRestante', index: 'TotalRestante', width: 20, align: "center", formatter: ListadoAportesDetalle.TotalRestante },
+                    //{ name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: FreeFormatter, formatoptions: { urlAction: '@Url.Action("DescargarPDF")', icon: 'fa fa-print i-blue', title: 'Descargar' }, align: "center" },
+                    { name: 'Delete', index: 'Delete', width: 15, sortable: false, formatter: ABM_Eliminar, align: "center" }
+                ],
+                sortname: 'Nombre',
+                sortorder: "asc",
+                footerrow: true,
+                gridComplete: function() {
+                    var $grid = $('#GridAportes');
+                    var colSumCantidadAbonosEfectivos = $grid.jqGrid('getCol', 'Asociado.CantidadAbonosEfectivos', false, 'sum');
+                    var colSumCantidadAbonosRestantes = $grid.jqGrid('getCol', 'Asociado.CantidadAbonosRestantes', false, 'sum');
+                    var colSumImporteAbono = $grid.jqGrid('getCol', 'Asociado.ImporteAbono', false, 'sum');
+                    var colSumTotal = $grid.jqGrid('getCol', 'Total', false, 'sum');
+                    debugger;
+                    //var colSumAbonado = $grid.jqGrid('getCol', 'TotalAbonado', false, 'sum');
+                    //var colSumRestante = $grid.jqGrid('getCol', 'TotalRestante', false, 'sum');
+                    //$grid.jqGrid('footerData', 'set', { 'Asociado.CantidadAbonosEfectivos': colSumCantidadAbonosEfectivos, 'Asociado.CantidadAbonosRestantes': colSumCantidadAbonosRestantes, 'Asociado.ImporteAbono': colSumImporteAbono, 'Total': colSumTotal, 'TotalAbonado': colSumAbonado, 'TotalRestante': colSumRestante, 'Nombre': "Footer" });
+                    $grid.jqGrid('footerData', 'set', { 'Asociado.CantidadAbonosEfectivos': colSumCantidadAbonosEfectivos, 'Asociado.CantidadAbonosRestantes': colSumCantidadAbonosRestantes, 'Asociado.ImporteAbono': colSumImporteAbono, 'Total': colSumTotal, 'Nombre': "Footer" });
+                },
+                pager: '#GridAportes_pager',
+            });
+            $('#GridAportes').trigger("reloadGrid");
+            $(document).on('click', '.BtnEliminar', ListadoAportesDetalle.OnEliminarSeleccionadosClick);
+            ListadoAportesDetalle.LoadData();
+            //ListadoAportesDetalle.CompletarHeader();
+        },
+
+        ValidateFilters: function () {
+            return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+        },
+
+        CompletarFiltros: function () {
+            $.CompletarFiltroDates($('#datestart'), $('#dateend'));
+        },
+
+        LoadData: function () {
+            ListadoAportesDetalle.CompletarFiltros();
+            valid = ListadoAportesDetalle.ValidateFilters();
+            if (!valid.success) {
+                return $.WarningDialog(valid.message);
+            }
+            //ListadoAportesDetalle.headNeedsReload = true;
+            ListadoAportesDetalle.ReloadGrid();
+        },
+
+        @*CompletarHeader: function(){
+
+            var params = {
+                url: '@Url.Action("LoadHeader")',
+                data: {
+                    //start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                    //end: $('#dateend').val() != '' ? $('#dateend').val() : null,
+                },
+                success: function (ret) {
+
+                        $('#AbonadoTeorico').html($.formatCurrency(ret.Data.ImporteAbono * ret.Data.CantidadAbonosEfectivos));
+                        $('#FaltanteTeorico').html($.formatCurrency((ret.Data.CantidadAbonos-ret.Data.CantidadAbonosEfectivos)*ret.Data.ImporteAbono));
+                    //$('#AbonadoReal').html($.formatCurrency(ret.Data.AbonadoReal));
+                    //$('#DeudaTeorica').html($.formatCurrency(ret.Data.DeudaTeorica));
+                }
+            }
+            $.AjaxPost(params);
+
+        },*@
+
+        OnEliminarSeleccionadosClick: function () {
+            var SelectedIds = $.GetSelectedRows('GridAportes');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea eliminar los Aportes seleccionadas?",
+                    function () { ListadoAportesDetalle.EliminarSeleccionados(SelectedIds) });
+            }
+        },
+
+        EliminarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Eliminar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridAportes').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        @*OpenImprimirGrid: function () {
+            debugger;
+            var SelectedIds = $("#GridAportes").jqGrid('getGridParam', '_index');
+
+            //var allRowsInGrid = $('#GridAportes').jqGrid('getRowData');
+
+            var params = {
+                url: '@Url.Action("ImprimirGrid")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        //$.each(SelectedIds, function (i, v) {
+                        //    $('#GridAportes').jqGrid('delRowData', v);
+                        //});
+                        //$('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+
+        },*@
+
+        @*OpenImportar: function () {
+                $('#importar-Aportes-dialog').OpenFormDialog('@Url.Action("Importar")', 'Importación de Aportes');
+            },*@
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridAportes', 'Listado de Aportes');
+        },
+
+        Refresh: function () {
+            ClearSelectedRows('GridAportes');
+            ListadoAportesDetalle.ReloadGrid();
+        },
+
+        ReloadGrid: function () {
+            $("#GridAportes").setGridParam({ datatype: 'json' });
+            $('#GridAportes').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        @*OnClickImprimir: function () {
+            var IdAsociado = $(this).closest('tr').attr('Id');
+            var params = {
+                url: '@Url.Action("Imprimir")',
+                data: { Aporte: IdAporte },
+                success: function (ret) {
+                    if (ret.Success) {
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },*@
+
+        CantidadAbonosRestantes: function (cellvalue, options, rowObject) {
+            if (rowObject.Nombre != "Footer") {
+                if (rowObject.Asociado != null)
+                {
+                    return parseFloat(rowObject.Asociado.CantidadAbonos) - parseFloat(rowObject.Asociado.CantidadAbonosEfectivos);                
+            }else if(rowObject["Asociado.CantidadAbonos"] != null && rowObject["Asociado.CantidadAbonosEfectivos"] != null)
+                {
+                    return parseFloat(rowObject["Asociado.CantidadAbonos"]) - parseFloat(rowObject["Asociado.CantidadAbonosEfectivos"]);                
+                }
+            } else {
+                return parseFloat(cellvalue);
+            }
+        },
+
+        //TotalAbonado: function (cellvalue, options, rowObject) {
+        //    if (rowObject.Nombre != "Footer") {
+        //        return parseFloat(rowObject.Asociado.ImporteAbono) * parseFloat(rowObject.Asociado.CantidadAbonosEfectivos);
+        //    } else {
+        //        return rowObject.TotalAbonado;
+        //    }
+        //},
+
+        //TotalRestante: function (cellvalue, options, rowObject) {
+        //    if (rowObject.Nombre != "Footer") {
+        //        return parseFloat(rowObject.Asociado.ImporteAbono) * (parseFloat(rowObject.Asociado.CantidadAbonos) - parseFloat(rowObject.Asociado.CantidadAbonosEfectivos));
+        //    } else {
+        //        return rowObject.TotalRestante;
+        //    }
+        //},
+        @*OnEliminarSeleccionadosClick: function(){
+                var SelectedIds = $.GetSelectedRows('GridAportes');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Aportes seleccionadas?",
+                        function () { ListadoAportesDetalle.EliminarSeleccionados(SelectedIds) });
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridAportes').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            EliminarAporte: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Aporte?",
+                    function () { ListadoAportesDetalle.EliminarSeleccionados(Id) });
+            },*@
+
+        @*OnBajarSeleccionadosClick: function(){
+            var SelectedIds = $.GetSelectedRows('GridAportes');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea Bajar los Aportes seleccionadas?",
+                    function () { ListadoAportesDetalle.BajarSeleccionados(SelectedIds) });
+            }
+        },
+
+        BajarSeleccionados: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Bajar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridAportes').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },*@
+
+        //BajarAporte: function () {
+        //    var Id = [$(this).closest('tr').attr('id')];
+        //    ConfirmationDialog.Show("Esta seguro que desea Bajar el Aporte?",
+        //        function () { ListadoAportesDetalle.BajarSeleccionados(Id) });
+        //},
+
+
+        @*EditarAporte: function () {
+            var Id = $(this).closest('tr').attr('id');
+            $.ShowLoader();
+            window.location = '@Url.Action("Editar")/' + Id;
+        }*@
+    }
+    $(document).ready(function () {
+        ListadoAportesDetalle.init();
+    });
+    </script>
+}

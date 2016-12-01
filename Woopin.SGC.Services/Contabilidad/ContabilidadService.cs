@@ -17,6 +17,7 @@ using Woopin.SGC.Repositories.Compras;
 using Woopin.SGC.Repositories.Contabilidad;
 using Woopin.SGC.Repositories.Ventas;
 using Woopin.SGC.Common.App.Logging;
+using Woopin.SGC.Model.Sueldos;
 
 namespace Woopin.SGC.Services
 {
@@ -119,6 +120,15 @@ namespace Woopin.SGC.Services
             asiento.Manualizado = false;
             return this.BuildAndSaveAsiento(asiento);
         }
+
+        public Asiento NuevoAsientoReciboSueldo(Recibo Recibo)
+        {
+            Asiento asiento = this.asientosHelper.AsientoReciboSueldo(Recibo);
+            asiento.Manualizado = false;
+            return this.BuildAndSaveAsiento(asiento);
+        }
+
+
         #endregion
 
         #region Asientos

@@ -1,0 +1,313 @@
+﻿@model IList<Woopin.SGC.Model.Cooperativa.Pago>
+@using Woopin.SGC.Common.Helpers
+@using Woopin.SGC.Model.Negocio
+@{
+    Layout = null;
+}
+@for (int i = 0; i < Model.Count(); ++i)
+{
+    //start for
+    <div style="width: 790px; background-color: #ffffff;padding-left:4px;">
+        <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+            <tr>
+                <td>
+                    <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                        <div>
+                            <div style="font-weight:bold;padding-top:7px;">@Model[i].Organizacion.RazonSocial - @Model[i].Organizacion.Categoria.Data</div>
+                            <div style="padding-top: 7px;">CUIT: @Model[i].Organizacion.CUIT</div>
+                            <div style="padding-top: 7px;">ANTICIPO DE RETORNO ANUAL (Art. 42 Ley 20.337)</div>
+                        </div>
+                    </div>
+                    <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                        <div style="padding-top:7px;">@Model[i].Organizacion.Domicilio</div>
+                        <div style="padding-top:7px;">@Model[i].Organizacion.CodigoPostal - @Model[i].Organizacion.Provincia.Nombre</div>
+                    </div>
+                    <div style="padding: 8px; width: 190px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                        <div style="padding-top:7px;">Original</div>
+                        <div style="padding-top:7px;">Legajo Asociado Nro: @Model[i].Asociado.Id</div>
+                        <div style="padding-top:7px;">Nro Recibo  @Model[i].NumeroReferencia</div>
+                        <div style="clear: both;"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:40px;">
+                <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 310px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Nombre y Apellido</td>
+                @*<td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Antiguedad Reconocida</td>*@
+                <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Documento</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;padding-top:7px;">@Model[i].Asociado.Nombre @Model[i].Asociado.Apellido </td>
+                @*<td style="padding-top:7px;">@Model[i].Asociado.FechaIngreso.ToString("dd/MM/yyyy")</td>*@
+                @if (Model[i].Asociado.CUIT != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.CUIT</td>
+                }
+                else if (Model[i].Asociado.DNI != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.DNI</td>
+                }
+                else if (Model[i].Asociado.CI != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.CI</td>
+                }
+                else if (Model[i].Asociado.LC != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.LC</td>
+                }
+                else if (Model[i].Asociado.LE != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.LE</td>
+                }
+
+            </tr>
+        </table>
+
+        <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:40px;">
+                <td style="font-weight: bold;  width: 300px;padding-right: 10px; padding-left: 10px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Periodo depositado</td>
+                <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 300px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Fecha de pago</td>
+            </tr>
+            <tr>
+                <td style="padding-top:7px;">@Model[i].FechaPeriodo</td>
+                <td style="padding-top:7px;">@Model[i].FechaPago</td>
+                <td style="clear: both;"></td>
+            </tr>
+        </table>
+
+
+
+
+
+        <table style="padding: 10px; max-height: 500px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:50px;">
+                <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 510px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descripción</td>
+                <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Anticipo</td>
+                <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
+            </tr>
+            @foreach (var item in Model[i].AdicionalesPago)
+            {
+                <tr style="margin-top: 10px;border: 1px solid #000;font-size:12px;height:40px;">
+                    <td style="width: 510px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Concepto.Descripcion</td>
+                    @if ((int)item.Concepto.TipoConcepto == 0)
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                    }
+                    else
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;"></td>
+                    }
+                    @if ((int)item.Concepto.TipoConcepto == 1)
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                    }
+                    else
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;"></td>
+                    }
+                    @*@if ((int)item.Concepto.TipoConcepto == 2)
+                        {
+                            <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                        }
+                        else
+                        {
+                            <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;"></td>
+                        }*@
+
+                </tr>
+            }
+
+        </table>
+        <table style="padding: 10px; height: 80px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:15px;">
+                <td style="font-weight: bold; height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Anticipo</td>
+                <td style="font-weight: bold;height:15px; width: 170px;padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuentos</td>
+                <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;background-color:#f3f3f3;">Total</td>
+            </tr>
+            <tr style="border: 1px solid #000;height:40px;">
+                <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model[i].TotalAnticipo.ToStringArCurrency()</td>
+                <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model[i].TotalDescuentos.ToStringArCurrency()</td>
+                <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;">@Model[i].Total.ToStringArCurrency()</td>
+            </tr>
+        </table>
+        <table style="width: 790px;border:1px solid #000;height: 50px;margin-left:2px;padding:5px;font-size:12px;">
+            <tr>
+                <td>
+                    <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                        Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model[i].Total) PESOS
+                    </div>
+                    <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                        en concepto de mis haberes correspondientes al periodo arriba indicado y según la presente
+                        liquidación, dejando constancia de haber recibido un duplicado de este recibo
+                    </div>
+                </td>
+                <td style="border-left:1px solid #000; width: 150px; float: left; min-height:110px; position: relative;padding:0 10px;vertical-align:top; display:inline-block;">
+                    Firma del Asociado
+                </td>
+
+            </tr>
+        </table>
+
+    </div>
+
+    <p style="page-break-after:always;"></p>
+
+
+    <div style="width: 790px; background-color: #ffffff;padding-left:4px;">
+        <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+            <tr>
+                <td>
+                    <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                        <div>
+                            <div style="font-weight:bold;padding-top:7px;">@Model[i].Organizacion.RazonSocial - @Model[i].Organizacion.Categoria.Data</div>
+                            <div style="padding-top: 7px;">CUIT: @Model[i].Organizacion.CUIT</div>
+                            <div style="padding-top: 7px;">ANTICIPO DE RETORNO ANUAL (Art. 42 Ley 20.337)</div>
+                        </div>
+                    </div>
+                    <div style="padding: 8px; width: 285px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                        <div style="padding-top:7px;">@Model[i].Organizacion.Domicilio</div>
+                        <div style="padding-top:7px;">@Model[i].Organizacion.CodigoPostal - @Model[i].Organizacion.Provincia.Nombre</div>
+                    </div>
+                    <div style="padding: 8px; width: 190px; float: left; position: relative; min-height: 1px; border: 2px solid #000; ">
+                        <div style="padding-top:7px;">Duplicado</div>
+                        <div style="padding-top:7px;">Legajo Asociado Nro: @Model[i].Asociado.Id</div>
+                        <div style="padding-top:7px;">Nro Recibo  @Model[i].NumeroReferencia</div>
+                        <div style="clear: both;"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:40px;">
+                <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 310px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Nombre y Apellido</td>
+                @*<td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 100px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Antiguedad Reconocida</td>*@
+                <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 150px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Documento</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;padding-top:7px;">@Model[i].Asociado.Nombre @Model[i].Asociado.Apellido </td>
+                @*<td style="padding-top:7px;">@Model[i].Asociado.FechaIngreso.ToString("dd/MM/yyyy")</td>*@
+                @if (Model[i].Asociado.CUIT != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.CUIT</td>
+                }
+                else if (Model[i].Asociado.DNI != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.DNI</td>
+                }
+                else if (Model[i].Asociado.CI != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.CI</td>
+                }
+                else if (Model[i].Asociado.LC != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.LC</td>
+                }
+                else if (Model[i].Asociado.LE != null)
+                {
+                    <td style="padding-top:7px;">@Model[i].Asociado.LE</td>
+                }
+
+            </tr>
+        </table>
+
+        <table style="width: 790px;border:1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:40px;">
+                <td style="font-weight: bold;  width: 300px;padding-right: 10px; padding-left: 10px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Periodo depositado</td>
+                <td style="font-weight: bold; padding-right: 10px; padding-left: 10px; width: 300px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Fecha de pago</td>
+            </tr>
+            <tr>
+                <td style="padding-top:7px;">@Model[i].FechaPeriodo</td>
+                <td style="padding-top:7px;">@Model[i].FechaPago</td>
+                <td style="clear: both;"></td>
+            </tr>
+        </table>
+
+
+
+
+
+        <table style="padding: 10px; max-height: 500px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:50px;">
+                <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 510px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descripción</td>
+                <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Anticipo</td>
+                <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
+            </tr>
+            @foreach (var item in Model[i].AdicionalesPago)
+            {
+                <tr style="margin-top: 10px;border: 1px solid #000;font-size:12px;height:40px;">
+                    <td style="width: 510px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Concepto.Descripcion</td>
+                    @if ((int)item.Concepto.TipoConcepto == 0)
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                    }
+                    else
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;"></td>
+                    }
+                    @if ((int)item.Concepto.TipoConcepto == 1)
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                    }
+                    else
+                    {
+                        <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;"></td>
+                    }
+                    @*@if ((int)item.Concepto.TipoConcepto == 2)
+                        {
+                            <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;">@item.Total.ToString("C")</td>
+                        }
+                        else
+                        {
+                            <td style="min-height: 1px; padding-right: 15px; padding-left: 15px; width: 110px;border-right: 1px solid #000;"></td>
+                        }*@
+
+                </tr>
+            }
+
+        </table>
+        <table style="padding: 10px; height: 80px;width: 790px; border: 1px solid #000;margin-left:2px;font-size:12px;">
+            <tr style="border: 1px solid #000;height:15px;">
+                <td style="font-weight: bold; height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Anticipo</td>
+                <td style="font-weight: bold;height:15px; width: 170px;padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuentos</td>
+                <td style="font-weight: bold;height:15px; padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;background-color:#f3f3f3;">Total</td>
+            </tr>
+            <tr style="border: 1px solid #000;height:40px;">
+                <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model[i].TotalAnticipo.ToStringArCurrency()</td>
+                <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-right: 1px solid #000;border-bottom: 1px solid #000;">@Model[i].TotalDescuentos.ToStringArCurrency()</td>
+                <td style=" padding-right: 15px; padding-left: 15px; width: 170px;border-bottom: 1px solid #000;">@Model[i].Total.ToStringArCurrency()</td>
+            </tr>
+        </table>
+        <table style="width: 790px;border:1px solid #000;height: 50px;margin-left:2px;padding:5px;font-size:12px;">
+            <tr>
+                <td>
+                    <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                        Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model[i].Total) PESOS
+                    </div>
+                    <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
+                        en concepto de mis haberes correspondientes al periodo arriba indicado y según la presente
+                        liquidación, dejando constancia de haber recibido un duplicado de este recibo
+                    </div>
+                </td>
+                <td style="border-left:1px solid #000; width: 150px; float: left; min-height:110px; position: relative;padding:0 10px;vertical-align:top; display:inline-block;">
+                    Firma del Asociado
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <p style="page-break-after:always;"></p>
+
+
+
+
+
+
+
+
+    //end for
+}

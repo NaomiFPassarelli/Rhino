@@ -10,9 +10,9 @@ function SelectCheckboxFormatter(cellvalue, options, rowObject)
 
 function Drop_Number(cellvalue, options, rowObject)
 {
-    var CantidadCoutasRestantes = parseFloat(rowObject.CantidadCuotas) - parseFloat(rowObject.CantidadCuotasAbonadas);
+    var CantidadRestantes = parseFloat(rowObject.CantidadAbonos) - parseFloat(rowObject.CantidadAbonosEfectivos);
     var drop = '<select id=' + options.colModel.formatoptions.nameSelect + ' name=' + options.colModel.formatoptions.nameSelect + ' onchange=changeselected(this,this.value);>';
-    for (var i = 1; i <= CantidadCoutasRestantes; i++)
+    for (var i = 1; i <= CantidadRestantes; i++)
     {
         if (i == 1) {
             drop += '<option value=' + i + ' selected="selected">' + i + '</option>';
@@ -26,8 +26,11 @@ function Drop_Number(cellvalue, options, rowObject)
 
 function changeselected(e, value)
 {
-    $($("select#"+ e.name + " option")).removeAttr("selected");
-    $($("select#" + e.name + " option")[--value]).attr("selected", "selected");
+    debugger;
+    //$($("select#" + e.name + "class=" + $(e).attr("class") + " option")).removeAttr("selected");
+    //$($("select#" + e.name + "class=" + $(e).attr("class") + " option")[--value]).attr("selected", "selected");
+    $(e.childNodes).removeAttr("selected");
+    $($(e.childNodes)[--value]).attr("selected", "selected");
 }
 
 /*
@@ -113,11 +116,13 @@ function AccionesFacturasFormatter(cellvalue, options, rowObject) {
     return ret;
 }
 
-function DetalleFormatter(cellvalue, options, rowObject) {
+function FreeFormatter(cellvalue, options, rowObject) {
     var ret = '';
     var url = options.colModel.formatoptions.urlAction + "/" + rowObject.Id;
-    ret += '<a class="boton boton-i BtnVerNuevaVentana" title="Detalle Nueva Ventana" target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="fa fa-search-plus i-blue"></i></a>';
-    //ret += '<a class="boton boton-i BtnVerDialog" title="Detalle Dialogo" data-Id="' + rowObject.Id + '"><i class="fa fa-files-o i-green"></i></a>';
+    ret += '<a class="boton boton-i BtnVerNuevaVentana" title=';
+    ret += options.colModel.formatoptions.title;
+    ret += ' target="_blank" data-Id="' + rowObject.Id + '" href="' + url + '"><i class="';
+    ret += options.colModel.formatoptions.icon + '"></i></a>';
     return ret;
 }
 
@@ -127,9 +132,6 @@ function formatterNumberToString(cellvalue,opt,row)
 }
 
 function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
-    if (rowObject.Adicional_Id >= 6 && rowObject.Adicional_Id <= 18) {
-        debugger;
-    }
     if (rowObject.TipoLiquidacion == "Footer") {
         return cellvalue;
     }
@@ -162,38 +164,55 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
         if (importe == 0) {
             if (/*IdAdicional >= 3007 && IdAdicional <= 3012 || */ (ValorMin != null && ($.isNumeric(ValorMin)) && ValorSobre != null && ($.isNumeric(ValorSobre)))) {
                 //es util para diferencia de obra socia, diferencia de cuota sindical
-                debugger;
-                if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && (-1 * ValorSobre >= ValorMin)){
-                    //devuelvo diferencia sindical anterior
-                    importe = -1 * Recibo.ValorAnteriorDiferenciaSindical;
-                    Suma = true;
-                } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) < Recibo.ValorAnteriorDiferenciaSindical)) {
-                    //devuelvo diferencia sindical anterior
-                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
-                    importe *= -1;
-                    Suma = true;
-                } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) > Recibo.ValorAnteriorDiferenciaSindical)) {
-                    //no devuelve hay diferencia nueva
-                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
-                } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && (-1 * ValorSobre >= ValorMin)) {
-                    //devuelvo diferencia ObraSocial anterior
-                    importe = -1 * Recibo.ValorAnteriorDiferenciaObraSocial;
-                    Suma = true;
-                } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) < Recibo.ValorAnteriorDiferenciaObraSocial)) {
-                    //devuelvo diferencia ObraSocial anterior
-                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
-                    importe *= -1;
-                    Suma = true;
-                } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(valorSobre)) > Recibo.ValorAnteriorDiferenciaObraSocial)) {
-                    //no devuelve hay diferencia nueva
-                    importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
-                } else {
-                    importeMin = parseFloat(ValorMin) + parseFloat(ValorSobre); // porque el valorSobre esta en negativo
-                    if (importeMin > 0) {
-                        importe = importeMin;
+                if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3012) {
+                    if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && (-1 * ValorSobre >= ValorMin)) {
+                        //devuelvo diferencia sindical anterior
+                        importe = -1 * Recibo.ValorAnteriorDiferenciaSindical;
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) < Recibo.ValorAnteriorDiferenciaSindical)) {
+                        //devuelvo diferencia sindical anterior
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) > Recibo.ValorAnteriorDiferenciaSindical)) {
+                        //no devuelve hay diferencia nueva
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
+                    } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && (-1 * ValorSobre >= ValorMin)) {
+                        //devuelvo diferencia ObraSocial anterior
+                        importe = -1 * Recibo.ValorAnteriorDiferenciaObraSocial;
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) < Recibo.ValorAnteriorDiferenciaObraSocial)) {
+                        //devuelvo diferencia ObraSocial anterior
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) > Recibo.ValorAnteriorDiferenciaObraSocial)) {
+                        //no devuelve hay diferencia nueva
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
+                    } else {
+                        //no se llego al minimo
+                        importeMin = parseFloat(ValorMin) + parseFloat(ValorSobre); // porque el ValorSobre esta en negativo
+                        if (importeMin > 0) {
+                            importe = importeMin;
+                        }
+                        //si es mayor a cero es porque ya se saldo y no hay que devolver ni agregar diferencia
                     }
+
                 }
                 
+            } else if (ValorSobre != null && ($.isNumeric(ValorSobre)) && Porcentaje != null && ($.isNumeric(Porcentaje)) && rowObject.Unidades != null && ($.isNumeric(rowObject.Unidades))) {
+                //es util para horas extras
+                importe = (rowObject.Unidades * ValorSobre) * Porcentaje / 100;
             } else if (ValorSobre != null && ($.isNumeric(ValorSobre)) && rowObject.Unidades != null && ($.isNumeric(rowObject.Unidades))) {
                 //es util para sueldo, dias, horas
                 importe = rowObject.Unidades * ValorSobre;
@@ -206,8 +225,18 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
         }
         if(importe != null && ($.isNumeric(importe)))
         {
-            importe = parseFloat(importe.toFixed(2));
+            importe = parseFloat(importe).toFixed(2);
         }
+
+        //TODO hacer este cambio y probarlo
+        //if (importe > 0) {
+        //    importeSuma = importe;
+        //    importeResta = -1 * importe;
+        //} else {
+        //    importeResta = importe;
+        //    importeSuma = -1 * importe;
+        //}
+
         importeSuma = importe;
         if (importeSuma > 0) {
             importeResta = "-" + importeSuma;
@@ -243,6 +272,8 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
                     valorPremioAsistenciaPerfecta = importe;
                     break;
                 case 1006:
+                case 5012:
+                case 5013:
                     valorRefrigerio = importe;
                     break;
                 case 4007:
@@ -279,11 +310,192 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
     }
 }
 
-function Action_Aceptar(cellvalue, options, rowObject)
-{
-    return "<a class='boton boton-i place-right RealizarPago' title='RealizarPago'><span><i class='fa fa-check-circle-o'></i></span></a>";
+
+function formatterPago_AntiDesc(cellvalue, options, rowObject) {
+    if (rowObject.Adicional_Id >= 6 && rowObject.Adicional_Id <= 18) {
+    }
+    if (rowObject.TipoLiquidacion == "Footer") {
+        return cellvalue;
+    }
+
+    var TipoLiquidacion;
+    var ValorSobre;
+    var Porcentaje;
+    var Suma;
+    var importe = 0;
+    var ValorMin = 0;
+    if (rowObject.Adicional != undefined && rowObject.Adicional != null) {
+        //Es vista Detalle, sino es Nuevo
+        TipoLiquidacion = String(rowObject.Adicional.TipoLiquidacion);
+        importe = rowObject.Total; //Es sobre el AdicionalesRecibo
+        Porcentaje = rowObject.Adicional.Porcentaje;
+        Suma = rowObject.Adicional.Suma;
+    } else {
+        TipoLiquidacion = String(rowObject.TipoLiquidacion);
+        ValorSobre = rowObject.Valor;
+        Porcentaje = rowObject.Porcentaje;
+        Suma = rowObject.Suma;
+        ValorMin = rowObject.ValorMin;
+    }
+    //rowObject.TipoLiquidacion = String(rowObject.TipoLiquidacion);
+    if ((options.colModel.index == "Remunerativo" && TipoLiquidacion != "0")
+        || (options.colModel.index == "NoRemunerativo" && TipoLiquidacion != "1")
+        || (options.colModel.index == "Descuento" && TipoLiquidacion != "2")) {
+        return "";
+    } else {
+        if (importe == 0) {
+            if (/*IdAdicional >= 3007 && IdAdicional <= 3012 || */ (ValorMin != null && ($.isNumeric(ValorMin)) && ValorSobre != null && ($.isNumeric(ValorSobre)))) {
+                //es util para diferencia de obra socia, diferencia de cuota sindical
+                if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3012) {
+                    if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && (-1 * ValorSobre >= ValorMin)) {
+                        //devuelvo diferencia sindical anterior
+                        importe = -1 * Recibo.ValorAnteriorDiferenciaSindical;
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) < Recibo.ValorAnteriorDiferenciaSindical)) {
+                        //devuelvo diferencia sindical anterior
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3009 && Recibo.ValorAnteriorDiferenciaSindical != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) > Recibo.ValorAnteriorDiferenciaSindical)) {
+                        //no devuelve hay diferencia nueva
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaSindical);
+                    } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && (-1 * ValorSobre >= ValorMin)) {
+                        //devuelvo diferencia ObraSocial anterior
+                        importe = -1 * Recibo.ValorAnteriorDiferenciaObraSocial;
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) < Recibo.ValorAnteriorDiferenciaObraSocial)) {
+                        //devuelvo diferencia ObraSocial anterior
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
+                        if (importe < 0) {
+                            importe *= -1;
+                        }
+                        Suma = true;
+                    } else if (rowObject.Adicional_Id >= 3010 && rowObject.Adicional_Id <= 3012 && Recibo.ValorAnteriorDiferenciaObraSocial != 0 && ((-1 * ValorSobre < ValorMin && parseFloat(ValorMin) + parseFloat(ValorSobre)) > Recibo.ValorAnteriorDiferenciaObraSocial)) {
+                        //no devuelve hay diferencia nueva
+                        importe = parseFloat(ValorMin) + parseFloat(ValorSobre) + parseFloat(Recibo.ValorAnteriorDiferenciaObraSocial);
+                    } else {
+                        //no se llego al minimo
+                        importeMin = parseFloat(ValorMin) + parseFloat(ValorSobre); // porque el ValorSobre esta en negativo
+                        if (importeMin > 0) {
+                            importe = importeMin;
+                        }
+                        //si es mayor a cero es porque ya se saldo y no hay que devolver ni agregar diferencia
+                    }
+
+                }
+
+            } else if (ValorSobre != null && ($.isNumeric(ValorSobre)) && rowObject.Unidades != null && ($.isNumeric(rowObject.Unidades))) {
+                //es util para sueldo, dias, horas
+                importe = rowObject.Unidades * ValorSobre;
+            } else if (ValorSobre != null && ($.isNumeric(ValorSobre)) && Porcentaje != null && ($.isNumeric(Porcentaje))) {
+                //es util para antiguedad, cuota sindical, obra social, ley
+                importe = ValorSobre * Porcentaje / 100;
+            } else {
+                importe = ValorSobre;
+
+            }
+        }
+        if (importe != null && ($.isNumeric(importe))) {
+            importe = parseFloat(importe).toFixed(2);
+        }
+
+        //TODO hacer este cambio y probarlo
+        //if (importe > 0) {
+        //    importeSuma = importe;
+        //    importeResta = -1 * importe;
+        //} else {
+        //    importeResta = importe;
+        //    importeSuma = -1 * importe;
+        //}
+
+        importeSuma = importe;
+        if (importeSuma > 0) {
+            importeResta = "-" + importeSuma;
+        } else {
+            importeResta = importeSuma;
+            //porque en la vista Detalle ya viene con el negativo
+        }
+
+        //switch (rowObject.Adicional_Id && (rowObject.Adicional == undefined || rowObject.Adicional == null))
+        if ((rowObject.Adicional == undefined || rowObject.Adicional == null)) {
+            switch (rowObject.Adicional_Id) {
+                //TODO SQL
+                case 6: //antiguedad
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                case 16:
+                case 17:
+                case 18:
+                    valorAntiguedad = importe;
+                    break;
+                case 1004: //premio asistencia y puntualidad
+                    valorPremioAsistenciaYPuntualidad = importe;
+                    break;
+                case 1005: //premio asistencia perfecta 
+                    valorPremioAsistenciaPerfecta = importe;
+                    break;
+                case 1006:
+                case 5012:
+                case 5013:
+                    valorRefrigerio = importe;
+                    break;
+                case 4007:
+                    valorHorasExtras = importe;
+                    break;
+                case 4008:
+                case 4009:
+                    valorHorasExtras = importe;
+                    break;
+                case 9011:
+                    valorDiaCortador = importe;
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        return ((Suma == "true" || Suma == true) ? importeSuma : importeResta);
+
+
+        //TODO TIENE SENTIDO ESTE SWITCH?
+        //switch (rowObject.TipoLiquidacion) {
+        //    case "0":
+        //        return (rowObject.Suma == "true" ? importeSuma : importeResta);
+        //        break;
+        //    case "1":
+        //        return (rowObject.Suma == "true" ? importeSuma : importeResta);
+        //        break;
+        //    case "2":
+        //        return (rowObject.Suma == "true" ? importeSuma : importeResta);
+        //        break;
+        //}
+    }
 }
 
+
+
+function Action_Aceptar(cellvalue, options, rowObject)
+{
+    return "<a class='boton boton-i place-right Realizar' title='Realizar'><span><i class='fa fa-check-circle-o'></i></span></a>";
+}
+
+//TODO creo que no lo usa nadie
 function Action_Imprimir(cellvalue, options, rowObject)
 {
         var ret = '';
@@ -297,7 +509,6 @@ function Action_Imprimir(cellvalue, options, rowObject)
 }
 
 //function formatterRecibo_Adicionales(cellvalue, options, rowObject) {
-//    debugger;
 
 //    Adicional_Adicionales = new Array();
 //    //New = { "Sobre": [ret.Data_AAs] };
