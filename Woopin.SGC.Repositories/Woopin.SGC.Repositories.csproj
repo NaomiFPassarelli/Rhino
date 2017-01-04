@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="BaseSecuredRepository.cs" />
     <Compile Include="BaseRepository.cs" />
+    <Compile Include="Common\Implementacion\DireccionRepository.cs" />
     <Compile Include="Common\Implementacion\ComboItemRepository.cs" />
     <Compile Include="Common\Implementacion\LocalizacionRepository.cs" />
     <Compile Include="Common\Implementacion\OrganizacionRepository.cs" />
@@ -73,11 +74,12 @@
     <Compile Include="Common\Implementacion\SucursalRepository.cs" />
     <Compile Include="Common\Implementacion\MonedaRepository.cs" />
     <Compile Include="Common\Implementacion\LocalidadRepository.cs" />
+    <Compile Include="Common\Interface\IDireccionRepository.cs" />
     <Compile Include="Common\Interface\IComboItemRepository.cs" />
     <Compile Include="Common\Interface\ILocalidadRepository.cs" />
     <Compile Include="Common\Interface\IOrganizacionRepository.cs" />
     <Compile Include="Common\Interface\IComboRepository.cs" />
-    <Compile Include="Common\Interface\ICategoriaIVAReository.cs" />
+    <Compile Include="Common\Interface\ICategoriaIVARepository.cs" />
     <Compile Include="Common\Interface\IGeneralRepository.cs" />
     <Compile Include="Common\Interface\IMonedaRepository.cs" />
     <Compile Include="Common\Interface\ILogRepository.cs" />

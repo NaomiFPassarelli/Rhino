@@ -15,13 +15,13 @@ namespace Woopin.SGC.Model.Compras
     public class ComprobanteCompra : ISecuredEntity
     {
         public virtual int Id { get; set; }
-
+        [DisplayName("N° Referencia")]
         public virtual int NumeroReferencia { get; set; }
 
         [Required(ErrorMessage = "Es Necesario el Proveedor")]
         [DoNotValidateOnlyId]
         public virtual Proveedor Proveedor { get; set; }
-
+        [DisplayName("Observación")]
         public virtual string Observacion { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Tipo de Comprobante")]
@@ -31,7 +31,6 @@ namespace Woopin.SGC.Model.Compras
         [Required(ErrorMessage = "La Fecha es requerida")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/mm/yyyy}", ApplyFormatInEditMode = true)]
-        [DisplayName("Fecha")]
         public virtual DateTime Fecha { get; set; }
 
         [Required(ErrorMessage = "La Fecha es requerida")]
@@ -40,6 +39,7 @@ namespace Woopin.SGC.Model.Compras
         [DisplayName("Fecha Contable")]
         public virtual DateTime FechaContable { get; set; }
         public virtual DateTime FechaVencimiento { get; set; }
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
 
         [DisplayName("Condición de Compra")]

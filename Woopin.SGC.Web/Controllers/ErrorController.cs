@@ -16,31 +16,31 @@ namespace Woopin.SGC.Web.Controllers
         public ViewResult Index()
         {
             Response.StatusCode = 400;
-            return View("Error");
+            return View("Index");
         }
         //Lo dejo pero es innecesario porque si pasa esto salta al login directo 
         public ViewResult Unauthorized()
         {
             Response.StatusCode = 401;
-            return View("Error");
+            return View("Index");
         }
 
         public ViewResult Forbidden()
         {
             Response.StatusCode = 403;
-            return View("Error");
+            return View("Index");
         }
 
         public ViewResult NotFound()
         {
             Response.StatusCode = 404;
-            return View("Error");
+            return View("Index");
         }
 
         public ViewResult InternalServerError()
         {
             Response.StatusCode = 500;
-            return View("Error");
+            return View("Index");
         }
     }
 }

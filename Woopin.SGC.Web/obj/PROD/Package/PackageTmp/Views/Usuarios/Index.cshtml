@@ -100,7 +100,7 @@
         /* Armo la grilla del ABM */
         $('#GridUsuarios').CreateCommonGrid({
             url: '@Url.Action("GetAllUsuariosByOrganizacion")',
-            colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', 'Username', 'Ultimo Acceso',''],
+            colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Nombre', 'Username', 'Último Acceso',''],
             colModel: [
                 { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
                 { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },

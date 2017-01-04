@@ -27,6 +27,8 @@ namespace Woopin.SGC.Model.Tesoreria
 
         [DisplayName("Fecha Emisión")]
         public virtual DateTime Fecha { get; set; }
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
 
         [DoNotValidateOnlyId]
@@ -39,7 +41,7 @@ namespace Woopin.SGC.Model.Tesoreria
         [DoNotValidate]
         public virtual Proveedor Proveedor { get; set; }
         public virtual EstadoRetencion Estado { get; set; }
-
+        [DisplayName("Número de Retención")]
         public virtual string NumeroRetencion { get; set; } //esto es para el Reporte de ComprobantesRetenciones
 
         [DoNotValidate]

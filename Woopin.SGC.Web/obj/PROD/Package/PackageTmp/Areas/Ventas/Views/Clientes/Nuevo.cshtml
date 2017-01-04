@@ -14,7 +14,6 @@
         <div class="form-group">
             <div class="col-md-10">
                 <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Cliente</a>
-                <a class="boton place-left " id="BtnSubmitAndBack"><i class="fa fa-plus-circle i-green"></i> Crear y Volver</a>
                 <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
             </div>
         </div>
@@ -167,6 +166,120 @@
                 @Html.ValidationMessageFor(model => model.CondicionVentaContratada, null, new { @class = "help-block" })
             </div>
         </div>
+
+
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <div id="DivAvanzado">
+                <a class="boton place-left " id="BtnAddAvanzado">
+                    <i class="fa fa-plus-circle i-green"></i> Agregar Direccion de Envio
+                </a>
+            </div>
+        </div>
+
+        <div id="DireccionEntrega" >
+
+            @*<div class="form-group @if (!ViewData.ModelState.IsValidField("Calle"))
+                        { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().Calle, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.DireccionesEntrega.First().Calle, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Calle, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.DireccionesEntrega.First().Numero, new { @class = "col-md-6 horizontal-label" })
+                    <div class="col-md-6 input-container">
+                        @Html.TextBoxFor(model => model.DireccionesEntrega.First().Numero, new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Numero, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-2" style="padding:0;">
+                    @Html.LabelFor(model => model.DireccionesEntrega.First().Departamento, new { @class = "col-md-7 horizontal-label" })
+                    <div class="col-md-5 input-container">
+                        @Html.TextBoxFor(model => model.DireccionesEntrega.First().Departamento, new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Departamento, null, new { @class = "help-block" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    @Html.LabelFor(model => model.DireccionesEntrega.First().Piso, new { @class = "col-md-6 horizontal-label" })
+                    <div class="col-md-6 input-container">
+                        @Html.TextBoxFor(model => model.DireccionesEntrega.First().Piso, new { @class = "textinput" })
+                        @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Piso, null, new { @class = "help-block" })
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group @if (!ViewData.ModelState.IsValidField("CodigoPostal"))
+                    { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().CodigoPostal, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-3 input-container">
+                    @Html.TextBoxFor(model => model.DireccionesEntrega.First().CodigoPostal, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().CodigoPostal, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group @if (!ViewData.ModelState.IsValidField("Localidad"))
+                    { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().Localidad, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.DropDownListFor(model => model.DireccionesEntrega.First().Localidad.Id, (IEnumerable<SelectListItem>)ViewBag.Localidades, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Localidad, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group @if (!ViewData.ModelState.IsValidField("Localizacion"))
+                    { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().Localizacion, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.DropDownListFor(model => model.DireccionesEntrega.First().Localizacion.Id, (IEnumerable<SelectListItem>)ViewBag.Localizaciones, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Localizacion, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group @if (!ViewData.ModelState.IsValidField("Pais"))
+                    { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().Pais, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.DropDownListFor(model => model.DireccionesEntrega.First().Pais.Id, (IEnumerable<SelectListItem>)ViewBag.Paises, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Pais, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group @if (!ViewData.ModelState.IsValidField("Telefono"))
+                    { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().Telefono, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-3 input-container">
+                    @Html.TextBoxFor(model => model.DireccionesEntrega.First().Telefono, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Telefono, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group @if (!ViewData.ModelState.IsValidField("Email"))
+                    { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().Email, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.DireccionesEntrega.First().Email, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Email, null, new { @class = "help-block" })
+                </div>
+            </div>
+
+            <div class="form-group @if (!ViewData.ModelState.IsValidField("Predeterminado"))
+                    { @Html.Raw("has-error");}">
+                @Html.LabelFor(model => model.DireccionesEntrega.First().Email, new { @class = "col-md-2 horizontal-label" })
+                <div class="col-md-6 input-container">
+                    @Html.TextBoxFor(model => model.DireccionesEntrega.First().Email, new { @class = "textinput" })
+                    @Html.ValidationMessageFor(model => model.DireccionesEntrega.First().Email, null, new { @class = "help-block" })
+                </div>
+            </div>*@
+
+            </div>
+
+
     </fieldset>
 }
 <input type="hidden" id="needrefresh" value="0">
@@ -174,21 +287,29 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/select2")
     @Styles.Render("~/Scripts/select2/select2.css")
-@Scripts.Render("~/Scripts/jquery.mask.min.js")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
     <script type="text/javascript">
         $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion del Cliente. Si presiona Aceptar, todos los cambios realizados se perderan.');
         $(document).ready(function () {
-            $('#CondicionVentaEstadistica').attr('data-val-number', 'La Condicion de Venta Estadistica debe ser un numero');
-            $('#CondicionVentaContratada').attr('data-val-number', 'La Condicion de Venta Contratada debe ser un número');
-            $('form').reParseForm();
-            $('#CUIT').mask('99-99999999-9');
-            $('#Master_Id').prepend('<option></option>');
-            $('#Master_Id').select2(
-                {
-                    placeholder: "Si Corresponde, Seleccione Un Grupo Economico",
-                    minimumInputLength: 0,
-                    ajax: { 
-                        url: "@Url.Action("GetCombo","GrupoEconomico")",
+            Cliente.init();
+        });
+
+        var Cliente = {
+            init: function () {
+                debugger;
+                $(document).off('click', '#BtnAddAvanzado').on('click', '#BtnAddAvanzado', Cliente.AddDireccionEnvio);
+            
+                $('#CondicionVentaEstadistica').attr('data-val-number', 'La Condicion de Venta Estadistica debe ser un numero');
+                $('#CondicionVentaContratada').attr('data-val-number', 'La Condicion de Venta Contratada debe ser un número');
+                $('form').reParseForm();
+                $('#CUIT').mask('99-99999999-9');
+                $('#Master_Id').prepend('<option></option>');
+                $('#Master_Id').select2(
+                    {
+                        placeholder: "Si Corresponde, Seleccione Un Grupo Economico",
+                        minimumInputLength: 0,
+                        ajax: { 
+                            url: "@Url.Action("GetCombo","GrupoEconomico")",
                         dataType: 'json',
                         params: { type: "POST" },
                         data: function (t, p) {
@@ -199,40 +320,138 @@
                         }
                     }
                 });
-            $('.BtnClearSelect2').on('click', function () {
-                var IdClear = $(this).attr('data-rel');
-                ClearSelect2(IdClear);
-            });
+                $('.BtnClearSelect2').on('click', function () {
+                    var IdClear = $(this).attr('data-rel');
+                    Cliente.ClearSelect2(IdClear);
+                });
 
-            function ClearSelect2(IdClear, IdClearInput) {
+                $('#BtnSubmit').on('click', Cliente.Save);
+
+                @*$('#BtnSubmit').FormSubmit({
+                    enter: true,
+                    success: function (data) {
+                        if (data.Success) {
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")'
+                        }
+                        else {
+                            $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                        }
+                    }
+                });
+                *@
+            },
+
+            ClearSelect2: function(IdClear, IdClearInput) {
                 $("#" + IdClear).select2("val", "");
-            };
+            },
 
-            $('#BtnSubmit').FormSubmit({
-                enter: true,
-                success: function (data) {
-                    if (data.Success) {
-                        window.onbeforeunload = null;
-                        $.ShowLoader();
-                        window.location = '@Url.Action("Index")'
-                    }
-                    else {
-                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+            AddDireccionEnvio: function(){
+                debugger;
+                var Inicio = '<div class="DireccionEntrega"><label class="col-md-12">Direccion de Envio</label>';
+                var Calle = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Calle">Calle</label><div class="col-md-6 input-container"><input class="textinput" id="Calle" name="Calle" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Calle" data-valmsg-replace="true"></span></div></div>';
+                var GroupInicio = '<div class="form-group">';
+                var Numero = '<div class="col-md-4"><label class="col-md-6 horizontal-label" for="Numero">Número</label><div class="col-md-6 input-container"><input class="textinput" id="Numero" name="Numero" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Numero" data-valmsg-replace="true"></span></div></div>';
+                var Dpto = '<div class="col-md-2" style="padding:0;"><label class="col-md-7 horizontal-label" for="Departamento">Departamento</label><div class="col-md-5 input-container"><input class="textinput" id="Departamento" name="Departamento" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Departamento" data-valmsg-replace="true"></span></div></div>';
+                var PisoYFinGroup = '<div class="col-md-2"><label class="col-md-6 horizontal-label" for="Piso">Piso</label><div class="col-md-6 input-container"><input class="textinput" id="Piso" name="Piso" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Piso" data-valmsg-replace="true"></span></div></div></div>';
+                var CP = '<div class="form-group "><label class="col-md-2 horizontal-label" for="CodigoPostal">Codigo Postal</label><div class="col-md-3 input-container"><input class="textinput" id="CodigoPostal" name="CodigoPostal" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="CodigoPostal" data-valmsg-replace="true"></span></div></div>';
+                //var Localidad = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Localidad">Localidad</label><div class="col-md-6 input-container"><select class="textinput" id="Localidad_Id" name="Localidad.Id"></select><span class="field-validation-valid help-block" data-valmsg-for="Localidad" data-valmsg-replace="true"></span></div></div>';
+                //<option selected="selected" value="33">Capital Federal</option>
+                //var Provincia = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Localizacion">Provincia</label><div class="col-md-6 input-container"><select class="textinput" id="Localizacion_Id" name="Localizacion.Id"></select><span class="field-validation-valid help-block" data-valmsg-for="Localizacion" data-valmsg-replace="true"></span></div></div>';
+                //<option selected="selected" value="1">Buenos Aires</option>
+                //var Pais = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Pais">Pais</label><div class="col-md-6 input-container"><select class="textinput" id="Pais_Id" name="Pais.Id"></select><span class="field-validation-valid help-block" data-valmsg-for="Pais" data-valmsg-replace="true"></span></div></div>';
+                //<option value="40">Argentina</option>
+                var Telefono = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Telefono">Telefono</label><div class="col-md-3 input-container"><input class="textinput" id="Telefono" name="Telefono" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Telefono" data-valmsg-replace="true"></span></div></div>';
+                var Email = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Email">Email</label><div class="col-md-6 input-container"><input class="textinput" id="Email" name="Email" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Email" data-valmsg-replace="true"></span></div></div>';
+                    
+                //var opt = Inicio + Calle + GroupInicio + Numero + Dpto + PisoYFinGroup + CP + Localidad + Provincia + Pais + Telefono + Email;
+                var opt = Inicio + Calle + GroupInicio + Numero + Dpto + PisoYFinGroup + CP + Telefono + Email;
+
+                $('#DireccionEntrega').append(opt);
+                $('#Avanzado').attr('hidden', false);
+
+            },
+
+            Save: function () {
+                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                    return;
+
+                $('#BtnSubmit').attr('disabled', 'disabled');
+                if (!$('form').valid())
+                {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    return;
+                }
+                var Cliente = $('form').serializeFormJSON();
+                //Cliente["Tipo.Data"] = $('#Tipo_Id :selected').text();
+
+                //var detalles = $('#GridDetallesCompra').jqGrid('getGridParam', 'data');
+                //if (detalles.length == 0) {
+                //    $('#BtnSubmit').removeAttr('disabled');
+                //    return $.WarningDialog('Es necesario que agregue al menos un item a la factura.');
+                //}
+                //Comprobante.Detalle = new Array();
+                //for (var i = 0; i < detalles.length; i++) {
+                //    var item = {
+                //        RubroCompra: {
+                //            Id: detalles[i].RubroCompra_Id,
+                //            PercepcionIVA: detalles[i].PercepcionIVA == "true",
+                //            PercepcionIIBB: detalles[i].PercepcionIIBB == "true"
+                //        },
+                //        Descripcion: detalles[i].Descripcion,
+                //        TipoIva: { Id: detalles[i].IVA_Id, AdditionalData: detalles[i].IVA },
+                //        Total: detalles[i].Total,
+                //        IVA: detalles[i].IVARubro
+                //    };
+                //    Comprobante.Detalle.push(item);
+
+                //}
+                debugger;
+
+                Cliente.DireccionesEntrega = new Array();
+                var detalles = $('.DireccionEntrega');
+                for (var i = 0; i < detalles.length; i++) {
+                    var calle = $(detalles[i]).find("input#Calle").val()
+                    if (calle != null && calle != "") {
+                        debugger;
+                        $($('.DireccionEntrega')[0]).find("input#Calle").val();
+                        $($('.DireccionEntrega #Calle')[0]).val();
+                        var item = {
+                            Calle: calle,
+                            Numero: $(detalles[i]).find("input#Numero").val(),
+                            Piso: $(detalles[i]).find("input#Piso").val(),
+                            Departamento: $(detalles[i]).find("input#Departamento").val(),
+                            CodigoPostal: $(detalles[i]).find("input#CodigoPostal").val(),
+                            Telefono: $(detalles[i]).find("input#Telefono").val(),
+                            Email: $(detalles[i]).find("input#Email").val(),
+                        };
+                        Cliente.DireccionesEntrega.push(item);
                     }
                 }
-            });
-            $('#BtnSubmitAndBack').FormSubmit({
-                enter: true,
+
+
+                var postParams = {
+                    url: "@Url.Action("Nuevo", "Clientes")",
+                    data: { Cliente: Cliente },
                 success: function (data) {
                     if (data.Success) {
-                        $('form').ClearForm();
-                        $('#Alert-Container').NewAlert('success', 'Se ha creado el cliente con exito');
+                        Cliente.OnFinishSave();
                     }
                     else {
-                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
                     }
                 }
-            });
-        });
+            }
+            $.AjaxPost(postParams);
+        },
+            OnFinishSave: function () {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Index")';
+            }
+
+    }
     </script>
 }

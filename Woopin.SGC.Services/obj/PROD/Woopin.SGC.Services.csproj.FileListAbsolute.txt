@@ -31,5 +31,3 @@ C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\PROD\Iesi.Collections.xml
 C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\PROD\Woopin.SGC.Services.csprojResolveAssemblyReference.cache
 C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\PROD\Woopin.SGC.Services.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\PROD\Woopin.SGC.Services.pdb
-C:\Woopin\App_Rhino\Woopin.SGC.Services\bin\PROD\Woopin.SGC.Services.pssym
-C:\Woopin\App_Rhino\Woopin.SGC.Services\obj\PROD\Woopin.SGC.Services.dll.postsharp

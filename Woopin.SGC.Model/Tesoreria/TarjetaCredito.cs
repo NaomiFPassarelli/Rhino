@@ -16,6 +16,7 @@ namespace Woopin.SGC.Model.Tesoreria
         public virtual int Id { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Numero")]
+        [DisplayName("Número")]
         public virtual string Numero { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Numero de Cta")]

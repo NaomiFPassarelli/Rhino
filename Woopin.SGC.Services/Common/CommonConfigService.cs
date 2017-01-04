@@ -17,12 +17,13 @@ namespace Woopin.SGC.Services
         private readonly ILocalidadRepository LocalidadRepository;
         private readonly IMonedaRepository monedaRepository;
         private readonly ICategoriaIVARepository categoriaIVARepository;
+        private readonly IDireccionRepository DireccionRepository;
         private readonly IComboRepository comboRepository;
         private readonly IComboItemRepository comboItemRepository;
         public CommonConfigService(ISucursalRepository sucursalRepository, ILocalizacionRepository localizacionRepository, 
             IMonedaRepository monedaRepository, ICategoriaIVARepository categoriaIVARepository,
-            IComboRepository comboRepository, IComboItemRepository comboItemRepository, 
-            ILocalidadRepository localidadRepository)
+            IComboRepository comboRepository, IComboItemRepository comboItemRepository,
+            ILocalidadRepository localidadRepository, IDireccionRepository DireccionRepository)
         {
             this.sucursalRepository = sucursalRepository;
             this.localizacionRepository = localizacionRepository;
@@ -31,6 +32,7 @@ namespace Woopin.SGC.Services
             this.comboRepository = comboRepository;
             this.LocalidadRepository = localidadRepository;
             this.comboItemRepository = comboItemRepository;
+            this.DireccionRepository = DireccionRepository;
         }
         #endregion
 
@@ -328,6 +330,64 @@ namespace Woopin.SGC.Services
             });
         }
         #endregion
+
+
+        #region Direccion
+        public Direccion GetDireccion(int Id)
+        {
+            Direccion Direccion = null;
+            this.DireccionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                Direccion = this.DireccionRepository.Get(Id);
+            });
+            return Direccion;
+        }
+
+        public IList<Direccion> GetAllDirecciones()
+        {
+            IList<Direccion> Direcciones = null;
+            this.DireccionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                Direcciones = this.DireccionRepository.GetAll();
+            });
+            return Direcciones;
+        }
+        public void AddDireccion(Direccion Direccion)
+        {
+            this.DireccionRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.DireccionRepository.Add(Direccion);
+            });
+        }
+        public void UpdateDireccion(Direccion Direccion)
+        {
+            this.DireccionRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.DireccionRepository.Update(Direccion);
+            });
+        }
+        public void SetDefaultDireccion(int Id)
+        {
+            this.DireccionRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.DireccionRepository.SetDefault(Id);
+            });
+        }
+        public void DeleteDirecciones(List<int> Ids)
+        {
+            this.DireccionRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                foreach (var Id in Ids)
+                {
+                    Direccion Direccion = this.DireccionRepository.Get(Id);
+                    this.DireccionRepository.Update(Direccion);
+                }
+            });
+        }
+        #endregion
+
+
+
 
         #region Combo
         public Combo GetCombo(int Id)

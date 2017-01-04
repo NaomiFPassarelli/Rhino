@@ -36,7 +36,8 @@ namespace Woopin.SGC.Model.Cooperativa
         public virtual DateTime? FechaFinalizacionActa { get; set; } // de la reunion de alta
         [DisplayName("Numero Acta")]
         public virtual int NumeroActa { get; set; }
-        [Required(ErrorMessage = "Es Necesario una fecha de creacion")]
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         
         public Acta()

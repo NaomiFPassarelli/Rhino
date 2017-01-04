@@ -63,5 +63,17 @@ namespace Woopin.SGC.Repositories.Ventas
                 return true;
             return false;
         }
+
+        public IList<Cliente> GetCompletos()
+        {
+            IList<Cliente> e = null;
+            e = this.GetSessionFactory().GetSession().QueryOver<Cliente>()
+                    .Where(x => x.Activo)
+                    .GetFilterBySecurity()
+                    .Fetch(x => x.DireccionesEntrega).Eager
+                    .List();
+            return e;
+        }
+
     }
 }

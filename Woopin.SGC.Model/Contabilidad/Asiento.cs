@@ -22,6 +22,7 @@ namespace Woopin.SGC.Model.Contabilidad
         [Required(ErrorMessage = "Es Necesario una Fecha")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/mm/yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         [Required(ErrorMessage = "Es Necesario una Leyenda")]
         public virtual string Leyenda { get; set; }

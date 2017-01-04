@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace Woopin.SGC.Model.Reporting
     {
         public virtual int Id { get; set; }
         [Required(ErrorMessage = "Es Necesario la Descripcion")]
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
         [Required(ErrorMessage = "Es Necesario la Raiz")]
         public virtual int Raiz { get; set; }

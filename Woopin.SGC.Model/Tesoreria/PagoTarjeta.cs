@@ -17,7 +17,7 @@ namespace Woopin.SGC.Model.Tesoreria
         [Required(ErrorMessage = "Es Necesario una Tarjeta")]
         [DoNotValidateOnlyId]
         public virtual TarjetaCredito Tarjeta { get; set; }
-
+        [DisplayName("Número")]
         public virtual string Numero { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Importe")]

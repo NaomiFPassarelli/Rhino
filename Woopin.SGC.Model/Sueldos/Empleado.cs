@@ -31,10 +31,11 @@ namespace Woopin.SGC.Model.Sueldos
         public virtual string Piso { get; set; }
         public virtual string Departamento { get; set; }
 
-        [DisplayName("Codigo Postal")]
+        [DisplayName("Código Postal")]
         public virtual string CodigoPostal { get; set; }
 
         [DoNotValidate]
+        [DisplayName("Provincia")]
         public virtual Localizacion Localizacion { get; set; }
 
         [DoNotValidate]
@@ -47,6 +48,7 @@ namespace Woopin.SGC.Model.Sueldos
         [DoNotValidate]
         public virtual ComboItem Sexo { get; set; }
 
+        [DisplayName("Teléfono")]
         public virtual string Telefono { get; set; }
 
         [DataType(DataType.EmailAddress)]
@@ -80,7 +82,7 @@ namespace Woopin.SGC.Model.Sueldos
         [DisplayName("Fecha de Ingreso")]
         [Required(ErrorMessage = "Es Necesario una Fecha de Ingreso")]
         public virtual DateTime FechaIngreso { get; set; }
-        [DisplayName("Fecha de Antiguedad Reconocidad")]
+        [DisplayName("Fecha de Antiguedad Reconocida")]
         public virtual DateTime? FechaAntiguedadReconocida { get; set; }
 
         [DisplayName("Fecha de Nacimiento")]

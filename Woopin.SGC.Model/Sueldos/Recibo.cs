@@ -36,22 +36,26 @@ namespace Woopin.SGC.Model.Sueldos
         [DisplayName("Total Descuento")]
         public virtual decimal TotalDescuento { get; set; }
         public virtual decimal Total { get; set; }
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         [DisplayName("Fecha Inicio")]
         public virtual DateTime FechaInicio { get; set; }
         [DisplayName("Fecha Fin")]
         public virtual DateTime FechaFin { get; set; }
-        [Required(ErrorMessage = "Es Necesario un Periodo")]
+        [Required(ErrorMessage = "Es Necesario un Período")]
+        [DisplayName("Período")]
         public virtual string Periodo { get; set; }
         [DisplayName("Fecha de Pago")]
         [Required(ErrorMessage = "Es Necesario una Fecha de Pago")]
         public virtual DateTime FechaPago { get; set; } //en la que se va a pagar este recibo
 
-        [DisplayName("Periodo Anterior")] 
+        [DisplayName("Período Anterior")] 
         public virtual string PeriodoAnterior { get; set; }
         [DisplayName("Fecha de Pago Anterior")]
-        public virtual DateTime? FechaPagoAnterior { get; set; } 
+        public virtual DateTime? FechaPagoAnterior { get; set; }
 
+        [DisplayName("Observación")]
         public virtual string Observacion { get; set; }
         [DisplayName("Numero Referencia")]
         public virtual int NumeroReferencia { get; set; }

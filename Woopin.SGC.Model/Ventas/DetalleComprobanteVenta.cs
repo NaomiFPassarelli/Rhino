@@ -30,7 +30,8 @@ namespace Woopin.SGC.Model.Ventas
         [DoNotValidateOnlyId]
         public virtual Articulo Articulo { get; set; }
 
-        [Required(ErrorMessage = "Es Necesario una Descripcion")]
+        [Required(ErrorMessage = "Es Necesario una Descripción")]
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
 
         [DisplayName("Precio Unitario")]

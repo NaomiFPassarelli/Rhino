@@ -27,8 +27,8 @@ namespace Woopin.SGC.Model.Ventas
         public virtual string Piso { get; set; }
         public virtual string Departamento { get; set; }
 
-        [DisplayName("Codigo Postal")]
-        [DataType(DataType.PostalCode,ErrorMessage="Codigo postal invalido")]
+        [DisplayName("Código Postal")]
+        [DataType(DataType.PostalCode, ErrorMessage = "Codigo postal invalido")]
         public virtual string CodigoPostal { get; set; }
 
         [DoNotValidateOnlyId]
@@ -42,10 +42,12 @@ namespace Woopin.SGC.Model.Ventas
         [DoNotValidateOnlyId]
         public virtual ComboItem Pais { get; set; }
 
+        [DisplayName("Teléfono")]
         public virtual string Telefono { get; set; }
 
         [DataType(DataType.EmailAddress)]
-        [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}",ErrorMessage = "El email no es valido.")]
+        [RegularExpression(@"([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})?",
+        ErrorMessage = "El email no es valido.")]
         public virtual string Email { get; set; }
 
         [DisplayName("Categoria IVA")]

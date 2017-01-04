@@ -37,13 +37,14 @@ namespace Woopin.SGC.Model.Common
         [Required(ErrorMessage = "Es Necesario un Domicilio")]
         public virtual string Domicilio { get; set; }
 
-        [DisplayName("Codigo Postal")]
+        [DisplayName("Código Postal")]
         public virtual string CodigoPostal { get; set; }
 
         [DoNotValidateOnlyId]
         public virtual Localizacion Provincia { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Telefono")]
+        [DisplayName("Teléfono")]
         public virtual string Telefono { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Email")]

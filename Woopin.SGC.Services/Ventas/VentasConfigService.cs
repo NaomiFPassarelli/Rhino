@@ -28,11 +28,13 @@ namespace Woopin.SGC.Services
         private readonly ICuentaRepository CuentaRepository;
         private readonly IListaPreciosRepository ListaPreciosRepository;
         private readonly ITalonarioRepository TalonarioRepoitory;
+        private readonly ILocalidadRepository LocalidadRepository;
         private readonly IOrganizacionRepository OrganizacionRepository;
+        private readonly IDireccionRepository DireccionRepository;
         public VentasConfigService(IClienteRepository ClienteRepository, IComprobanteVentaRepository ComprobanteVentaRepository, IGrupoEconomicoRepository GrupoEconomicoRepository,
                                 ICuentaRepository CuentaRepository, IListaPreciosRepository ListaPreciosRepository, ITalonarioRepository TalonarioRepoitory,
                                 IOrganizacionRepository OrganizacionRepository, IComboItemRepository ComboItemRepository, ILocalizacionRepository LocalizacionRepository,
-                                ICategoriaIVARepository CategoriaIVARepository)
+                                ICategoriaIVARepository CategoriaIVARepository, ILocalidadRepository LocalidadRepository, IDireccionRepository DireccionRepository)
         {
             this.ClienteRepository = ClienteRepository;
             this.ComprobanteVentaRepository = ComprobanteVentaRepository;
@@ -44,6 +46,8 @@ namespace Woopin.SGC.Services
             this.ComboItemRepository = ComboItemRepository;
             this.CategoriaIVARepository = CategoriaIVARepository;
             this.LocalizacionRepository = LocalizacionRepository;
+            this.LocalidadRepository = LocalidadRepository;
+            this.DireccionRepository = DireccionRepository;
         }
 
         #endregion
@@ -66,6 +70,10 @@ namespace Woopin.SGC.Services
             this.ClienteRepository.GetSessionFactory().SessionInterceptor(() =>
             {
                 Clientes = this.ClienteRepository.GetAll();
+                foreach (Cliente c in Clientes)
+                {
+                    c.DireccionesEntrega = null;
+                }
             });
             return Clientes;
         }
@@ -91,6 +99,18 @@ namespace Woopin.SGC.Services
                 if (this.ExistCUITNT(Cliente.CUIT, null))
                     throw new BusinessException("El CUIT ya existe");
 
+                //TODO ver si se agregan las direcciones de entrega
+                if (Cliente.DireccionesEntrega == null || Cliente.DireccionesEntrega.Count == 0)
+                {
+                    Cliente.DireccionesEntrega = null;
+                }
+                else {
+                    foreach (Direccion Dir in Cliente.DireccionesEntrega)
+                    {
+                        this.DireccionRepository.Add(Dir);
+                    }
+                
+                }
                 this.ClienteRepository.Add(Cliente);
             });
         }
@@ -125,10 +145,27 @@ namespace Woopin.SGC.Services
             if (this.ExistCUITNT(Cliente.CUIT, null))
                 throw new BusinessException("El CUIT coincide con uno ya creado");
 
-            Cliente.CondicionVenta = this.ComboItemRepository.GetByComboAndName(ComboType.CondicionCompraVenta, Cliente.CondicionVenta.Data);
-            Cliente.CategoriaIva = this.CategoriaIVARepository.GetByNombre(Cliente.CategoriaIva.Nombre);
-            Cliente.Localizacion = this.LocalizacionRepository.GetByNombre(Cliente.Localizacion.Nombre);
-
+            if (Cliente.CondicionVenta != null)
+            {
+                Cliente.CondicionVenta = this.ComboItemRepository.GetByComboAndName(ComboType.CondicionCompraVenta, Cliente.CondicionVenta.Data);
+            }
+            if (Cliente.CategoriaIva != null)
+            {
+                Cliente.CategoriaIva = this.CategoriaIVARepository.GetByNombre(Cliente.CategoriaIva.Nombre);
+            }
+            if (Cliente.Localizacion != null)
+            {
+                Cliente.Localizacion = this.LocalizacionRepository.GetByNombre(Cliente.Localizacion.Nombre);
+            }
+            if (Cliente.Localidad != null)
+            {
+                Cliente.Localidad = this.LocalidadRepository.GetByNombre(Cliente.Localidad.Nombre);
+            }
+            if (Cliente.Pais != null)
+            {
+                Cliente.Pais = this.ComboItemRepository.GetByComboAndName(ComboType.Paises, Cliente.Pais.Data);
+            }
+            
             this.ClienteRepository.Add(Cliente);
         }
 
@@ -175,7 +212,25 @@ namespace Woopin.SGC.Services
                     else {
                         ToUpdate.Master = Cliente.Master;
                     }
-                    
+                }
+                //si antes era null y ahora != null, pones directamente las nuevas
+                //si antes era != null y ahora null, eliminas todo
+                //si antes y ahora es != null entonces 
+                //Cliente es lo nuevo ToUpdate lo viejo
+                if (ToUpdate.DireccionesEntrega == null && Cliente.DireccionesEntrega != null)
+                {
+                    ToUpdate.DireccionesEntrega = new List<Direccion>();
+                    ToUpdate.DireccionesEntrega = Cliente.DireccionesEntrega;
+                } else if(ToUpdate.DireccionesEntrega != null && Cliente.DireccionesEntrega != null ){
+                    ToUpdate.DireccionesEntrega = null;
+                }
+                else
+                {
+                    //TODO revisar de los nuevos si vienen con id=0, de ser asi a esos habria que agregarlos
+                    //los que siguen existiendo dejarlos
+                    //y los que se eliminaron sacarlos
+                    //capaz con esto funciona, capaz no
+                    ToUpdate.DireccionesEntrega = Cliente.DireccionesEntrega;
                 }
                 
                 this.ClienteRepository.Update(ToUpdate);
@@ -190,7 +245,23 @@ namespace Woopin.SGC.Services
                 {
                     Cliente Cliente = this.ClienteRepository.Get(Id);
                     Cliente.Activo = false;
+
+
+                    IList<Direccion> DireccionesEntrega = Cliente.DireccionesEntrega;
+                    Cliente.DireccionesEntrega = null;
                     this.ClienteRepository.Update(Cliente);
+
+                    foreach (Direccion Dir in DireccionesEntrega)
+                    {
+                        Direccion D = this.DireccionRepository.Get(Dir.Id);
+                        this.DireccionRepository.Delete(D);
+                    }
+
+                    //for(int cantDire = 0; cantDire < Cliente.DireccionesEntrega.Count; cantDire++)
+                    //{
+                    //    this.DireccionRepository.Delete(Cliente.DireccionesEntrega[cantDire]);
+                    //}
+
                 }
             });
         }

@@ -14,5 +14,6 @@ namespace Woopin.SGC.Repositories.Ventas
         IList<Cliente> GetAllByFilter(SelectComboRequest req);
         IList<Cliente> GetAllByFilter(PagingRequest req);
         bool ExistCUIT(string cuit, int? IdUpdate);
+        IList<Cliente> GetCompletos();
     }
 }

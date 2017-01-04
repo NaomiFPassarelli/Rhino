@@ -92,6 +92,7 @@ namespace Woopin.SGC.Model.Ventas
 
         public virtual IList<DetalleComprobanteVenta> Detalle { get; set; }
         public virtual IList<ObservComprobanteVenta> Observaciones { get; set; }
+        [DisplayName("Observación")]
         public virtual string Observacion { get; set; }
 
         public virtual IList<ImputacionVenta> Imputacion { get; set; }

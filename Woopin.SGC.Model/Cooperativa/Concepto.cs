@@ -15,6 +15,7 @@ namespace Woopin.SGC.Model.Cooperativa
         public virtual int Id { get; set; }
 
         [Required(ErrorMessage = "El valor es requerido")]
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
         public virtual string AdditionalDescription { get; set; }
         //[RegularExpression("^[0-9]+[0-9]*(.[0-9]{0,2})?$", ErrorMessage = "El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales")]

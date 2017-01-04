@@ -19,6 +19,7 @@ namespace Woopin.SGC.Model.Compras
         [DisplayName("Rubro de Compra")]
         public virtual RubroCompra RubroCompra { get; set; }
         [Required(ErrorMessage = "Es Necesario una Descripcion")]
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Total de Compra")]

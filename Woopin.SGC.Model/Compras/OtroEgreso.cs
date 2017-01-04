@@ -21,6 +21,7 @@ namespace Woopin.SGC.Model.Compras
         [Required(ErrorMessage = "Es Necesario el Proveedor")]
         [DoNotValidateOnlyId]
         public virtual Proveedor Proveedor { get; set; }
+        [DisplayName("Observación")]
         public virtual string Observacion { get; set; }
 
         [Required(ErrorMessage = "La Fecha es requerida")]
@@ -34,6 +35,7 @@ namespace Woopin.SGC.Model.Compras
         [DisplayFormat(DataFormatString = "{0:dd/mm/yyyy}", ApplyFormatInEditMode = true)]
         [DisplayName("Fecha Contable")]
         public virtual DateTime FechaContable { get; set; }
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Estado")]

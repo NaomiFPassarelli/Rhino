@@ -15,7 +15,8 @@ namespace Woopin.SGC.Model.Compras
     {
         public virtual int Id { get; set; }
 
-        [Required(ErrorMessage = "La Descripcion es requerida")]
+        [Required(ErrorMessage = "La Descripción es requerida")]
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
 
         //[Required(ErrorMessage = "La cuenta es requerida")]

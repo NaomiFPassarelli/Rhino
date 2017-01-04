@@ -167,25 +167,32 @@
     @Scripts.Render("~/bundles/select2")
     @Styles.Render("~/Scripts/select2/select2.css")
     <script type="text/javascript">
+        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion del Cliente. Si presiona Aceptar, todos los cambios realizados se perderan.');
         $(document).ready(function () {
-            $('#ClearSelect2').click(function () {
-                $("#Master_Id").select2("val", "");
-            });
-            $('#CondicionVentaEstadistica').attr('data-val-number', 'La Condicion de Venta Estadistica debe ser un numero');
-            $('#CondicionVentaContratada').attr('data-val-number', 'La Condicion de Venta Contratada debe ser un número');
-            $('form').reParseForm();
-            $('#Master_Id').prepend('<option></option>');
-            $('#Master_Id').select2(
-                {
-                    placeholder: "Si Corresponde, Seleccione Un Grupo Economico",
-                    minimumInputLength: 0,
-                    initSelection: function (element, callback) {
-                        // En caso de necesitar un modelo complejo deberia realizar un post para obtener el campo texto.
-                        // Post con Id = element.val(), devuelve el texto del select2
-                        callback({ id: element.val(), text: element.data('text') });
-                    },
-                    ajax: {
-                        url: "@Url.Action("GetCombo", "GrupoEconomico")",
+            ClienteEditar.init();
+        });
+
+        var ClienteEditar = {
+            init: function () {
+                debugger;
+                $(document).off('click', '#BtnAddAvanzado').on('click', '#BtnAddAvanzado', ClienteEditar.AddDireccionEnvio);
+            
+                $('#CondicionVentaEstadistica').attr('data-val-number', 'La Condicion de Venta Estadistica debe ser un numero');
+                $('#CondicionVentaContratada').attr('data-val-number', 'La Condicion de Venta Contratada debe ser un número');
+                $('form').reParseForm();
+                $('#CUIT').mask('99-99999999-9');
+                $('#Master_Id').prepend('<option></option>');
+                $('#Master_Id').select2(
+                    {
+                        placeholder: "Si Corresponde, Seleccione Un Grupo Economico",
+                        minimumInputLength: 0,
+                        initSelection: function (element, callback) {
+                            // En caso de necesitar un modelo complejo deberia realizar un post para obtener el campo texto.
+                            // Post con Id = element.val(), devuelve el texto del select2
+                            callback({ id: element.val(), text: element.data('text') });
+                        },
+                        ajax: {
+                            url: "@Url.Action("GetCombo", "GrupoEconomico")",
                         dataType: 'json',
                         params: { type: "POST" },
                         data: function (t, p) {
@@ -196,18 +203,140 @@
                         }
                     }
                 });
-            $('#BtnSubmit').FormSubmit({
-                enter: true,
-                success: function (data) {
-                    if (data.Success) {
-                        $('#Alert-Container').NewAlert('success', 'Se ha guardado el cliente con exito');
-                    }
-                    else {
-                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
-                    }
-                }
-            });
+        $('.BtnClearSelect2').on('click', function () {
+            var IdClear = $(this).attr('data-rel');
+            ClienteEditar.ClearSelect2(IdClear);
         });
+
+        $('#BtnSubmit').on('click', ClienteEditar.Save);
+
+                @*$('#BtnSubmit').FormSubmit({
+                    enter: true,
+                    success: function (data) {
+                        if (data.Success) {
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")'
+                        }
+                        else {
+                            $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                        }
+                    }
+                });
+        *@
+        },
+
+        ClearSelect2: function(IdClear, IdClearInput) {
+            $("#" + IdClear).select2("val", "");
+        },
+
+        AddDireccionEnvio: function(){
+            debugger;
+            var Inicio = '<div class="DireccionEntrega"><label class="col-md-12">Direccion de Envio</label>';
+            var Calle = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Calle">Calle</label><div class="col-md-6 input-container"><input class="textinput" id="Calle" name="Calle" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Calle" data-valmsg-replace="true"></span></div></div>';
+            var GroupInicio = '<div class="form-group">';
+            var Numero = '<div class="col-md-4"><label class="col-md-6 horizontal-label" for="Numero">Número</label><div class="col-md-6 input-container"><input class="textinput" id="Numero" name="Numero" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Numero" data-valmsg-replace="true"></span></div></div>';
+            var Dpto = '<div class="col-md-2" style="padding:0;"><label class="col-md-7 horizontal-label" for="Departamento">Departamento</label><div class="col-md-5 input-container"><input class="textinput" id="Departamento" name="Departamento" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Departamento" data-valmsg-replace="true"></span></div></div>';
+            var PisoYFinGroup = '<div class="col-md-2"><label class="col-md-6 horizontal-label" for="Piso">Piso</label><div class="col-md-6 input-container"><input class="textinput" id="Piso" name="Piso" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Piso" data-valmsg-replace="true"></span></div></div></div>';
+            var CP = '<div class="form-group "><label class="col-md-2 horizontal-label" for="CodigoPostal">Codigo Postal</label><div class="col-md-3 input-container"><input class="textinput" id="CodigoPostal" name="CodigoPostal" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="CodigoPostal" data-valmsg-replace="true"></span></div></div>';
+            //var Localidad = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Localidad">Localidad</label><div class="col-md-6 input-container"><select class="textinput" id="Localidad_Id" name="Localidad.Id"></select><span class="field-validation-valid help-block" data-valmsg-for="Localidad" data-valmsg-replace="true"></span></div></div>';
+            //<option selected="selected" value="33">Capital Federal</option>
+            //var Provincia = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Localizacion">Provincia</label><div class="col-md-6 input-container"><select class="textinput" id="Localizacion_Id" name="Localizacion.Id"></select><span class="field-validation-valid help-block" data-valmsg-for="Localizacion" data-valmsg-replace="true"></span></div></div>';
+            //<option selected="selected" value="1">Buenos Aires</option>
+            //var Pais = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Pais">Pais</label><div class="col-md-6 input-container"><select class="textinput" id="Pais_Id" name="Pais.Id"></select><span class="field-validation-valid help-block" data-valmsg-for="Pais" data-valmsg-replace="true"></span></div></div>';
+            //<option value="40">Argentina</option>
+            var Telefono = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Telefono">Telefono</label><div class="col-md-3 input-container"><input class="textinput" id="Telefono" name="Telefono" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Telefono" data-valmsg-replace="true"></span></div></div>';
+            var Email = '<div class="form-group "><label class="col-md-2 horizontal-label" for="Email">Email</label><div class="col-md-6 input-container"><input class="textinput" id="Email" name="Email" type="text" value=""><span class="field-validation-valid help-block" data-valmsg-for="Email" data-valmsg-replace="true"></span></div></div>';
+                    
+            //var opt = Inicio + Calle + GroupInicio + Numero + Dpto + PisoYFinGroup + CP + Localidad + Provincia + Pais + Telefono + Email;
+            var opt = Inicio + Calle + GroupInicio + Numero + Dpto + PisoYFinGroup + CP + Telefono + Email;
+
+            $('#DireccionEntrega').append(opt);
+            $('#Avanzado').attr('hidden', false);
+
+        },
+
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
+
+            $('#BtnSubmit').attr('disabled', 'disabled');
+            if (!$('form').valid())
+            {
+                $('#BtnSubmit').removeAttr('disabled');
+                return;
+            }
+            var Cliente = $('form').serializeFormJSON();
+            //Cliente["Tipo.Data"] = $('#Tipo_Id :selected').text();
+
+            //var detalles = $('#GridDetallesCompra').jqGrid('getGridParam', 'data');
+            //if (detalles.length == 0) {
+            //    $('#BtnSubmit').removeAttr('disabled');
+            //    return $.WarningDialog('Es necesario que agregue al menos un item a la factura.');
+            //}
+            //Comprobante.Detalle = new Array();
+            //for (var i = 0; i < detalles.length; i++) {
+            //    var item = {
+            //        RubroCompra: {
+            //            Id: detalles[i].RubroCompra_Id,
+            //            PercepcionIVA: detalles[i].PercepcionIVA == "true",
+            //            PercepcionIIBB: detalles[i].PercepcionIIBB == "true"
+            //        },
+            //        Descripcion: detalles[i].Descripcion,
+            //        TipoIva: { Id: detalles[i].IVA_Id, AdditionalData: detalles[i].IVA },
+            //        Total: detalles[i].Total,
+            //        IVA: detalles[i].IVARubro
+            //    };
+            //    Comprobante.Detalle.push(item);
+
+            //}
+            debugger;
+
+            Cliente.DireccionesEntrega = new Array();
+            var detalles = $('.DireccionEntrega');
+            for (var i = 0; i < detalles.length; i++) {
+                var calle = $(detalles[i]).find("input#Calle").val()
+                if (calle != null && calle != "") {
+                    debugger;
+                    $($('.DireccionEntrega')[0]).find("input#Calle").val();
+                    $($('.DireccionEntrega #Calle')[0]).val();
+                    var item = {
+                        Calle: calle,
+                        Numero: $(detalles[i]).find("input#Numero").val(),
+                        Piso: $(detalles[i]).find("input#Piso").val(),
+                        Departamento: $(detalles[i]).find("input#Departamento").val(),
+                        CodigoPostal: $(detalles[i]).find("input#CodigoPostal").val(),
+                        Telefono: $(detalles[i]).find("input#Telefono").val(),
+                        Email: $(detalles[i]).find("input#Email").val(),
+                    };
+                    Cliente.DireccionesEntrega.push(item);
+                }
+            }
+
+
+            var postParams = {
+                url: "@Url.Action("Nuevo", "Clientes")",
+                data: { Cliente: Cliente },
+            success: function (data) {
+                if (data.Success) {
+                    ClienteEditar.OnFinishSave();
+                }
+                else {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                }
+            }
+        }
+        $.AjaxPost(postParams);
+        },
+        OnFinishSave: function () {
+            window.onbeforeunload = null;
+            $.ShowLoader();
+            window.location = '@Url.Action("Index")';
+        }
+
+        }
+
 </script>
 
 }

@@ -1,6 +1,7 @@
 ﻿using DataAnnotationsExtensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,8 @@ namespace Woopin.SGC.Model.Tesoreria
         public virtual decimal Importe { get; set; }
         public virtual ValorIngresado Valor { get; set; }
         public virtual DateTime Fecha { get; set; }
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         public virtual Asiento Asiento { get; set; }
         [DoNotValidate]

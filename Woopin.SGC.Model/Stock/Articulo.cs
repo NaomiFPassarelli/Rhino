@@ -15,6 +15,7 @@ namespace Woopin.SGC.Model.Stock
         public virtual int Id { get; set; }
 
         [Required(ErrorMessage = "La Descripcion es requerida")]
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
 
         [DisplayName("Código de Barras")]

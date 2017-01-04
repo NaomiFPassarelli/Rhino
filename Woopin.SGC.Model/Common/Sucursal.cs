@@ -19,7 +19,7 @@ namespace Woopin.SGC.Model.Common
         [Required(ErrorMessage = "La localidad es requerida")]
         public virtual string Localidad { get; set; }
         [Required(ErrorMessage = "El  es requerido")]
-        [DisplayName("Codigo Postal")]
+        [DisplayName("Código Postal")]
         public virtual string CodigoPostal { get; set; }
         [Required(ErrorMessage = "El telefono es requerido")]
         public virtual string Telefono1 { get; set; }

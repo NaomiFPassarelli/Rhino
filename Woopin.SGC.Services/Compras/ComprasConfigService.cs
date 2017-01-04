@@ -27,11 +27,12 @@ namespace Woopin.SGC.Services
         private readonly IOrganizacionRepository OrganizacionRepository;
         private readonly ICategoriaIVARepository CategoriaIVARepository;
         private readonly ILocalizacionRepository LocalizacionRepository;
+        private readonly ILocalidadRepository LocalidadRepository;
         private readonly IComboItemRepository ComboItemRepository;
 
         public ComprasConfigService(IProveedorRepository ProveedorRepository, IRubroCompraRepository RubroCompraRepository, IComprobanteCompraRepository ComprobanteCompraRepository,
             ICuentaRepository CuentaRepository, IOrganizacionRepository OrganizacionRepository, ICategoriaIVARepository CategoriaIVARepository, ILocalizacionRepository LocalizacionRepository,
-            IComboItemRepository ComboItemRepository)
+            IComboItemRepository ComboItemRepository, ILocalidadRepository LocalidadRepository)
         {
             this.ProveedorRepository = ProveedorRepository;
             this.RubroCompraRepository = RubroCompraRepository;
@@ -41,6 +42,7 @@ namespace Woopin.SGC.Services
             this.ComboItemRepository = ComboItemRepository;
             this.CategoriaIVARepository = CategoriaIVARepository;
             this.LocalizacionRepository = LocalizacionRepository;
+            this.LocalidadRepository = LocalidadRepository;
         }
 
         #endregion
@@ -172,10 +174,28 @@ namespace Woopin.SGC.Services
             if (this.ExistCUITNT(Proveedor.CUIT, null))
                 throw new BusinessException("El CUIT coincide con uno ya creado");
 
-            Proveedor.CondicionCompra = this.ComboItemRepository.GetByComboAndName(ComboType.CondicionCompraVenta, Proveedor.CondicionCompra.Data);
-            Proveedor.CategoriaIva = this.CategoriaIVARepository.GetByNombre(Proveedor.CategoriaIva.Nombre);
-            Proveedor.Localizacion = this.LocalizacionRepository.GetByNombre(Proveedor.Localizacion.Nombre);
-
+            
+            if (Proveedor.CondicionCompra != null)
+            {
+                Proveedor.CondicionCompra = this.ComboItemRepository.GetByComboAndName(ComboType.CondicionCompraVenta, Proveedor.CondicionCompra.Data);
+            }
+            if (Proveedor.CategoriaIva != null)
+            {
+                Proveedor.CategoriaIva = this.CategoriaIVARepository.GetByNombre(Proveedor.CategoriaIva.Nombre);
+            }
+            if (Proveedor.Localizacion != null)
+            {
+                Proveedor.Localizacion = this.LocalizacionRepository.GetByNombre(Proveedor.Localizacion.Nombre);
+            }
+            if (Proveedor.Localidad != null)
+            {
+                Proveedor.Localidad = this.LocalidadRepository.GetByNombre(Proveedor.Localidad.Nombre);
+            }
+            if (Proveedor.Pais != null)
+            {
+                Proveedor.Pais = this.ComboItemRepository.GetByComboAndName(ComboType.Paises, Proveedor.Pais.Data);
+            }
+            
             this.ProveedorRepository.Add(Proveedor);
         }
         #endregion

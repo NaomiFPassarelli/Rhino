@@ -23,7 +23,7 @@ namespace Woopin.SGC.Model.Compras
         [DoNotValidateOnlyId]
         [DisplayName("Tipo de IVA")]
         public virtual ComboItem TipoIva { get; set; }
-
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Total")]

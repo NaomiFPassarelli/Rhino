@@ -96,6 +96,7 @@ namespace Woopin.SGC.Web.App_Start
             kernel.Bind<ILocalidadRepository>().To<LocalidadRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IUsuarioRepository>().To<UsuarioRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<ICategoriaIVARepository>().To<CategoriaIVARepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IDireccionRepository>().To<DireccionRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IComboRepository>().To<ComboRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IComboItemRepository>().To<ComboItemRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IGeneralRepository>().To<GeneralRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
@@ -184,6 +185,7 @@ namespace Woopin.SGC.Web.App_Start
                 .WithConstructorArgument("ISucursalRepository", kernel.GetService(typeof(ISucursalRepository)))
                 .WithConstructorArgument("IMonedaRepository", kernel.GetService(typeof(IMonedaRepository)))
                 .WithConstructorArgument("ICategoriaIVARepository", kernel.GetService(typeof(ICategoriaIVARepository)))
+                .WithConstructorArgument("IDireccionRepository", kernel.GetService(typeof(IDireccionRepository)))
                 .WithConstructorArgument("ILocalizacionRepository", kernel.GetService(typeof(ILocalizacionRepository)))
                 .WithConstructorArgument("ILocalidadRepository", kernel.GetService(typeof(ILocalidadRepository)))
                 .WithConstructorArgument("IComboRepository", kernel.GetService(typeof(IComboRepository)))

@@ -373,11 +373,13 @@
                         if (data.NumeroRef != null) {
                             msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
                         }
-                        //$.WarningDialog(msg, 'warning', function () {
-                        //    Asociado.OnFinishSave(data.Asociado)
-                        //});
-                        $('#BtnSubmit').removeAttr('disabled');
-                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        $.WarningDialog(msg, 'warning', function () {
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")';
+                        });
+                        //$('#BtnSubmit').removeAttr('disabled');
+                        //$('#Alert-Container').NewAlert('error', data.ErrorMessage);
 
                     }
                 } else {
@@ -404,11 +406,13 @@
                             if (data.NumeroRef != null) {
                                 msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
                             }
-                            //$.WarningDialog(msg, 'warning', function () {
-                            //    Asociado.OnFinishSave(data.Asociado)
-                            //});
-                            $('#BtnSubmit').removeAttr('disabled');
-                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                            $.WarningDialog(msg, 'warning', function () {
+                                window.onbeforeunload = null;
+                                $.ShowLoader();
+                                window.location = '@Url.Action("Index")';
+                            });
+                            //$('#BtnSubmit').removeAttr('disabled');
+                            //$('#Alert-Container').NewAlert('error', data.ErrorMessage);
                             //$('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
 
                         }

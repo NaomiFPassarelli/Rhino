@@ -13,8 +13,8 @@ namespace Woopin.SGC.Model.Cooperativa
     public class Asociado : ISecuredEntity
     {
         public virtual int Id { get; set; }
-        [Required(ErrorMessage = "Es Necesario un Numero de Asociado")]
-        [DisplayName("Numero de Referencia")]
+        [Required(ErrorMessage = "Es Necesario un Número de Asociado")]
+        [DisplayName("N° Referencia")]
         public virtual int NumeroReferencia { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Nombre")]
@@ -31,24 +31,25 @@ namespace Woopin.SGC.Model.Cooperativa
         public virtual string Piso { get; set; }
         public virtual string Departamento { get; set; }
 
-        [DisplayName("Codigo Postal")]
+        [DisplayName("Código Postal")]
         public virtual string CodigoPostal { get; set; }
         [DisplayName("Recomendado Por")]
         public virtual string RecomendadoPor { get; set; }
         [DoNotValidate]
+        [DisplayName("Provincia")]
         public virtual Localizacion Localizacion { get; set; }
 
         [DoNotValidate]
         public virtual ComboItem Nacionalidad { get; set; }
-        [DisplayName("Numero de Carnet de Conductor")]
+        [DisplayName("Número de Carnet de Conductor")]
         public virtual string NroCarnetConductor { get; set; }
-        [DisplayName("Categoria de Conductor")]
+        [DisplayName("Categoría de Conductor")]
         public virtual string CategoriaConductor { get; set; }
-        [DisplayName("Marca del Vehiculo")]
+        [DisplayName("Marca del Vehículo")]
         public virtual string MarcaVehiculo { get; set; }
-        [DisplayName("Modelo del Vehiculo")]
+        [DisplayName("Modelo del Vehículo")]
         public virtual string ModeloVehiculo { get; set; }
-        [DisplayName("Numero de Chapa del Vehiculo")]
+        [DisplayName("Número de Chapa del Vehículo")]
         public virtual string NroChapaVehiculo { get; set; }
 
         [DisplayName("Estado Civil")]
@@ -56,6 +57,7 @@ namespace Woopin.SGC.Model.Cooperativa
         public virtual ComboItem EstadoCivil { get; set; }
         [RegularExpression(@"[0-9]{8,20}",
         ErrorMessage = "El telefono no es valido.")]
+        [DisplayName("Teléfono")]
         public virtual string Telefono { get; set; }
 
         [RegularExpression(@"[0-9]{2}-[0-9]{8}-[0-9]{1}",
@@ -72,8 +74,10 @@ namespace Woopin.SGC.Model.Cooperativa
 
         [DoNotValidate]
         public virtual Organizacion Organizacion { get; set; }
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
-        [DisplayName("Fecha de Notificacion")]
+        [DisplayName("Fecha de Notificación")]
         public virtual DateTime? FechaNotificacion { get; set; }
 
         [DisplayName("Fecha de Ingreso")]

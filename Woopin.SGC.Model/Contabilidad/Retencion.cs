@@ -18,6 +18,7 @@ namespace Woopin.SGC.Model.Contabilidad
         public virtual string Abreviatura { get; set; }
 
         [Required(ErrorMessage = "Es Necesario una Descripción")]
+        [DisplayName("Descripción")]
         public virtual string Descripcion { get; set; }
 
         [Required(ErrorMessage = "La juridiccion es requerida")]

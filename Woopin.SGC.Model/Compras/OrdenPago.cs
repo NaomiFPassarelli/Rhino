@@ -37,6 +37,7 @@ namespace Woopin.SGC.Model.Compras
         [DoNotValidateOnlyId]
         public virtual ComboItem Tipo { get; set; }
         public virtual EstadoComprobanteCancelacion Estado { get; set; }
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
 
         public virtual IList<OrdenPagoComprobanteItem> Comprobantes { get; set; }

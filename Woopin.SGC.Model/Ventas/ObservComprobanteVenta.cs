@@ -12,7 +12,7 @@ namespace Woopin.SGC.Model.Ventas
     public class ObservComprobanteVenta
     {
         public virtual int Id { get; set; }
-        [Required(ErrorMessage = "Es Necesario una Descripcion")]
+        [Required(ErrorMessage = "Es Necesario una Descripción")]
         public virtual string Descripcion { get; set; }
 
 

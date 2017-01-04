@@ -18,6 +18,7 @@
     <div id="hoeapp-wrapper" class="hoe-hide-lpanel" hoe-device-type="desktop">
         <header id="hoe-header" hoe-lpanel-effect="shrink">
             <div class="hoe-left-header">
+                <img src="/Images/LogoWoopin.png" style="float: left;width:100px; margin: 5% 0 0 20%;">
                 @*<a href="/" style="float:left; margin-left: 10%;"> <span style="font-family: 'Gloria Hallelujah', cursive;font-size: 180%;">Rhino</span> <img src="@Url.Content("~/Images/RhinoFaceTransparent.png")" /> </a>*@
                 <span class="hoe-sidebar-toggle"><a href="#"></a></span>
             </div>
@@ -799,7 +800,7 @@
                                         </li>
                                         <li>
                                             <a href="@Url.Action("Vencidos", "Pagos", new { Area = "Cooperativa" })">
-                                                <span class="menu-text">Ultimos Pagos Vencidos</span>
+                                                <span class="menu-text">Últimos Pagos Vencidos</span>
                                                 <span class="selected"></span>
                                             </a>
                                         </li>
@@ -958,9 +959,9 @@
         </div>
     </div>
 
-    <div id="FloatingLogo" class="hidden-print">
+    @*<div id="FloatingLogo" class="hidden-print">
         <img src="@Url.Content("~/Images/LogoWoopin.png")" style="float:right;width:100px;" />
-    </div>
+    </div>*@
     <div id="LoaderModal">
         <div id="LoaderMsg">Cargando...</div>
     </div>

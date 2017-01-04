@@ -16,7 +16,8 @@ namespace Woopin.SGC.Model.Cooperativa
         public virtual int Id { get; set; }
         [DoNotValidateOnlyId]
         public virtual Asociado Asociado { get; set; }
-        [Required(ErrorMessage = "Es Necesario una fecha de creacion")]
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         [DoNotValidate]
         public virtual Organizacion Organizacion { get; set; }
@@ -27,12 +28,13 @@ namespace Woopin.SGC.Model.Cooperativa
         //[Required(ErrorMessage = "Es Necesario una Fecha de Aporte")]
         //public virtual DateTime FechaAporte { get; set; } //en la que se va a pagar este recibo
 
-        [DisplayName("Fecha de Periodo de Aporte")]
-        [Required(ErrorMessage = "Es Necesario una Fecha de Periodo de Aporte")]
+        [DisplayName("Fecha de Período de Aporte")]
+        [Required(ErrorMessage = "Es Necesario una Fecha de Período de Aporte")]
         public virtual DateTime FechaPeriodo { get; set; } //el periodo de Aporte
 
-        [DisplayName("Numero Referencia")]
+        [DisplayName("N° Referencia")]
         public virtual int NumeroReferencia { get; set; }
+        [DisplayName("Observación")]
         public virtual string Observacion { get; set; }
         public virtual bool Activo { get; set; }
         public Aporte()

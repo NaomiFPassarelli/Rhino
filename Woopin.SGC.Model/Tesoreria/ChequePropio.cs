@@ -31,6 +31,8 @@ namespace Woopin.SGC.Model.Tesoreria
         [DisplayName("Fecha Emisión")]
         public virtual DateTime Fecha { get; set; }
 
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         [DisplayName("Fecha De Pago")]
         public virtual DateTime? FechaPago { get; set; }

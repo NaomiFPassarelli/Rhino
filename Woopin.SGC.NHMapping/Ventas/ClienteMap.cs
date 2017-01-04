@@ -32,7 +32,7 @@ namespace Woopin.SGC.NHMapping
             this.References(c => c.CondicionVenta).Nullable().Not.LazyLoad();
             this.References(c => c.Localizacion).Nullable().Not.LazyLoad();
             this.References(c => c.Organizacion).Not.Nullable().LazyLoad().UniqueKey("UX_CUIT");
-            this.HasMany(c => c.DireccionesEntrega).AsBag().KeyColumn("DireccionesEntrega_Id").Cascade.AllDeleteOrphan();
+            this.HasMany(c => c.DireccionesEntrega).AsBag().KeyColumn("Cliente_Id").Cascade.None();
         }
     }
 }

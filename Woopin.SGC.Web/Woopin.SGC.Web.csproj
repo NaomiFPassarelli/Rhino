@@ -975,6 +975,7 @@
     <Content Include="Views\ConfiguracionErrors\SinRetenciones.cshtml" />
     <Content Include="Views\ConfiguracionErrors\SinTarjetas.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Error\Index.cshtml" />
     <None Include="Web.DESA.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -1069,7 +1070,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>1283</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:3240/</IISUrl>
+          <IISUrl>http://localhost:3270/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

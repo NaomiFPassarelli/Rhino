@@ -13,7 +13,17 @@ namespace Woopin.SGC.NHMapping
         public DireccionMap()
         {
             this.Id(c => c.Id).GeneratedBy.Identity();
-            
+            this.Map(c => c.Calle).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.CodigoPostal).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.Departamento).Nullable().Not.LazyLoad();
+            this.Map(c => c.Email).Nullable().Not.LazyLoad();
+            //this.References(c => c.Localidad).Nullable().Not.LazyLoad();
+            //this.References(c => c.Localizacion).Nullable().Not.LazyLoad();
+            this.Map(c => c.Numero).Not.Nullable().Not.LazyLoad();
+            //this.References(c => c.Pais).Nullable().Not.LazyLoad();
+            this.Map(c => c.Piso).Nullable().Not.LazyLoad();
+            this.Map(c => c.Telefono).Not.Nullable().Not.LazyLoad();
+            this.Map(c => c.Predeterminado).Not.Nullable().Not.LazyLoad();
         }
     }
 }

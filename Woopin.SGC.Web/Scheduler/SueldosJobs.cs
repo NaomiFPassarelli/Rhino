@@ -82,7 +82,8 @@ namespace Woopin.SGC.Web.Scheduler
                         int columnsExcel = 26;
                         for (int u = 1; u < columnsExcel; u++)
                         {
-                            if (currentRow.GetCell(u) != null)
+                            //if (currentRow.GetCell(u) != null)
+                            if (currentRow.GetCell(u).CellType != CellType.Blank)
                             {
 
                                 CellType type = currentRow.GetCell(u).CellType;
@@ -269,7 +270,7 @@ namespace Woopin.SGC.Web.Scheduler
                 }
             }
             string currentFileName = Path.GetFileName(path);
-            string newFileName = "resultado_" + currentFileName;
+            string newFileName = "resultado_empleados_" + currentFileName;
             string newPath = path.Replace(currentFileName,newFileName);
             using (FileStream file = new FileStream(newPath, FileMode.Create, FileAccess.Write))
             {

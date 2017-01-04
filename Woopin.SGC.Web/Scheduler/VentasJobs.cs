@@ -155,31 +155,135 @@ namespace Woopin.SGC.Web.Scheduler
                     try
                     {
                         // Force celltypes
-                        currentRow.GetCell(5).SetCellType(CellType.String);
-                        currentRow.GetCell(6).SetCellType(CellType.String);
-                        currentRow.GetCell(7).SetCellType(CellType.String);
-                        currentRow.GetCell(8).SetCellType(CellType.String);
-                        currentRow.GetCell(9).SetCellType(CellType.String);
-                        currentRow.GetCell(10).SetCellType(CellType.String);
-                        currentRow.GetCell(11).SetCellType(CellType.String);
+                        //currentRow.GetCell(5).SetCellType(CellType.String);
+                        //currentRow.GetCell(6).SetCellType(CellType.String);
+                        //currentRow.GetCell(7).SetCellType(CellType.String);
+                        //currentRow.GetCell(8).SetCellType(CellType.String);
+                        //currentRow.GetCell(9).SetCellType(CellType.String);
+                        //currentRow.GetCell(10).SetCellType(CellType.String);
+                        //currentRow.GetCell(11).SetCellType(CellType.String);
 
-                        Cliente c = new Cliente()
+                        //Cliente c = new Cliente()
+                        //{
+                        //    RazonSocial = currentRow.GetCell(1).StringCellValue,
+                        //    CUIT = Cuit,
+                        //    CategoriaIva = new CategoriaIVA() { Nombre = currentRow.GetCell(2).StringCellValue },
+                        //    Email = currentRow.GetCell(3).StringCellValue,
+                        //    Direccion = currentRow.GetCell(4).StringCellValue,
+                        //    Numero = currentRow.GetCell(5).StringCellValue,
+                        //    Piso = currentRow.GetCell(6).StringCellValue,
+                        //    Departamento = currentRow.GetCell(7).StringCellValue,
+                        //    CodigoPostal = currentRow.GetCell(8).StringCellValue,
+                        //    Localidad = new Localidad() { Nombre = currentRow.GetCell(9).StringCellValue },
+                        //    Localizacion = new Localizacion() { Nombre = currentRow.GetCell(10).StringCellValue },
+                        //    Pais = new ComboItem() { Data = currentRow.GetCell(11).StringCellValue },
+                        //    Telefono = currentRow.GetCell(12).StringCellValue,
+                        //    CondicionVenta = new ComboItem() { Data = currentRow.GetCell(13).StringCellValue },
+                        //};
+
+                        Cliente c = new Cliente() { };
+                        int[] obligatorios = new int[] { 1, 2, 13 };
+                        int columnsExcel = 14;
+                        for (int u = 1; u < columnsExcel; u++)
                         {
-                            RazonSocial = currentRow.GetCell(1).StringCellValue,
-                            CUIT = Cuit,
-                            CategoriaIva = new CategoriaIVA() { Nombre = currentRow.GetCell(2).StringCellValue },
-                            Email = currentRow.GetCell(3).StringCellValue,
-                            Direccion = currentRow.GetCell(4).StringCellValue,
-                            Numero = currentRow.GetCell(5).StringCellValue,
-                            Piso = currentRow.GetCell(6).StringCellValue,
-                            Departamento = currentRow.GetCell(7).StringCellValue,
-                            CodigoPostal = currentRow.GetCell(8).StringCellValue,
-                            Localidad = new Localidad() { Nombre = currentRow.GetCell(9).StringCellValue },
-                            Localizacion = new Localizacion() { Nombre = currentRow.GetCell(10).StringCellValue },
-                            Pais = new ComboItem() { Data = currentRow.GetCell(11).StringCellValue },
-                            Telefono = currentRow.GetCell(12).StringCellValue,
-                            CondicionVenta = new ComboItem() { Data = currentRow.GetCell(13).StringCellValue },
-                        };
+                            if (currentRow.GetCell(u).CellType != CellType.Blank)
+                                //if (currentRow.GetCell(u) != null)
+                            {
+                                CellType type = currentRow.GetCell(u).CellType;
+                                if (type == CellType.String)
+                                {
+                                    currentRow.GetCell(u).SetCellType(CellType.String);
+                                }
+                                else if (type == CellType.Numeric)
+                                {
+                                    currentRow.GetCell(u).SetCellType(CellType.Numeric);
+                                }
+
+                                //Campos NO obligatorios
+                                switch (u)
+                                {
+                                    case 3:
+                                        c.Email = (currentRow.GetCell(3).CellType == CellType.String) ? currentRow.GetCell(3).StringCellValue : currentRow.GetCell(3).NumericCellValue.ToString();
+                                        break;
+                                    case 4:
+                                        c.Direccion = (currentRow.GetCell(4).CellType == CellType.String) ? currentRow.GetCell(4).StringCellValue : currentRow.GetCell(4).NumericCellValue.ToString();
+                                        break;
+                                    case 5:
+                                        c.Numero = (currentRow.GetCell(5).CellType == CellType.String) ? currentRow.GetCell(5).StringCellValue : currentRow.GetCell(5).NumericCellValue.ToString();
+                                        break;
+                                    case 6:
+                                        c.Piso = (currentRow.GetCell(6).CellType == CellType.String) ? currentRow.GetCell(6).StringCellValue : currentRow.GetCell(6).NumericCellValue.ToString();
+                                        break;
+                                    case 7:
+                                        c.Departamento = (currentRow.GetCell(7).CellType == CellType.String) ? currentRow.GetCell(7).StringCellValue : currentRow.GetCell(7).NumericCellValue.ToString();
+                                        break;
+                                    case 8:
+                                        c.CodigoPostal = (currentRow.GetCell(8).CellType == CellType.String) ? currentRow.GetCell(8).StringCellValue : currentRow.GetCell(8).NumericCellValue.ToString();
+                                        break;
+                                    case 9:
+                                        c.Localidad = new Localidad() { Nombre = currentRow.GetCell(9).StringCellValue };
+                                        break;
+                                    case 10:
+                                        c.Localizacion = new Localizacion() { Nombre = currentRow.GetCell(10).StringCellValue };
+                                        break;
+                                    case 11:
+                                        c.Pais = new ComboItem() { Data = currentRow.GetCell(11).StringCellValue };
+                                        break;
+                                    case 12:
+                                        c.Telefono = (currentRow.GetCell(12).CellType == CellType.String) ? currentRow.GetCell(12).StringCellValue : currentRow.GetCell(12).NumericCellValue.ToString();
+                                        break;
+                                }
+                            }
+                            else if (obligatorios.Contains(u)) //Campos obligatorios
+                            {
+                                string msg = "Todos los campos obligatorios deben estar completos";
+                                statusCell.SetCellValue(msg);
+                            }
+                            else
+                            { //Campos NO obligatorios
+                                switch (u)
+                                {
+                                    case 3:
+                                        c.Email = null;
+                                        break;
+                                    case 4:
+                                        c.Direccion = null;
+                                        break;
+                                    case 5:
+                                        c.Numero = null;
+                                        break;
+                                    case 6:
+                                        c.Piso = null;
+                                        break;
+                                    case 7:
+                                        c.Departamento = null;
+                                        break;
+                                    case 8:
+                                        c.CodigoPostal = null;
+                                        break;
+                                    case 9:
+                                        c.Localidad = null;
+                                        break;
+                                    case 10:
+                                        c.Localizacion = null;
+                                        break;
+                                    case 11:
+                                        c.Pais = null;
+                                        break;
+                                    case 12:
+                                        c.Telefono = null;
+                                        break;
+                                }
+
+                            }
+                        }
+
+                        //Campos obligatorios
+                        c.CUIT = Cuit;
+                        c.RazonSocial = (currentRow.GetCell(1).CellType == CellType.String) ? currentRow.GetCell(1).StringCellValue : currentRow.GetCell(1).NumericCellValue.ToString();
+                        c.CategoriaIva = new CategoriaIVA() { Nombre = currentRow.GetCell(2).StringCellValue };
+                        c.CondicionVenta = new ComboItem() { Data = currentRow.GetCell(13).StringCellValue };
+                        
 
                         // Model validations.
                         List<ValidationResult> validations;
@@ -206,7 +310,7 @@ namespace Woopin.SGC.Web.Scheduler
                 }
             }
             string currentFileName = Path.GetFileName(path);
-            string newFileName = "resultado_" + currentFileName;
+            string newFileName = "resultado_clientes_" + currentFileName;
             string newPath = path.Replace(currentFileName,newFileName);
             using (FileStream file = new FileStream(newPath, FileMode.Create, FileAccess.Write))
             {

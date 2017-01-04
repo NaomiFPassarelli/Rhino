@@ -20,11 +20,12 @@ namespace Woopin.SGC.Model.Tesoreria
         public virtual Banco Banco { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Numero")]
+        [DisplayName("Número")]
         public virtual string Numero { get; set; }
 
         // TODO - PIROSKA - Se saca el requerido para piroska.
         //[Required(ErrorMessage = "Es Necesario un Numero de Cta")]
-        [DisplayName("Numero Cuenta")]
+        [DisplayName("Número Cuenta")]
         public virtual string NumeroCuenta { get; set; }
 
         [Required(ErrorMessage = "Es Necesario un Importe")]
@@ -39,7 +40,9 @@ namespace Woopin.SGC.Model.Tesoreria
 
         [DisplayName("Fecha Efectivizado")]
         public virtual DateTime? FechaEfectivizado { get; set; }
-        
+
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         public virtual EstadoCheque Estado { get; set; }
 

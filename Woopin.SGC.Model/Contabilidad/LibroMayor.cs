@@ -16,7 +16,8 @@ namespace Woopin.SGC.Model.Contabilidad
         public virtual DateTime FechaCreacion { get; set; }
         public virtual string Leyenda { get; set; }
         public virtual string Modulo { get; set; }
-        public virtual Ejercicio Ejercicio { get; set; } 
+        public virtual Ejercicio Ejercicio { get; set; }
+        [DisplayName("N° Referencia")]
         public virtual int NumeroReferencia { get; set; }
         public virtual decimal Debe { get; set; }
         public virtual decimal Haber { get; set; }

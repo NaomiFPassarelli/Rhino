@@ -47,6 +47,17 @@ namespace Woopin.SGC.Services
         void SetDefaultCategoriaIVA(int Id);
         #endregion
 
+        #region Direccion
+        void AddDireccion(Direccion Direccion);
+        void DeleteDirecciones(List<int> Ids);
+        Direccion GetDireccion(int Id);
+        void UpdateDireccion(Direccion Direccion);
+        IList<Direccion> GetAllDirecciones();
+        void SetDefaultDireccion(int Id);
+        #endregion
+
+
+
         #region Combo
         Combo GetCombo(int Id);
         IList<Combo> GetAllCombos();

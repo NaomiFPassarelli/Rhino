@@ -26,9 +26,12 @@ namespace Woopin.SGC.Model.Stock
         public virtual decimal Cantidad { get; set; }
         //[DoNotValidate]
         //public virtual ComprobanteCompra Comprobante { get; set; }
+        [DisplayName("Observación")]
         public virtual string Observacion { get; set; }
         public virtual Organizacion Organizacion { get; set; }
         //public virtual UsuarioOrganizacion UsuarioOrganizacion { get; set; }
+        [Required(ErrorMessage = "Es Necesario una fecha de creación")]
+        [DisplayName("Fecha Creación")]
         public virtual DateTime FechaCreacion { get; set; }
         public IngresoStock() 
         {

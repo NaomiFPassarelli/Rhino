@@ -66,7 +66,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2015 17:40:26</publishTime>
     </File>
     <File Include="Areas/Compras/Views/Imputaciones/Nuevo.cshtml">
-      <publishTime>09/03/2015 17:40:26</publishTime>
+      <publishTime>12/29/2016 09:02:15</publishTime>
     </File>
     <File Include="Areas/Compras/Views/OrdenesPagos/Detalle.cshtml">
       <publishTime>09/03/2015 17:40:26</publishTime>
@@ -321,7 +321,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/14/2016 10:57:14</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Asociados/Nuevo.cshtml">
-      <publishTime>10/14/2016 14:57:34</publishTime>
+      <publishTime>12/28/2016 16:40:02</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Asociados/SolicitudIngreso.cshtml">
       <publishTime>10/14/2016 16:14:46</publishTime>
@@ -345,7 +345,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/14/2016 13:16:07</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Pagos/Vencidos.cshtml">
-      <publishTime>10/14/2016 13:15:46</publishTime>
+      <publishTime>12/29/2016 10:45:37</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Pagos/VersionImprimible.cshtml">
       <publishTime>10/13/2016 14:02:59</publishTime>
@@ -453,19 +453,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/23/2016 06:39:58</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Empleados/Nuevo.cshtml">
-      <publishTime>09/27/2016 17:29:10</publishTime>
+      <publishTime>12/22/2016 20:30:53</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Recibos/Detalle.cshtml">
       <publishTime>08/09/2016 16:12:55</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Recibos/Index.cshtml">
-      <publishTime>10/20/2016 16:35:11</publishTime>
+      <publishTime>12/28/2016 11:12:57</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Recibos/js/_Detalle.cshtml">
       <publishTime>06/22/2016 06:08:51</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Recibos/Nuevo.cshtml">
-      <publishTime>11/24/2016 11:58:11</publishTime>
+      <publishTime>01/02/2017 11:37:17</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Recibos/SueldoBruto.cshtml">
       <publishTime>08/05/2016 12:49:18</publishTime>
@@ -474,10 +474,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/05/2016 12:49:35</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Recibos/VersionImprimible.cshtml">
-      <publishTime>08/09/2016 17:19:07</publishTime>
+      <publishTime>12/29/2016 10:46:57</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Recibos/VersionImprimibles.cshtml">
-      <publishTime>10/14/2016 12:14:40</publishTime>
+      <publishTime>12/29/2016 10:47:47</publishTime>
     </File>
     <File Include="Areas/Sueldos/Views/Web.config">
       <publishTime>02/12/2016 09:57:09</publishTime>
@@ -660,7 +660,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/04/2016 15:13:16</publishTime>
     </File>
     <File Include="Areas/Ventas/Views/Clientes/Editar.cshtml">
-      <publishTime>11/09/2016 16:52:36</publishTime>
+      <publishTime>12/20/2016 19:58:39</publishTime>
     </File>
     <File Include="Areas/Ventas/Views/Clientes/Importar.cshtml">
       <publishTime>01/21/2016 10:47:10</publishTime>
@@ -669,7 +669,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/22/2016 17:44:58</publishTime>
     </File>
     <File Include="Areas/Ventas/Views/Clientes/Nuevo.cshtml">
-      <publishTime>11/09/2016 16:51:30</publishTime>
+      <publishTime>12/20/2016 19:59:15</publishTime>
     </File>
     <File Include="Areas/Ventas/Views/Cobranzas/Detalle.cshtml">
       <publishTime>09/03/2015 17:40:27</publishTime>
@@ -735,7 +735,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2015 17:40:27</publishTime>
     </File>
     <File Include="Areas/Ventas/Views/Imputaciones/Nuevo.cshtml">
-      <publishTime>09/03/2015 17:40:27</publishTime>
+      <publishTime>12/29/2016 09:01:45</publishTime>
     </File>
     <File Include="Areas/Ventas/Views/ListaPrecios/Editar.cshtml">
       <publishTime>09/03/2015 17:40:27</publishTime>
@@ -1041,10 +1041,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2015 17:40:28</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Common.App.dll">
-      <publishTime>11/30/2016 12:55:19</publishTime>
+      <publishTime>01/03/2017 16:33:50</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Common.App.pdb">
-      <publishTime>11/30/2016 12:55:19</publishTime>
+      <publishTime>01/03/2017 16:33:50</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Common.dll">
       <publishTime>11/30/2016 12:55:16</publishTime>
@@ -1053,43 +1053,43 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/30/2016 12:55:16</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Model.dll">
-      <publishTime>11/30/2016 12:55:17</publishTime>
+      <publishTime>01/03/2017 16:33:47</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Model.pdb">
-      <publishTime>11/30/2016 12:55:17</publishTime>
+      <publishTime>01/03/2017 16:33:47</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.NHMapping.dll">
-      <publishTime>11/30/2016 12:55:18</publishTime>
+      <publishTime>01/03/2017 16:33:48</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.NHMapping.pdb">
-      <publishTime>11/30/2016 12:55:18</publishTime>
+      <publishTime>01/03/2017 16:33:48</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Repositories.dll">
-      <publishTime>11/30/2016 12:55:20</publishTime>
+      <publishTime>01/03/2017 16:33:51</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Repositories.pdb">
-      <publishTime>11/30/2016 12:55:20</publishTime>
+      <publishTime>01/03/2017 16:33:51</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.Afip.dll">
-      <publishTime>11/30/2016 12:55:19</publishTime>
+      <publishTime>01/03/2017 16:33:51</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.Afip.pdb">
-      <publishTime>11/30/2016 12:55:19</publishTime>
+      <publishTime>01/03/2017 16:33:51</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.Afip.XmlSerializers.dll">
-      <publishTime>11/30/2016 12:55:20</publishTime>
+      <publishTime>01/03/2017 16:33:51</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.dll">
-      <publishTime>11/30/2016 12:55:22</publishTime>
+      <publishTime>01/03/2017 16:33:54</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.pdb">
-      <publishTime>11/30/2016 12:55:22</publishTime>
+      <publishTime>01/03/2017 16:33:54</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Web.dll">
-      <publishTime>11/30/2016 12:55:26</publishTime>
+      <publishTime>01/03/2017 16:33:57</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Web.pdb">
-      <publishTime>11/30/2016 12:55:26</publishTime>
+      <publishTime>01/03/2017 16:33:57</publishTime>
     </File>
     <File Include="bin/zh-Hans/Microsoft.Data.Edm.resources.dll">
       <publishTime>09/03/2015 17:40:28</publishTime>
@@ -1149,7 +1149,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/22/2016 03:30:33</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>01/20/2016 17:35:03</publishTime>
+      <publishTime>12/28/2016 11:51:11</publishTime>
     </File>
     <File Include="Content/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png">
       <publishTime>09/03/2015 17:40:27</publishTime>
@@ -1515,7 +1515,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/18/2016 16:45:57</publishTime>
     </File>
     <File Include="Scripts/hoe/hoe.css">
-      <publishTime>01/19/2016 14:19:55</publishTime>
+      <publishTime>12/28/2016 12:08:54</publishTime>
     </File>
     <File Include="Scripts/hoe/hoe.js">
       <publishTime>01/19/2016 12:40:07</publishTime>
@@ -2046,7 +2046,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/01/2016 19:34:52</publishTime>
     </File>
     <File Include="Views/Account/Login.cshtml">
-      <publishTime>01/20/2016 17:32:41</publishTime>
+      <publishTime>12/28/2016 10:12:34</publishTime>
     </File>
     <File Include="Views/Account/_ChangePasswordPartial.cshtml">
       <publishTime>09/03/2015 17:40:28</publishTime>
@@ -2068,6 +2068,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/ConfiguracionErrors/SinTarjetas.cshtml">
       <publishTime>01/04/2016 15:13:16</publishTime>
+    </File>
+    <File Include="Views/Error/Index.cshtml">
+      <publishTime>12/05/2016 21:41:44</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
       <publishTime>01/20/2016 17:50:59</publishTime>
@@ -2106,7 +2109,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2015 17:40:28</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>10/19/2016 11:53:58</publishTime>
+      <publishTime>12/29/2016 10:45:15</publishTime>
     </File>
     <File Include="Views/Shared/_Layout_LogIn.cshtml">
       <publishTime>07/05/2016 09:44:41</publishTime>
@@ -2115,7 +2118,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2015 17:40:28</publishTime>
     </File>
     <File Include="Views/Usuarios/Index.cshtml">
-      <publishTime>09/03/2015 17:40:28</publishTime>
+      <publishTime>12/29/2016 10:48:13</publishTime>
     </File>
     <File Include="Views/Usuarios/Nuevo.cshtml">
       <publishTime>01/04/2016 15:13:16</publishTime>
@@ -2127,7 +2130,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/04/2016 15:13:16</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>05/23/2016 02:38:49</publishTime>
+      <publishTime>12/15/2016 11:00:21</publishTime>
     </File>
     <File Include="Woopin.SGC.Web.psproj">
       <publishTime>09/03/2015 17:40:28</publishTime>

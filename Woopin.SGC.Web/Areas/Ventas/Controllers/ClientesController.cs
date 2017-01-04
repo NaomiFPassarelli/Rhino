@@ -49,7 +49,7 @@ namespace Woopin.SGC.Web.Areas.Ventas.Controllers
             try
             {
                 ClearNotValidatedProperties(Cliente);
-                Cliente.Master = Cliente.Master == null ? null : Cliente.Master;
+                Cliente.Master = Cliente.Master == null ? null : (Cliente.Master.Id == 0 ? null : Cliente.Master);
                 if (ModelState.IsValid)
                 {
                     this.ventasConfigService.AddCliente(Cliente);
