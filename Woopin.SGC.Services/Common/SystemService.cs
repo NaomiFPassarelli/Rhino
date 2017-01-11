@@ -27,12 +27,13 @@ namespace Woopin.SGC.Services
         private readonly IGeneralRepository GeneralRepository;
         private readonly ILogRepository LogRepository;
         private readonly IOrganizacionRepository OrganizacionRepository;
+        private readonly IOrganizacionModuloRepository OrganizacionModuloRepository;
         private readonly IUsuarioOrganizacionRepository UsuarioOrganizacionRepository;
         private readonly IContabilidadConfigService ContabilidadConfigService;
         private readonly ITesoreriaConfigService TesoreriaConfigService;
 
         public SystemService(IUsuarioRepository UsuarioRepository, IComboRepository ComboRepository, IComboItemRepository ComboItemRepository, IGeneralRepository GeneralRepository, ILogRepository LogRepository, IOrganizacionRepository OrganizacionRepository,
-                                            IUsuarioOrganizacionRepository UsuarioOrganizacionRepository, IContabilidadConfigService ContabilidadConfigService, ITesoreriaConfigService TesoreriaConfigService)
+                                            IUsuarioOrganizacionRepository UsuarioOrganizacionRepository, IContabilidadConfigService ContabilidadConfigService, ITesoreriaConfigService TesoreriaConfigService, IOrganizacionModuloRepository OrganizacionModuloRepository)
         {
             this.UsuarioRepository = UsuarioRepository;
             this.ComboRepository = ComboRepository;
@@ -40,6 +41,7 @@ namespace Woopin.SGC.Services
             this.GeneralRepository = GeneralRepository;
             this.LogRepository = LogRepository;
             this.OrganizacionRepository = OrganizacionRepository;
+            this.OrganizacionModuloRepository = OrganizacionModuloRepository;
             this.UsuarioOrganizacionRepository = UsuarioOrganizacionRepository;
             this.ContabilidadConfigService = ContabilidadConfigService;
             this.TesoreriaConfigService = TesoreriaConfigService;
@@ -432,13 +434,88 @@ namespace Woopin.SGC.Services
                 user.OrganizacionActual = org;
                 this.UsuarioRepository.Update(user);
 
+                // Busqueda de los nuevos datos desde base.
+                IList<ModulosSistemaGestion> modulos = this.GetAllModulosByOrganizacion(org.Id);
+
                 // Actualizo la información de la sesion.
                 Security.SetUsuario(user);
                 Security.SetOrganizacion(org);
+                Security.SetModulos(modulos);
             });
         }
 
         #endregion
+
+        #region
+
+        /// <summary>
+        /// Consulta para traer todos los modulos para la administracion de organizaciones.
+        /// Si se le manda Id de Organizacion, filtrara por esa organizacion.
+        /// </summary>
+        /// <param name="IdOrganizacion">Id de la Organizacion a filtrar, 0 no filtra</param>
+        /// <param name="IdUsuario">Id del modulo a filtrar, 0 no filtra</param>
+        /// <returns>Devuelve todos los modulos que cumplan con los criterios.</returns>
+        public IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion)
+        {
+            IList<ModulosSistemaGestion> Modulos = null;
+            this.OrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                //Modulos = this.OrganizacionRepository.GetAllModulosByOrganizacion(IdOrganizacion, SessionDataManager.Get().CurrentUser.Id);
+                Modulos = this.OrganizacionRepository.GetAllModulosByOrganizacion(IdOrganizacion, Security.GetCurrentUser().Id);
+            });
+            return Modulos;
+        }
+
+
+        /// <summary>
+        /// Elimina la relacion modulo-organizacion, para los modulos seleccionados de la organizacion dada.
+        /// </summary>
+        /// <param name="Ids">Ids de los modulos a remover</param>
+        /// <param name="IdOrganizacion">Id de la organización a limpiar</param>
+        [Loggable]
+        public void RemoverModulosOrganizacion(List<int> Ids, int IdOrganizacion)
+        {
+            this.OrganizacionModuloRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                foreach (var Id in Ids)
+                {
+                    OrganizacionModulo moduloOrg = this.OrganizacionModuloRepository.GetByIDs(Id, IdOrganizacion);
+                    if (moduloOrg != null)
+                        this.OrganizacionModuloRepository.Delete(moduloOrg);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Agregar las relaciones modulo-organizacion, para los modulos seleccionados de la organizacion dada.
+        /// </summary>
+        /// <param name="Ids">Ids de modulos a agregar</param>
+        /// <param name="IdOrganizacion">Id de la organizacion</param>
+        [Loggable]
+        public void AgregarModulosOrganizacion(List<int> Ids, int IdOrganizacion)
+        {
+            this.OrganizacionModuloRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                foreach (var Id in Ids)
+                {
+                    OrganizacionModulo moduloOrg = this.OrganizacionModuloRepository.GetByIDs(Id, IdOrganizacion);
+                    if (moduloOrg == null)
+                    {
+                        OrganizacionModulo uo = new OrganizacionModulo()
+                        {
+                            Organizacion = new Organizacion() { Id = IdOrganizacion },
+                            ModulosSistemaGestion = (ModulosSistemaGestion)Id
+                        };
+                        this.OrganizacionModuloRepository.Add(uo);
+                    }
+
+                }
+            });
+        }
+
+        
+        #endregion
+
         
 
 

@@ -218,6 +218,15 @@ namespace Woopin.SGC.Repositories.Common
                                                         .Where(x => x.Id == user.OrganizacionActual.Id)
                                                         .SingleOrDefault();
             s.CurrentUser = user;
+            //s.CurrentsModuls = this.GetSessionFactory().GetSession().QueryOver<OrganizacionModulo>()
+            //                                            .Where(x => x.Organizacion.Id == user.OrganizacionActual.Id)
+            //                                            .List<ModulosSistemaGestion>();
+
+            IList<OrganizacionModulo> OrganizacionModulos = this.GetSessionFactory().GetSession().QueryOver<OrganizacionModulo>()
+                                                        .Where(x => x.Organizacion.Id == user.OrganizacionActual.Id)
+                                                        .List();
+            s.CurrentsModuls = OrganizacionModulos.Select(c => c.ModulosSistemaGestion).ToList();
+            
             SessionDataFactory.RegisterSessionData(s);
             return s;
         }
@@ -230,6 +239,10 @@ namespace Woopin.SGC.Repositories.Common
             s.CurrentUser = this.GetSessionFactory().GetSession().QueryOver<Usuario>()
                                                         .Where(x => x.Id == header.IdUsuario)
                                                         .SingleOrDefault();
+            s.CurrentsModuls = this.GetSessionFactory().GetSession().QueryOver<OrganizacionModulo>()
+                                                        .Where(x => x.Organizacion.Id == header.IdOrganizacion)
+                                                        .List<ModulosSistemaGestion>();
+            
             SessionDataFactory.RegisterSessionData(s);
             return s;
         }

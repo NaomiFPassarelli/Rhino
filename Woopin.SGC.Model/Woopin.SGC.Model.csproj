@@ -100,6 +100,7 @@
     <Compile Include="Common\Organizacion.cs" />
     <Compile Include="Common\ReporteCitiItem.cs" />
     <Compile Include="Common\SystemConfig.cs" />
+    <Compile Include="Common\OrganizacionModulo.cs" />
     <Compile Include="Common\UsuarioOrganizacion.cs" />
     <Compile Include="Compras\ImputacionCompra.cs" />
     <Compile Include="Compras\ComprasCuentaCorriente.cs" />

@@ -155,3 +155,5 @@ C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\PROD\Woopin.SGC.Web.csprojResolveAssembly
 C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\PROD\Woopin.SGC.Web.dll
 C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\PROD\Woopin.SGC.Web.pdb
 C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Iesi.Collections.xml
+C:\Woopin\App_Rhino\Woopin.SGC.Web\bin\Woopin.SGC.Web.pssym
+C:\Woopin\App_Rhino\Woopin.SGC.Web\obj\PROD\Woopin.SGC.Web.dll.postsharp

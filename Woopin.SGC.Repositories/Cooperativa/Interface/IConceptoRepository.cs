@@ -12,6 +12,7 @@ namespace Woopin.SGC.Repositories.Cooperativa
     public interface IConceptoRepository : IRepository<Concepto>
     {
         IList<Concepto> GetAllByFilter(SelectComboRequest req);
+        Concepto GetByFilter(string DescripcionConcepto);
         IList<Concepto> GetAllByFilter(PagingRequest req);
         Concepto Get(int IdConcepto);
 

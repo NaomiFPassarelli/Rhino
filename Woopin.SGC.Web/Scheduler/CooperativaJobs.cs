@@ -65,7 +65,8 @@ namespace Woopin.SGC.Web.Scheduler
                 string Cuit = null;
                 if (cuitCell != null)
                 {
-                    Cuit = cuitCell.StringCellValue;
+                    Cuit = (currentRow.GetCell(0).CellType == CellType.String) ? currentRow.GetCell(0).StringCellValue : currentRow.GetCell(0).NumericCellValue.ToString();
+                    //Cuit = cuitCell.StringCellValue;
                 }
                 ICell dniCell = currentRow.GetCell(1);
                 string DNI = null;

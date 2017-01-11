@@ -61,6 +61,7 @@
     <Compile Include="Common\LocalidadMap.cs" />
     <Compile Include="Common\LogMap.cs" />
     <Compile Include="Common\OrganizacionMap.cs" />
+    <Compile Include="Common\OrganizacionModuloMap.cs" />
     <Compile Include="Common\UsuarioOrganizacionMap.cs" />
     <Compile Include="Compras\ImputacionCompraMap.cs" />
     <Compile Include="Compras\OtroEgresoItem.cs" />

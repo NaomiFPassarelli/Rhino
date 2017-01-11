@@ -193,10 +193,7 @@
                             $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(ret.ErrorMessage));
 
                             if (ret.FaltaInformacion) {
-                                debugger;
-                                window.open('@Url.Action("Nuevo")?FechaActa=' + ret.FechaActa, '_blank');
-
-                                //$('#seleccionar-completar-dialog').OpenFormDialog('Url.Action("Nuevo")?FechaActa=' + ret.FechaActa, 'Complete la informacion del acta finalizada');
+                                window.location = '@Url.Action("Nuevo")' + "?FechaActa=" + ret.FechaActa;
                             }
                         }
                     }
@@ -314,5 +311,5 @@
     $(document).ready(function () {
         ListadoActas.init();
     });
-    </script>
+</script>
 }

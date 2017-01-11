@@ -27,6 +27,10 @@ namespace Woopin.SGC.CommonApp.Session
         /// </summary>
         public Usuario CurrentUser { get; set; }
 
+        /// <summary>
+        /// Devuelve los modulos de la organizacion
+        /// </summary>
+        public IList<ModulosSistemaGestion> CurrentsModuls { get; set; }
 
         /// <summary>
         /// Devuelve una nueva instancia de la clase.

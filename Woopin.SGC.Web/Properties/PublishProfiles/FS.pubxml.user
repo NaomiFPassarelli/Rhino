@@ -276,7 +276,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/05/2016 11:58:54</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Actas/Index.cshtml">
-      <publishTime>10/14/2016 10:54:53</publishTime>
+      <publishTime>01/11/2017 13:11:26</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Actas/Nuevo.cshtml">
       <publishTime>09/15/2016 09:29:22</publishTime>
@@ -339,7 +339,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/24/2016 15:02:03</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Pagos/Nuevo.cshtml">
-      <publishTime>09/27/2016 15:52:19</publishTime>
+      <publishTime>01/11/2017 12:43:31</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Pagos/PorVencer.cshtml">
       <publishTime>10/14/2016 13:16:07</publishTime>
@@ -348,7 +348,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/29/2016 10:45:37</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Pagos/VersionImprimible.cshtml">
-      <publishTime>10/13/2016 14:02:59</publishTime>
+      <publishTime>01/10/2017 21:29:54</publishTime>
     </File>
     <File Include="Areas/Cooperativa/Views/Pagos/VersionImprimibles.cshtml">
       <publishTime>10/13/2016 11:52:24</publishTime>
@@ -1041,10 +1041,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2015 17:40:28</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Common.App.dll">
-      <publishTime>01/03/2017 16:33:50</publishTime>
+      <publishTime>01/10/2017 14:37:39</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Common.App.pdb">
-      <publishTime>01/03/2017 16:33:50</publishTime>
+      <publishTime>01/10/2017 14:37:39</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Common.dll">
       <publishTime>11/30/2016 12:55:16</publishTime>
@@ -1053,43 +1053,43 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/30/2016 12:55:16</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Model.dll">
-      <publishTime>01/03/2017 16:33:47</publishTime>
+      <publishTime>01/10/2017 12:21:26</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Model.pdb">
-      <publishTime>01/03/2017 16:33:47</publishTime>
+      <publishTime>01/10/2017 12:21:26</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.NHMapping.dll">
-      <publishTime>01/03/2017 16:33:48</publishTime>
+      <publishTime>01/10/2017 12:21:27</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.NHMapping.pdb">
-      <publishTime>01/03/2017 16:33:48</publishTime>
+      <publishTime>01/10/2017 12:21:27</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Repositories.dll">
-      <publishTime>01/03/2017 16:33:51</publishTime>
+      <publishTime>01/11/2017 13:17:21</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Repositories.pdb">
-      <publishTime>01/03/2017 16:33:51</publishTime>
+      <publishTime>01/11/2017 13:17:21</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.Afip.dll">
-      <publishTime>01/03/2017 16:33:51</publishTime>
+      <publishTime>01/10/2017 14:37:40</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.Afip.pdb">
-      <publishTime>01/03/2017 16:33:51</publishTime>
+      <publishTime>01/10/2017 14:37:39</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.Afip.XmlSerializers.dll">
-      <publishTime>01/03/2017 16:33:51</publishTime>
+      <publishTime>01/10/2017 14:37:40</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.dll">
-      <publishTime>01/03/2017 16:33:54</publishTime>
+      <publishTime>01/11/2017 13:17:23</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Services.pdb">
-      <publishTime>01/03/2017 16:33:54</publishTime>
+      <publishTime>01/11/2017 13:17:23</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Web.dll">
-      <publishTime>01/03/2017 16:33:57</publishTime>
+      <publishTime>01/11/2017 13:17:26</publishTime>
     </File>
     <File Include="bin/Woopin.SGC.Web.pdb">
-      <publishTime>01/03/2017 16:33:57</publishTime>
+      <publishTime>01/11/2017 13:17:26</publishTime>
     </File>
     <File Include="bin/zh-Hans/Microsoft.Data.Edm.resources.dll">
       <publishTime>09/03/2015 17:40:28</publishTime>
@@ -2109,7 +2109,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2015 17:40:28</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>12/29/2016 10:45:15</publishTime>
+      <publishTime>01/10/2017 16:42:34</publishTime>
     </File>
     <File Include="Views/Shared/_Layout_LogIn.cshtml">
       <publishTime>07/05/2016 09:44:41</publishTime>

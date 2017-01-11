@@ -140,9 +140,11 @@ namespace Woopin.SGC.Web.Scheduler
 
                 ICell cuitCell = currentRow.GetCell(0);
                 string Cuit = null;
+
                 if (cuitCell != null)
                 {
-                    Cuit = cuitCell.StringCellValue;
+                    Cuit = (currentRow.GetCell(0).CellType == CellType.String) ? currentRow.GetCell(0).StringCellValue : currentRow.GetCell(0).NumericCellValue.ToString();
+                    //Cuit = cuitCell.StringCellValue;
                 }
 
                 if (currentRow != null && Cuit != null && Cuit.Length > 0)

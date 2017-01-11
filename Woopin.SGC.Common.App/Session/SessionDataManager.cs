@@ -50,6 +50,16 @@ namespace Woopin.SGC.CommonApp.Session
         }
 
         /// <summary>
+        /// Cambia los modulos de la organizacion actual del usuario de la sesion
+        /// </summary>
+        /// <param name="modulos">Nuevos modulos de la organizacion actual</param>
+        public static void SetModulos(IList<ModulosSistemaGestion> modulos)
+        {
+            SessionDataManager.Get().CurrentsModuls = modulos;
+        }
+
+
+        /// <summary>
         /// Busca de la sesión, toda la información del usuario.
         /// </summary>
         /// <returns>Objeto usuario loggeado</returns>
@@ -75,5 +85,16 @@ namespace Woopin.SGC.CommonApp.Session
         {
             SessionDataManager.Get().CurrentUser.IsDebugging = !SessionDataManager.Get().CurrentUser.IsDebugging;
         }
+
+
+        /// <summary>
+        /// Busca de la sesión, los modulos que actualmente tiene seteado la organizacion
+        /// </summary>
+        /// <returns>Los modulos de la organizacion</returns>
+        public static IList<ModulosSistemaGestion> GetModulosByOrganizacion()
+        {
+            return SessionDataManager.Get().CurrentsModuls;
+        }
+
     }
 }

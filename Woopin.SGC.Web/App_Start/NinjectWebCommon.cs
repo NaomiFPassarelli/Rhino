@@ -102,6 +102,7 @@ namespace Woopin.SGC.Web.App_Start
             kernel.Bind<IGeneralRepository>().To<GeneralRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<ILogRepository>().To<LogRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IOrganizacionRepository>().To<OrganizacionRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IOrganizacionModuloRepository>().To<OrganizacionModuloRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IUsuarioOrganizacionRepository>().To<UsuarioOrganizacionRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
 
             // Ventas

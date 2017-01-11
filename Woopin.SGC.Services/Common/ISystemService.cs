@@ -100,10 +100,35 @@ namespace Woopin.SGC.Services
 
         #endregion
 
+        #region OrganizacionModulo
+
+        /// <summary>
+        /// Consulta para traer todos los modulos para la administracion de organizaciones.
+        /// Si se le manda Id de Organizacion, filtrara por esa organizacion.
+        /// </summary>
+        /// <param name="IdOrganizacion">Id de la Organizacion a filtrar, 0 no filtra</param>
+        /// <returns>Devuelve todos los modulos que cumplan con los criterios, menos el que esta loggeado.</returns>
+        IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion);
+
+        /// <summary>
+        /// Elimina la relacion modulo-organizacion, para los modulos seleccionados de la organizacion dada.
+        /// </summary>
+        /// <param name="Ids">Ids de los modulos a remover</param>
+        /// <param name="IdOrganizacion">Id de la organización a limpiar</param>
+        void RemoverModulosOrganizacion(List<int> Ids, int IdOrganizacion);
+
+        /// <summary>
+        /// Agregar las relaciones modulos-organizacion, para los modulos seleccionados de la organizacion dada.
+        /// </summary>
+        /// <param name="Ids">Ids de modulos a agregar</param>
+        /// <param name="IdOrganizacion">Id de la organizacion</param>
+        void AgregarModulosOrganizacion(List<int> Ids, int IdOrganizacion);
+
+
+        #endregion
 
 
 
-        
     }
 }
 

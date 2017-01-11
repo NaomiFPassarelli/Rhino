@@ -41,6 +41,13 @@ namespace Woopin.SGC.Repositories.Cooperativa
                                                         .List();
         }
 
+        public Concepto GetByFilter(string DescripcionConcepto)
+        {
+            return this.GetSessionFactory().GetSession().QueryOver<Concepto>()
+                                                        .Where(x => x.Descripcion.IsLike('%' + DescripcionConcepto + '%'))
+                                                        .GetFilterBySecurity().SingleOrDefault();
+        }
+
         public IList<Concepto> GetAllByFilter(PagingRequest req)
         {
             // Este puede tener informacion de paginado para traer solo algunos registros y ordenamiento

@@ -44,6 +44,8 @@ namespace Woopin.SGC.Services
         IList<Concepto> GetAllConceptos();
         void DeleteConceptos(List<int> Ids);
         SelectCombo GetAllConceptosByFilterCombo(SelectComboRequest req);
+        Concepto GetConceptoByFilterCombo(string DescripcionConcepto);
+        
         SelectCombo GetConceptoCombos();
         //void AddConceptoConConceptos(Concepto Concepto, IList<Concepto> Conceptos);
         #endregion

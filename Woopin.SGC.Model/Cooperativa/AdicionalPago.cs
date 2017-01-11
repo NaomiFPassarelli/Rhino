@@ -13,7 +13,7 @@ namespace Woopin.SGC.Model.Cooperativa
     public class AdicionalPago : ISecuredEntity
     {
         public virtual int Id { get; set; }
-
+        [Required(ErrorMessage= "Este campo es obligatorio")] 
         [RegularExpression("^[0-9]+[0-9]*(.[0-9]{0,2})?$", ErrorMessage = "El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales")]
         public virtual decimal Total { get; set; }
         public virtual Organizacion Organizacion { get; set; }

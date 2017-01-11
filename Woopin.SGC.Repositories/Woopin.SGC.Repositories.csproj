@@ -69,6 +69,7 @@
     <Compile Include="Common\Implementacion\CategoriaIVARepository.cs" />
     <Compile Include="Common\Implementacion\GeneralRepository.cs" />
     <Compile Include="Common\Implementacion\LogRepository.cs" />
+    <Compile Include="Common\Implementacion\OrganizacionModuloRepository.cs" />
     <Compile Include="Common\Implementacion\UsuarioOrganizacionRepository.cs" />
     <Compile Include="Common\Implementacion\UsuarioRepository.cs" />
     <Compile Include="Common\Implementacion\SucursalRepository.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Common\Interface\IGeneralRepository.cs" />
     <Compile Include="Common\Interface\IMonedaRepository.cs" />
     <Compile Include="Common\Interface\ILogRepository.cs" />
+    <Compile Include="Common\Interface\IOrganizacionModuloRepository.cs" />
     <Compile Include="Common\Interface\IUsuarioOrganizacionRepository.cs" />
     <Compile Include="Common\Interface\IUsuarioRepository.cs" />
     <Compile Include="Common\Interface\ISucursalRepository.cs" />

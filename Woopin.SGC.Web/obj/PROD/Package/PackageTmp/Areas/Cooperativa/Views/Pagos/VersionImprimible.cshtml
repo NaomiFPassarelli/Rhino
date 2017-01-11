@@ -39,23 +39,23 @@
             <tr>
                 <td style="font-weight:bold;padding-top:7px;">@Model.Asociado.Nombre @Model.Asociado.Apellido </td>
                 @*<td style="padding-top:7px;">@Model.Asociado.FechaIngreso.ToString("dd/MM/yyyy")</td>*@
-                @if (Model[i].Asociado.CUIT != null)
+                @if (Model.Asociado.CUIT != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.CUIT</td>
                 }
-                else if (Model[i].Asociado.DNI != null)
+                else if (Model.Asociado.DNI != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.DNI</td>
                 }
-                else if (Model[i].Asociado.CI != null)
+                else if (Model.Asociado.CI != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.CI</td>
                 }
-                else if (Model[i].Asociado.LC != null)
+                else if (Model.Asociado.LC != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.LC</td>
                 }
-                else if (Model[i].Asociado.LE != null)
+                else if (Model.Asociado.LE != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.LE</td>
                 }
@@ -85,7 +85,7 @@
                 <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Anticipo</td>
                 <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
             </tr>
-            @foreach (var item in Model[i].AdicionalesPago)
+            @foreach (var item in Model.AdicionalesPago)
             {
                 <tr style="margin-top: 10px;border: 1px solid #000;font-size:12px;height:40px;">
                     <td style="width: 510px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Concepto.Descripcion</td>
@@ -134,7 +134,7 @@
             <tr>
                 <td>
                     <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
-                        Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model[i].Total) PESOS
+                        Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model.Total) PESOS
                     </div>
                     <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
                         en concepto de mis haberes correspondientes al periodo arriba indicado y según la presente
@@ -188,23 +188,23 @@
             <tr>
                 <td style="font-weight:bold;padding-top:7px;">@Model.Asociado.Nombre @Model.Asociado.Apellido </td>
                 @*<td style="padding-top:7px;">@Model.Asociado.FechaIngreso.ToString("dd/MM/yyyy")</td>*@
-                @if (Model[i].Asociado.CUIT != null)
+                @if (Model.Asociado.CUIT != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.CUIT</td>
                 }
-                else if (Model[i].Asociado.DNI != null)
+                else if (Model.Asociado.DNI != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.DNI</td>
                 }
-                else if (Model[i].Asociado.CI != null)
+                else if (Model.Asociado.CI != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.CI</td>
                 }
-                else if (Model[i].Asociado.LC != null)
+                else if (Model.Asociado.LC != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.LC</td>
                 }
-                else if (Model[i].Asociado.LE != null)
+                else if (Model.Asociado.LE != null)
                 {
                     <td style="padding-top:7px;">@Model.Asociado.LE</td>
                 }
@@ -234,7 +234,7 @@
                 <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Anticipo</td>
                 <td style="font-weight: bold;  padding-right: 10px; padding-left: 10px; width: 110px;border-right: 1px solid #000;border-bottom: 1px solid #000;background-color:#f3f3f3;">Descuento</td>
             </tr>
-            @foreach (var item in Model[i].AdicionalesPago)
+            @foreach (var item in Model.AdicionalesPago)
             {
                 <tr style="margin-top: 10px;border: 1px solid #000;font-size:12px;height:40px;">
                     <td style="width: 510px; min-height: 1px; padding-right: 15px; padding-left: 15px;border-right: 1px solid #000;">@item.Concepto.Descripcion</td>
@@ -283,7 +283,7 @@
             <tr>
                 <td>
                     <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
-                        Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model[i].Total) PESOS
+                        Recibí conforme la suma de Pesos: @CurrencyHelper.ToLetras(Model.Total) PESOS
                     </div>
                     <div style="width: 600px; float: left; position: relative;height:40px;padding:10px;">
                         en concepto de mis haberes correspondientes al periodo arriba indicado y según la presente

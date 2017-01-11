@@ -27,14 +27,14 @@
                 <div class="col-md-5">
                     @Html.LabelFor(model => model.Organizacion.RazonSocial, new { @class = "col-md-4 horizontal-label padding-left-2 readonly-label" })
                     <div class="col-md-8 input-container padding-left-2">
-                        @Html.TextBoxFor(model => model.Organizacion.RazonSocial, new { @class = "textinput padding-left-2", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.Organizacion.RazonSocial, new { @class = "textinput padding-left-2", @readonly = "readonly", @Value = ViewBag.Organizacion.RazonSocial.ToString() })
                         @Html.ValidationMessageFor(model => model.Organizacion.RazonSocial, null, new { @class = "help-block" })
                     </div>
                 </div>
                 <div class="col-md-7 ">
                     <label class="col-md-5 horizontal-label readonly-label">Domicilio Empresa</label>
                     <div class="col-md-7 input-container padding-left-2">
-                        @Html.TextBoxFor(model => model.DomicilioEmpresa, new { @class = "textinput", @readonly = "readonly", @Value = ViewBag.DomicilioEmpresa.ToString() })
+                        @Html.TextBoxFor(model => model.DomicilioEmpresa, new { @class = "textinput", @readonly = "readonly", @Value = ViewBag.Organizacion.Domicilio.ToString() })
                     </div>
                 </div>
             </div>
@@ -429,6 +429,7 @@
             $(document).off('click', '#BtnSubmit').on('click', '#BtnSubmit', Pago.Save);
 
             $('#datepago').datepicker({ dateFormat: 'dd/mm/yy' });
+            $('#dateperiodo').datepicker({ dateFormat: 'dd/mm/yy' });
         },
 
         CompletarPeriodo: function () {
@@ -735,10 +736,24 @@
         },
 
         AgregarConceptosIniciales: function () {
+            var DescripcionConcepto = "Servicios Prestados";
 
-            //agregar todo aca
-            idServiciosPrestados = 1;
-            Pago.TakeAndAddConcepto(idServiciosPrestados, Pago.valorCuotaAsociado, null, false);
+            var params = {
+                url: '@Url.Action("GetConceptoByFilter", "Conceptos")',
+                data: {
+                    DescripcionConcepto: DescripcionConcepto
+                },
+                //data: function (t, p) {
+                //    return { where: t };
+                //},
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        idServiciosPrestados = ret.Data.Id;
+                        Pago.TakeAndAddConcepto(idServiciosPrestados, Pago.valorCuotaAsociado, null, false);
+                    }
+                }
+            }
+            $.AjaxPost(params);
         },
 
         ChangeDiasTrabajadosLiterales: function () {
@@ -1497,6 +1512,7 @@
         },
 
         LoadAsociado: function (Asociado) {
+            debugger;
             Pago.InicializarVariables();
             $('#GridDetallesPago').jqGrid('clearGridData');
             $('#AsociadoID').val(Asociado.Id);
@@ -1512,7 +1528,7 @@
                 $('#CUIT').val(Asociado.CI);
             }
 
-            Pago.valorCuotaAsociado = Asociado.ImporteCuota.toFixed(2);
+            Pago.valorCuotaAsociado = Asociado.ImportePago.toFixed(2);
 
             //var FechaIngreso = new Date(Asociado.FechaIngreso != null ? Asociado.FechaIngreso : new Date());
             //$('#FechaIngreso').val(FechaIngreso.format("dd/mm/yyyy"));

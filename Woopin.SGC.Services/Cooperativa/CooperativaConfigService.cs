@@ -429,6 +429,23 @@ namespace Woopin.SGC.Services
             return SelectConceptoCombos;
         }
 
+        public Concepto GetConceptoByFilterCombo(string DescripcionConcepto)
+        {
+            Concepto c = null;
+            this.ConceptoRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                c = this.ConceptoRepository.GetByFilter(DescripcionConcepto);
+                                                            //.Select(x => new SelectComboItem()
+                                                            //  {
+                                                            //      id = x.Id,
+                                                            //      text = x.Descripcion + x.AdditionalDescription
+                                                            //  });
+                
+            });
+            return c;
+        }
+
+
         //public void AddAdicionalConAdicionales(Concepto Concepto, IList<Concepto> Adicionales)
         //{
         //    this.ConceptoRepository.GetSessionFactory().TransactionalInterceptor(() =>

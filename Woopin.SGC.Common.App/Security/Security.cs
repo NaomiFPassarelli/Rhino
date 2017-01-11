@@ -62,6 +62,15 @@ namespace Woopin.SGC.CommonApp.Security
         }
 
         /// <summary>
+        /// Cambia los modulos de la organizacion actual del usuario de la sesion
+        /// </summary>
+        /// <param name="modulos">Nuevos modulos de la organizacion actual</param>
+        public static void SetModulos(IList<ModulosSistemaGestion> modulos)
+        {
+            SessionDataManager.SetModulos(modulos);
+        }
+
+        /// <summary>
         /// Consulta para saber si el usuario debe o no loggear.
         /// </summary>
         /// <returns>Si el usuario debe o no loggear</returns>
@@ -83,5 +92,15 @@ namespace Woopin.SGC.CommonApp.Security
                 IdUsuario = SessionDataManager.GetUsuario().Id
             };
         }
+
+        /// <summary>
+        /// Busca los modulos de la organizacion
+        /// </summary>
+        /// <returns>Los modulos de la organizacion</returns>
+        public static IList<ModulosSistemaGestion> GetModulos()
+        {
+            return SessionDataManager.GetModulosByOrganizacion();
+        }
+
     }
 }

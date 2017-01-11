@@ -55,7 +55,7 @@ namespace Woopin.SGC.Web.Areas.Cooperativa.Controllers
         public ActionResult Nuevo()
         {
             ViewBag.NumeroRef = this.CooperativaService.GetProximoNumeroReferenciaPago();
-            ViewBag.DomicilioEmpresa = Security.GetOrganizacion().Domicilio;
+            ViewBag.Organizacion = Security.GetOrganizacion();
             return View();
         }
 

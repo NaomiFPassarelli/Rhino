@@ -158,6 +158,13 @@ namespace Woopin.SGC.Web.Areas.Cooperativa.Controllers
         }
 
         [HttpPost]
+        public JsonResult GetConceptoByFilter(string DescripcionConcepto)
+        {
+            return Json(new { Data = this.CooperativaConfigService.GetConceptoByFilterCombo(DescripcionConcepto), Success = true });
+        }
+
+
+        [HttpPost]
         public JsonResult GetConcepto(int idConcepto)
         {
             Concepto a = this.CooperativaConfigService.GetConcepto(idConcepto);
