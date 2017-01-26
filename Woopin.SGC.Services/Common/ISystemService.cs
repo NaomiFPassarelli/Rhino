@@ -103,11 +103,11 @@ namespace Woopin.SGC.Services
         #region OrganizacionModulo
 
         /// <summary>
-        /// Consulta para traer todos los modulos para la administracion de organizaciones.
+        /// Consulta para traer todos los modulos de organizacion actual.
         /// Si se le manda Id de Organizacion, filtrara por esa organizacion.
         /// </summary>
         /// <param name="IdOrganizacion">Id de la Organizacion a filtrar, 0 no filtra</param>
-        /// <returns>Devuelve todos los modulos que cumplan con los criterios, menos el que esta loggeado.</returns>
+        /// <returns>Devuelve todos los modulos que cumplan con los criterios.</returns>
         IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion);
 
         /// <summary>

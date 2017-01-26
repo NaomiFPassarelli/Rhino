@@ -14,7 +14,7 @@ namespace Woopin.SGC.Model.Negocio
 {
     public class AsientosHelper
     {
-        public string Ventas = "4.1.001";
+        public string Ventas = "4.1.0.001";
         public string IvaDebito = "2.1.3.001";
         public string IvaCredito = "1.1.3.001";
         public string ValoresADepositar = "1.1.1.002";

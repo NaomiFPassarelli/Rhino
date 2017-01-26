@@ -5,10 +5,10 @@
 }
 <div class="action-bar row" style="margin-bottom:20px;">
     <a class="boton place-left" id="BtnImprimirGrid" title="Imprimir Todos">
-        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Todos
+        <i class="fa fa-print i-blue"></i>  Imprimir Todos
     </a>
     <a class="boton place-left" id="BtnImprimirSeleccionados" title="Imprimir Seleccionados">
-        <i class="fa fa-file-excel-o i-blue"></i>  Imprimir Seleccionados
+        <i class="fa fa-print i-blue"></i>  Imprimir Seleccionados
     </a>
 </div>
 <div class="action-bar row">
@@ -32,6 +32,15 @@
     <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
         <span class="icon-xls"></span>
     </a>
+
+    <div class="col-md-4 place-left" style="margin-top:6px;">
+        Desde
+        <input type="text" id="datestart" class="text-center" value="@DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy")" />
+        al
+        <input type="text" id="dateend" class="text-center" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+    </div>
+
+
 </div>
 <div class="table-container">
     <table id="GridRecibos"></table>
@@ -46,6 +55,8 @@
         var ListadoRecibos = {
 
             init: function () {
+                $('#datestart,#dateend').datepicker({ dateFormat: 'dd/mm/yy' });
+
                 $('#BtnImprimirGrid').bind('click', ListadoRecibos.ImprimirGrid);
                 $('#BtnImprimirSeleccionados').bind('click', ListadoRecibos.ImprimirSeleccionados);
 
@@ -68,7 +79,13 @@
                 /* Armo la grilla del ABM */
                 $('#GridRecibos').CreateCommonGrid({
                     url: '@Url.Action("GetAll")',
-                    colNames: ['', '', 'Nro Referencia', 'Nombre', 'Apellido', 'Fecha Creacion', 'Periodo', 'Remunerativo', 'No Remunerativo', 'Descuento', 'Total', '', '' ],
+                    serializeGridData: function (postData) {
+                        data = {
+                            start: $('#datestart').val() != '' ? $('#datestart').val() : null,
+                            end: $('#dateend').val() != '' ? $('#dateend').val() : null
+                        }
+                        return JSON.stringify($.extend(postData, data));
+                    }, colNames: ['', '', 'Nro Referencia', 'Nombre', 'Apellido', 'Fecha Creacion', 'Periodo', 'Remunerativo', 'No Remunerativo', 'Descuento', 'Total', '', ''],
                     colModel: [
                         { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
                         { name: 'Seleccionados', index: 'Seleccionados', width: 5, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
@@ -132,6 +149,15 @@
             },
 
             Refresh: function () {
+                ListadoRecibos.LoadData();
+            },
+
+            LoadData: function () {
+                ListadoRecibos.CompletarFiltros();
+                valid = ListadoRecibos.ValidateFilters();
+                if (!valid.success) {
+                    return $.WarningDialog(valid.message);
+                }
                 ClearSelectedRows('GridRecibos');
                 ListadoRecibos.ReloadGrid();
             },
@@ -139,6 +165,14 @@
             ReloadGrid: function () {
                 $("#GridRecibos").setGridParam({ datatype: 'json' });
                 $('#GridRecibos').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            ValidateFilters: function () {
+                return $.ValidateDates($('#datestart').val(), $('#dateend').val());
+            },
+
+            CompletarFiltros: function () {
+                $.CompletarFiltroDates($('#datestart'), $('#dateend'));
             },
 
             @*OnEliminarSeleccionadosClick: function(){

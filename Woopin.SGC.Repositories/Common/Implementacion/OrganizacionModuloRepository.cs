@@ -30,5 +30,20 @@ namespace Woopin.SGC.Repositories.Common
                                                         .Where(x => (int)x.ModulosSistemaGestion == Id && x.Organizacion.Id == IdOrganizacion)
                                                         .SingleOrDefault();
         }
+
+        /// <summary>
+        /// Consulta para traer todos los modulos de organizacion actual.
+        /// Si se le manda Id de Organizacion, filtrara por esa organizacion.
+        /// </summary>
+        /// <param name="IdOrganizacion">Id de la Organizacion a filtrar, 0 no filtra</param>
+        /// <returns>Devuelve todos los modulos que cumplan con los criterios.</returns>
+        public IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion)
+        {
+            return this.GetSessionFactory().GetSession().QueryOver<OrganizacionModulo>()
+                                                        .Where(x => x.Organizacion.Id == IdOrganizacion || IdOrganizacion == 0)
+                                                        .Select(x => x.ModulosSistemaGestion)
+                                                        .List<ModulosSistemaGestion>();
+        }
+
     }
 }

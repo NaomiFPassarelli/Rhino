@@ -38,33 +38,7 @@ namespace Woopin.SGC.Repositories.Common
                                                         .OrderBy(x => x.RazonSocial).Asc
                                                         .List();
         }
-        /// <summary>
-        /// Consulta para traer todos los usuarios para la administracion de organizaciones.
-        /// Si se le manda Id de Organizacion, filtrara por esa organizacion.
-        /// </summary>
-        /// <param name="IdOrganizacion">Id de la Organizacion a filtrar, 0 no filtra</param>
-        /// <param name="IdUsuario">Id del usuario a filtrar, 0 no filtra</param>
-        /// <returns>Devuelve todos los usuarios que cumplan con los criterios, menos el que esta loggeado.</returns>
-        public IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion, int IdModulo)
-        {
-            //OrganizacionModulo uoAlias = null;
-            //int uAlias = 0;
-
-
-            //return this.GetSessionFactory().GetSession().QueryOver<OrganizacionModulo>( () => uoAlias)
-            //                                            .JoinAlias( () => uoAlias.ModulosSistemaGestion,() => uAlias )
-            //                                            .Where(() => uoAlias.Organizacion.Id == IdOrganizacion)
-            //                                            //.Where(() => uoAlias.Organizacion.Id == IdOrganizacion && (int)uAlias != IdModulo)
-            //                                            .Select(x => uoAlias.ModulosSistemaGestion)
-            //                                            .List<ModulosSistemaGestion>();
-
-
-
-            return this.GetSessionFactory().GetSession().QueryOver<OrganizacionModulo>()
-                                                        .Where(x => x.Organizacion.Id == IdOrganizacion)
-                                                        .Select(x => x.ModulosSistemaGestion)
-                                                        .List<ModulosSistemaGestion>();
-        }
+        
 
 
     }

@@ -88,6 +88,15 @@ namespace Woopin.SGC.Repositories.Sueldos
                                                                        .SingleOrDefault();
         }
 
+        public IList<Recibo> GetAllByDates(DateTime start, DateTime end)
+        {
+            return this.GetSessionFactory().GetSession().QueryOver<Recibo>()
+                                                        .GetFilterBySecurity()
+                                                        .Where(c => c.FechaCreacion >= start && c.FechaCreacion <= end)
+                                                        .OrderBy(x => x.FechaCreacion).Desc
+                                                        .List();
+        }
+        
         public IList<Recibo> GetRecibos(IList<int> Ids)
         {
             IList<Recibo> Recibos = this.GetSessionFactory().GetSession().QueryOver<Recibo>()

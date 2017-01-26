@@ -75,12 +75,18 @@ namespace Woopin.SGC.Services
         }
 
 
-        public IList<Recibo> GetAllRecibos()
+        public IList<Recibo> GetAllRecibos(DateTime? start, DateTime? end)
         {
             IList<Recibo> Recibos = null;
             this.ReciboRepository.GetSessionFactory().SessionInterceptor(() =>
             {
-                Recibos = this.ReciboRepository.GetAll();
+                DateTime _start = start.HasValue ? start.Value : DateTime.Now;
+                DateTime _end = end.HasValue ? end.Value : DateTime.Now;
+                if (!start.HasValue && !end.HasValue)
+                {
+                    _start = _start.AddMonths(-1);
+                }
+                Recibos = this.ReciboRepository.GetAllByDates(_start, _end);
             });
             return Recibos;
         }

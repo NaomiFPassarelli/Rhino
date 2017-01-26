@@ -18,6 +18,8 @@ namespace Woopin.SGC.Repositories.Sueldos
         Recibo GetReciboAnterior(int IdEmpleado);
         IList<Recibo> GetRecibos(IList<int> Ids);
 
+        IList<Recibo> GetAllByDates(DateTime _start, DateTime _end);
+
         decimal GetMejorRemuneracion(int IdEmpleado);
         decimal[] GetPromedioRemunerativo(int IdEmpleado);
     }

@@ -16,6 +16,7 @@ namespace Woopin.SGC.Model.Common
         public virtual int Id { get; set; }
 
         [DisplayName("Calle")]
+        [Required(ErrorMessage = "Es necesaria la calle")]
         public virtual string Calle { get; set; }
 
         [DisplayName("Número")]
@@ -24,7 +25,7 @@ namespace Woopin.SGC.Model.Common
         public virtual string Departamento { get; set; }
 
         [DisplayName("Código Postal")]
-        [DataType(DataType.PostalCode, ErrorMessage = "Codigo postal invalido")]
+        [DataType(DataType.PostalCode, ErrorMessage = "Código postal invalido")]
         public virtual string CodigoPostal { get; set; }
 
         //[DoNotValidateOnlyId]

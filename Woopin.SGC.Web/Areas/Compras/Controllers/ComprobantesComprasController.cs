@@ -69,14 +69,14 @@ namespace Woopin.SGC.Web.Areas.Compras.Controllers
         {
             try
             {
-                string Numero = ComprobanteCompra.Numero;
+                int Numero = ComprobanteCompra.NumeroReferencia;
                 this.ComprasService.AddComprobanteCompra(ComprobanteCompra);
                 // Problema de referencia circular, no lo devuelvo
                 ComprobanteCompra.Asiento = null;
                 ComprobanteCompra.Detalle = null;
-                if (ComprobanteCompra.Id != ComprobanteCompra.NumeroReferencia)
+                if (Numero != ComprobanteCompra.NumeroReferencia)
                 {
-                    return Json(new { Success = true, NumeroRef = ComprobanteCompra.Id, Comprobante = ComprobanteCompra });
+                    return Json(new { Success = true, NumeroRef = ComprobanteCompra.NumeroReferencia, Comprobante = ComprobanteCompra });
                 }
                 return Json(new { Success = true, Comprobante = ComprobanteCompra });
             }

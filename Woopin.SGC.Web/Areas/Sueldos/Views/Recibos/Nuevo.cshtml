@@ -532,7 +532,7 @@
 
             $('#GridDetallesRecibo').CreateCommonGrid({
                 datatype: 'local',
-                colNames: ['', '', '', 'Descripcion', 'Porcentaje', 'Unidades', '', '', 'Remunerativo', 'No remunerativo', 'Descuento', '', '', ''],
+                colNames: ['', '', '', 'Descripcion', 'Porcentaje', 'Unidades', '', '', 'Remunerativo', 'No remunerativo', 'Descuento', '', '', '', ''],
                 colModel: [
                     { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
                     { name: 'Adicional_Id', index: 'Adicional_Id', width: 0, sortable: false, hidden: true },
@@ -551,6 +551,7 @@
                     { name: 'Descuento', index: 'Descuento', width: 20, align: "center", sortable: true, formatter: formatterRecibo_RemNoRemDesc },
                     { name: 'TipoLiquidacion', index: 'TipoLiquidacion', width: 0, sortable: false, hidden: true },
                     { name: 'Suma', index: 'Suma', width: 0, sortable: false, hidden: true },
+                    { name: 'TotalForzado', index: 'TotalForzado', width: 0, sortable: false, hidden: true },
                     //{ name: 'AdicionalAdicionales', index: 'AdicionalAdicionales', width: 0, sortable: false, hidden: true, formatter: formatterRecibo_Adicionales }
                     { name: 'AdicionalAdicionales', index: 'AdicionalAdicionales', width: 0, sortable: false, hidden: true }
                 ],
@@ -932,7 +933,7 @@
 
                 //TODO SQL
                 idAdicionalSueldoBasico = 2;
-                Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, diasSueldoBasico, false);
+                Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, diasSueldoBasico, null, false);
 
                 EmpleadoAntiguedad = Recibo.CalcularAntiguedad();
                 Recibo.AgregarAntiguedad(EmpleadoAntiguedad);
@@ -942,15 +943,15 @@
                 //Porque tiene validaciones
                 Recibo.ChangeDiasHorasNoJustificados();
 
-                Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, false);
+                Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, null, false);
                 
-                Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, false);
+                Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, null, false);
 
                 //si existe el dia del cortador en grilla 
                 if (idAdicionalDiaCortador != 0) {
                     var indexEnArrayYGrillaDiaCortador = Recibo.SelectedRows.indexOf(idAdicionalDiaCortador);
                     if (indexEnArrayYGrillaDiaCortador >= 0) {
-                        Recibo.TakeAndAddAdicional(idAdicionalDiaCortador, null, valueDiasHoras, false);
+                        Recibo.TakeAndAddAdicional(idAdicionalDiaCortador, null, valueDiasHoras, null, false);
 
                         var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
                         $.each(allGridData, function (i, item) {
@@ -998,14 +999,14 @@
             idAdicionalObraSocial = 1007;
             valorRemunerativo = $('#TotalRemunerativo').val();
             if (Recibo.SelectedRows.indexOf(idAdicionalObraSocial) >= 0) {
-                Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, false);
+                Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, null, false);
                 //Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
             }
 
             //TODO SQL
             idAdicionalCuotaSindical = 1010;
             if (Recibo.SelectedRows.indexOf(idAdicionalCuotaSindical) >= 0) {
-                Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, false);
+                Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, null, false);
                 //Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
             }
 
@@ -1047,7 +1048,7 @@
                 }
                 if (Recibo.SelectedRows.indexOf(diferencias.idAdicionalDiferenciaObraSocial) >= 0)
                 {
-                    Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, false);
+                    Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, null, false);
                 } else {
                     var existeEnGrilla = false;
                     var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
@@ -1058,7 +1059,7 @@
                     });
                     if (!existeEnGrilla)
                     {
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, null, false);
                     }
                     
                 }
@@ -1072,7 +1073,7 @@
                 }
 
                 if (Recibo.SelectedRows.indexOf(diferencias.idAdicionalDiferenciaSindical) >= 0) {
-                    Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, false);
+                    Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, null, false);
                 } else {
                     var existeEnGrilla = false;
                     var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
@@ -1082,7 +1083,7 @@
                         }
                     });
                     if (!existeEnGrilla) {
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, null, false);
                     }
 
                 }
@@ -1092,7 +1093,7 @@
                 ValorTotalSindical = parseFloat(ValorTotalAnteriorSindical) + parseFloat(ValorTotalSindical);
 
                 if (Recibo.SelectedRows.indexOf(idAdicionalCuotaSindical) >= 0) {
-                    Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, false);
+                    Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, null, false);
                 }
 
             }
@@ -1100,14 +1101,14 @@
             //TODO SQL
             idAdicionalJubilacion = 1008;
             if (Recibo.SelectedRows.indexOf(idAdicionalJubilacion) >= 0) {
-                Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, false);
+                Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, null, false);
                 //Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
             }
 
             //TODO SQL
             idAdicionalLey19032 = 1009;
             if (Recibo.SelectedRows.indexOf(idAdicionalLey19032) >= 0) {
-                Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, false);
+                Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, null, false);
                 //Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
             }
 
@@ -1143,14 +1144,14 @@
                     var valueDiasHoras = valorDias - valorHoras;
 
                     idAdicionalPremioAsistenciaYPuntualidad = 1004;
-                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, valueDiasHoras, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, valueDiasHoras, null, null, false);
 
                     //TODO MODIFICAR
                     //valorPremioAsistenciaYPuntualidad = 0;
                     //TODO SQL
                     idAdicionalPremioAsistenciaPerfecta = 1005;
                     //En realidad valorDias son los trabajados y justificados porque no pueden haber sin justificar pero en este punto no hay
-                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, valueDiasHoras, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, valueDiasHoras, null, null, false);
                     //valorPremioAsistenciaPerfecta = 0;
                     //TODO ver si falta algun premio
                     //TODO de prueba agarramos los que estamos usando, pero modificar esto
@@ -1170,9 +1171,9 @@
                     //        idAdicionalViatico = 5016;
                     //        break;
                     //}
-                    Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, null, false);
 
-                    Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, null, false);
 
                     //var idAdicionalPremioPorProduccion = 0;
                     //var idAdicionalDiaCortador = 0;
@@ -1192,7 +1193,7 @@
                     if (idAdicionalDiaCortador != 0) {
                         var indexEnArrayYGrillaDiaCortador = Recibo.SelectedRows.indexOf(idAdicionalDiaCortador);
                         if (indexEnArrayYGrillaDiaCortador >= 0) {
-                            Recibo.TakeAndAddAdicional(idAdicionalDiaCortador, null, valueDiasHoras, false);
+                            Recibo.TakeAndAddAdicional(idAdicionalDiaCortador, null, valueDiasHoras, null, false);
 
                             var allGridData = $('#GridDetallesRecibo').jqGrid('getGridParam', 'data');
                             $.each(allGridData, function (i, item) {
@@ -1207,7 +1208,7 @@
 
                     if (idAdicionalPremioPorProduccion != 0)
                     {
-                        Recibo.TakeAndAddAdicional(idAdicionalPremioPorProduccion, valueDiasHoras, null, false);
+                        Recibo.TakeAndAddAdicional(idAdicionalPremioPorProduccion, valueDiasHoras, null, null, false);
                     //}
                     
                     //if (idAdicionalPremioPorProduccion != 0)
@@ -1233,12 +1234,12 @@
                     //TODO SQL
                     idAdicionalObraSocial = 1007;
                     valorRemunerativo = $('#TotalRemunerativo').val();
-                    Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
                     idAdicionalCuotaSindical = 1010;
-                    Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     ValorTotalObraSocial = 0;
@@ -1266,7 +1267,7 @@
                         } else {
                             ValorTotalObraSocial = parseFloat(ValorTotalObraSocial);
                         }
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, null, false);
                     }
                     
                     if (Recibo.SelectedRows.indexOf(idAdicionalCuotaSindical) >= 0) {
@@ -1275,7 +1276,7 @@
                         }else{
                             ValorTotalSindical = parseFloat(ValorTotalSindical);
                         }
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, null, false);
                     }
                 
 
@@ -1285,12 +1286,12 @@
 
                     //TODO SQL
                     idAdicionalJubilacion = 1008;
-                    Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
                     idAdicionalLey19032 = 1009;
-                    Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
@@ -1299,7 +1300,7 @@
                     if (Recibo.BeneficiarioObraSocial != null && Recibo.BeneficiarioObraSocial > 0) {
                         //TODO SQL
                         idAdicionalBeneficiarioOS = 5011;
-                        Recibo.TakeAndAddAdicional(idAdicionalBeneficiarioOS, Recibo.BeneficiarioObraSocial, null, false);
+                        Recibo.TakeAndAddAdicional(idAdicionalBeneficiarioOS, Recibo.BeneficiarioObraSocial, null, null, false);
                     }
 
 
@@ -1328,17 +1329,17 @@
 
                     //TODO SQL
                     idAdicionalSAC = 4010;
-                    Recibo.TakeAndAddAdicional(idAdicionalSAC, valueSAC, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalSAC, valueSAC, null, null, false);
 
                     //TODO SQL
                     idAdicionalObraSocial = 1007;
                     valorRemunerativo = $('#TotalRemunerativo').val();
-                    Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
                     idAdicionalCuotaSindical = 1010;
-                    Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     ////TODO SQL
@@ -1388,7 +1389,7 @@
                         } else {
                             ValorTotalObraSocial = parseFloat(ValorTotalObraSocial);
                         }
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, null, false);
                     }
 
                     if (Recibo.SelectedRows.indexOf(idAdicionalCuotaSindical) >= 0) {
@@ -1397,17 +1398,17 @@
                         } else {
                             ValorTotalSindical = parseFloat(ValorTotalSindical);
                         }
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, null, false);
                     }
 
                     //TODO SQL
                     idAdicionalJubilacion = 1008;
-                    Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
                     idAdicionalLey19032 = 1009;
-                    Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
@@ -1531,17 +1532,17 @@
                     valueVacaciones /= 25;
                     //TODO SQL
                     idAdicionalVacaciones = 8011;
-                    Recibo.TakeAndAddAdicional(idAdicionalVacaciones, valueVacaciones, cantDiasVacaciones, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalVacaciones, valueVacaciones, cantDiasVacaciones, null, false);
 
                     //TODO SQL
                     idAdicionalObraSocial = 1007;
                     valorRemunerativo = $('#TotalRemunerativo').val();
-                    Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalObraSocial, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
                     idAdicionalCuotaSindical = 1010;
-                    Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalCuotaSindical, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     ////TODO SQL
@@ -1591,7 +1592,7 @@
                         } else {
                             ValorTotalObraSocial = parseFloat(ValorTotalObraSocial);
                         }
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaObraSocial, ValorTotalObraSocial, null, null, false);
                     }
 
                     if (Recibo.SelectedRows.indexOf(idAdicionalCuotaSindical) >= 0) {
@@ -1600,17 +1601,17 @@
                         } else {
                             ValorTotalSindical = parseFloat(ValorTotalSindical);
                         }
-                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, false);
+                        Recibo.TakeAndAddAdicional(diferencias.idAdicionalDiferenciaSindical, ValorTotalSindical, null, null, false);
                     }
 
                     //TODO SQL
                     idAdicionalJubilacion = 1008;
-                    Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalJubilacion, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     //TODO SQL
                     idAdicionalLey19032 = 1009;
-                    Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorRemunerativo, null, null, false);
                     //Recibo.TakeAndAddAdicional(idAdicionalLey19032, valorDiasHorasAntiguedadPremiosRefrigerio, null, false);
 
                     break; //vacaciones
@@ -1663,9 +1664,9 @@
             //        idAdicionalViatico = 5016;
             //        break;
             //}
-            Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, false);
+            Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, null, false);
 
-            Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, false);
+            Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, null, false);
 
             Recibo.ChangeValorDiasHoras(true);
         },
@@ -1682,7 +1683,7 @@
                 //TODO SQL
                 //valor = horasNoJustificadasSeleccionado * 1.5;
                 //Recibo.TakeAndAddAdicional(idAdicionalHorasExtras, valor, horasExtras, false);
-                Recibo.TakeAndAddAdicional(idAdicionalHorasExtras, horasNoJustificadasSeleccionado, horasExtras, false);
+                Recibo.TakeAndAddAdicional(idAdicionalHorasExtras, horasNoJustificadasSeleccionado, horasExtras, null, false);
             }
 
             //si estan los premios, actualizarlos
@@ -1756,7 +1757,7 @@
 
             //TODO SQL
             idAdicionalSueldoBasico = 2;
-            Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, diasTrabajados, false);
+            Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, diasTrabajados, null, false);
 
             Recibo.ChangeValorDiasHoras(false);
         },
@@ -1820,9 +1821,9 @@
                 }
             }
             else if (cant > 0 && dias) {
-                Recibo.TakeAndAddAdicional(idAdicional, sueldoBrutoSeleccionado, cant, false);
+                Recibo.TakeAndAddAdicional(idAdicional, sueldoBrutoSeleccionado, cant, null, false);
             } else if (cant > 0 && !dias) {
-                Recibo.TakeAndAddAdicional(idAdicional, horasNoJustificadasSeleccionado, cant, false);
+                Recibo.TakeAndAddAdicional(idAdicional, horasNoJustificadasSeleccionado, cant, null, false);
             }
 
 
@@ -1945,7 +1946,7 @@
 
                 //si corresponde premio produccion lo pones o actualizas si no lo sacas
                 if (idAdicionalPremioPorProduccion != 0) {
-                    Recibo.TakeAndAddAdicional(idAdicionalPremioPorProduccion, valDiasHoras, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalPremioPorProduccion, valDiasHoras, null, null, false);
                 }
                 //else {
                 
@@ -1955,7 +1956,7 @@
                 //Para el premio por asistencia perfecta debe no tener ni faltas ni horas no justificadas
                 if (Recibo.CorrespondePremio(null, 0, null, 0, true)) {
                     //actualizar o agregar asistencia perfecta
-                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, valDiasHoras, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaPerfecta, valDiasHoras, null, null, false);
                 } else {
                     //eliminar
                     //Ojo con esto porque si existe el reordenamiento en grilla, esto no funciona mas
@@ -1979,7 +1980,7 @@
                 //Para el premio por asistencia y puntualidad debe no tener ni faltas ni horas no justificadas
                 if (Recibo.CorrespondePremio(null, 0, null, 0, true)) {
                     //actualizar o agregar asistencia y puntualidad
-                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, valDiasHoras, null, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalPremioAsistenciaYPuntualidad, valDiasHoras, null, null, false);
 
                 } else {
                     //eliminar
@@ -2181,13 +2182,13 @@
                 //}
                 
                 if (diasNoJustificados > 0) {
-                    Recibo.TakeAndAddAdicional(idAdicionalDiasNoJustificados, sueldoBrutoSeleccionado, diasNoJustificados, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalDiasNoJustificados, sueldoBrutoSeleccionado, diasNoJustificados, null, false);
                 }
                 if (diasSuspension > 0) {
-                    Recibo.TakeAndAddAdicional(idAdicionalSuspension, sueldoBrutoSeleccionado, diasSuspension, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalSuspension, sueldoBrutoSeleccionado, diasSuspension, null, false);
                 }
                 if (horasNoJustificados > 0) {
-                    Recibo.TakeAndAddAdicional(idAdicionalHorasNoJustificadas, horasNoJustificadasSeleccionado, horasNoJustificados, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalHorasNoJustificadas, horasNoJustificadasSeleccionado, horasNoJustificados, null, false);
                 }
             }
             //si toque alguno de estos dos, primero valido y despues modifico el resto
@@ -2461,6 +2462,7 @@
                         $('#AdicionalID').val(ret.Data.Id);
                         $('#Adicional_Id').select2('data', { id: IdAdicional, text: ret.Data.Descripcion });
                         $('#Adicional_Porcentaje').val(ret.Data.Porcentaje);
+                        debugger;
                         if (IdAdicional == 4010) {
                             //SAC
                             $('#Adicional_Valor').val(valueSAC);
@@ -2782,7 +2784,7 @@
                         - $('#DiasNoJustificados').val() - $('#Suspension').val() - $('#DiaNacimiento').val() - $('#DiaMudanza').val()
                         - $('#DiaCasamiento').val() - $('#DiasFallecimiento').val();
                     sueldoBrutoSeleccionado = Empleado.Categoria.AdditionalData;
-                    Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, unidades, false);
+                    Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, unidades, null, false);
 
                     //TODO PROBAR SI ESTO ANDA BIEN CUANDO NO TIENE SUELDO POR HORA O MES,SOLO CON EL DE LA CATEGORIA
                     EmpleadoAntiguedad = Recibo.CalcularAntiguedad();
@@ -2950,7 +2952,7 @@
 
         //TODO hacer que sea util el withSobreAdicionales si es que vale la pena porque estamos calculando todo como desde afuera
         //TODO ver si todos los parametros son utilizadas por alguna funcion alguna vez, sino sacar.
-        TakeAndAddAdicional: function (IdAdicional, valueCalculated, unidadesCalculated, withSobreAdicionales) {
+        TakeAndAddAdicional: function (IdAdicional, valueCalculated, unidadesCalculated, totalForced, withSobreAdicionales) {
             //Inicio del mismo/padre
             //Primero me fijo sino esta en la grilla
             //si ya esta en la grilla habria que editar los valores
@@ -3040,6 +3042,8 @@
             }
 
             if (indexEnArray < 0 && idEnGrilla == -1 && /*!existeEnGrilla &&*/ !existeEnGrillaDelMismoTipo) {
+                debugger;
+
                 //Si no esta lo agrego
                 $.ajax({
                     type: 'POST',
@@ -3083,6 +3087,7 @@
                 });
 
             } else if (idEnGrilla != -1 /*&& existeEnGrilla*/ && !existeEnGrillaDelMismoTipo) {
+                debugger;
                 //existe En Grilla entonces editamos los campos necesarios
                 if (indexEnArray < 0) {
                     Recibo.SelectedRows.push(parseFloat(IdAdicional));
@@ -3096,6 +3101,13 @@
                     row.Valor = valueCalculated;
                 }
 
+                //para editar manualmente el total de algun adicional
+                if (totalForced != null && totalForced != "" && $.isNumeric(totalForced)) {
+                    row.TotalForzado = totalForced;
+                } else {
+                    row.TotalForzado = null;
+                }
+                
                 //TODO porcentaje/valorMin ? ver si alguno necesita esa edicion
                 $('#GridDetallesRecibo').trigger("reloadGrid");
             }
@@ -3174,7 +3186,7 @@
                     - $('#DiasNoJustificados').val() - $('#Suspension').val() - $('#DiaNacimiento').val() - $('#DiaMudanza').val()
                     - $('#DiaCasamiento').val() - $('#DiasFallecimiento').val();
 
-            Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, unidades, false);
+            Recibo.TakeAndAddAdicional(idAdicionalSueldoBasico, sueldoBrutoSeleccionado, unidades, null, false);
 
             return true;
         },
@@ -3351,7 +3363,7 @@
             valorHoras = Recibo.HorasRestan(false);
             
             var valueAntiguedad = valorDias + valorHoras;
-            Recibo.TakeAndAddAdicional(idAdicionalAntiguedad, valueAntiguedad, null, false);
+            Recibo.TakeAndAddAdicional(idAdicionalAntiguedad, valueAntiguedad, null, null, false);
         },
 
         CalcularTotales: function () {
@@ -3411,15 +3423,18 @@
             var porcentaje = $('#Adicional_Porcentaje').val();
             var unidades = $('#Adicional_Unidades').val();
             var total = $('#Adicional_Total').val();
+            var totalForzado = null;
 
             
-            //TODO se podria hacer un refactor minimo que el adicional diga de que depende por ejemplo de toda la parte 
+            //TODO se podria hacer un refactor minimo que el adicional diga de 
+            //que depende por ejemplo de toda la parte 
             //remunerativa o descuento o no remunerativa o del sueldo o premios
             //y tener en cuenta si esta o no seleccionado en grilla
             switch ($('#Adicional_Id').val()) {
                 case 9011:
                 case "9011":
-                    //TODO 9011 que es, colocar descripcion para saber
+                    //Dia Cortador
+
                     //TODO ver si hay que poner asi los dias y horas, que comento abajo
             //        dias = parseFloat($('#DiasTrabajados').val()) - parseFloat($('#DiasNoJustificados').val()) - parseFloat($('#Suspension').val())
             //      - parseFloat($('#DiaNacimiento').val()) - parseFloat($('#DiaCasamiento').val()) - parseFloat($('#DiaMudanza').val())
@@ -3430,8 +3445,6 @@
             //        valorHoras = horas * horasNoJustificadasSeleccionado;
 
             //        var valueAntiguedad = valorDias + valorHoras;
-
-
 
                     //dias = parseFloat($('#DiasTrabajados').val())
                     //    /*+ parseFloat($('#DiasJustificados').val()) + parseFloat($('#LicenciaEnfermedad').val()) + parseFloat($('#ART').val())*/
@@ -3452,6 +3465,9 @@
                     break;
                 case 12016:
                 case "12016":
+                case 10083:
+                case "10083":
+                    //CETIC
                     dias = parseFloat($('#DiasTrabajados').val()) /*+ parseFloat($('#DiasJustificados').val()) + parseFloat($('#LicenciaEnfermedad').val()) + parseFloat($('#ART').val())*/ - parseFloat($('#DiasNoJustificados').val()) - parseFloat($('#Suspension').val());
                     valorDias = dias * sueldoBrutoSeleccionado;
                     valor = valorDias;
@@ -3460,7 +3476,12 @@
 
             //TODO pasar a cuando cambian/tocan/modifican estos campos no antes de agregar!
             //solo para mostrar
-            if ($.isNumeric(porcentaje) && porcentaje != null && $.isNumeric(valor) && valor != null) {
+            debugger;
+            if (total > 0) {
+                //si se edito el valor manualmente
+                totalForzado = total;
+            } else
+                if ($.isNumeric(porcentaje) && porcentaje != null && $.isNumeric(valor) && valor != null) {
                 porcentaje = parseFloat(porcentaje);
                 valor = parseFloat(valor);
                 
@@ -3480,7 +3501,7 @@
             
             if ($('#recibo-detalle').valid()) {
                 var Descripcion = $('#Adicional_Id').select2('data').text;
-                Recibo.TakeAndAddAdicional($('#Adicional_Id').val(), valor, unidades, false);
+                Recibo.TakeAndAddAdicional($('#Adicional_Id').val(), valor, unidades, totalForzado, false);
                 Recibo.ChangeTotalesGrid();
 
                 //var detalle = {
@@ -3719,8 +3740,6 @@
             horasExtras = parseFloat($('#HorasExtras').val());
 
             cantidad = horasJustificadas + (horasExtras * 1.5) - horasNoJustificadas;
-            debugger;
-
             valor = cantidad * horasNoJustificadasSeleccionado;
             if (cantidadOValor) {
                 return cantidad;

@@ -4,6 +4,7 @@
 }
 @{
     var LocalizacionNombre = "";
+    var Documento = "";
     if (Model.Localizacion != null)
     {
         LocalizacionNombre = Model.Localizacion.Nombre;
@@ -28,6 +29,24 @@
     {
         FechaEgreso = Model.FechaEgreso.Value.ToString("dd/MM/yyyy");
     }
+    if(Model.CUIT != null)
+    {
+        Documento = Model.CUIT;
+    }else if(Model.DNI != null)
+    {
+        Documento = Model.DNI;
+    }else if(Model.CI != null)
+    {
+        Documento = Model.CI;
+    }
+    else if (Model.LC != null)
+    {
+        Documento = Model.LC;
+    }
+    else {
+        Documento = Model.LE;
+    }
+    
 }
 <div style="width: 790px; padding: 0px 90px; background-color: #ffffff; font-family: Calibri; color: #000000; ">
 @*        <div style="width: 790px; padding-left:110px;padding-right:110px;padding-bottom:100px;padding-top:100px;">*@
@@ -60,7 +79,7 @@
                                     <br />
                                     Domicilio:  @Model.Direccion  @Model.Numero  @Model.Piso   @Model.Departamento .
                                     <br />
-                                    Documento de Identidad (C.I, D.N.I,L.E,L.C.)/CUIT:  @ViewBag.Documento .
+                                    Documento de Identidad (C.I, D.N.I,L.E,L.C.)/CUIT:  @Documento .
                                     <br />
                                     Teléfono: @Model.Telefono .
                                 </div>
@@ -146,7 +165,7 @@
                                     <br />
                                     4.	LUGAR: @LocalizacionNombre . PROV.: @LocalizacionNombre .
                                     <br />
-                                    5.	CI / LE / LC / DNI /CUIT Nº @ViewBag.Documento. POL: @Model.NroPolicia .
+                                    5.	CI / LE / LC / DNI /CUIT Nº @Documento. POL: @Model.NroPolicia .
                                     <br />
                                     6.	CARNET DE CONDUCTOR Nº: @Model.NroCarnetConductor. CATEGORIA: @Model.CategoriaConductor
                                     <br />
@@ -204,7 +223,7 @@
 
                                 <div class="Cuerpo-SI" style="text-align:justify;">
                                     <br />
-                                    En Buenos Aires, a los @Model.FechaCreacion.Day del mes de @Model.FechaCreacion.Month de @Model.FechaCreacion.Year el que suscribe asociado Nº @Model.NumeroReferencia D.S ……………………………………………………..(DNI / CUIT @ViewBag.Documento ) manifiesta y declara conocer la presente instrucción firmando al pie como prueba de conformidad.
+                                    En Buenos Aires, a los @Model.FechaCreacion.Day del mes de @Model.FechaCreacion.Month de @Model.FechaCreacion.Year el que suscribe asociado Nº @Model.NumeroReferencia D.S ……………………………………………………..(DNI / CUIT @Documento ) manifiesta y declara conocer la presente instrucción firmando al pie como prueba de conformidad.
                                     <br />
                                     La presente instrucción corresponde al cursillo interno de capacitación e ilustración sobre el tema cooperativismo cuya clase Nº 1 ha sido comunicada oportunamente a los asociados.
                                     <br />
@@ -381,7 +400,7 @@
                                     <br />
                                     Aclaración: @Model.Apellido @Model.Nombre
                                     <br />
-                                    Documento de Identidad: @ViewBag.Documento
+                                    Documento de Identidad: @Documento
                                 </div>
                             </div>
                         </div>
@@ -420,7 +439,7 @@
                                     <br />
                                     Aclaración: @Model.Apellido @Model.Nombre
                                     <br />
-                                    Documento de Identidad: @ViewBag.Documento
+                                    Documento de Identidad: @Documento
                                 </div>
                             </div>
                         </div>
@@ -462,7 +481,7 @@
                                     <br />
                                     Aclaración: @Model.Apellido @Model.Nombre
                                     <br />
-                                    Documento de Identidad: @ViewBag.Documento
+                                    Documento de Identidad: @Documento
                                 </div>
 
                             </div>
@@ -522,7 +541,7 @@
                                     <br />
                                     Aclaración de la firma: @Model.Apellido @Model.Nombre
                                     <br />
-                                    DNI: @ViewBag.Documento
+                                    DNI: @Documento
                                     <br />
                                 </div>
 
@@ -570,7 +589,7 @@
                                     <br />
                                     Apellido / Denominación: @Model.Apellido @Model.Nombre
                                     <br />
-                                    Documento de Identidad / CUIT: @ViewBag.Documento
+                                    Documento de Identidad / CUIT: @Documento
                                     <br />
                                     Hijo de: @Model.Padre  y de: @Model.Madre
                                     <br />

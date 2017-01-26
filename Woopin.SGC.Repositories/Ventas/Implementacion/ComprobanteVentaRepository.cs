@@ -39,14 +39,18 @@ namespace Woopin.SGC.Repositories.Ventas
         {
             List<EstadoComprobante> estados = ComprobanteHelper.GetEstadosByfilter(filter);
             
-            return this.GetSessionFactory().GetSession().QueryOver<ComprobanteVenta>()
+             IList<ComprobanteVenta> cs = this.GetSessionFactory().GetSession().QueryOver<ComprobanteVenta>()
                                                         .GetFiltroCuentaCorriente(filter)
                                                         .GetByPermissions()
+                                                        .Fetch(c => c.Cliente).Eager
+                                                        .Fetch(c => c.Cliente.DireccionesEntrega).Eager
                                                         .Where(c => c.Fecha >= _start && c.Fecha <= _end && (c.FechaVencimiento >= startvenc && c.FechaVencimiento <= endvenc) && (c.Cliente.Id == IdCliente || IdCliente == 0))
                                                         .WhereRestrictionOn(c => c.Estado).IsIn(estados)
                                                         .GetFilterBySecurity()
                                                         .OrderBy(x => x.Fecha).Desc
                                                         .List();
+            
+            return cs;
         }
      
         public ComprobanteVenta GetByLetrayNumero(string LetraYNumero)
@@ -97,6 +101,7 @@ namespace Woopin.SGC.Repositories.Ventas
                                                         .GetFilterBySecurity()
                                                         .Fetch(x => x.Detalle).Eager
                                                         .Fetch(x => x.Cliente).Eager
+                                                        .Fetch(x => x.Cliente.DireccionesEntrega).Eager
                                                         .Fetch(x => x.Talonario).Eager
                                                         .Fetch(x => x.Organizacion).Eager
                                                         .SingleOrDefault();

@@ -120,11 +120,11 @@ namespace Woopin.SGC.Web.Areas.Cooperativa.Controllers
                         Asociado.ImagePath = path;
                     }
 
-                    Asociado.NumeroReferencia = this.CooperativaConfigService.GetProximoNumeroReferencia();
+                    int Numero = Asociado.NumeroReferencia;
                     this.CooperativaConfigService.AddAsociado(Asociado);
-                    if (Asociado.NumeroReferencia != Asociado.NumeroReferencia)
+                    if (Numero != Asociado.NumeroReferencia)
                     {
-                        return Json(new { Success = true, NumeroRef = Asociado.Id, Asociado = Asociado });
+                        return Json(new { Success = true, NumeroRef = Asociado.NumeroReferencia, Asociado = Asociado });
                     }
                 
                     return Json(new { Success = true, Asociado = Asociado });

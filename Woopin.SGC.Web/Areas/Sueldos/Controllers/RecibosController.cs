@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Woopin.SGC.Common.HtmlModel;
+using Woopin.SGC.Common.Models;
 using Woopin.SGC.CommonApp.Security;
 using Woopin.SGC.Model.Common;
 using Woopin.SGC.Model.Sueldos;
@@ -71,10 +72,11 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
                 
                 //if (ModelState.IsValid)
                 //{
+                int Numero = Recibo.NumeroReferencia;
                     this.SueldosService.AddRecibo(Recibo);
-                    if (Recibo.Id != Recibo.NumeroReferencia)
+                    if (Numero != Recibo.NumeroReferencia)
                     {
-                        return Json(new { Success = true, NumeroRef = Recibo.Id, Recibo = Recibo });
+                        return Json(new { Success = true, NumeroRef = Recibo.NumeroReferencia, Recibo = Recibo });
                     }
                     return Json(new { Success = true, Recibo = Recibo });
                 //}
@@ -160,17 +162,30 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
 
 
         [HttpPost]
-        public JsonResult GetAll(PagingRequest paging)
+        public JsonResult GetAll(PagingRequest paging, DateTime? start, DateTime? end)
         {
+            DateRange range = new DateRange(start, end);
             if (paging.page == 0)
             {
-                return Json(new { Data = this.SueldosService.GetAllRecibos(), Success = true });
+                return Json(new { Data = this.SueldosService.GetAllRecibos(range.Start, range.End).Select(x => new Recibo()
+                {
+                    Id = x.Id,
+                    Total = x.Total,
+                    TotalDescuento = x.TotalDescuento,
+                    TotalNoRemunerativo = x.TotalNoRemunerativo,
+                    TotalRemunerativo = x.TotalRemunerativo,
+                    FechaCreacion = x.FechaCreacion,
+                    NumeroReferencia = x.NumeroReferencia,
+                    Periodo = x.Periodo,
+                    Empleado = x.Empleado
+                }).ToList()
+                , Success = true });
             }
             else
             {
                 PagingResponse<Recibo> resp = new PagingResponse<Recibo>();
                 resp.Page = paging.page;
-                resp.Records = this.SueldosService.GetAllRecibos().Select(x => new Recibo()
+                resp.Records = this.SueldosService.GetAllRecibos(range.Start, range.End).Select(x => new Recibo()
                 {
                     Id = x.Id,
                     Total = x.Total,

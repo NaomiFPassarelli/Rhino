@@ -32,9 +32,9 @@ namespace Woopin.SGC.Model.Cooperativa
         public virtual string OtroPresente { get; set; }
         public virtual string Tesorero { get; set; }
 
-        [DisplayName("Fecha Finalizacion Acta")]
+        [DisplayName("Fecha y hora Finalización Acta")]
         public virtual DateTime? FechaFinalizacionActa { get; set; } // de la reunion de alta
-        [DisplayName("Numero Acta")]
+        [DisplayName("Número Acta")]
         public virtual int NumeroActa { get; set; }
         [Required(ErrorMessage = "Es Necesario una fecha de creación")]
         [DisplayName("Fecha Creación")]

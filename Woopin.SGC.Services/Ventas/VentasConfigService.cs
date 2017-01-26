@@ -59,7 +59,8 @@ namespace Woopin.SGC.Services
             Cliente Cliente = null;
             this.ClienteRepository.GetSessionFactory().SessionInterceptor(() =>
             {
-                Cliente = this.ClienteRepository.Get(Id);
+                //Cliente = this.ClienteRepository.Get(Id);
+                Cliente = this.ClienteRepository.GetCompleto(Id);
             });
             return Cliente;
         }
@@ -203,7 +204,7 @@ namespace Woopin.SGC.Services
                 ToUpdate.CondicionVentaContratada = Cliente.CondicionVentaContratada;
 
                 // Porque no es requiered
-                if (Cliente.Master != ToUpdate.Master)
+                if (Cliente.Master != ToUpdate.Master && Cliente.Master.Id > 0)
                 {
                     if (Cliente.Master != null)
                     {
@@ -221,7 +222,15 @@ namespace Woopin.SGC.Services
                 {
                     ToUpdate.DireccionesEntrega = new List<Direccion>();
                     ToUpdate.DireccionesEntrega = Cliente.DireccionesEntrega;
-                } else if(ToUpdate.DireccionesEntrega != null && Cliente.DireccionesEntrega != null ){
+                    foreach(Direccion Dir in ToUpdate.DireccionesEntrega)
+                    {
+                        this.DireccionRepository.Add(Dir);                    
+                    }
+                } else if(ToUpdate.DireccionesEntrega != null && Cliente.DireccionesEntrega == null ){
+                    foreach(Direccion Dir in ToUpdate.DireccionesEntrega)
+                    {
+                        this.DireccionRepository.Delete(Dir);
+                    }
                     ToUpdate.DireccionesEntrega = null;
                 }
                 else
@@ -230,7 +239,20 @@ namespace Woopin.SGC.Services
                     //los que siguen existiendo dejarlos
                     //y los que se eliminaron sacarlos
                     //capaz con esto funciona, capaz no
+                    foreach(Direccion direcToUpdate in Cliente.DireccionesEntrega)
+                    {
+                        if (direcToUpdate.Id > 0 && direcToUpdate.Id != null)
+                        {
+                            //existe, actualizar
+                            this.DireccionRepository.Update(direcToUpdate);
+                        }
+                        else { 
+                            //no existe agregar
+                            this.DireccionRepository.Add(direcToUpdate);
+                        }
+                    }
                     ToUpdate.DireccionesEntrega = Cliente.DireccionesEntrega;
+
                 }
                 
                 this.ClienteRepository.Update(ToUpdate);

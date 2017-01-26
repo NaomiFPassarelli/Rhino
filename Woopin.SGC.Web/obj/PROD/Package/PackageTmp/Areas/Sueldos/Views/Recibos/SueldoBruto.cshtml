@@ -24,18 +24,30 @@
 }*@
 <div class="form-group" style="margin:0px;">
     <div class="col-md-12 input-container">
+        @{
+            if (ViewBag.SueldoCategoria > 0) {
+                ViewBag.predeterminadoCategoria = true;
+            }
+            else if (ViewBag.SueldoMes > 0) {
+                ViewBag.predeterminadoMes = true;
+            }
+            else if (ViewBag.SueldoHora > 0)
+            {
+                ViewBag.predeterminadoHora = true;
+            }
+        }
+
         @if (ViewBag.SueldoCategoria > 0)
         {
-            <input class="col-md-5" id="Categoria" name="Sueldo" type="radio" value="@ViewBag.SueldoCategoria"> <p class="col-md-7"> Categoria: @ViewBag.SueldoCategoria </p>
+            <input class="col-md-5" id="Categoria" name="Sueldo" type="radio" value="@ViewBag.SueldoCategoria" checked="@ViewBag.predeterminadoCategoria"> <p class="col-md-7"> Categoria: @ViewBag.SueldoCategoria </p>
         }
-        
         @if (ViewBag.SueldoMes > 0)
         {
-            <input class="col-md-5" id="Mes" name="Sueldo" type="radio" value="@ViewBag.SueldoMes"><p class="col-md-7"> Mensual: @ViewBag.SueldoMes </p>
+            <input class="col-md-5" id="Mes" name="Sueldo" type="radio" value="@ViewBag.SueldoMes" checked="@ViewBag.predeterminadoMes"><p class="col-md-7"> Mensual: @ViewBag.SueldoMes </p>
         }
         @if (ViewBag.SueldoHora > 0)
         {
-            <input class="col-md-5" id="Hora" name="Sueldo" type="radio" value="@ViewBag.SueldoHora"> <p class="col-md-7"> Jornada/Hora: @ViewBag.SueldoHora </p>
+            <input class="col-md-5" id="Hora" name="Sueldo" type="radio" value="@ViewBag.SueldoHora" checked="@ViewBag.predeterminadoHora"> <p class="col-md-7"> Jornada/Hora: @ViewBag.SueldoHora </p>
         }
     </div>
 </div>

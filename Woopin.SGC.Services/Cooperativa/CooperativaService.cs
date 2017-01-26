@@ -263,16 +263,20 @@ namespace Woopin.SGC.Services
         {
             this.AporteRepository.GetSessionFactory().TransactionalInterceptor(() =>
             {
-                //Aporte.FechaAporte = Aporte.FechaCreacion;
                 Asociado a = this.AsociadoRepository.Get(Aporte.Asociado.Id);
-                int NumeroCuota = ++a.CantidadAbonosEfectivos;
+                int NumeroCuota = a.CantidadAbonosEfectivos + 1;
                 for (int i = 1; i <= CantidadCuotasAPagar; i++)
                 {
-                    Aporte.NumeroAbono = NumeroCuota;
-                    Aporte.FechaPeriodo = this.AporteRepository.GetProximoPeriodo(Aporte.Asociado.Id);
-                    //Aporte.Total = 
-                    Aporte.NumeroReferencia = this.AporteRepository.GetProximoNumeroReferencia();
-                    this.AporteRepository.Add(Aporte);
+                    Aporte AporteNew = new Aporte();
+                    AporteNew.Asociado = a;
+                    AporteNew.FechaPeriodo = Aporte.FechaPeriodo;
+                    AporteNew.Observacion = Aporte.Observacion;
+                    AporteNew.Organizacion = Aporte.Organizacion;
+                    AporteNew.Total = Aporte.Total;
+                    AporteNew.NumeroAbono = NumeroCuota;
+                    AporteNew.FechaPeriodo = this.AporteRepository.GetProximoPeriodo(Aporte.Asociado.Id);
+                    AporteNew.NumeroReferencia = this.AporteRepository.GetProximoNumeroReferencia();
+                    this.AporteRepository.Add(AporteNew);
                     NumeroCuota++;
                 }
                 a.CantidadAbonosEfectivos += CantidadCuotasAPagar;
@@ -434,8 +438,8 @@ namespace Woopin.SGC.Services
                 foreach (Acta Acta in Actas)
                 {
                     //TODO null o GetAsociadosMesEgreso() + GetAsociadosMes() + getOtrospuntos
-                    Acta.AsociadosEgreso = this.AsociadoRepository.GetAsociadosMes(Acta.FechaActa.Month, Acta.FechaActa.Year);
-                    Acta.AsociadosIngreso = this.AsociadoRepository.GetAsociadosMesEgreso(Acta.FechaActa.Month, Acta.FechaActa.Year);
+                    Acta.AsociadosIngreso = this.AsociadoRepository.GetAsociadosMes(Acta.FechaActa.Month, Acta.FechaActa.Year);
+                    Acta.AsociadosEgreso = this.AsociadoRepository.GetAsociadosMesEgreso(Acta.FechaActa.Month, Acta.FechaActa.Year);
                     Acta.OtrosPuntos = this.ActaPuntoExtraRepository.GetActaPuntoExtraByActa(Acta.Id);
                 }
             });

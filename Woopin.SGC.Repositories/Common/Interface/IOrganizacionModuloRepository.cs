@@ -19,5 +19,7 @@ namespace Woopin.SGC.Repositories.Common
         /// <param name="IdOrganizacion">Id de la organizacion</param>
         /// <returns></returns>
         OrganizacionModulo GetByIDs(int Id, int IdOrganizacion);
+        IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion);
+
     }
 }

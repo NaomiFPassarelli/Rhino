@@ -77,10 +77,11 @@ namespace Woopin.SGC.Web.Areas.Cooperativa.Controllers
 
                 //if (ModelState.IsValid)
                 //{
+                int Numero = Pago.NumeroReferencia;
                 this.CooperativaService.AddPago(Pago);
-                if (Pago.Id != Pago.NumeroReferencia)
+                if (Numero != Pago.NumeroReferencia)
                 {
-                    return Json(new { Success = true, NumeroRef = Pago.Id, Pago = Pago });
+                    return Json(new { Success = true, NumeroRef = Pago.NumeroReferencia, Pago = Pago });
                 }
                 
                 return Json(new { Success = true, Pago = Pago });

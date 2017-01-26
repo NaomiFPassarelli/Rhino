@@ -10,7 +10,7 @@
     ViewBag.Title = "Detalle Comprobante " + Model.GetLetraNumero();
     ViewBag.SectionIcon = "file-text-o";
     ViewBag.SectionTitle = "Detalle Comprobante " + Model.GetLetraNumero();
-    var dirreccionCompleta = Model.Cliente.Direccion + " " + Model.Cliente.Numero + " " + Model.Cliente.Piso + " " + Model.Cliente.Departamento + " - " + Model.Cliente.Localizacion.Nombre;
+    var dirreccionCompleta = Model.Cliente.Direccion + " " + Model.Cliente.Numero + " " + Model.Cliente.Piso + " " + Model.Cliente.Departamento + " - " + (Model.Cliente.Localizacion != null ? Model.Cliente.Localizacion.Nombre : null);
     
 }
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "comprobante-header" }))

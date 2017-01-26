@@ -12,7 +12,6 @@ namespace Woopin.SGC.Repositories.Common
     {
         IList<Organizacion> GetAllMine();
 
-        IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion, int IdUsuario);
 
     }
 }

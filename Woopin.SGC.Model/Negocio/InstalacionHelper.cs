@@ -44,11 +44,13 @@ namespace Woopin.SGC.Model.Negocio
                 cuentas.Add(new Cuenta("2.2.0.0", "Pasivo No Corriente"));
             
             cuentas.Add(new Cuenta("3.0.0.0", "Patrimonio Neto"));
-                cuentas.Add(new Cuenta("3.001", "Capital Social"));
+                cuentas.Add(new Cuenta("3.1.0.0", "Capital"));
+                    cuentas.Add(new Cuenta("3.1.0.001", "Capital Social"));
+                cuentas.Add(new Cuenta("3.2.0.0", "Resultado"));
 
             cuentas.Add(new Cuenta("4.0.0.0", "Ingresos"));
                 cuentas.Add(new Cuenta("4.1.0.0", "Ingresos por Ventas"));
-                    cuentas.Add(new Cuenta("4.1.001", "Ventas"));
+                    cuentas.Add(new Cuenta("4.1.0.001", "Ventas"));
                 cuentas.Add(new Cuenta("4.2.0.0", "Otros Ingresos"));
 
             cuentas.Add(new Cuenta("5.0.0.0", "Egresos"));

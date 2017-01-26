@@ -123,10 +123,11 @@ namespace Woopin.SGC.Web.Areas.Sueldos.Controllers
                     {
                         Empleado.Tarea = null;
                     }
+                    int Numero = Empleado.NumeroReferencia;
                     this.SueldosConfigService.AddEmpleado(Empleado);
-                    if (Empleado.Id != Empleado.NumeroReferencia)
+                    if (Numero != Empleado.NumeroReferencia)
                     {
-                        return Json(new { Success = true, NumeroRef = Empleado.Id, Empleado = Empleado });
+                        return Json(new { Success = true, NumeroRef = Empleado.NumeroReferencia, Empleado = Empleado });
                     }
                     return Json(new { Success = true, Empleado = Empleado });
                 }

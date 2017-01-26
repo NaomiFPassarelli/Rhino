@@ -136,6 +136,8 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
         return cellvalue;
     }
 
+    debugger;
+
     var TipoLiquidacion;
     var ValorSobre;
     var Porcentaje;
@@ -161,7 +163,12 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
         || (options.colModel.index == "Descuento" && TipoLiquidacion != "2")) {
         return "";
     } else {
-        if (importe == 0) {
+        if (rowObject.TotalForzado != null && ($.isNumeric(rowObject.TotalForzado)))
+        {
+            //para editar manualmente el total de algun adicional
+            importe = rowObject.TotalForzado;
+        }
+        else if (importe == 0) {
             if (/*IdAdicional >= 3007 && IdAdicional <= 3012 || */ (ValorMin != null && ($.isNumeric(ValorMin)) && ValorSobre != null && ($.isNumeric(ValorSobre)))) {
                 //es util para diferencia de obra socia, diferencia de cuota sindical
                 if (rowObject.Adicional_Id >= 3007 && rowObject.Adicional_Id <= 3012) {

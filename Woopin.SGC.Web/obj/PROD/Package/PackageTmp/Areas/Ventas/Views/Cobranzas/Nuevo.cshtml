@@ -104,7 +104,7 @@
     </div>
 </div>
 @* Grilla con los Valores que voy a emitir ahora -->*@
-<div class="table-container" id="GridCobrosCobranza_Container">
+<div class="table-container last-bottom-margin" id="GridCobrosCobranza_Container">
     <table id="GridCobrosCobranza"></table>
     <div id="GridCobrosCobranza_pager"></div>
 </div>
@@ -331,7 +331,7 @@
                     $('#BtnSubmit').removeAttr('disabled');
                     return;
                 }
-                $('#Tipo_Id').attr('disabled', false);
+                $('#Tipo_Id').attr('disabled', false);//TODO arreglar
                 var eCobranza = $('#comprobante-header').serializeFormJSON();
                 var comprobantesGrid = $('#GridDetallesCobranza').jqGrid('getGridParam', 'data');
                 if (comprobantesGrid.length == 0)

@@ -11,10 +11,10 @@
     var DomicilioText = " domiciliado en la calle ";
     var NumeroText = " , número de ";
     var ParentesisText = ") ";
-    var HayIngresos = "informa que durante este mes no se han efectuado incorporaciones de asociados";
-    var NoHayIngresos = "trae a aprobación la solicitud de asociación efectuada por los señores: ";
-    var HayEgresos = " Informa que durante este mes no se han efectuado egresos de asociados";
-    var NoHayEgresos = " trae a aprobación el egreso de asociación efectuada por los señores: ";
+    var NoHayIngresos = "informa que durante este mes no se han efectuado incorporaciones de asociados";
+    var HayIngresos = "trae a aprobación la solicitud de asociación efectuada por los señores: ";
+    var NoHayEgresos = " Informa que durante este mes no se han efectuado egresos de asociados";
+    var HayEgresos = " trae a aprobación el egreso de asociación efectuada por los señores: ";
     var EnterText = "\n";
 }
 <div style="width: 790px; padding: 0px 90px; background-color: #ffffff; font-family: Calibri; color: #000000; ">
@@ -92,22 +92,22 @@
                             <br />
                             Iniciada la reunión se trata el punto 
                             <br />
-                            1) del orden del día y se dispone la lectura al acta anterior, lo cual así se 
+                            1) Del orden del día y se dispone la lectura al acta anterior, lo cual así se 
                             verifica quedando la misma aprobada por unanimidad de los presentes, siendo fiel 
                             reflejo de lo actuado. Continuando con el punto 
                             <br />
-                            2) del orden del día, se trae a análisis los ingresos y egresos del período, que
+                            2) Del orden del día, se trae a análisis los ingresos y egresos del período, que
                              luego de un cambio de opiniones y consideraciones, se aprueba por unanimidad.
                             <br />
-                            Acto seguido toma la palabra el Sr. Presidente y referente al punto 
+                            Acto seguido toma la palabra el Sr. Presidente y referente al punto, 
                             
                             @if(Model.AsociadosIngreso.Count == 0)
                             {
-                                @HayIngresos;
+                                @NoHayIngresos;
                                 @*@Html.TextArea("informa que durante este mes no se han efectuado incorporaciones de asociados");*@
                             }
                             else { 
-                                @NoHayIngresos;
+                                @HayIngresos;
                                 @*@Html.TextArea("trae a aprobación la solicitud de asociación efectuada por los señores: ");*@
                             }
 
@@ -147,12 +147,12 @@
 
                             @if (Model.AsociadosEgreso.Count == 0)
                             {
-                                @HayEgresos;
+                                @NoHayEgresos;
                                 @*@Html.TextArea(" Informa que durante este mes no se han efectuado egresos de asociados");*@
                             }
                             else
                             {
-                                @NoHayEgresos;
+                                @HayEgresos;
                                 @*@Html.TextArea(" trae a aprobación el egreso de asociación efectuada por los señores: ");*@
                             }
 

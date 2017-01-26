@@ -229,6 +229,7 @@ namespace Woopin.SGC.Web.Areas.Cooperativa.Controllers
             //else {
             ViewBag.BaseURL = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "");
             Organizacion o = this.SystemService.GetOrganizacion(Acta.Organizacion.Id);
+            Acta.Organizacion = o;
 
             string html = RenderViewToString("Acta", Acta);
             string filename = Acta.Organizacion.RazonSocial + " " + Acta.FechaActa.Month + ".pdf";

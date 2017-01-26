@@ -95,6 +95,7 @@ namespace Woopin.SGC.Web.Areas.Ventas.Controllers
         public ActionResult Editar(int Id)
         {
             Cliente Cliente = this.ventasConfigService.GetCliente(Id);
+            ViewBag.DireccionesEntrega = Cliente.DireccionesEntrega;
             ViewBag.CategoriasIva = this.commonConfigService.GetAllCategoriaIVAs().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Abreviatura + " (" + x.Nombre + ")", Selected = x.Predeterminado }).ToList();
             ViewBag.Localizaciones = this.commonConfigService.GetAllLocalizaciones().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();
             ViewBag.Localidades = this.commonConfigService.GetAllLocalidades().Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nombre, Selected = x.Predeterminado }).ToList();

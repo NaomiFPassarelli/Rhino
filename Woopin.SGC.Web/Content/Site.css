@@ -228,6 +228,7 @@ select, .button-bar select, select[size="0"],select[size="1"] {background-repeat
 .table-container.detalles {float: left;}
 #comprobante-header, #comprobante-detalle,.table-container.detalles {margin: 0px; padding: 0px; font-size:13px;}
 .totalSlash{border-top:1px solid #CCCCCC;position:absolute;width: 80%;top: 5px;left: 10%;}
+.last-bottom-margin {margin-bottom: 5%;}
 /* Cobranzas */
 .horizontal-label-left {text-align:left;}
 input[type="date"] {line-height: 23px;margin-top: 4px;font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;font-weight: normal;font-style: normal;}

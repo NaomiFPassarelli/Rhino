@@ -19,7 +19,7 @@ namespace Woopin.SGC.Services
         Recibo GetRecibo(int Id);
         Recibo GetReciboCompleto(int Id);
         //void UpdateRecibo(Recibo Recibo);
-        IList<Recibo> GetAllRecibos();
+        IList<Recibo> GetAllRecibos(DateTime? start, DateTime? end);
         void DeleteRecibos(List<int> Ids);
         SelectCombo GetAllRecibosByFilterCombo(SelectComboRequest req);
         SelectCombo GetReciboCombos();

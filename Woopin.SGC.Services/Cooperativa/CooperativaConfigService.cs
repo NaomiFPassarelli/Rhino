@@ -115,7 +115,7 @@ namespace Woopin.SGC.Services
                 if (Asociado.CUIT != null && !ComprobanteHelper.IsCUITValid(Asociado.CUIT))
                     throw new BusinessException("El CUIT no es valido");
 
-                if (Asociado.CUIT != null && this.ExistCUITNT(Asociado.CUIT, null))
+                if (Asociado.CUIT != null && this.ExistCUITNT(Asociado.CUIT, Asociado.Id))
                     throw new BusinessException("El CUIT ya existe");
 
                 Asociado ToUpdate = this.AsociadoRepository.Get(Asociado.Id);

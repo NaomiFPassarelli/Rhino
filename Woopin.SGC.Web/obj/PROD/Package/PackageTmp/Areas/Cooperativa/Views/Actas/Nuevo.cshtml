@@ -59,7 +59,7 @@
             @Html.LabelFor(model => model.FechaFinalizacionActa, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
                 @*@Html.TextBoxFor(model => model.FechaFinalizacionActa, new { @class = "textinput" })*@
-                <input class="text-box single-line textinput value-def" data-val="true" data-val-required="La Fecha Finalizacion Acta es requerida" id="FechaFinalizacionActa" name="FechaFinalizacionActa" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")">
+                <input class="text-box single-line textinput value-def" data-val="true" data-val-required="La Fecha y hora Finalización Acta es requerida" id="FechaFinalizacionActa" name="FechaFinalizacionActa" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")">
                 @Html.ValidationMessageFor(model => model.FechaFinalizacionActa, null, new { @class = "help-block" })
             </div>
         </div>

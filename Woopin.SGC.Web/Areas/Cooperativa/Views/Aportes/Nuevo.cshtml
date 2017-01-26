@@ -110,6 +110,7 @@
                 var cantidadAAportar = 0;
                 $.each(options, function (i, v) {
                     IsSelected = $(v).attr("selected");
+                    debugger;
                     if(IsSelected == true || IsSelected == "selected"){
                         cantidadAAportar = i;
                         return false;

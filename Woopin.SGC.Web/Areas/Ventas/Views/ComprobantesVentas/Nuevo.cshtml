@@ -271,7 +271,7 @@
         </div>
     </div>
 
-    <div class="col-md-12" style="padding-top:10px;">
+    <div class="col-md-12 last-bottom-margin" style="padding-top:10px;">
         <div class="totalSlash"></div>
         @Html.LabelFor(model => model.Total, new { @class = "col-md-4 horizontal-label readonly-label" })
         <div class="col-md-6 input-container">
@@ -405,6 +405,8 @@
             $('#agregarComprobantes').on("click", ComprobanteVenta.OnAgregarComprobantes);
             ComprobanteVenta.DefaultIVAValue = $('#TipoIVA').val();
 
+
+
             $('#Talonario_Id').fillSelect({
                 url: '@Url.Action("GetCombo","Talonario")',
                 placeholder: ''
@@ -420,6 +422,7 @@
         OnTalonarioChange: function () {
             // TODO trabajar con los arrys del objeto.
             var tipo = $('#Tipo_Id').val();
+            debugger;
             if ($(this).find(":selected").data('ad') != null) {
                 // FE
                 $('#Tipo_Id option[value="@ComprobanteVentaHelper.FEFacturaC"]').show();
@@ -644,14 +647,39 @@
         },
 
         CargarNumeroComprobante: function () {
-            var letra = $('#Letra').val();
-            var tipo = $('#Tipo_Id').val();
-            var talonario = $('#Talonario_Id').val();
-
-            if (letra == null || tipo == null || talonario == null) {
+            if ($('#Cliente_Id').val() == "" || $('#Cliente_Id').val() == null)
+            {
                 return;
             }
+            debugger;
+            var letra = $('#Letra').val();
+            var tipo = $('#Tipo_Id').val();
+            var talonario = null;
+            if ($('#Talonario_Id').val() != null && $('#Talonario_Id').val() != "") {
+                talonario = $('#Talonario_Id').val();
+            } else if ($('select#Talonario_Id') != null) {
+                talonario = 0; //hay talonarios pero no lo seleccionaron
+                if ($('select#Talonario_Id option:selected') != null && $('select#Talonario_Id option:selected')[0].value != null
+                    && $('select#Talonario_Id option:selected')[0].value != "")
+                {
+                    talonario = $('select#Talonario_Id option:selected')[0].value;
+                }
+            }
+            
 
+            if (letra == null || letra == "") {
+                return $.WarningDialog('Debe colocarle al cliente una letra');
+            }
+            if (talonario == null) { //no existen talonarios
+                //if (talonario == null || talonario == "") {
+                return $.WarningDialog('Debe crear un talonario');
+            }
+            if (talonario == 0) { //existen talonarios pero no lo selecciono
+                return;
+            }
+            if (tipo == null || tipo == "") {
+                return;
+            }
 
             var parametros = {
                 url: '@Url.Action("GetProximoComprobante")',

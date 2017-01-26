@@ -449,19 +449,18 @@ namespace Woopin.SGC.Services
         #region
 
         /// <summary>
-        /// Consulta para traer todos los modulos para la administracion de organizaciones.
+        /// Consulta para traer todos los modulos para la organizacion actual.
         /// Si se le manda Id de Organizacion, filtrara por esa organizacion.
         /// </summary>
         /// <param name="IdOrganizacion">Id de la Organizacion a filtrar, 0 no filtra</param>
-        /// <param name="IdUsuario">Id del modulo a filtrar, 0 no filtra</param>
         /// <returns>Devuelve todos los modulos que cumplan con los criterios.</returns>
         public IList<ModulosSistemaGestion> GetAllModulosByOrganizacion(int IdOrganizacion)
         {
             IList<ModulosSistemaGestion> Modulos = null;
             this.OrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
             {
-                //Modulos = this.OrganizacionRepository.GetAllModulosByOrganizacion(IdOrganizacion, SessionDataManager.Get().CurrentUser.Id);
-                Modulos = this.OrganizacionRepository.GetAllModulosByOrganizacion(IdOrganizacion, Security.GetCurrentUser().Id);
+                //Modulos = this.OrganizacionRepository.GetAllModulosByOrganizacion(IdOrganizacion);
+                Modulos = this.OrganizacionModuloRepository.GetAllModulosByOrganizacion(IdOrganizacion);
             });
             return Modulos;
         }
