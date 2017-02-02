@@ -709,7 +709,6 @@
     <Content Include="Areas\Cooperativa\Views\Asociados\VersionImprimibles.cshtml" />
     <Content Include="Areas\Sueldos\Views\Recibos\VersionImprimibles.cshtml" />
     <Content Include="App_Data\Importaciones\Templates\Proveedores.xlsx" />
-    <Content Include="Areas\Cooperativa\Views\Actas\VersionImprimible.cshtml" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\FS.pubxml" />
     <None Include="Properties\PublishProfiles\WoopinSrv.pubxml" />

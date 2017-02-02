@@ -3,8 +3,33 @@
 @{
     ViewBag.Title = "Editar Asociado";
     ViewBag.SectionIcon = "truck";
-    ViewBag.SectionTitle = "Editar Asociado";
+    ViewBag.SectionTitle = "Editar Asociado";    
 }
+@{
+    //var FechaIngreso = "";
+    //var FechaNotificacion = "";
+    //var FechaEgreso = "";
+    //var FechaNacimiento = "";
+    
+    //if (Model.FechaIngreso != null)
+    //{
+    //    FechaIngreso = Model.FechaIngreso.ToString();
+    //}
+    //if (Model.FechaNotificacion != null)
+    //{
+    //    FechaNotificacion = Model.FechaNotificacion.ToString();
+    //}
+    //if (Model.FechaEgreso != null)
+    //{
+    //    FechaEgreso = Model.FechaEgreso.ToString();
+    //}
+    //if (Model.FechaNacimiento != null && Model.FechaNacimiento.HasValue)
+    //{
+    //    FechaNacimiento = Model.FechaNacimiento.Value.ToString("dd/MM/yyyy");
+    //}
+    
+}
+    
 @using (Html.BeginForm("Editar", "Asociados", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
@@ -154,7 +179,8 @@
         <div class="form-group">
             @Html.LabelFor(model => model.FechaNacimiento, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                <input class="text-box single-line textinput" data-val="true" id="FechaNacimiento" name="FechaNacimiento" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @*<input class="text-box single-line textinput" data-val="true" id="FechaNacimiento" name="FechaNacimiento" type="text" value="@(Model.FechaNacimiento != null ? Model.FechaNacimiento.ToString() : null)">*@
+                <input class="text-box single-line textinput" data-val="true" id="FechaNacimiento" name="FechaNacimiento" type="text" value="@(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") : null)">
                 @Html.ValidationMessageFor(model => model.FechaNacimiento, null, new { @class = "help-block" })
             </div>
         </div>
@@ -245,7 +271,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.FechaIngreso, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Ingreso es requerida" id="FechaIngreso" name="FechaIngreso" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Ingreso es requerida" id="FechaIngreso" name="FechaIngreso" type="text" value="@(Model.FechaIngreso.ToString("dd/MM/yyyy"))">
                 @Html.ValidationMessageFor(model => model.FechaIngreso, null, new { @class = "help-block" })
             </div>
         </div>
@@ -253,7 +279,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.FechaNotificacion, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Notificacion es requerida" id="FechaNotificacion" name="FechaNotificacion" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Notificacion es requerida" id="FechaNotificacion" name="FechaNotificacion" type="text" value="@(Model.FechaNotificacion.HasValue ? Model.FechaNotificacion.Value.ToString("dd/MM/yyyy") : null)">
                 @Html.ValidationMessageFor(model => model.FechaNotificacion, null, new { @class = "help-block" })
             </div>
         </div>
@@ -261,7 +287,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.FechaEgreso, new { @class = "col-md-2 horizontal-label" })
             <div class="col-md-6 input-container">
-                <input class="text-box single-line textinput" data-val="true" id="FechaEgreso" name="FechaEgreso" type="text">
+                <input class="text-box single-line textinput" data-val="true" id="FechaEgreso" name="FechaEgreso" type="text" value="@(Model.FechaEgreso.HasValue ? Model.FechaEgreso.Value.ToString("dd/MM/yyyy") : null) " >
                 @Html.ValidationMessageFor(model => model.FechaEgreso, null, new { @class = "help-block" })
             </div>
         </div>

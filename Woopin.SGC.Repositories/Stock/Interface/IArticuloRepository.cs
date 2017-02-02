@@ -15,5 +15,6 @@ namespace Woopin.SGC.Repositories.Stock
         IList<Articulo> GetAllByFilter(PagingRequest req);
         IList<Articulo> GetAllConStockByFilter(SelectComboRequest req);
         Articulo GetConStock(int IdArticulo);
+        IList<Articulo> GetAllByRubro(int IdRubro);
     }
 }

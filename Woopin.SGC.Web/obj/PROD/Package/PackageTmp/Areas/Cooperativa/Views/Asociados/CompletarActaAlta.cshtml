@@ -69,7 +69,7 @@
         @Scripts.Render("~/bundles/jqueryval")
         @Scripts.Render("~/bundles/jqueryui")
         <script type="text/javascript">
-            debugger;
+
             $("#FechaFinalizacionAlta").datepicker({ dateFormat: 'dd/mm/yy 09:00' });
             $("#FechaActaIngresoCompletar").val($("#FechaActaIngreso").val());
 
@@ -93,7 +93,7 @@
 
 
                 $(document).off("click", "#BtnSubmitCompletar").on("click", "#BtnSubmitCompletar", function () {
-                    debugger;
+
                     //var Asociado = $('#completar-acta-alta').serializeFormJSON();
 
                     var params = {

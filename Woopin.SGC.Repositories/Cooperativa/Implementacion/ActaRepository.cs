@@ -98,6 +98,24 @@ namespace Woopin.SGC.Repositories.Cooperativa
             return A;
         }
 
+        public bool existActaNumero(int ActaNumero, int? IdUpdate)
+        {
+            Acta p = null;
+            if (IdUpdate != null && IdUpdate > 0)
+            {
+                p = this.GetSessionFactory().GetSession().QueryOver<Acta>()
+                    .Where(x => x.NumeroActa == ActaNumero && IdUpdate != x.Id).GetFilterBySecurity().SingleOrDefault();
+            }
+            else
+            {
+                p = this.GetSessionFactory().GetSession().QueryOver<Acta>()
+                    .Where(x => x.NumeroActa == ActaNumero).GetFilterBySecurity().SingleOrDefault();
+            }
+            if (p != null)
+                return true;
+            return false;
+        }
+
         
             
     }

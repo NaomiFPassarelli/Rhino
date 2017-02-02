@@ -531,7 +531,7 @@
             Recibo.SelectedRows = new Array();
 
             $('#GridDetallesRecibo').CreateCommonGrid({
-                datatype: 'local',
+                datatype: 'json',
                 colNames: ['', '', '', 'Descripcion', 'Porcentaje', 'Unidades', '', '', 'Remunerativo', 'No remunerativo', 'Descuento', '', '', '', ''],
                 colModel: [
                     { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
@@ -888,7 +888,7 @@
             //horasNoJustificadas = parseFloat($('#HorasNoJustificadas').val());
             //horasExtras = parseFloat($('#HorasExtras').val());
 
-            debugger;
+
             diasSueldoBasico = Recibo.DiasSumanYRestan(true, true); //se usa
             //diasSueldoBasico = diasTrabajados - diasJustificados - licEnfermedad - art - diasNoJustificados - diasSuspension - diasNacimiento - diasCasamiento - diasMudanza - diasFallecimiento;
             
@@ -1171,6 +1171,7 @@
                     //        idAdicionalViatico = 5016;
                     //        break;
                     //}
+
                     Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, null, false);
 
                     Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, null, false);
@@ -1664,6 +1665,7 @@
             //        idAdicionalViatico = 5016;
             //        break;
             //}
+
             Recibo.TakeAndAddAdicional(idAdicionalRefrigerio, null, diasTrabajadosLiteral, null, false);
 
             Recibo.TakeAndAddAdicional(idAdicionalViatico, null, diasTrabajadosLiteral, null, false);
@@ -2462,7 +2464,6 @@
                         $('#AdicionalID').val(ret.Data.Id);
                         $('#Adicional_Id').select2('data', { id: IdAdicional, text: ret.Data.Descripcion });
                         $('#Adicional_Porcentaje').val(ret.Data.Porcentaje);
-                        debugger;
                         if (IdAdicional == 4010) {
                             //SAC
                             $('#Adicional_Valor').val(valueSAC);
@@ -2943,7 +2944,13 @@
                     }
 
                 });
+
+                //$('#GridDetallesRecibo').jqGrid('setGridParam',
+                //    {
+                //        datatype: 'local'
+                //    }).trigger("reloadGrid");
                 $('#GridDetallesRecibo').trigger("reloadGrid");
+                debugger;
 
             }
 
@@ -3042,7 +3049,6 @@
             }
 
             if (indexEnArray < 0 && idEnGrilla == -1 && /*!existeEnGrilla &&*/ !existeEnGrillaDelMismoTipo) {
-                debugger;
 
                 //Si no esta lo agrego
                 $.ajax({
@@ -3087,7 +3093,6 @@
                 });
 
             } else if (idEnGrilla != -1 /*&& existeEnGrilla*/ && !existeEnGrillaDelMismoTipo) {
-                debugger;
                 //existe En Grilla entonces editamos los campos necesarios
                 if (indexEnArray < 0) {
                     Recibo.SelectedRows.push(parseFloat(IdAdicional));
@@ -3107,7 +3112,6 @@
                 } else {
                     row.TotalForzado = null;
                 }
-                
                 //TODO porcentaje/valorMin ? ver si alguno necesita esa edicion
                 $('#GridDetallesRecibo').trigger("reloadGrid");
             }
@@ -3476,12 +3480,10 @@
 
             //TODO pasar a cuando cambian/tocan/modifican estos campos no antes de agregar!
             //solo para mostrar
-            debugger;
             if (total > 0) {
                 //si se edito el valor manualmente
                 totalForzado = total;
-            } else
-                if ($.isNumeric(porcentaje) && porcentaje != null && $.isNumeric(valor) && valor != null) {
+            } else if ($.isNumeric(porcentaje) && porcentaje != null && $.isNumeric(valor) && valor != null) {
                 porcentaje = parseFloat(porcentaje);
                 valor = parseFloat(valor);
                 

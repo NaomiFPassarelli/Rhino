@@ -7,6 +7,84 @@
         //start for
     var LocalizacionNombre = "";
     var Documento = "";
+    var mesCreacion = "";
+    var edad = 0;
+    switch (Model[i].FechaCreacion.Month)
+    {
+        case 1:
+            mesCreacion = "Enero";
+            break;
+        case 2:
+            mesCreacion = "Febrero";
+            break;
+        case 3:
+            mesCreacion = "Marzo";
+            break;
+        case 4:
+            mesCreacion = "Abril";
+            break;
+        case 5:
+            mesCreacion = "Mayo";
+            break;
+        case 6:
+            mesCreacion = "Junio";
+            break;
+        case 7:
+            mesCreacion = "Julio";
+            break;
+        case 8:
+            mesCreacion = "Agosto";
+            break;
+        case 9:
+            mesCreacion = "Septiembre";
+            break;
+        case 10:
+            mesCreacion = "Octubre";
+            break;
+        case 11:
+            mesCreacion = "Noviembre";
+            break;
+        case 12:
+            mesCreacion = "Diciembre";
+            break;
+    }
+
+    DateTime dateToday = DateTime.Now;
+    int dayToday = dateToday.Day;
+    int monthToday = dateToday.Month + 1;
+    int yearToday = dateToday.Year;
+    int dayNacimiento, monthNacimiento, yearNacimiento, cantYears, cantMonths, cantDays = 0;
+    if (Model[i].FechaNacimiento.HasValue)
+    {
+        dayNacimiento = Model[i].FechaNacimiento.Value.Day;
+        monthNacimiento = Model[i].FechaNacimiento.Value.Month;
+        yearNacimiento = Model[i].FechaNacimiento.Value.Year;
+        cantYears = yearToday - yearNacimiento;
+        if (cantYears != 0)
+        {
+            //distinto año
+            cantMonths = monthToday - monthNacimiento;
+            if (cantMonths == 0)
+            {
+                //mismo mes
+                cantDays = dayToday - dayNacimiento;
+                if (cantDays < 0)
+                {
+                    //resto un año
+                    cantYears -= 1;
+                }
+                //else nada
+            }
+            else if (cantMonths < 0)
+            {
+                //distinto mes resto un año
+                cantYears -= 1;
+            }
+        }
+        edad = cantYears;
+    }
+
+    
         if (Model[i].Localizacion != null)
         {
             LocalizacionNombre = Model[i].Localizacion.Nombre;
@@ -165,7 +243,7 @@
                                     <br />
                                     2.	NOMBRE: @Model[i].Nombre
                                     <br />
-                                    3.	EDAD: @ViewBag.Edad . NACIO EL: @FechaNacimiento .
+                                    3.	EDAD: @edad . NACIO EL: @FechaNacimiento .
                                     <br />
                                     4.	LUGAR: @LocalizacionNombre . PROV.: @LocalizacionNombre .
                                     <br />
@@ -227,7 +305,7 @@
 
                                 <div class="Cuerpo-SI" style="text-align:justify;">
                                     <br />
-                                    En Buenos Aires, a los @Model[i].FechaCreacion.Day del mes de @Model[i].FechaCreacion.Month de @Model[i].FechaCreacion.Year el que suscribe asociado Nº @Model[i].NumeroReferencia D.S ……………………………………………………..(DNI / CUIT @Documento ) manifiesta y declara conocer la presente instrucción firmando al pie como prueba de conformidad.
+                                    En Buenos Aires, a los @Model[i].FechaCreacion.Day del mes de @mesCreacion de @Model[i].FechaCreacion.Year el que suscribe asociado Nº @Model[i].NumeroReferencia D.S ……………………………………………………..(DNI / CUIT @Documento ) manifiesta y declara conocer la presente instrucción firmando al pie como prueba de conformidad.
                                     <br />
                                     La presente instrucción corresponde al cursillo interno de capacitación e ilustración sobre el tema cooperativismo cuya clase Nº 1 ha sido comunicada oportunamente a los asociados.
                                     <br />
@@ -275,7 +353,7 @@
                                 <div class="Cuerpo-SI" style="text-align:justify;padding-top:40px;">
                                     Si bien no está expresado en el concepto, completa la noción analizada en el artículo 2do, cuando dice “…son entidades fundadas en el esfuerzo propio y la ayuda mutua para organizar y prestar servicios…”
                                     <br />
-                                    En BUENOS AIRES, a los @Model[i].FechaCreacion.Day Días del mes de @Model[i].FechaCreacion.Month de @Model[i].FechaCreacion.Year . declaro bajo juramento que previo mi presentación formal en la Cooperativa de Trabajo SCI LTDA he sido debidamente capacitado sobre los aspectos fundamentales de la legislación vigente y aplicable a todas las relaciones que se susciten entre los asociados y de los asociados con la cooperativa, en particular sobre la Ley 20.337 y Reglamento de Disciplina que juntamente con el Estatuto Social, son los instrumentos legales específicos en la materia, que desde ya reconozco y acepto mientras subsista mi relación de asociado de la Cooperativas.
+                                    En BUENOS AIRES, a los @Model[i].FechaCreacion.Day Días del mes de @mesCreacion de @Model[i].FechaCreacion.Year . declaro bajo juramento que previo mi presentación formal en la Cooperativa de Trabajo SCI LTDA he sido debidamente capacitado sobre los aspectos fundamentales de la legislación vigente y aplicable a todas las relaciones que se susciten entre los asociados y de los asociados con la cooperativa, en particular sobre la Ley 20.337 y Reglamento de Disciplina que juntamente con el Estatuto Social, son los instrumentos legales específicos en la materia, que desde ya reconozco y acepto mientras subsista mi relación de asociado de la Cooperativas.
                                     <br />
                                     Asimismo, manifiesto que he sido informado sobre los aspectos que caracterizan la activada y los Actos Cooperativos, en particular sobre las siguientes situaciones.
                                     <br />
@@ -397,7 +475,7 @@
 
                                 <div class="Cuerpo-SI" style="text-align:left;padding-top:40px;">
                                     <br />
-                                    Buenos Aires, @Model[i].FechaCreacion.Date.Day de @Model[i].FechaCreacion.Date.Month de @Model[i].FechaCreacion.Year
+                                    Buenos Aires, @Model[i].FechaCreacion.Date.Day de @mesCreacion de @Model[i].FechaCreacion.Year
                                     <br />
 
                                     Firma:……………………………………………………………….
@@ -514,7 +592,7 @@
                                 </div>
 
                                 <div class="Cuerpo-SI" style="text-align:right;">
-                                    CABA, @Model[i].FechaCreacion.Day de @Model[i].FechaCreacion.Month de @Model[i].FechaCreacion.Year
+                                    CABA, @Model[i].FechaCreacion.Day de @mesCreacion de @Model[i].FechaCreacion.Year
                                 </div>
 
                                 <div class="Cuerpo-SI" style="text-align:left;padding-bottom:50px;">

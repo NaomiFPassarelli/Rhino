@@ -26,7 +26,6 @@ function Drop_Number(cellvalue, options, rowObject)
 
 function changeselected(e, value)
 {
-    debugger;
     //$($("select#" + e.name + "class=" + $(e).attr("class") + " option")).removeAttr("selected");
     //$($("select#" + e.name + "class=" + $(e).attr("class") + " option")[--value]).attr("selected", "selected");
     $(e.childNodes).removeAttr("selected");
@@ -135,8 +134,6 @@ function formatterRecibo_RemNoRemDesc(cellvalue, options, rowObject) {
     if (rowObject.TipoLiquidacion == "Footer") {
         return cellvalue;
     }
-
-    debugger;
 
     var TipoLiquidacion;
     var ValorSobre;

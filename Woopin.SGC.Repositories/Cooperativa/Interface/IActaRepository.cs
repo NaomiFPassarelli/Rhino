@@ -16,5 +16,7 @@ namespace Woopin.SGC.Repositories.Cooperativa
         IList<Acta> GetAllActasCompletas();
         IList<Acta> GetActas(IList<int> Ids);
 
+        bool existActaNumero(int ActaNumero, int? IdUpdate);
+
     }
 }

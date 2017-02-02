@@ -57,6 +57,8 @@ namespace Woopin.SGC.Services
         IList<ActaPuntoExtra> GetActaPuntoExtraByActa(int ActaId);
         void DeleteActas(List<int> Ids);
 
+        bool existActaNumero(int ActaNumero, int? IdUpdate);
+
         #endregion
 
     }

@@ -123,7 +123,7 @@
     <script type="text/javascript">
         $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante. Si presiona Aceptar, todos los cambios realizados se perderan.');
         $(document).ready(function () {
-            debugger;
+            
             ActaNueva.init();
             $("#FechaFinalizacionActa").datepicker({ dateFormat: 'dd/mm/yy 09:00' });
             $("#FechaActa").datepicker({ dateFormat: 'dd/mm/yy' });
@@ -156,10 +156,10 @@
 
 
                 var Acta = $('#acta-form').serializeFormJSON();
-                debugger;
+                
                 Acta.OtrosPuntos = new Array();
                 var detalles = $('.Encabezado');
-                debugger;
+                
                 for (var i = 0; i < detalles.length; i++) {
                     if ($(detalles[i]).val() != null && $(detalles[i]).val() != "") {
                         var item = {
@@ -201,7 +201,7 @@
 
 
                 
-                debugger;
+                
 
                 var params = {
                     url: '@Url.Action("Nuevo")',
@@ -212,7 +212,7 @@
                     },
                     success: function (ret) {
                         if (ret.Success) {
-                            debugger;
+                            
                             console.log('se guardo');
                             window.onbeforeunload = null;
                             $.ShowLoader();
@@ -220,7 +220,7 @@
                             console.log('termino ');
 
                         } else {
-                            debugger;
+                            
 
                             $('#BtnSubmit').removeAttr('disabled');
                             $('#Alert-Container').NewAlert('error', ret.ErrorMessage);

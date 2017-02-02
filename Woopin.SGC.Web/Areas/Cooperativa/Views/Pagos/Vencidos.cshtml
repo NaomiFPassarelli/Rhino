@@ -148,7 +148,6 @@
                     var colSumCantidadCoutasRestantes = $grid.jqGrid('getCol', 'Asociado.CantidadCoutasRestantes', false, 'sum');
                     var colSumImporteCuota = $grid.jqGrid('getCol', 'Asociado.ImporteCuota', false, 'sum');
                     var colSumTotal = $grid.jqGrid('getCol', 'Total', false, 'sum');
-                    debugger;
                     //var colSumAbonado = $grid.jqGrid('getCol', 'TotalAbonado', false, 'sum');
                     //var colSumRestante = $grid.jqGrid('getCol', 'TotalRestante', false, 'sum');
                     //$grid.jqGrid('footerData', 'set', { 'Asociado.CantidadCuotasAbonadas': colSumCantidadCuotasAbonadas, 'Asociado.CantidadCoutasRestantes': colSumCantidadCoutasRestantes, 'Asociado.ImporteCuota': colSumImporteCuota, 'Total': colSumTotal, 'TotalAbonado': colSumAbonado, 'TotalRestante': colSumRestante, 'Nombre': "Footer" });
@@ -225,7 +224,6 @@
         },
 
         OpenImprimirGrid: function () {
-            debugger;
             var SelectedIds = $("#GridVencido").jqGrid('getGridParam', '_index');
 
             //var allRowsInGrid = $('#GridVencido').jqGrid('getRowData');

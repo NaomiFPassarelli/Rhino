@@ -233,6 +233,12 @@ namespace Woopin.SGC.Services
             {
                 foreach (var Id in Ids)
                 {
+                    IList<Articulo> ArticulosDelRubro = this.ArticuloRepository.GetAllByRubro(Id);
+                    foreach(Articulo art in ArticulosDelRubro)
+                    {
+                        art.Activo = false;
+                        this.ArticuloRepository.Update(art);
+                    }
                     RubroArticulo RubroArticulo = this.RubroArticuloRepository.Get(Id);
                     RubroArticulo.Activo = false;
                     this.RubroArticuloRepository.Update(RubroArticulo);

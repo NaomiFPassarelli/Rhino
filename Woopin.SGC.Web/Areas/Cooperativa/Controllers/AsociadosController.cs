@@ -408,43 +408,43 @@ namespace Woopin.SGC.Web.Areas.Cooperativa.Controllers
         {
             Asociado r = this.CooperativaConfigService.GetAsociado(Id);
 
-            DateTime dateToday = new DateTime();
-            int dayToday = dateToday.Day;
-            int monthToday = dateToday.Month + 1;
-            int yearToday = dateToday.Year;
-            int dayNacimiento, monthNacimiento, yearNacimiento, cantYears, cantMonths, cantDays = 0;
+            //DateTime dateToday = new DateTime();
+            //int dayToday = dateToday.Day;
+            //int monthToday = dateToday.Month + 1;
+            //int yearToday = dateToday.Year;
+            //int dayNacimiento, monthNacimiento, yearNacimiento, cantYears, cantMonths, cantDays = 0;
 
-            if (r.FechaNacimiento.HasValue)
-            {
-                dayNacimiento = r.FechaNacimiento.Value.Day;
-                monthNacimiento = r.FechaNacimiento.Value.Month;
-                yearNacimiento = r.FechaNacimiento.Value.Year;
-                cantYears = yearToday - yearNacimiento;
-                if (cantYears != 0)
-                {
-                    //distinto año
-                    cantMonths = monthToday - monthNacimiento;
-                    if (cantMonths == 0)
-                    {
-                        //mismo mes
-                        cantDays = dayToday - dayNacimiento;
-                        if (cantDays < 0)
-                        {
-                            //resto un año
-                            cantYears -= 1;
-                        }
-                        //else nada
-                    }
-                    else if (cantMonths < 0)
-                    {
-                        //distinto mes resto un año
-                        cantYears -= 1;
-                    }
-                }
-                ViewBag.Edad = cantYears;
-            }
+            //if (r.FechaNacimiento.HasValue)
+            //{
+            //    dayNacimiento = r.FechaNacimiento.Value.Day;
+            //    monthNacimiento = r.FechaNacimiento.Value.Month;
+            //    yearNacimiento = r.FechaNacimiento.Value.Year;
+            //    cantYears = yearToday - yearNacimiento;
+            //    if (cantYears != 0)
+            //    {
+            //        //distinto año
+            //        cantMonths = monthToday - monthNacimiento;
+            //        if (cantMonths == 0)
+            //        {
+            //            //mismo mes
+            //            cantDays = dayToday - dayNacimiento;
+            //            if (cantDays < 0)
+            //            {
+            //                //resto un año
+            //                cantYears -= 1;
+            //            }
+            //            //else nada
+            //        }
+            //        else if (cantMonths < 0)
+            //        {
+            //            //distinto mes resto un año
+            //            cantYears -= 1;
+            //        }
+            //    }
+            //    ViewBag.Edad = cantYears;
+            //}
 
-            ViewBag.Documento = (r.CUIT != null ? r.CUIT : (r.DNI != null ? r.DNI : (r.CI != null ? r.CI : (r.LC != null ? r.LC : r.LE))));
+            //ViewBag.Documento = (r.CUIT != null ? r.CUIT : (r.DNI != null ? r.DNI : (r.CI != null ? r.CI : (r.LC != null ? r.LC : r.LE))));
             ViewBag.OpensDialog = opensDialog.HasValue ? opensDialog.Value : false;
             return View(r);
         }

@@ -1512,7 +1512,7 @@
         },
 
         LoadAsociado: function (Asociado) {
-            debugger;
+
             Pago.InicializarVariables();
             $('#GridDetallesPago').jqGrid('clearGridData');
             $('#AsociadoID').val(Asociado.Id);
@@ -1696,7 +1696,6 @@
         //TODO hacer que sea util el withSobreConceptos si es que vale la pena porque estamos calculando todo como desde afuera
         //TODO ver si todos los parametros son utilizadas por alguna funcion alguna vez, sino sacar.
         TakeAndAddConcepto: function (IdConcepto, valueCalculated, unidadesCalculated, withSobreConceptos) {
-            debugger;
 
             //Inicio del mismo/padre
             //Primero me fijo sino esta en la grilla
@@ -2002,7 +2001,6 @@
             //    $('#Concepto_Total').val((porcentaje * valor).toFixed(2));
 
             //} else 
-            debugger;
             if ($.isNumeric(valor) && valor != null && $.isNumeric(unidades) && unidades != null) {
                 unidades = parseFloat(unidades);
                 valor = parseFloat(valor);

@@ -156,7 +156,6 @@
         },
 
         CountRows: function (cellvalue, options, rowObject) {
-            debugger;
             var btns = cellvalue.length;
             return btns;
             //if(options.colModel.name)
@@ -175,7 +174,7 @@
         },
 
         DownloadActa: function () {
-            debugger;
+            
             var fechaActa = $('#FechaActa').val();
             if (fechaActa != null && fechaActa != "") {
                 dayActa = ((fechaActa).split("/"))[0];
@@ -187,10 +186,10 @@
                     data: { Mes: monthActa, Año: yearActa },
                     success: function (ret) {
                         if (ret.Success) {
-                            debugger;
+                            
                             window.open('@Url.Action("DescargarPDF")?' + "Mes=" + monthActa + "&Año=" + yearActa, '_blank');
                         } else {
-                            debugger;
+                            
                             $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(ret.ErrorMessage));
 
                             if (ret.FaltaInformacion) {

@@ -53,7 +53,7 @@
 
             OnClickEliminar: function () {
                 var Id = [$(this).closest('tr').attr('id')];
-                ConfirmationDialog.Show("Esta seguro que desea eliminar el rubro seleccionado?",
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el rubro seleccionado? (se eliminarán los artículos del rubro)",
                             function () { ListadoRubroArticulos.Eliminar(Id) });
             },
 
@@ -83,7 +83,7 @@
             OnClickEliminarSeleccionados: function () {
                 var SelectedIds = $.GetSelectedRows('GridRubroArticulos');
                 if (SelectedIds.length > 0) {
-                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Rubros seleccionados?",
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Rubros seleccionados (se eliminarán los artículos de cada rubro)?",
                             function () { ListadoRubroArticulos.Eliminar(SelectedIds) });
                 } else {
                     $.WarningDialog("No hay RubroArticulos seleccionados!");

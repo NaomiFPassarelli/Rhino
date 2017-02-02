@@ -432,6 +432,8 @@
         ValidateFilters: function () {
             var Id = $('#ProveedorID').val();
             if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                $('#ProveedorID').val("");
+                $('#Proveedor_Id').val("");
                 return { success: false, message: 'El N° de Proveedor no es correcto' };
             } else {
                 return { success: true };
@@ -441,6 +443,8 @@
         GetRubroCompraByID: function () {
             var Id = $('#RubroCompraID').val();
             if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                $('#RubroCompraID').val("");
+                $('#RubroCompra_Id').val("");
                 return $.WarningDialog('El N° de Rubro no es correcto');
             }
             ComprobanteCompra.LoadRubroCompra(Id);
@@ -495,6 +499,12 @@
         },
 
         LoadRubroCompra: function (IdRubroCompra) {
+            var IdProveedor = $('#ProveedorID').val();
+            if (IdProveedor == "" || !$.isNumeric(IdProveedor) || IdProveedor <= 0) {
+                $('#RubroCompraID').val("");
+                return $.WarningDialog('Es necesario un el Proveedor para cargar el articulo');
+            }
+
             var params = {
                 url: '@Url.Action("GetRubroCompra", "Rubros")',
                 data: { IdRubroCompra: IdRubroCompra },

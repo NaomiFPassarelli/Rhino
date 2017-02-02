@@ -23,8 +23,7 @@ namespace Woopin.SGC.Model.Tesoreria
         [DisplayName("Número")]
         public virtual string Numero { get; set; }
 
-        // TODO - PIROSKA - Se saca el requerido para piroska.
-        //[Required(ErrorMessage = "Es Necesario un Numero de Cta")]
+        [Required(ErrorMessage = "Es Necesario un Numero de Cta")]
         [DisplayName("Número Cuenta")]
         public virtual string NumeroCuenta { get; set; }
 

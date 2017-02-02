@@ -74,7 +74,7 @@
                     { name: 'CantidadAbonosEfectivos', index: 'CantidadAbonosEfectivos', width: 20, align: "center" },
                     { name: 'CantidadAbonosRestantes', index: 'CantidadAbonosRestantes', width: 20, align: "center", formatter: ListadoAportes.CantidadAbonosEfectivos },
                     { name: 'ImporteAbono', index: 'ImporteAbono', width: 20, align: "center" },
-                    { name: 'cantidadAAportar', index: 'cantidadAAportar', width: 25, align: "center", formatter: Drop_Number, formatoptions: { nameSelect: 'Aportes' } },
+                    { name: 'cantidadAAportar', index: 'cantidadAAportar', width: 25, align: "center", formatter: Drop_Number, formatoptions: { nameSelect: 'Aportes' }, cellattr: function () { return ' title="Seleccione cantidad de cuotas a abonar"'; } },
                     { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: Action_Aceptar, align: "center" }
                 ],
                 sortname: 'Nombre',
@@ -110,8 +110,8 @@
                 var cantidadAAportar = 0;
                 $.each(options, function (i, v) {
                     IsSelected = $(v).attr("selected");
-                    debugger;
-                    if(IsSelected == true || IsSelected == "selected"){
+
+                    if (IsSelected == true || IsSelected == "selected") {
                         cantidadAAportar = i;
                         return false;
                     }

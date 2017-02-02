@@ -452,6 +452,9 @@ namespace Woopin.SGC.Services
         {
             this.ActaRepository.GetSessionFactory().TransactionalInterceptor(() =>
             {
+                if (this.existActaNumero(Acta.NumeroActa, null))
+                    throw new BusinessException("El Acta Número ya existe");
+
                 Acta.AsociadosIngreso = this.AsociadoRepository.GetAsociadosMes(Acta.FechaActa.Month, Acta.FechaActa.Year);
                 Acta.AsociadosEgreso = this.AsociadoRepository.GetAsociadosMesEgreso(Acta.FechaActa.Month, Acta.FechaActa.Year);
                 this.ActaRepository.Add(Acta);
@@ -496,6 +499,10 @@ namespace Woopin.SGC.Services
             });
         }
 
+        public bool existActaNumero(int ActaNumero, int? IdUpdate)
+        {
+            return this.ActaRepository.existActaNumero(ActaNumero, IdUpdate);
+        }
 
 
 

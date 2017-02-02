@@ -424,16 +424,12 @@
 
             //}
 
-            debugger;
-
             Cliente.DireccionesEntrega = new Array();
             var detalles = $('.DireccionEntrega');
-            debugger;
             for (var i = 0; i < detalles.length; i++) {
                 //requeridos
                 var calle = $(detalles[i]).find("input#DireccionEntrega_Calle").val();
                 if (calle != null && calle != "") {
-                    debugger;
                     //$($('.DireccionEntrega')[0]).find("input#Calle").val();
                     //$($('.DireccionEntrega #Calle')[0]).val();
                     var item = {
@@ -449,7 +445,6 @@
                     Cliente.DireccionesEntrega.push(item);
                 }
             }
-            debugger;
 
             var postParams = {
                 url: "@Url.Action("Editar")",

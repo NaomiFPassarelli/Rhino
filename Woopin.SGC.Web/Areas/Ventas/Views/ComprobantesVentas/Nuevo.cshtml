@@ -183,8 +183,7 @@
                     @Html.LabelFor(model => model.Detalle.First().Articulo, new { @class = " horizontal-label" })
                     <div class="input-container col-md-12">
                         <div class="row">
-                            <input id="ArticuloID" name="ArticuloID" class="col-md-2" style="margin-top: 7px;" required />
-
+                            <input type="number" id="ArticuloID" name="ArticuloID" class="col-md-2" style="margin-top: 7px;" required />
                             <div class="col-md-10" style="padding:0;">
                                 <input type="hidden" id="Articulo_Id" name="Articulo.Id" class="selectinput" required />
                             </div>
@@ -422,7 +421,6 @@
         OnTalonarioChange: function () {
             // TODO trabajar con los arrys del objeto.
             var tipo = $('#Tipo_Id').val();
-            debugger;
             if ($(this).find(":selected").data('ad') != null) {
                 // FE
                 $('#Tipo_Id option[value="@ComprobanteVentaHelper.FEFacturaC"]').show();
@@ -517,6 +515,8 @@
         ValidateFilters: function () {
             var Id = $('#ClienteID').val();
             if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                $('#ClienteID').val("");
+                $('#Cliente_Id').val("");
                 return { success: false, message: 'El N° de Cliente no es correcto' };
             } else {
                 return { success: true };
@@ -537,6 +537,8 @@
         GetArticuloByID: function () {
             var Id = $('#ArticuloID').val();
             if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                $('#ArticuloID').val("");
+                $('#Articulo_Id').val("");
                 return $.WarningDialog('El N° de Articulo no es correcto');
             }
             ComprobanteVenta.LoadArticulo(Id);
@@ -584,6 +586,7 @@
         LoadArticulo: function (IdArticulo) {
             var IdCliente = $('#ClienteID').val();
             if (IdCliente == "" || !$.isNumeric(IdCliente) || IdCliente <= 0) {
+                $('#ArticuloID').val("");
                 return $.WarningDialog('Es necesario un el Cliente para cargar el articulo');
             }
 
@@ -601,6 +604,9 @@
                         $('#Articulo_Id').select2('data', { id: IdArticulo, text: ret.Articulo.Descripcion });
                         $('#TipoIVA').val(ret.Articulo.AlicuotaIVA.Id);
                     } else {
+                        debugger;
+                        $('#ArticuloID').val("");
+                        $('#Articulo_Id').select2("val", "");
                         return $.WarningDialog('El N° de Articulo no existe');
                     }
                 }
@@ -651,7 +657,6 @@
             {
                 return;
             }
-            debugger;
             var letra = $('#Letra').val();
             var tipo = $('#Tipo_Id').val();
             var talonario = null;
@@ -735,6 +740,7 @@
             jQuery.extend(jQuery.validator.messages, {
                 required: "Este campo es necesario"
             });
+            debugger;
             var Descuento = $('#Descuento').val() != "" ? $('#Descuento').val() : null;
             if (!($('#Articulo_Id').val() > 0 || $('#ArticuloID').val() <= 0)) {
                 $('.valid-custom.servicioventa').removeClass('field-validation-valid');

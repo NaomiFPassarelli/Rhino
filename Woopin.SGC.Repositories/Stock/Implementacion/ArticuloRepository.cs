@@ -61,5 +61,13 @@ namespace Woopin.SGC.Repositories.Stock
                                                         .List();
         }
 
+        public IList<Articulo> GetAllByRubro(int IdRubro)
+        {
+            return this.GetSessionFactory().GetSession().QueryOver<Articulo>()
+                                                        .Where(x => x.Rubro.Id == IdRubro)
+                                                        .GetFilterBySecurity()
+                                                        .List();
+        }
+
     }
 }
