@@ -86,8 +86,8 @@ insert into Combo (Id,Nombre,Activo) values(8,'Tipo Comprobante Compra',1)
 insert into Combo (Id,Nombre,Activo) values(9,'Tipos de IVA',1)
 insert into Combo (Id,Nombre,Activo) values(10,'Tipos de Cobranzas',1)
 insert into Combo (Id,Nombre,Activo) values(11,'Tipos de Ordenes de Pago',1)
-insert into Combo (Id,Nombre,Activo) values(12,'Actividad de la Organización',1)
-insert into Combo (Id,Nombre,Activo) values(13,'Categoria IVA de la Organización',1)
+insert into Combo (Id,Nombre,Activo) values(12,'Actividad de la OrganizaciÃ³n',1)
+insert into Combo (Id,Nombre,Activo) values(13,'Categoria IVA de la OrganizaciÃ³n',1)
 insert into Combo (Id,Nombre,Activo) values(14,'Unidades de Medida',1)
 INSERT INTO [dbo].[Combo] ([Id], [Nombre], [Activo]) VALUES (15, N'Categorias de Empleados', 1)
 INSERT INTO [dbo].[Combo] ([Id], [Nombre], [Activo]) VALUES (16, N'Tareas del Empleado', 1)
@@ -119,7 +119,7 @@ insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(18,'150 Di
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(19,'Cuenta Corriente',6,'0',1)
 -- del 30 al 39 los movimientos de fondos
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(30,'Deposito',3,'1',1)
-insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(31,'Extracción',3,'-1',1)
+insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(31,'ExtracciÃ³n',3,'-1',1)
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(32,'Transferencia entre Bancos',3,'0',1)
 -- del 40 al 49 los paises
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(40,'Argentina',4,null,1,'200')
@@ -129,8 +129,13 @@ insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(44,'Ecuador',4,null,1, '210')
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(45,'Venezuela',4,null,1, '226')
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(46,'Paraguay',4,null,1, '221')
+<<<<<<< HEAD
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(47,'Perú',4,null,1, '222')
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(48,'Otro País',4,null,1,null)
+=======
+insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(47,'PerÃº',4,null,1, '222')
+insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo, AfipData) values(48,'Otro PaÃ­s',4,null,1,null)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 -- del 50 al 69 tipos de comprobantes venta
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(51,'Factura',5,'1',1)
 insert into ComboItem (Id,Data,Combo_Id,AdditionalData,Activo) values(52,'Nota de Credito',5,'-1',1)
@@ -242,10 +247,17 @@ DBCC CHECKIDENT ('ComboItem',RESEED, 200)
 
 SET IDENTITY_INSERT [dbo].[Localizacion] ON
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (1, N'Buenos Aires', N'Buenos Aires', 1, 1, 40)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (2, N'Córdoba', N'Córdoba', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (3, N'Corrientes', N'Corrientes', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (4, N'Formosa', N'Formosa', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (5, N'Entre Ríos', N'Entre Ríos', 1, 0, 40)
+=======
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (2, N'CÃ³rdoba', N'CÃ³rdoba', 1, 0, 40)
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (3, N'Corrientes', N'Corrientes', 1, 0, 40)
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (4, N'Formosa', N'Formosa', 1, 0, 40)
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (5, N'Entre RÃ­os', N'Entre RÃ­os', 1, 0, 40)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (6, N'Misiones', N'Misiones', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (7, N'Chubut', N'Chubut', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (8, N'Mendoza', N'Mendoza', 1, 0, 40)
@@ -254,14 +266,24 @@ INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predet
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (11, N'Tierra del Fuego', N'Tierra del Fuego', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (12, N'San Luis', N'San Luis', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (13, N'La Pampa', N'La Pampa', 1, 0, 40)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (14, N'Tucumán', N'Tucumán', 1, 0, 40)
+=======
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (14, N'TucumÃ¡n', N'TucumÃ¡n', 1, 0, 40)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (15, N'Jujuy', N'Jujuy', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (16, N'Chaco', N'Chaco', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (17, N'Salta', N'Salta', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (18, N'Santa Cruz', N'Santa Cruz', 1, 0, 40)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (19, N'Río Negro', N'Río Negro', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (20, N'Catamarca', N'Catamarca', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (21, N'Neuquén', N'Neuquén', 1, 0, 40)
+=======
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (19, N'RÃ­o Negro', N'RÃ­o Negro', 1, 0, 40)
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (20, N'Catamarca', N'Catamarca', 1, 0, 40)
+INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (21, N'NeuquÃ©n', N'NeuquÃ©n', 1, 0, 40)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (22, N'Santiago del Estero', N'Santiago del Estero', 1, 0, 40)
 INSERT INTO [dbo].[Localizacion] ([Id], [Nombre], [Provincia], [Activo], [Predeterminado], [Pais_id]) VALUES (23, N'La Rioja', N'La Rioja', 1, 0, 40)
 SET IDENTITY_INSERT [dbo].[Localizacion] OFF
@@ -270,7 +292,11 @@ SET IDENTITY_INSERT [dbo].[Localizacion] OFF
 SET IDENTITY_INSERT [dbo].[Localidad] ON
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (1, N'17 de Agosto', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (2, N'25 de Mayo', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (3, N'9 de Julio / La Niña', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (3, N'9 de Julio / La NiÃ±a', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (4, N'Acassuso', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (5, N'Aguas Verdes', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (6, N'Alberti', 1, 0, 1)
@@ -279,8 +305,13 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (9, N'Avellaneda', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (10, N'Ayacucho', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (11, N'Azul', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (12, N'Bahía Blanca', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (13, N'Bahía San Blas', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (12, N'BahÃ­a Blanca', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (13, N'BahÃ­a San Blas', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (14, N'Balcarce', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (15, N'Balneario Marisol', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (16, N'Balneario Orense', 1, 0, 1)
@@ -288,16 +319,26 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (18, N'Balneario San Cayetano', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (19, N'Baradero', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (20, N'Bella Vista', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (21, N'Benito Juárez', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (21, N'Benito JuÃ¡rez', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (22, N'Berazategui', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (23, N'Berisso', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (24, N'Boulogne', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (25, N'Bragado', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (26, N'Brandsen', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (27, N'Campana', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (28, N'Capilla del Señor', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (29, N'Capital Federal', 1, 1, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (30, N'Capitán Sarmiento', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (28, N'Capilla del SeÃ±or', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (29, N'Capital Federal', 1, 1, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (30, N'CapitÃ¡n Sarmiento', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (31, N'Carapachay', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (32, N'Carhue', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (33, N'Carlos Keen', 1, 0, 1)
@@ -307,6 +348,7 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (37, N'Castelar', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (38, N'Castelli', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (39, N'Chacabuco', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (40, N'Chascomús', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (41, N'Chivilcoy', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (42, N'City Bell', 1, 0, 1)
@@ -316,13 +358,28 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (46, N'Coronel Dorrego', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (47, N'Coronel Pringles', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (48, N'Coronel Suárez', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (40, N'ChascomÃºs', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (41, N'Chivilcoy', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (42, N'City Bell', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (43, N'Ciudadela', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (44, N'ClaromecÃ³', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (45, N'ColÃ³n', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (46, N'Coronel Dorrego', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (47, N'Coronel Pringles', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (48, N'Coronel SuÃ¡rez', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (49, N'Darregueira', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (50, N'Dunamar', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (51, N'Escobar', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (52, N'Ezeiza', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (53, N'Florencio Varela', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (54, N'Florida', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (55, N'Fortín Mercedes', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (55, N'FortÃ­n Mercedes', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (56, N'Garin', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (57, N'General Arenales', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (58, N'General Belgrano', 1, 0, 1)
@@ -330,6 +387,7 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (60, N'General Villegas', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (61, N'Gral. Daniel Cerri', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (62, N'Gran Buenos Aires', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (63, N'Guaminí', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (64, N'Haedo', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (65, N'Huanguelen', 1, 0, 1)
@@ -337,6 +395,15 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (67, N'Isla Martín García', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (68, N'Ituzaingo', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (69, N'Junín', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (63, N'GuaminÃ­', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (64, N'Haedo', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (65, N'Huanguelen', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (66, N'Hurlingham', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (67, N'Isla MartÃ­n GarcÃ­a', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (68, N'Ituzaingo', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (69, N'JunÃ­n', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (70, N'La Plata', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (71, N'La Tablada', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (72, N'Laferrere', 1, 0, 1)
@@ -352,6 +419,7 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (82, N'Lomas de Zamora', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (83, N'Los Toldos - Gral. Viamonte', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (84, N'Lucila del Mar', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (85, N'Luis Guillón', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (86, N'Luján', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (87, N'Magdalena', 1, 0, 1)
@@ -365,26 +433,56 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (95, N'Mar del Tuyú', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (96, N'Martinez', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (97, N'Médanos / Laguna Chasicó', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (85, N'Luis GuillÃ³n', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (86, N'LujÃ¡n', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (87, N'Magdalena', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (88, N'MaipÃº', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (89, N'Mar Azul', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (90, N'Mar Chiquita', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (91, N'Mar de AjÃ³', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (92, N'Mar de Cobo', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (93, N'Mar del Plata', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (94, N'Mar del Sud', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (95, N'Mar del TuyÃº', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (96, N'Martinez', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (97, N'MÃ©danos / Laguna ChasicÃ³', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (98, N'Mercedes', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (99, N'Merlo', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (100, N'Miramar', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (101, N'Monte Hermoso', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (102, N'Moreno', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (103, N'Morón', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (103, N'MorÃ³n', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (104, N'Munro', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (105, N'Nada', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (106, N'Navarro', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (107, N'Necochea', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (108, N'Nueva Atlantis', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (109, N'Olavarría', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (109, N'OlavarrÃ­a', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (110, N'Olivos', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (111, N'Open Door', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (112, N'Ostende', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (113, N'Pedro Luro', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (114, N'Pehuajó', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (115, N'Pehuen  Có', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (116, N'Pergamino', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (117, N'Pigüé', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (114, N'PehuajÃ³', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (115, N'Pehuen  CÃ³', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (116, N'Pergamino', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (117, N'PigÃ¼Ã©', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (118, N'Pilar', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (119, N'Pinamar', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (120, N'Pinamar', 1, 0, 1)
@@ -393,37 +491,65 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (123, N'Punta Alta', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (124, N'Punta Indio', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (125, N'Punta Lara', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (126, N'Quequén', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (127, N'Quilmes', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (128, N'Ramallo', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (129, N'Ramos Mejía', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (126, N'QuequÃ©n', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (127, N'Quilmes', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (128, N'Ramallo', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (129, N'Ramos MejÃ­a', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (130, N'Ranchos', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (131, N'Rauch', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (132, N'Rivadavia', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (133, N'Rojas', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (134, N'Roque Pérez', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (135, N'Saenz Peña', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (134, N'Roque PÃ©rez', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (135, N'Saenz PeÃ±a', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (136, N'Saladillo', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (137, N'Salto', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (138, N'San Antonio de Areco', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (139, N'San Bernardo', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (140, N'San Cayetano', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (141, N'San Clemente del Tuyú', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (141, N'San Clemente del TuyÃº', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (142, N'San Fernando', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (143, N'San Isidro', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (144, N'San Justo', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (145, N'San Martin', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (146, N'San Miguel del Monte', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (147, N'San Nicolás', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (147, N'San NicolÃ¡s', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (148, N'San Pedro', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (149, N'San Vicente', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (150, N'Santa Clara del Mar', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (151, N'Santa Teresita', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (152, N'Sarandí', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (153, N'Sierra de la Ventana', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (154, N'Sierra de los Padres', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (155, N'Tandil', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (156, N'Tapalqué', 1, 0, 1)
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (152, N'SarandÃ­', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (153, N'Sierra de la Ventana', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (154, N'Sierra de los Padres', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (155, N'Tandil', 1, 0, 1)
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (156, N'TapalquÃ©', 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (157, N'Temperley', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (158, N'Tigre', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (159, N'Tornquist / Ruta Prov. 76', 1, 0, 1)
@@ -440,8 +566,21 @@ INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Prov
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (170, N'Villa Ventana', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (171, N'Villalonga', 1, 0, 1)
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (172, N'Wilde', 1, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (173, N'Zárate', 1, 0, 1)
 SET IDENTITY_INSERT [dbo].[Localidad] OFF
+=======
+INSERT INTO [dbo].[Localidad] ([Id], [Nombre], [Activo], [Predeterminado], [Provincia_id]) VALUES (173, N'ZÃ¡rate', 1, 0, 1)
+SET IDENTITY_INSERT [dbo].[Localidad] OFF
+
+SET IDENTITY_INSERT [dbo].[Concepto] ON
+INSERT INTO [dbo].[Concepto] ([Id], [Descripcion], [AdditionalDescription], [Valor], [Suma], [TipoConcepto], [Organizacion_id]) VALUES (1, N'Servicios Prestados', NULL, NULL, 1, N'Anticipo', 1)
+INSERT INTO [dbo].[Concepto] ([Id], [Descripcion], [AdditionalDescription], [Valor], [Suma], [TipoConcepto], [Organizacion_id]) VALUES (2, N'Reconocimiento Monotributo', NULL, NULL, 1, N'Anticipo', 1)
+INSERT INTO [dbo].[Concepto] ([Id], [Descripcion], [AdditionalDescription], [Valor], [Suma], [TipoConcepto], [Organizacion_id]) VALUES (3, N'Adelanto', NULL, NULL, 1, N'Anticipo', 1)
+INSERT INTO [dbo].[Concepto] ([Id], [Descripcion], [AdditionalDescription], [Valor], [Suma], [TipoConcepto], [Organizacion_id]) VALUES (4, N'Otros Anticipos', NULL, NULL, 1, N'Anticipo', 1)
+SET IDENTITY_INSERT [dbo].[Concepto] OFF
+
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 
 SET IDENTITY_INSERT [dbo].Usuario ON
 insert into Usuario(Id,NombreCompleto,Username,LastLogin,Activo, OrganizacionActual_id)
@@ -477,6 +616,7 @@ INSERT INTO [dbo].[OrganizacionModulo] ([Id], [ModulosSistemaGestion], [Organiza
 INSERT INTO [dbo].[OrganizacionModulo] ([Id], [ModulosSistemaGestion], [Organizacion_id]) VALUES (8, N'8', 1)
 INSERT INTO [dbo].[OrganizacionModulo] ([Id], [ModulosSistemaGestion], [Organizacion_id]) VALUES (9, N'9', 1)
 SET IDENTITY_INSERT [dbo].[OrganizacionModulo] OFF
+<<<<<<< HEAD
 
 
 SET IDENTITY_INSERT [dbo].[Concepto] ON
@@ -486,6 +626,8 @@ INSERT INTO [dbo].[Concepto] ([Id], [Descripcion], [AdditionalDescription], [Val
 INSERT INTO [dbo].[Concepto] ([Id], [Descripcion], [AdditionalDescription], [Valor], [Suma], [TipoConcepto], [Organizacion_id]) VALUES (4, N'Otros Anticipos', NULL, NULL, 1, N'Anticipo', 1)
 SET IDENTITY_INSERT [dbo].[Concepto] OFF
 
+=======
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 
 
 DBCC CHECKIDENT ('Moneda',RESEED, 0)
@@ -522,14 +664,23 @@ INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [Sub
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (19, N'2.1.5.0', N'Otras Deudas', 2, 1, 5, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (20, N'4.1.0.0', N'Ingresos Por Ventas', 4, 1, 0, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (21, N'4.2.0.0', N'Otros Ingresos', 4, 2, 0, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (22, N'4.2.1.0', N'Gastos Administración', 4, 2, 1, 0, 1)
+=======
+INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (22, N'4.2.1.0', N'Gastos AdministraciÃ³n', 4, 2, 1, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (23, N'4.2.2.0', N'Gastos Comerciales', 4, 2, 2, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (24, N'4.2.3.0', N'Gastos Financieros', 4, 2, 3, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (25, N'4.2.4.0', N'Costos', 4, 2, 4, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (26, N'3.1.0.001', N'Capital Social', 3, 1, 0, 1, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (27, N'5.0.0.0', N'Egresos', 5, 0, 0, 0, 1)
+<<<<<<< HEAD
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (28, N'5.1.0.0', N'Gastos de Comercialización', 5, 1, 0, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (29, N'5.2.0.0', N'Gastos de Administración', 5, 2, 0, 0, 1)
+=======
+INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (28, N'5.1.0.0', N'Gastos de ComercializaciÃ³n', 5, 1, 0, 0, 1)
+INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (29, N'5.2.0.0', N'Gastos de AdministraciÃ³n', 5, 2, 0, 0, 1)
+>>>>>>> 93eff202c21e24ca31f3cc1a406bab2764c4c66e
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (30, N'5.3.0.0', N'Gastos de Financiamiento', 5, 3, 0, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (31, N'5.4.0.0', N'Otros Egresos', 5, 4, 0, 0, 1)
 INSERT INTO [dbo].[Cuenta] ([Id], [Codigo], [Nombre], [Rubro], [Corriente], [SubRubro], [Numero], [Organizacion_id]) VALUES (32, N'1.1.1.002', N'Valores A Depositar', 1, 1, 1, 2, 1)
@@ -556,7 +707,7 @@ INSERT INTO [dbo].[CategoriaIVA] ([Id], [Abreviatura], [Nombre], [Discrimina], [
 INSERT INTO [dbo].[CategoriaIVA] ([Id], [Abreviatura], [Nombre], [Discrimina], [LiquidaInternos], [ExentoIva], [ResponsabilidadAfip], [Activo], [Predeterminado], [LetraCompras_id], [LetraVentas_id]) 
 	VALUES (3, 'EX', 'Exento', 0, 0, 0, 'IVA Sujeto Exento', 1, 0, 2,2)
 INSERT INTO [dbo].[CategoriaIVA] ([Id], [Abreviatura], [Nombre], [Discrimina], [LiquidaInternos], [ExentoIva], [ResponsabilidadAfip], [Activo], [Predeterminado], [LetraCompras_id], [LetraVentas_id]) 
-	VALUES (4, 'EP', 'Exportación', 0, 0, 0, 'Cliente del Exterior', 1, 0, 4,4)
+	VALUES (4, 'EP', 'ExportaciÃ³n', 0, 0, 0, 'Cliente del Exterior', 1, 0, 4,4)
 INSERT INTO [dbo].[CategoriaIVA] ([Id], [Abreviatura], [Nombre], [Discrimina], [LiquidaInternos], [ExentoIva], [ResponsabilidadAfip], [Activo], [Predeterminado], [LetraCompras_id], [LetraVentas_id]) 
 	VALUES (5, 'MO', 'Responsable Monotributista', 0, 0, 0, 'Responsable Monotributista', 1, 0, 3,2)
 INSERT INTO [dbo].[CategoriaIVA] ([Id], [Abreviatura], [Nombre], [Discrimina], [LiquidaInternos], [ExentoIva], [ResponsabilidadAfip], [Activo], [Predeterminado], [LetraCompras_id], [LetraVentas_id]) 
@@ -635,7 +786,7 @@ INSERT INTO [dbo].[Valor] ([Id], [Nombre], [Activo], [Moneda_id], [TipoValor_id]
 INSERT INTO [dbo].[Valor] ([Id], [Nombre], [Activo], [Moneda_id], [TipoValor_id],Organizacion_Id) VALUES (4, N'Cheque Terceros', 1, 1, 70,1)
 INSERT INTO [dbo].[Valor] ([Id], [Nombre], [Activo], [Moneda_id], [TipoValor_id],Organizacion_Id) VALUES (5, N'Transferencia', 1, 1, 72,1)
 INSERT INTO [dbo].[Valor] ([Id], [Nombre], [Activo], [Moneda_id], [TipoValor_id],Organizacion_Id) VALUES (6, N'Tarjeta de Credito', 1, 1, 74,1)
-INSERT INTO [dbo].[Valor] ([Id], [Nombre], [Activo], [Moneda_id], [TipoValor_id],Organizacion_Id) VALUES (7, N'Retención', 1, 1, 75,1)
+INSERT INTO [dbo].[Valor] ([Id], [Nombre], [Activo], [Moneda_id], [TipoValor_id],Organizacion_Id) VALUES (7, N'RetenciÃ³n', 1, 1, 75,1)
 SET IDENTITY_INSERT [dbo].[Valor] OFF
 
 SET IDENTITY_INSERT [dbo].[Ejercicio] ON
