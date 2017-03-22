@@ -47,15 +47,24 @@
         OnSaveCompleted: function (ret) {
             if (ret.Success) {
                 CambiarActual.CloseDialog();
-                $.WarningDialog('La organización fue cambiada exitosamente.', 'success', CambiarActual.OnFinishSave);
+                //$.WarningDialog('La organización fue cambiada exitosamente.', 'success', CambiarActual.OnFinishSave);
+                typeMsg = "success";
+                msg = "La operación fue existosa";
+                CambiarActual.OnFinishSave(typeMsg, msg);
             }
             else {
                 $.WarningDialog('Ocurrio un error al querer cambiar de organización, vuelva a intentarlo.', 'error');
             }
         },
 
-        OnFinishSave: function(){
-            window.location.reload();
+        OnFinishSave: function (typeMsg, msg) {
+            $.WarningDialog(msg, typeMsg, function () {
+                //window.onbeforeunload = null;
+                //$.ShowLoader();
+                //window.location = 'Url.Action("Index")';
+                window.location.reload();
+
+            });
         },
 
         CloseDialog: function(){

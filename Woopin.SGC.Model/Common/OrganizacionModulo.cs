@@ -23,7 +23,8 @@ namespace Woopin.SGC.Model.Common
         Sueldos = 6,
         Cooperativa = 7, 
         Configuracion = 8,
-        Management = 9
+        Management = 9,
+        Bolos = 10
     }
 
 }

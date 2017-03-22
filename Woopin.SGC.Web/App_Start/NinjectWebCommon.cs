@@ -22,6 +22,7 @@ namespace Woopin.SGC.Web.App_Start
     using Woopin.SGC.Repositories.Reporting;
     using Woopin.SGC.Repositories.Stock;
     using Woopin.SGC.Repositories.Sueldos;
+    using Woopin.SGC.Repositories.Bolos;
     using Woopin.SGC.Repositories.Cooperativa;
 
     public static class NinjectWebCommon
@@ -99,6 +100,8 @@ namespace Woopin.SGC.Web.App_Start
             kernel.Bind<IDireccionRepository>().To<DireccionRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IComboRepository>().To<ComboRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IComboItemRepository>().To<ComboItemRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IComboOrganizacionRepository>().To<ComboOrganizacionRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IComboItemOrganizacionRepository>().To<ComboItemOrganizacionRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IGeneralRepository>().To<GeneralRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<ILogRepository>().To<LogRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IOrganizacionRepository>().To<OrganizacionRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
@@ -163,6 +166,16 @@ namespace Woopin.SGC.Web.App_Start
             kernel.Bind<IReciboRepository>().To<ReciboRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IAdicionalReciboRepository>().To<AdicionalReciboRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
 
+            // Bolos
+            kernel.Bind<ITrabajadorRepository>().To<TrabajadorRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IEscalafonRepository>().To<EscalafonRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<ITrabajadorBoloEscalafonRepository>().To<TrabajadorBoloEscalafonRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IEmpresaRepository>().To<EmpresaRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<ILiquidadorRepository>().To<LiquidadorRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IDetalleLiquidadorRepository>().To<DetalleLiquidadorRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IBoloRepository>().To<BoloRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+            kernel.Bind<IConceptoBoloRepository>().To<ConceptoBoloRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
+
             // Cooperativa
             kernel.Bind<IAsociadoRepository>().To<AsociadoRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
             kernel.Bind<IPagoRepository>().To<PagoRepository>().InSingletonScope().WithConstructorArgument("IHibernateSessionFactory", kernel.GetService(typeof(IHibernateSessionFactory)));
@@ -190,7 +203,9 @@ namespace Woopin.SGC.Web.App_Start
                 .WithConstructorArgument("ILocalizacionRepository", kernel.GetService(typeof(ILocalizacionRepository)))
                 .WithConstructorArgument("ILocalidadRepository", kernel.GetService(typeof(ILocalidadRepository)))
                 .WithConstructorArgument("IComboRepository", kernel.GetService(typeof(IComboRepository)))
-                .WithConstructorArgument("IComboItemRepository", kernel.GetService(typeof(IComboItemRepository)));
+                .WithConstructorArgument("IComboItemRepository", kernel.GetService(typeof(IComboItemRepository)))
+                .WithConstructorArgument("IComboOrganizacionRepository", kernel.GetService(typeof(IComboOrganizacionRepository)))
+                .WithConstructorArgument("IComboItemOrganizacionRepository", kernel.GetService(typeof(IComboItemOrganizacionRepository)));
 
             kernel.Bind<ISystemService>().To<SystemService>().InSingletonScope()
                 .WithConstructorArgument("IGeneralRepository", kernel.GetService(typeof(IGeneralRepository)))
@@ -268,6 +283,18 @@ namespace Woopin.SGC.Web.App_Start
                 .WithConstructorArgument("IAdicionalAdicionalesRepository", kernel.GetService(typeof(IAdicionalAdicionalesRepository)));
             kernel.Bind<ISueldosService>().To<SueldosService>().InSingletonScope()
                 .WithConstructorArgument("IReciboRepository", kernel.GetService(typeof(IReciboRepository)));
+
+            kernel.Bind<IBolosConfigService>().To<BolosConfigService>().InSingletonScope()
+                .WithConstructorArgument("ITrabajadorRepository", kernel.GetService(typeof(ITrabajadorRepository)))
+                .WithConstructorArgument("IEscalafonRepository", kernel.GetService(typeof(IEscalafonRepository)))
+                .WithConstructorArgument("ITrabajadorBoloEscalafonRepository", kernel.GetService(typeof(ITrabajadorBoloEscalafonRepository)))
+                .WithConstructorArgument("IEmpresaRepository", kernel.GetService(typeof(IEmpresaRepository)))
+                .WithConstructorArgument("IBoloRepository", kernel.GetService(typeof(IBoloRepository)))
+                .WithConstructorArgument("IConceptoBoloRepository", kernel.GetService(typeof(IConceptoBoloRepository)));
+
+            kernel.Bind<IBolosService>().To<BolosService>().InSingletonScope()
+                .WithConstructorArgument("IDetalleLiquidadorRepository", kernel.GetService(typeof(IDetalleLiquidadorRepository)))
+                .WithConstructorArgument("ILiquidadorRepository", kernel.GetService(typeof(ILiquidadorRepository)));
 
             kernel.Bind<ICooperativaConfigService>().To<CooperativaConfigService>().InSingletonScope()
                 .WithConstructorArgument("IAsociadoRepository", kernel.GetService(typeof(IAsociadoRepository)))

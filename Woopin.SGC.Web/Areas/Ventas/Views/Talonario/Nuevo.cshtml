@@ -81,6 +81,8 @@
                     $('#GridTalonario').jqGrid('addRowData', 'Id', data.Talonario);
                     $('#GridTalonario').trigger("reloadGrid");
                     _OpenDialog.dialog('close');
+                    msg = "La operación fue existosa";
+                    $.WarningDialog(msg, "success");
                 }
                 else {
                     $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));

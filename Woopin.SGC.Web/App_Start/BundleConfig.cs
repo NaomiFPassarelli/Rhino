@@ -39,6 +39,14 @@ namespace Woopin.SGC.Web
                         "~/Scripts/select2/select2.js",
                         "~/Scripts/select2/locale/select2_locale_es.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/multiSelect").Include(
+                        "~/Scripts/multiSelect/jquery.multiselect.filter.js",
+                        "~/Scripts/multiSelect/jquery.multiselect.js"
+                        //,
+                        //"~/Scripts/grid.functions.js",
+                        //"~/Scripts/export.excel.functions.js"
+                        ));
+
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
@@ -47,6 +55,8 @@ namespace Woopin.SGC.Web
             bundles.Add(new StyleBundle("~/Content/css").Include(
                         "~/Content/metro-bootstrap.css",
                         "~/Content/font-awesome.css",
+                        "~/Content/jquery.multiselect.css",
+                        "~/Content/jquery.multiselect.filter.css",
                         "~/SCripts/nanoscroller/nanoscroller.css",
                         "~/Content/site.css"));
 

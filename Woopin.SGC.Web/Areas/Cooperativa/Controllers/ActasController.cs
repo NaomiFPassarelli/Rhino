@@ -54,13 +54,13 @@ namespace Woopin.SGC.Web.Areas.Cooperativa.Controllers
                 DateTime endOfMonth = new DateTime(Acta.FechaActa.Year, Acta.FechaActa.Month, DateTime.DaysInMonth(Acta.FechaActa.Year, Acta.FechaActa.Month));
                 if(this.CooperativaService.GetActaByFecha(endOfMonth) != null)
                 {
-                    return Json(new { Success = false, ErrorMessage = "Ya existe un acta para el mes seleccionado", FaltaInformacion = false });
+                    return Json(new { Success = false, ErrorMessage = "Ya existe un acta para el mes seleccionado" });
                 }
                 DateTime today = DateTime.Now;
                 if (today < endOfMonth)
                 {
                     //return con error porque debe terminar el mes antes de generar el pdf
-                    return Json(new { Success = false, ErrorMessage = "La fecha seleccionada no puede ser de un mes no finalizado", FaltaInformacion = false });
+                    return Json(new { Success = false, ErrorMessage = "La fecha seleccionada no puede ser de un mes no finalizado" });
                 }
                 Acta.FechaActa = endOfMonth;
                 ClearNotValidatedProperties(Acta);

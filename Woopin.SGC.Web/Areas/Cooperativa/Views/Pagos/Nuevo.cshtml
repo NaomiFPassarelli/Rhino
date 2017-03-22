@@ -226,7 +226,7 @@
     @Scripts.Render("~/Scripts/jquery.mask.min.js")
     <script type="text/javascript">
     var PagoDetalleId = 0;
-    
+
     //TODO que funcione: SetupUniqueNonQuitableForm needrefresh
     $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de Pago. Si presiona Aceptar, todos los cambios realizados se perderan.');
     $(document).ready(function () {
@@ -436,7 +436,7 @@
             //Fecha de Pago sugerida
             var DatePago = new Date();
             var DatePeriodo = new Date(DatePago.getFullYear(), DatePago.getMonth(), 0);
-            
+
             $('#datepago').val(DatePago.format("dd/mm/yyyy"));
             $('#dateperiodo').val(DatePeriodo.format("dd/mm/yyyy"));
 
@@ -560,10 +560,10 @@
                 Pago.ChangeDiasHorasNoJustificados();
 
                 Pago.TakeAndAddConcepto(idConceptoRefrigerio, null, diasTrabajadosLiteral, false);
-                
+
                 Pago.TakeAndAddConcepto(idConceptoViatico, null, diasTrabajadosLiteral, false);
 
-                //si existe el dia del cortador en grilla 
+                //si existe el dia del cortador en grilla
                 if (idConceptoDiaCortador != 0) {
                     var indexEnArrayYGrillaDiaCortador = Pago.SelectedRows.indexOf(idConceptoDiaCortador);
                     if (indexEnArrayYGrillaDiaCortador >= 0) {
@@ -678,7 +678,7 @@
                     {
                         Pago.TakeAndAddConcepto(diferencias.idConceptoDiferenciaObraSocial, ValorTotalObraSocial, null, false);
                     }
-                    
+
                 }
             }
 
@@ -1327,7 +1327,7 @@
             });
 
 
-            
+
             var params = {
                 url: '@Url.Action("GetConcepto", "Conceptos")',
                 data: { IdConcepto: IdConcepto, IdSindicato: Pago.Sindicato != null ? Pago.Sindicato : 0 },
@@ -1431,7 +1431,7 @@
                                 if (tienenTodosLosHijosValor) {
                                     //if (ret.Data.Porcentaje != null && ret.Data.Valor != null) {
                                     //    $('#Concepto_Total').val(ret.Data.Porcentaje * ret.Data.Valor);
-                                    //} else 
+                                    //} else
                                     if (ret.Data.Valor != null && ret.Data.Unidades != null) {
                                         $('#Concepto_Total').val(ret.Data.Unidades * ret.Data.Valor);
                                     }
@@ -1499,7 +1499,7 @@
         },
 
         CamposNoEditables: function (Readonly) {
-            
+
         },
 
         InicializarVariables: function(){
@@ -1590,13 +1590,13 @@
         //                //rowOS = item;
         //                var ind = $('#GridDetallesPago').getInd(item.Id);
         //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
-                        
+
         //                //ValorTotalObraSocial = localRowData.Valor * localRowData.Porcentaje / 100;
 
         //            } else if (indexEnArrayS >= 0 && item.Concepto_Id == idConceptoCuotaSindical) {
         //                var ind = $('#GridDetallesPago').getInd(item.Id);
         //                var localRowData = $('#GridDetallesPago').jqGrid('getLocalRow', --ind);
-                        
+
         //                //ValorTotalSindical = localRowData.Valor * localRowData.Porcentaje / 100;
         //            } else if (indexEnArrayJ >= 0 && item.Concepto_Id == idConceptoJubilacion) {
         //                var ind = $('#GridDetallesPago').getInd(item.Id);
@@ -1614,7 +1614,7 @@
         //                {
         //                    ValorTotalObraSocial *= -1;
         //                }
-                        
+
         //                if (ValorTotalAnteriorObraSocial != 0 || Pago.ValorAnteriorDiferenciaObraSocial != 0) {
         //                    ValorTotalObraSocial = parseFloat(ValorTotalAnteriorObraSocial) + parseFloat(ValorTotalObraSocial);
         //                } else {
@@ -1992,7 +1992,7 @@
             //var porcentaje = $('#Concepto_Porcentaje').val();
             var unidades = $('#Concepto_Unidades').val();
             var total = $('#Concepto_Total').val();
- 
+
             //TODO pasar a cuando cambian/tocan/modifican estos campos no antes de agregar!
             //solo para mostrar
             //if ($.isNumeric(porcentaje) && porcentaje != null && $.isNumeric(valor) && valor != null) {
@@ -2000,7 +2000,7 @@
             //    valor = parseFloat(valor);
             //    $('#Concepto_Total').val((porcentaje * valor).toFixed(2));
 
-            //} else 
+            //} else
             if ($.isNumeric(valor) && valor != null && $.isNumeric(unidades) && unidades != null) {
                 unidades = parseFloat(unidades);
                 valor = parseFloat(valor);
@@ -2013,7 +2013,7 @@
                 valor = total;
                 valor = parseFloat(valor);
             }
-            
+
             if ($('#Pago-detalle').valid()) {
                 var Descripcion = $('#Concepto_Id').select2('data').text;
                 Pago.TakeAndAddConcepto($('#Concepto_Id').val(), valor, unidades, false);
@@ -2082,19 +2082,22 @@
                 success: function (data) {
                     if (data.Success) {
                         if (data.NuevoNumero == null && data.NumeroRef == null) {
-                            Pago.OnFinishSave(data.Pago);
+                            msg = "La operación fue existosa";
+                            typeMsg = "success";
+                            Pago.OnFinishSave(data.Pago, typeMsg, msg);
                         }
                         else {
                             var msg = "";
+                            typeMsg = "warning";
                             if (data.NuevoNumero != null) {
                                 msg += '<p>El N° de Pago ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
                             }
                             if (data.NumeroRef != null) {
                                 msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
                             }
-                            $.WarningDialog(msg, 'warning', function () {
-                                Pago.OnFinishSave(data.Pago)
-                            });
+                            //$.WarningDialog(msg, 'warning', function () {
+                            Pago.OnFinishSave(data.Pago, typeMsg, msg);
+                            //});
                         }
                     }
                     else {
@@ -2106,12 +2109,14 @@
             $.AjaxPost(postParams);
         },
 
-        OnFinishSave: function (Pago) {
-            window.onbeforeunload = null;
-            $.ShowLoader();
-            window.location = '@Url.Action("Index")';
-            //TODO que vaya a detalle de como se va a imprimir podria ser
-            //window.location = '@@ Url.Action("Detalle")/' + Pago.Id;
+        OnFinishSave: function (Pago, typeMsg, msg) {
+            $.WarningDialog(msg, typeMsg, function () {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Index")';
+                //TODO que vaya a detalle de como se va a imprimir podria ser
+                //window.location = '@@ Url.Action("Detalle")/' + Pago.Id;
+            });
         }
     }
     </script>

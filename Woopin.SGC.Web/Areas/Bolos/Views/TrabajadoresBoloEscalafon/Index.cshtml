@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "Trabajadores Bolo Escalafon";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Listado de Trabajadores Bolo Escalafon";
+}
+@*<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImportar" title="Importación">
+        <i class="fa fa-file-excel-o i-blue"></i>  Importar
+    </a>
+</div>*@
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear TrabajadorBoloEscalafon" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Trabajador Bolo Escalafon
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar TrabajadorBoloEscalafon..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridTrabajadoresBoloEscalafon"></table>
+    <div id="GridTrabajadoresBoloEscalafon_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+<div id="importar-TrabajadoresBoloEscalafon-dialog"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoTrabajadoresBoloEscalafon = {
+
+            init: function () {
+                $('#BtnImportar').bind('click', ListadoTrabajadoresBoloEscalafon.OpenImportar);
+                $('#BtnExportXLS').click(ListadoTrabajadoresBoloEscalafon.ExportToExcel);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridTrabajadoresBoloEscalafon');
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridTrabajadoresBoloEscalafon', ["Descripcion", "Apellido", "CUIT", "Direccion"]);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoTrabajadoresBoloEscalafon.Refresh);
+
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoTrabajadoresBoloEscalafon.OnEliminarSeleccionadosClick);
+
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoTrabajadoresBoloEscalafon.EliminarTrabajadorBoloEscalafon);
+                /* Editar de la grilla */
+                // Abre nueva ventana
+                $(document).on('click', '.BtnEditar', ListadoTrabajadoresBoloEscalafon.EditarTrabajadorBoloEscalafon);
+
+                /* Armo la grilla del ABM */
+                $('#GridTrabajadoresBoloEscalafon').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Descripcion', 'Categoria'/*, 'Tarea'*/, 'Salario', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Descripcion', index: 'Descripcion', width: 25, align: "center", sortable: true },
+                        { name: 'Categoria.Data', index: 'Categoria.Data', width: 25, align: "center", sortable: true },
+                        //{ name: 'Tarea.Data', index: 'Tarea.Data', width: 25, align: "center", sortable: true },
+                        { name: 'Salario', index: 'Salario', width: 20, align: "center", sortable: true },
+                        { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Descripcion',
+                    sortorder: "asc",
+                    pager: '#GridTrabajadoresBoloEscalafon_pager',
+                });
+                $('#GridTrabajadoresBoloEscalafon').trigger("reloadGrid");
+            },
+
+            @*OpenImportar: function () {
+                $('#importar-TrabajadoresBoloEscalafon-dialog').OpenFormDialog('@Url.Action("Importar")', 'Importación de TrabajadoresBoloEscalafon');
+            },*@
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridTrabajadoresBoloEscalafon', 'Listado de TrabajadoresBoloEscalafon');
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridTrabajadoresBoloEscalafon');
+                ListadoTrabajadoresBoloEscalafon.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridTrabajadoresBoloEscalafon").setGridParam({ datatype: 'json' });
+                $('#GridTrabajadoresBoloEscalafon').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            OnEliminarSeleccionadosClick: function(){
+                var SelectedIds = $.GetSelectedRows('GridTrabajadoresBoloEscalafon');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los TrabajadoresBoloEscalafon seleccionadas?",
+                        function () { ListadoTrabajadoresBoloEscalafon.EliminarSeleccionados(SelectedIds) });
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridTrabajadoresBoloEscalafon').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            EliminarTrabajadorBoloEscalafon: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el TrabajadorBoloEscalafon?",
+                    function () { ListadoTrabajadoresBoloEscalafon.EliminarSeleccionados(Id) });
+            },
+
+            EditarTrabajadorBoloEscalafon: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $.ShowLoader();
+                window.location = '@Url.Action("Editar")/' + Id;
+            }
+        }
+        $(document).ready(function () {
+            ListadoTrabajadoresBoloEscalafon.init();
+        });
+    </script>
+}

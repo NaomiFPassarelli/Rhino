@@ -366,13 +366,17 @@
                 success: function (data) {
                     if (data.Success) {
                         if (data.NumeroRef != null) {
-                            $.WarningDialog('El N° de Orden de Pago ha sido tomado, su nuevo N° es ' + data.NumeroRef, 'warning',
-                                function () {
-                                    OrdenPago.OnFinishSave(data.OrdenPago)
-                                });
+                            //$.WarningDialog('El N° de Orden de Pago ha sido tomado, su nuevo N° es ' + data.NumeroRef, 'warning',
+                            //function () {
+                            msg = 'El N° de Orden de Pago ha sido tomado, su nuevo N° es ' + data.NumeroRef;
+                            typeMsg = "warning";
+                            OrdenPago.OnFinishSave(data.OrdenPago, typeMsg, msg);
+                                //});
                         }
                         else {
-                            OrdenPago.OnFinishSave(data.OrdenPago);
+                            //OrdenPago.OnFinishSave(data.OrdenPago);
+                            msg = "La operación fue existosa";
+                            OrdenPago.OnFinishSave(data.OrdenPago, "success", msg);
                         }
                     }
                     else {
@@ -397,10 +401,12 @@
             OrdenPago.CalcularTotal();
         },
 
-        OnFinishSave: function (OP) {
-            window.onbeforeunload = null;
-            $.ShowLoader();
-            window.location = '@Url.Action("Detalle")/' + OP.Id;
+        OnFinishSave: function (OP, typeMsg, msg) {
+            $.WarningDialog(msg, typeMsg, function () {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Detalle")/' + OP.Id;
+            });
         },
 
         OnAgregarValor: function () {

@@ -73,6 +73,8 @@
                     $('#GridMonedas').jqGrid('addRowData', 'Id', data.Moneda);
                     $('#GridMonedas').trigger("reloadGrid");
                     _OpenDialog.dialog('close');
+                    msg = "La operación fue existosa";
+                    $.WarningDialog(msg, "success");
                 }
                 else
                 {

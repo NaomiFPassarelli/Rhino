@@ -72,6 +72,9 @@
                 if (data.Success) {
                     PlanCuentas.LoadJsTree();
                     _OpenDialog.dialog('close');
+                    msg = "La operación fue existosa";
+                    typeMsg = "success";
+                    $.WarningDialog(msg, typeMsg);
                 }
                 else {
                     $('#Dialog-Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));

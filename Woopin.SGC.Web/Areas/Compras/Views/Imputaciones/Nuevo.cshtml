@@ -352,7 +352,8 @@
                     data: { Imputaciones: Imputaciones },
                     success: function (data) {
                         if (data.Success) {
-                            Imputacion.OnFinishSave();
+                            msg = "La operación fue existosa";
+                            Imputacion.OnFinishSave("success", msg);
                         }
                         else {
                             $('#BtnSubmit').removeAttr('disabled');
@@ -363,10 +364,12 @@
                 $.AjaxPost(postParams);
             },
 
-            OnFinishSave: function () {
-                window.onbeforeunload = null;
-                $.ShowLoader();
-                window.location = '@Url.Action("Index")';
+            OnFinishSave: function (typeMsg, msg) {
+                $.WarningDialog(msg, typeMsg, function () {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Index")';
+                });
             }
 
 

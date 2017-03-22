@@ -157,47 +157,47 @@
     @Scripts.Render("~/Scripts/jquery.mask.min.js")
     @Scripts.Render("~/bundles/jqueryui")
     <script type="text/javascript">
-        var ComprobanteDetalleId = 0;
-        $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante. Si presiona Aceptar, todos los cambios realizados se perderan.');
-        $(document).ready(function () {
-            OtroEgreso.init();
-        });
-        var OtroEgreso = {
+    var ComprobanteDetalleId = 0;
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de comprobante. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        OtroEgreso.init();
+    });
+    var OtroEgreso = {
 
-            init: function () {
-                
-                // Saca la validacion del Total
-                $('#Total').attr("data-val", false);
-                $('#comprobante-header').removeData('unobtrusiveValidation');
-                $('#comprobante-header').removeData('validator');
-                $.validator.unobtrusive.parse('#comprobante-header');
+        init: function () {
 
-                $('#ProveedorID').change(OtroEgreso.OnProveedorChange);
-                $('#Proveedor_Id').select2(
-                   {
-                       placeholder: "Seleccione Un Proveedor",
-                       minimumInputLength: 2,
-                       ajax: {
-                           url: "@Url.Action("GetProveedoresCombo", "Proveedores")",
-                           dataType: 'json',
-                           params: { type: "POST" },
-                           data: function (t, p) {
-                               return { where: t };
-                           },
-                           results: function (data, page) {
-                               return { results: data.Data.Items };
-                           }
+            // Saca la validacion del Total
+            $('#Total').attr("data-val", false);
+            $('#comprobante-header').removeData('unobtrusiveValidation');
+            $('#comprobante-header').removeData('validator');
+            $.validator.unobtrusive.parse('#comprobante-header');
+
+            $('#ProveedorID').change(OtroEgreso.OnProveedorChange);
+            $('#Proveedor_Id').select2(
+               {
+                   placeholder: "Seleccione Un Proveedor",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetProveedoresCombo", "Proveedores")",
+                       dataType: 'json',
+                       params: { type: "POST" },
+                       data: function (t, p) {
+                           return { where: t };
+                       },
+                       results: function (data, page) {
+                           return { results: data.Data.Items };
                        }
-                   });
-                $('#Proveedor_Id').on("select2-selecting", OtroEgreso.OnProveedorSelected);
-                $('#RubroCompraID').change(OtroEgreso.GetRubroCompraByID);
-                $('#RubroCompra_Id').prepend('<option></option>');
-                $('#RubroCompra_Id').select2(
-                    {
-                        placeholder: "Seleccione Un Rubro de Compra",
-                        minimumInputLength: 0,
-                        ajax: {
-                            url: "@Url.Action("GetRubrosSinPercepcionesCombo", "Rubros")",
+                   }
+               });
+            $('#Proveedor_Id').on("select2-selecting", OtroEgreso.OnProveedorSelected);
+            $('#RubroCompraID').change(OtroEgreso.GetRubroCompraByID);
+            $('#RubroCompra_Id').prepend('<option></option>');
+            $('#RubroCompra_Id').select2(
+                {
+                    placeholder: "Seleccione Un Rubro de Compra",
+                    minimumInputLength: 0,
+                    ajax: {
+                        url: "@Url.Action("GetRubrosSinPercepcionesCombo", "Rubros")",
                         dataType: 'json',
                         params: { type: "POST" },
                         data: function (t, p) {
@@ -208,259 +208,263 @@
                         }
                     }
                 });
-                $('#RubroCompra_Id').on("select2-selecting", OtroEgreso.OnSelectRubroCompra);
-                $("#Fecha,#FechaContable").datepicker({ dateFormat: 'dd/mm/yy' });
+            $('#RubroCompra_Id').on("select2-selecting", OtroEgreso.OnSelectRubroCompra);
+            $("#Fecha,#FechaContable").datepicker({ dateFormat: 'dd/mm/yy' });
 
-                //Grilla de los comprobantes elegidos a abonar despues del popup
-                $('#GridDetallesOtroEgreso').CreateCommonGrid({
-                    datatype: 'local',
-                    colNames: ['', '', '', 'Descripcion', 'Total'],
-                    colModel: [
-                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
-                        { name: 'RubroCompra_Id', index: 'RubroCompra_Id', width: 0, sortable: false, hidden: true },
-                        { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: ABM_Eliminar, align: "center" },
-                        { name: 'Descripcion', index: 'IVA', width: 20, align: "center", sortable: true },
-                        { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true, formatter: $.formatCurrency }
-                    ],
-                    sortname: 'Descripcion',
-                    sortorder: "asc",
-                    pager: '#GridDetallesOtroEgreso_pager'
+            //Grilla de los comprobantes elegidos a abonar despues del popup
+            $('#GridDetallesOtroEgreso').CreateCommonGrid({
+                datatype: 'local',
+                colNames: ['', '', '', 'Descripcion', 'Total'],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'RubroCompra_Id', index: 'RubroCompra_Id', width: 0, sortable: false, hidden: true },
+                    { name: 'Actions', index: 'Actions', width: 6, sortable: false, formatter: ABM_Eliminar, align: "center" },
+                    { name: 'Descripcion', index: 'IVA', width: 20, align: "center", sortable: true },
+                    { name: 'Total', index: 'Total', width: 20, align: "center", sortable: true, formatter: $.formatCurrency }
+                ],
+                sortname: 'Descripcion',
+                sortorder: "asc",
+                pager: '#GridDetallesOtroEgreso_pager'
+            });
+            $('#GridDetallesOtroEgreso').trigger("reloadGrid");
+            $('#BtnAgregarDetalle').on("click", OtroEgreso.AgregarDetalleAGrilla);
+            $('#agregarPagos').on("click", OtroEgreso.OnAgregarValor);
+            $("#GridDetallesOtroEgreso").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
+            $('#BtnSubmit').on('click', OtroEgreso.Save);
+            $(document).on('click', '.BtnEliminar', OtroEgreso.OnEliminarDetalleClick);
+            IngresoValores.Init('#GridPagosOtrosEgresos', '#TotalPagos');
+            OtroEgreso.ValidarTieneValores();
+        },
+
+        ValidarTieneValores: function () {
+            if ($('#TipoValor option').length == 1) {
+                var msg = 'No posee configurado ningún valor para poder realizar la cobranza.<br/> Puede configurar los mismos desde la seccion de Tesoreria.';
+                return $.WarningDialog(msg, 'warning', function () {
+                    window.location = '@Url.Action("Index", "Valores", new { Area = "Tesoreria" })';
                 });
-                $('#GridDetallesOtroEgreso').trigger("reloadGrid");
-                $('#BtnAgregarDetalle').on("click", OtroEgreso.AgregarDetalleAGrilla);
-                $('#agregarPagos').on("click", OtroEgreso.OnAgregarValor);
-                $("#GridDetallesOtroEgreso").parents('div.ui-jqgrid-bdiv').css("max-height", "150px");
-                $('#BtnSubmit').on('click', OtroEgreso.Save);
-                $(document).on('click', '.BtnEliminar', OtroEgreso.OnEliminarDetalleClick);
-                IngresoValores.Init('#GridPagosOtrosEgresos', '#TotalPagos');
-                OtroEgreso.ValidarTieneValores();
-            },
+            }
+        },
 
-            ValidarTieneValores: function () {
-                if ($('#TipoValor option').length == 1) {
-                    var msg = 'No posee configurado ningún valor para poder realizar la cobranza.<br/> Puede configurar los mismos desde la seccion de Tesoreria.';
-                    return $.WarningDialog(msg, 'warning', function () {
-                        window.location = '@Url.Action("Index", "Valores", new { Area = "Tesoreria" })';
-                    });
-                }
-            },
-
-            OnProveedorChange: function () {
-                OtroEgreso.ResetComprobantesGrid();
-                var Id = $('#ProveedorID').val();
-                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
-                    return $.WarningDialog('El N° de Proveedor no es correcto');
-                }
-                var params = {
-                    url: '@Url.Action("GetProveedor", "Proveedores")',
-                    data: { IdProveedor: Id },
-                    success: function (ret) {
-                        if (ret.Success && ret.Data != null) {
-                            var ProvYCuit = ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')';
-                            $('#Proveedor_Id').select2('data', { id: Id, text: ProvYCuit });
-                            $('#CategoriaIVA').val(ret.Data.CategoriaIva.Abreviatura);
-                        }
-                        else {
-                            // Not Found
-                            $.WarningDialog('El Proveedor no existe!','error');
-                            $('#Proveedor_Id').select2('data', null);
-                        }
+        OnProveedorChange: function () {
+            OtroEgreso.ResetComprobantesGrid();
+            var Id = $('#ProveedorID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return $.WarningDialog('El N° de Proveedor no es correcto');
+            }
+            var params = {
+                url: '@Url.Action("GetProveedor", "Proveedores")',
+                data: { IdProveedor: Id },
+                success: function (ret) {
+                    if (ret.Success && ret.Data != null) {
+                        var ProvYCuit = ret.Data.RazonSocial + '(' + ret.Data.CUIT + ')';
+                        $('#Proveedor_Id').select2('data', { id: Id, text: ProvYCuit });
+                        $('#CategoriaIVA').val(ret.Data.CategoriaIva.Abreviatura);
+                    }
+                    else {
+                        // Not Found
+                        $.WarningDialog('El Proveedor no existe!', 'error');
+                        $('#Proveedor_Id').select2('data', null);
                     }
                 }
-                $.AjaxPost(params);
-            },
+            }
+            $.AjaxPost(params);
+        },
 
-            OnProveedorSelected: function (e) {
-                $('#ProveedorID').val(e.val);
-                OtroEgreso.OnProveedorChange();
-            },
+        OnProveedorSelected: function (e) {
+            $('#ProveedorID').val(e.val);
+            OtroEgreso.OnProveedorChange();
+        },
 
-            GetRubroCompraByID: function () {
-                var Id = $('#RubroCompraID').val();
-                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
-                    return $.WarningDialog('El N° de Rubro Compra no es correcto');
+        GetRubroCompraByID: function () {
+            var Id = $('#RubroCompraID').val();
+            if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                return $.WarningDialog('El N° de Rubro Compra no es correcto');
+            }
+            OtroEgreso.LoadRubroCompra(Id);
+        },
+
+        OnEliminarDetalleClick: function () {
+            var Id = $(this).closest('tr').attr('id');
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el detalle?",
+                    function () { OtroEgreso.EliminarDetalle(Id) });
+        },
+
+        EliminarDetalle: function (Id) {
+            $('#GridDetallesOtroEgreso').jqGrid('delRowData', Id);
+            OtroEgreso.CalcularTotales();
+        },
+
+        OnSelectRubroCompra: function (e) {
+            OtroEgreso.LoadRubroCompra(e.val);
+        },
+
+        LoadRubroCompra: function (IdRubroCompra) {
+            var params = {
+                url: '@Url.Action("GetRubroCompra", "Rubros")',
+                data: { IdRubroCompra: IdRubroCompra },
+                success: function (ret) {
+                    if (ret.Success) {
+                        if (ret.Data == null || ret.Data == "") {
+                            $.WarningDialog('El Rubro de Compra seleccionado no existe', 'error');
+                            return;
+                        }
+                        $('#RubroCompraID').val(ret.Data.Id);
+                        $('#RubroCompra_Id').select2('data', { id: IdRubroCompra, text: ret.Data.Descripcion });
+                    }
                 }
-                OtroEgreso.LoadRubroCompra(Id);
-            },
+            }
+            $.AjaxPost(params);
+        },
 
-            OnEliminarDetalleClick: function () {
-                var Id = $(this).closest('tr').attr('id');
-                ConfirmationDialog.Show("Esta seguro que desea eliminar el detalle?",
-                        function () { OtroEgreso.EliminarDetalle(Id) });
-            },
-
-            EliminarDetalle: function (Id) {
-                $('#GridDetallesOtroEgreso').jqGrid('delRowData', Id);
+        AgregarDetalleAGrilla: function (e) {
+            if ($('#comprobante-detalle').valid()) {
+                if ($('#RubroCompra_Id').select2('data') == null) {
+                    $.WarningDialog('Es necesario un Rubro de Compra', 'error');
+                    return;
+                }
+                var Descripcion = $('#RubroCompra_Id').select2('data').text;
+                var detalle = {
+                    Id: ComprobanteDetalleId,
+                    RubroCompra_Id: $('#RubroCompra_Id').val(),
+                    Descripcion: Descripcion,
+                    Total: $('#TotalRubro').val()
+                };
+                ComprobanteDetalleId++;
+                $('#GridDetallesOtroEgreso').jqGrid('addRowData', detalle.Id, detalle);
                 OtroEgreso.CalcularTotales();
-            },
 
-            OnSelectRubroCompra: function (e) {
-                OtroEgreso.LoadRubroCompra(e.val);
-            },
+                $('#comprobante-detalle').ClearForm();
+                $('#RubroCompra_Id').select2('data', null);
+            }
+        },
 
-            LoadRubroCompra: function (IdRubroCompra) {
-                var params = {
-                    url: '@Url.Action("GetRubroCompra", "Rubros")',
-                    data: { IdRubroCompra: IdRubroCompra },
-                    success: function (ret) {
-                        if (ret.Success) {
-                            if (ret.Data == null || ret.Data == "") {
-                                $.WarningDialog('El Rubro de Compra seleccionado no existe', 'error');
-                                return;
-                            }
-                            $('#RubroCompraID').val(ret.Data.Id);
-                            $('#RubroCompra_Id').select2('data', { id: IdRubroCompra, text: ret.Data.Descripcion });
-                        }
-                    }
-                }
-                $.AjaxPost(params);
-            },
-
-            AgregarDetalleAGrilla: function (e) {
-                if ($('#comprobante-detalle').valid()) {
-                    if ($('#RubroCompra_Id').select2('data')  == null) {
-                        $.WarningDialog('Es necesario un Rubro de Compra', 'error');
-                        return;
-                    }
-                    var Descripcion = $('#RubroCompra_Id').select2('data').text;
-                    var detalle = {
-                        Id: ComprobanteDetalleId,
-                        RubroCompra_Id: $('#RubroCompra_Id').val(),
-                        Descripcion: Descripcion,
-                        Total: $('#TotalRubro').val()
-                    };
-                    ComprobanteDetalleId++;
-                    $('#GridDetallesOtroEgreso').jqGrid('addRowData', detalle.Id, detalle);
-                    OtroEgreso.CalcularTotales();
-
-                    $('#comprobante-detalle').ClearForm();
-                    $('#RubroCompra_Id').select2('data', null);
-                }
-            },
-
-            CalcularTotales: function () {
-                var comprobantes = $("#GridDetallesOtroEgreso").jqGrid('getGridParam', 'data')
-                var total = 0;
-                $.each(comprobantes, function (i, comp) {
-                    total += $.unformatCurrency(Number(comp.Total));
-                });
-                $('#Total').val($.formatCurrency(total));
-                return total;
-            },
+        CalcularTotales: function () {
+            var comprobantes = $("#GridDetallesOtroEgreso").jqGrid('getGridParam', 'data')
+            var total = 0;
+            $.each(comprobantes, function (i, comp) {
+                total += $.unformatCurrency(Number(comp.Total));
+            });
+            $('#Total').val($.formatCurrency(total));
+            return total;
+        },
 
 
-            ResetComprobantesGrid: function(){
-                $("#GridDetallesOtroEgreso").jqGrid("clearGridData", true).trigger("reloadGrid");
-                OtroEgreso.IdsGridRestricta = [];
-                IngresoValores.ClearValores();
-                $('#Total').val("");
-            },
+        ResetComprobantesGrid: function () {
+            $("#GridDetallesOtroEgreso").jqGrid("clearGridData", true).trigger("reloadGrid");
+            OtroEgreso.IdsGridRestricta = [];
+            IngresoValores.ClearValores();
+            $('#Total').val("");
+        },
 
 
-            Save: function () {
-                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
-                    return;
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
 
-                $('#BtnSubmit').attr('disabled', 'disabled');
-                if (!$('#comprobante-header').valid())
-                {
+            $('#BtnSubmit').attr('disabled', 'disabled');
+            if (!$('#comprobante-header').valid()) {
+                $('#BtnSubmit').removeAttr('disabled');
+                return;
+            }
+            var eOtroEgreso = $('#comprobante-header').serializeFormJSON();
+            var DetalleGrid = $('#GridDetallesOtroEgreso').jqGrid('getGridParam', 'data');
+            if (DetalleGrid.length == 0) {
+                $('#BtnSubmit').removeAttr('disabled');
+                $.WarningDialog('Es necesario que agregue al menos un detalle.');
+                return;
+            }
+            $('#GridDetallesOtroEgreso').jqGrid('editCell', 0, 0, false);
+
+            eOtroEgreso.Detalle = new Array();
+            for (var i = 0; i < DetalleGrid.length; i++) {
+                if (DetalleGrid[i].Total <= 0) {
                     $('#BtnSubmit').removeAttr('disabled');
+                    $.WarningDialog('Es necesario que el importe a pagar de todos los comprobantes sea mayor a cero');
                     return;
                 }
-                var eOtroEgreso = $('#comprobante-header').serializeFormJSON();
-                var DetalleGrid = $('#GridDetallesOtroEgreso').jqGrid('getGridParam', 'data');
-                if (DetalleGrid.length == 0)
-                {
+                var item = {
+                    RubroCompra: { Id: DetalleGrid[i].RubroCompra_Id },
+                    Descripcion: DetalleGrid[i].Descripcion,
+                    Total: DetalleGrid[i].Total
+                };
+                eOtroEgreso.Detalle.push(item);
+            }
+            var NoValoresErrorMsg = 'Es necesario que agregue al menos un medio de pago.';
+            var Valores = IngresoValores.GetValores(NoValoresErrorMsg);
+            var MsgErrorPagos = null;
+            eOtroEgreso.Pagos = new Array();
+            $.each(Valores, function (i, valor) {
+                if (valor.Importe <= 0) {
                     $('#BtnSubmit').removeAttr('disabled');
-                    $.WarningDialog('Es necesario que agregue al menos un detalle.');
-                    return;
+                    MsgErrorPagos = 'Es necesario que el importe de todos los medios de pago sea mayor a cero';
+                    return false;
                 }
-                $('#GridDetallesOtroEgreso').jqGrid('editCell', 0, 0, false);
+                eOtroEgreso.Pagos.push({ Id: 0, Valor: valor });
+            });
+            if (MsgErrorPagos != null) {
+                $('#BtnSubmit').removeAttr('disabled');
+                return $.WarningDialog(MsgErrorPagos);
+            }
+            var TotalPagos = IngresoValores.CalcularTotales();
+            var TotalDetalle = OtroEgreso.CalcularTotales();
+            if ($.parseCurrency(TotalPagos) != $.parseCurrency(TotalDetalle)) {
+                $('#BtnSubmit').removeAttr('disabled');
+                $.WarningDialog('Hay una diferencia entre los gastos y los pagos ingresados ');
+                return;
+            }
+            if ($.parseCurrency(TotalPagos) <= 0 || $.parseCurrency(TotalDetalle) <= 0) {
+                $('#BtnSubmit').removeAttr('disabled');
+                $.WarningDialog('El saldo del otro egreso debe ser mayor a cero ');
+                return;
+            }
 
-                eOtroEgreso.Detalle = new Array();
-                for (var i = 0; i < DetalleGrid.length; i++) {
-                    if (DetalleGrid[i].Total <= 0) {
-                        $('#BtnSubmit').removeAttr('disabled');
-                        $.WarningDialog('Es necesario que el importe a pagar de todos los comprobantes sea mayor a cero');
-                        return;
-                    }
-                    var item = {
-                        RubroCompra: { Id: DetalleGrid[i].RubroCompra_Id },
-                        Descripcion: DetalleGrid[i].Descripcion,
-                        Total: DetalleGrid[i].Total
-                    };
-                    eOtroEgreso.Detalle.push(item);
-                }
-                var NoValoresErrorMsg = 'Es necesario que agregue al menos un medio de pago.';
-                var Valores = IngresoValores.GetValores(NoValoresErrorMsg);
-                var MsgErrorPagos = null;
-                eOtroEgreso.Pagos = new Array();
-                $.each(Valores, function (i, valor) {
-                    if (valor.Importe <= 0) {
-                        $('#BtnSubmit').removeAttr('disabled');
-                        MsgErrorPagos = 'Es necesario que el importe de todos los medios de pago sea mayor a cero';
-                        return false;
-                    }
-                    eOtroEgreso.Pagos.push({ Id: 0, Valor: valor });
-                });
-                if (MsgErrorPagos != null) {
-                    $('#BtnSubmit').removeAttr('disabled');
-                    return $.WarningDialog(MsgErrorPagos);
-                }
-                var TotalPagos = IngresoValores.CalcularTotales();
-                var TotalDetalle = OtroEgreso.CalcularTotales();
-                if ($.parseCurrency(TotalPagos) != $.parseCurrency(TotalDetalle)) {
-                    $('#BtnSubmit').removeAttr('disabled');
-                    $.WarningDialog('Hay una diferencia entre los gastos y los pagos ingresados ');
-                    return;
-                }
-                if ($.parseCurrency(TotalPagos) <= 0 || $.parseCurrency(TotalDetalle) <= 0) {
-                    $('#BtnSubmit').removeAttr('disabled');
-                    $.WarningDialog('El saldo del otro egreso debe ser mayor a cero ');
-                    return;
-                }
-
-                var postParams = {
-                    url: "@Url.Action("Nuevo")",
-                    data: { OtroEgreso: eOtroEgreso },
-                    success: function (data) {
-                        if (data.Success) {
-                            if (data.NumeroRef != null) {
-                                $.WarningDialog('El N° de Otro Egreso ha sido tomado, su nuevo N° es ' + data.NumeroRef, 'warning',
-                                    function () {
-                                        OtroEgreso.OnFinishSave(data.OtroEgreso)
-                                    });
-                            }
-                            else {
-                                OtroEgreso.OnFinishSave(data.OtroEgreso);
-                            }
+            var postParams = {
+                url: "@Url.Action("Nuevo")",
+                data: { OtroEgreso: eOtroEgreso },
+                success: function (data) {
+                    if (data.Success) {
+                        if (data.NumeroRef != null) {
+                            //$.WarningDialog('El N° de Otro Egreso ha sido tomado, su nuevo N° es ' + data.NumeroRef, 'warning',
+                            //function () {
+                            msg = 'El N° de Otro Egreso ha sido tomado, su nuevo N° es ' + data.NumeroRef;
+                            typeMsg = "warning";
+                            OtroEgreso.OnFinishSave(data.OtroEgreso, typeMsg, msg);
+                                //});
                         }
                         else {
-                            $('#BtnSubmit').removeAttr('disabled');
-                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                            msg = "La operación fue existosa";
+                            typeMsg = "success";
+                            OtroEgreso.OnFinishSave(data.OtroEgreso, typeMsg, msg);
                         }
                     }
+                    else {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                    }
                 }
-                $.AjaxPost(postParams);
-            },
+            }
+            $.AjaxPost(postParams);
+        },
 
-            OnFinishSave: function (OE) {
+        OnFinishSave: function (OE, typeMsg, msg) {
+            $.WarningDialog(msg, typeMsg, function () {
                 window.onbeforeunload = null;
                 $.ShowLoader();
                 window.location = '@Url.Action("Detalle")/' + OE.Id;
-            },
+            });
+        },
 
-            OnAgregarValor: function () {
-                if ($('#Proveedor_Id').select2('data') == null) {
-                    $.WarningDialog('Debe elegir un proveedor antes de cargar un comprobante de pago!');
-                    return;
-                }
-                var tipo = $('#TipoValor').val();
-                if (tipo != "") {
-                    IngresoValores.Nuevo(tipo,$('#TipoValor option:selected').data('ad'));
-                }
+        OnAgregarValor: function () {
+            if ($('#Proveedor_Id').select2('data') == null) {
+                $.WarningDialog('Debe elegir un proveedor antes de cargar un comprobante de pago!');
+                return;
+            }
+            var tipo = $('#TipoValor').val();
+            if (tipo != "") {
+                IngresoValores.Nuevo(tipo, $('#TipoValor option:selected').data('ad'));
             }
         }
+    }
 
     </script>
     @Html.Partial("~/Areas/Tesoreria/Views/Valores/js/_IngresoValores.cshtml");

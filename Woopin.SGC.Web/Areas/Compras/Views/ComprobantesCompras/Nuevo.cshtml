@@ -687,19 +687,21 @@
                 success: function (data) {
                     if (data.Success) {
                         if (data.NuevoNumero == null && data.NumeroRef == null) {
-                            ComprobanteCompra.OnFinishSave(data.Comprobante);
+                            msg = "La operación fue existosa";
+                            ComprobanteCompra.OnFinishSave(data.Comprobante, "success", msg);
                         }
                         else {
                             var msg = "";
+                            typeMsg = "warning";
                             if (data.NuevoNumero != null) {
                                 msg += '<p>El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
                             }
                             if (data.NumeroRef != null) {
                                 msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
                             }
-                            $.WarningDialog(msg, 'warning', function(){
-                                ComprobanteCompra.OnFinishSave(data.Comprobante)
-                            });
+                            //$.WarningDialog(msg, 'warning', function(){
+                            ComprobanteCompra.OnFinishSave(data.Comprobante, typeMsg, msg);
+                            //});
                         }
                     }
                     else {
@@ -711,10 +713,12 @@
             $.AjaxPost(postParams);
         },
 
-        OnFinishSave: function (Comprobante) {
-            window.onbeforeunload = null;
-            $.ShowLoader();
-            window.location = '@Url.Action("Detalle")/' + Comprobante.Id;
+        OnFinishSave: function (Comprobante, typeMsg, msg) {
+            $.WarningDialog(msg, typeMsg, function () {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Detalle")/' + Comprobante.Id;
+            });
         }
     }
     </script>

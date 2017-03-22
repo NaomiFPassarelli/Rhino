@@ -1,0 +1,126 @@
+﻿@model Woopin.SGC.Model.Bolos.TrabajadorBoloEscalafon
+
+@{
+    ViewBag.Title = "Editar Trabajador Bolo Escalafón";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Editar Trabajador Bolo Escalafón";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-save i-green"></i> Guardar Cambios</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Trabajador, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <div class="row">
+                    <input type="text" id="TrabajadorID" name="TrabajadorID" class="col-md-2" style="margin-top: 7px;" />
+                    <div class="col-md-10" style="padding:0;">
+                        <input type="hidden" id="Trabajador_Id" name="Trabajador.Id" class="selectinput" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Bolo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Bolo.Id, (IEnumerable<SelectListItem>)ViewBag.Bolos, null, new { @class = "textinput" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Escalafon, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Escalafon.Id, (IEnumerable<SelectListItem>)ViewBag.Escalafones, null, new { @class = "textinput" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FechaDesde, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Nacimiento es requerida" id="FechaDesde" name="FechaDesde" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.FechaDesde, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FechaHasta, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de Nacimiento es requerida" id="FechaHasta" name="FechaHasta" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.FechaHasta, null, new { @class = "help-block" })
+            </div>
+        </div>
+    </fieldset>
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+@Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#TrabajadorID').change(function () {
+                var Id = $('#TrabajadorID').val();
+                if (Id != "" && (!$.isNumeric(Id) || Id <= 0)) {
+                    return $.WarningDialog('El N° de Trabajador no es correcto');
+                }
+                var params = {
+                    url: '@Url.Action("GetTrabajador", "Trabajadores")',
+                    data: { IdTrabajador: Id },
+                    success: function (ret) {
+                        if (ret.Success && ret.Data != null) {
+                            $('#Trabajador_Id').select2('data', { id: Id, text: CliYCuit });
+                        }
+                        else {
+                            // Not Found
+                            $.WarningDialog('El Trabajador no existe!');
+                            $('#Trabajador_Id').select2('data', null);
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            });
+            $('#Trabajador_Id').select2(
+               {
+                   placeholder: "Seleccione Un Trabajador",
+                   minimumInputLength: 2,
+                   ajax: {
+                       url: "@Url.Action("GetTrabajadoresCombo", "Trabajadores")",
+                   dataType: 'json',
+                   params: { type: "POST" },
+                   data: function (t, p) {
+                       return { where: t };
+                   },
+                   results: function (data, page) {
+                       return { results: data.Data.Items };
+                   }
+               }
+            });
+        $('#Trabajador_Id').on("select2-selecting", $('#TrabajadorID').val(e.val));
+
+
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        $('#Alert-Container').NewAlert('success', 'Se han guardado los cambios con exito!');
+                    }
+                    else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+        });
+</script>
+}

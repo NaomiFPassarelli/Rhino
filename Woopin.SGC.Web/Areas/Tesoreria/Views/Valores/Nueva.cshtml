@@ -64,6 +64,8 @@
                     $('#GridValores').jqGrid('addRowData', 'Id', data.Valor);
                     $('#GridValores').trigger("reloadGrid");
                     _OpenDialog.dialog('close');
+                    msg = "La operación fue existosa";
+                    $.WarningDialog(msg, "success");
                 }
                 else
                 {

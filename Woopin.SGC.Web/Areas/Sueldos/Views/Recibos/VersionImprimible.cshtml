@@ -105,7 +105,10 @@
             <td style="padding-top: 7px;">@Model.Periodo</td>
             <td style="padding-top:7px;">@Model.Organizacion.Domicilio</td>
             <td style="padding-top:7px;">@Model.FechaPago.ToString("dd/MM/yyyy")</td>
-            <td style="padding-top:7px;">@Model.Empleado.Tarea.Data</td>
+            @if (Model.Empleado.Tarea != null)
+            {
+                <td style="padding-top:7px;">@Model.Empleado.Tarea.Data</td>
+            }
             <td style="clear: both;"></td>
         </tr>
     </table>
@@ -301,7 +304,10 @@
             <td style="padding-top: 7px;">@Model.Periodo</td>
             <td style="padding-top:7px;">@Model.Organizacion.Domicilio</td>
             <td style="padding-top:7px;">@Model.FechaPago.ToString("dd/MM/yyyy")</td>
-            <td style="padding-top:7px;">@Model.Empleado.Tarea.Data</td>
+            @if (Model.Empleado.Tarea != null)
+            {
+                <td style="padding-top:7px;">@Model.Empleado.Tarea.Data</td>
+            }
             <td style="clear: both;"></td>
         </tr>
     </table>

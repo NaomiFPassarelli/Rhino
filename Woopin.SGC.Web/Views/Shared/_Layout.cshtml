@@ -764,6 +764,150 @@
 
                         }
 
+                        @if (Security.GetModulos().IndexOf(ModulosSistemaGestion.Bolos) >= 0)
+                        {
+                            <li class="hoe-has-menu">
+                                <a href="javascript:void(0)">
+                                    <i class="fa fa-male"></i>
+                                    <span class="menu-text">Bolos</span>
+                                    <span class="selected"></span>
+                                </a>
+                                <ul class="hoe-sub-menu">
+                                    <li class="hoe-has-menu">
+                                        <a href="javascript:void(0)">
+                                            <span class="menu-text">Archivos</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                        <ul class="hoe-sub-menu">
+                                            <li>
+                                                <a href="@Url.Action("Nuevo", "Trabajadores", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nuevo Trabajador</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Nuevo", "Escalafones", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nuevo Escalafón</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            @*<li>
+                                                <a href="@Url.Action("Nuevo", "Empresas", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nueva Empresa</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>*@
+                                            @*<li>
+                                                <a href="@Url.Action("Nuevo", "Anunciantes", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nuevo Anunciante</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>*@
+                                            @*<li>
+                                                <a href="@Url.Action("Nuevo", "Agencias", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nueva Agencia</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>*@
+                                            <li>
+                                                <a href="@Url.Action("Nuevo", "Bolos", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nueva Película</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            @if (Roles.IsUserInRole("Administrador"))
+                                            {
+                                            <li>
+                                                <a href="@Url.Action("Nuevo", "ConceptosBolo", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nuevo Concepto</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+
+                                            }
+                                            <li>
+                                                <a href="@Url.Action("Nuevo", "TrabajadoresBoloEscalafon", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Nuevo Trabajador Bolo Escalafón</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Nuevo", "Liquidadores", new { Area = "Bolos" })">
+                                            <span class="menu-text">Nuevo Liquidador</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                    </li>
+                                    <li class="hoe-has-menu">
+                                        <a href="javascript:void(0)">
+                                            <span class="menu-text">Consultas</span>
+                                            <span class="selected"></span>
+                                        </a>
+                                        <ul class="hoe-sub-menu">
+                                            <li>
+                                                <a href="@Url.Action("Index", "Trabajadores", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Trabajadores</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "Escalafones", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Escalafones</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            @*<li>
+                                                <a href="@Url.Action("Index", "Empresas", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Empresas</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>*@
+                                            @*<li>
+                                                <a href="@Url.Action("Index", "Anunciantes", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Anunciantes</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "Agencias", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Agencias</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>*@
+                                            <li>
+                                                <a href="@Url.Action("Index", "Liquidadores", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Liquidadores</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "Bolos", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Películas</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                            @if (Roles.IsUserInRole("Administrador"))
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("Index", "ConceptosBolo", new { Area = "Bolos" })">
+                                                        <span class="menu-text">Conceptos</span>
+                                                        <span class="selected"></span>
+                                                    </a>
+                                                </li>
+                                            }
+                                            <li>
+                                                <a href="@Url.Action("Index", "TrabajadoresBoloEscalafon", new { Area = "Bolos" })">
+                                                    <span class="menu-text">Trabajador Bolo Escalafón</span>
+                                                    <span class="selected"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        }
 
 
                         @if (Security.GetModulos().IndexOf(ModulosSistemaGestion.Cooperativa) >= 0)

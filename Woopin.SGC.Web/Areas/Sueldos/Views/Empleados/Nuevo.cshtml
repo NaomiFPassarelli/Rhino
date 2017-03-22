@@ -282,15 +282,20 @@
             enter: true,
             success: function (data) {
                 if (data.Success) {
-                    $.ShowLoader();
+                    //$.ShowLoader();
                     if (data.NuevoNumero == null && data.NumeroRef == null) {
-                        window.onbeforeunload = null;
-                        window.location = '@Url.Action("Index")';
+                        msg = "La operación fue existosa";
+                        typeMsg = "success";
+                        $.WarningDialog(msg, typeMsg, function () {
+                                window.onbeforeunload = null;
+                                $.ShowLoader();
+                                window.location = '@Url.Action("Index")';
+                            });
                         }
                         else {
                             var msg = "";
                             if (data.NuevoNumero != null) {
-                                msg += '<p>El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                                msg += '<p>El N° de Empleado ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
                             }
                             if (data.NumeroRef != null) {
                                 msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
@@ -298,9 +303,17 @@
                             //$.WarningDialog(msg, 'warning', function () {
                             //    ComprobanteCompra.OnFinishSave(data.Comprobante)
                             //});
-                            $('#Alert-Container').NewAlert('warning', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                            @*$('#Alert-Container').NewAlert('warning', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
                             window.onbeforeunload = null;
-                            window.location = '@Url.Action("Index")';
+                            window.location = '@Url.Action("Index")';*@
+
+                        typeMsg = "warning";
+                            $.WarningDialog(msg, typeMsg, function () {
+                                window.onbeforeunload = null;
+                                $.ShowLoader();
+                                window.location = '@Url.Action("Index")';
+                            });
+
                         }
                     }
                 else {
@@ -314,26 +327,31 @@
                 enter: true,
                 success: function (data) {
                     $.ShowLoader();
-                    if (data.NuevoNumero == null && data.NumeroRef == null) {
-                        $('form').ClearForm();
-                        $('#Alert-Container').NewAlert('success', 'Se ha creado el Empleado con exito! ');
-
-                    }
-                    else {
-                        var msg = "";
-                        if (data.NuevoNumero != null) {
-                            msg += '<p>El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                    if (data.Success) {
+                        if (data.NuevoNumero == null && data.NumeroRef == null) {
+                            $('form').ClearForm();
+                            $('#Alert-Container').NewAlert('success', 'La operación fue existosa ');
                         }
-                        if (data.NumeroRef != null) {
-                            msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                        else {
+                            var msg = "";
+                            if (data.NuevoNumero != null) {
+                                msg += '<p>El N° de Empleado ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                            }
+                            if (data.NumeroRef != null) {
+                                msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                            }
+                            //$.WarningDialog(msg, 'warning', function () {
+                            //    ComprobanteCompra.OnFinishSave(data.Comprobante)
+                            //});
+                            $('form').ClearForm();
+                            $('#Alert-Container').NewAlert('warning', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                            //window.onbeforeunload = null;
+                            //window.location = 'Url.Action("Index")';
                         }
-                        //$.WarningDialog(msg, 'warning', function () {
-                        //    ComprobanteCompra.OnFinishSave(data.Comprobante)
-                        //});
-                        $('#Alert-Container').NewAlert('warning', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
-                        window.onbeforeunload = null;
-                        window.location = '@Url.Action("Index")';
+                    } else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
                     }
+                    
                 }
             });
         });

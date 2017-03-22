@@ -60,6 +60,9 @@
 @section Scripts{
 @Scripts.Render("~/bundles/jqueryui")
 @Scripts.Render("~/bundles/jqgrid")
+@*@Scripts.Render("~/bundles/jqueryval")*@
+@Scripts.Render("~/bundles/multiSelect")
+
     <script type="text/javascript">
     var ListadoAsociados = {
 
@@ -88,7 +91,7 @@
             /* Armo la grilla del ABM */
             $('#GridAsociados').CreateCommonGrid({
                 url: '@Url.Action("GetAll")',
-                colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre', 'Apellido', 'CUIT', 'Fecha Ingreso', 'Fecha Egreso', '', 'Abonado', 'Falta Abonar', 'Pagos Realizados', '', ''],
+                colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Nombre', 'Apellido', 'CUIT', 'Fecha Ingreso', 'Fecha Egreso', '', 'Abonado', 'Falta Abonar', 'Pagos Realizados', '','ejemplo', ''],
                 colModel: [
                     { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
                     { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
@@ -104,12 +107,49 @@
                     //{ name: 'ActaAlta', index: 'ActaAlta', width: 25, align: "center", sortable: true },
                     //{ name: 'ActaBaja', index: 'ActaBaja', width: 25, align: "center", sortable: true },
                     { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ListadoAsociados.ABM_EditarYBajar, align: "center" },
+                    {
+                        name: 'EstadoCivil.Data',
+                        //index: 'EstadoCivil',
+                        width: 20,
+                        align: 'center',
+                        //formatter: 'select',
+                        //edittype: 'select',
+                        //editoptions: {
+                        //    //value: 'FE:FedEx;TN:TNT;IN:Intim',
+                        //    value: '242:Soltero;243:Casado;IN:Intim',
+                        //    defaultValue: 'Intime',
+                        //    multiple: true
+                        //},
+                        stype: 'select',
+                        searchoptions: {
+                            sopt: ['eq', 'ne'],
+                            //value: 'FE:FedEx;TN:TNT;IN:Intim',
+                            value: 'Soltero:Soltero;Casado:Casado;',
+                            attr: { multiple: 'multiple', size: 4 },
+                            dataInit: ListadoAsociados.dataInitMultiselect
+                        }
+                    },
                     { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: FreeFormatter, formatoptions: { urlAction: '@Url.Action("DescargarPDFSolicitud", "Asociados")', icon: 'fa fa-download', title: 'Descargar' }, align: "center" }
                 ],
                 sortname: 'Nombre',
                 sortorder: "asc",
                 pager: '#GridAsociados_pager',
             });
+
+            $('#GridAsociados').jqGrid('navGrid', '#GridAsociados_pager',
+                { edit: false, add: false, del: false, search: false },
+                {}, {}, {},
+                {
+                multipleSearch: true,
+                multipleGroup: true,
+                recreateFilter: true
+            });
+            $('#GridAsociados').jqGrid('filterToolbar', {
+                stringResult: true,
+                searchOnEnter: true,
+                defaultSearch: "cn"
+            });
+
             $('#GridAsociados').trigger("reloadGrid");
         },
 
@@ -191,7 +231,51 @@
             var Id = $(this).closest('tr').attr('id');
             $.ShowLoader();
             window.location = '@Url.Action("Editar")/' + Id;
+        },
+
+
+
+        dataInitMultiselect: function (elem) {
+            setTimeout(function () {
+                var $elem = $(elem), id = elem.id,
+                    inToolbar = typeof id === "string" && id.substr(0, 3) === "gs_",
+                    options = {
+                        selectedList: 2,
+                        height: "auto",
+                        checkAllText: "all",
+                        uncheckAllText: "no",
+                        noneSelectedText: "Any",
+                        open: function () {
+                            var $menu = $(".ui-multiselect-menu:visible");
+                            $menu.width("auto");
+                            return;
+                        }
+                    },
+                    $options = $elem.find("option");
+                if ($options.length > 0 && $options[0].selected) {
+                    $options[0].selected = false; // unselect the first selected option
+                }
+                if (inToolbar) {
+                    options.minWidth = 'auto';
+                }
+                $elem.multiselect(options);
+                $elem.siblings('button.ui-multiselect').css({
+                    width: inToolbar ? "98%" : "100%",
+                    marginTop: "1px",
+                    marginBottom: "1px",
+                    paddingTop: "3px"
+                });
+            }, 50);
         }
+        
+
+
+
+
+
+
+
+
     }
     $(document).ready(function () {
         ListadoAsociados.init();

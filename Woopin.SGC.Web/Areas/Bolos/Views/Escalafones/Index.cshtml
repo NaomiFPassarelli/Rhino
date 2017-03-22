@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "Escalafones";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Listado de Escalafones";
+}
+@*<div class="action-bar row" style="margin-bottom:20px;">
+    <a class="boton place-left" id="BtnImportar" title="Importación">
+        <i class="fa fa-file-excel-o i-blue"></i>  Importar
+    </a>
+</div>*@
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear Escalafon" href="@Url.Action("Nuevo")">
+        <i class="fa fa-plus-circle i-green"></i>  Crear Escalafon
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Escalafon..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridEscalafones"></table>
+    <div id="GridEscalafones_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+<div id="importar-Escalafones-dialog"></div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoEscalafones = {
+
+            init: function () {
+                $('#BtnImportar').bind('click', ListadoEscalafones.OpenImportar);
+                $('#BtnExportXLS').click(ListadoEscalafones.ExportToExcel);
+                /* Binding de los checkbox, contador de seleccionados */
+                $.SetupSelectCount('GridEscalafones');
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridEscalafones', ["Descripcion", "Apellido", "CUIT", "Direccion"]);
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoEscalafones.Refresh);
+
+                /* Eliminar Seleccionados */
+                $('#BtnDeleteSelected').click(ListadoEscalafones.OnEliminarSeleccionadosClick);
+
+                /* Eliminar de Grilla */
+                $(document).on('click', '.BtnEliminar', ListadoEscalafones.EliminarEscalafon);
+                /* Editar de la grilla */
+                // Abre nueva ventana
+                $(document).on('click', '.BtnEditar', ListadoEscalafones.EditarEscalafon);
+
+                /* Armo la grilla del ABM */
+                $('#GridEscalafones').CreateCommonGrid({
+                    url: '@Url.Action("GetAll")',
+                    colNames: ['', '<input type="checkbox" id="SelectAll" onclick="$.SelectAllCheckboxClick(event)"/>', 'Descripcion', 'Vigencia Desde', 'Vigencia Hasta', 'Salario', ''],
+                    colModel: [
+                        { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                        { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                        { name: 'Descripcion', index: 'Descripcion', width: 25, align: "center", sortable: true },
+                        { name: 'VigenciaDesde', index: 'VigenciaDesde', width: 25, align: "center", sortable: true },
+                        { name: 'VigenciaHasta', index: 'VigenciaHasta', width: 25, align: "center", sortable: true },
+                        { name: 'Salario', index: 'Salario', width: 20, align: "center", sortable: true },
+                        { name: 'Actions', index: 'Actions', width: 15, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                    ],
+                    sortname: 'Descripcion',
+                    sortorder: "asc",
+                    pager: '#GridEscalafones_pager',
+                });
+                $('#GridEscalafones').trigger("reloadGrid");
+            },
+
+            @*OpenImportar: function () {
+                $('#importar-Escalafones-dialog').OpenFormDialog('@Url.Action("Importar")', 'Importación de Escalafones');
+            },*@
+
+            ExportToExcel: function () {
+                JQGridExportExcel.Export('GridEscalafones', 'Listado de Escalafones');
+            },
+
+            Refresh: function () {
+                ClearSelectedRows('GridEscalafones');
+                ListadoEscalafones.ReloadGrid();
+            },
+
+            ReloadGrid: function () {
+                $("#GridEscalafones").setGridParam({ datatype: 'json' });
+                $('#GridEscalafones').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            OnEliminarSeleccionadosClick: function(){
+                var SelectedIds = $.GetSelectedRows('GridEscalafones');
+                if (SelectedIds.length > 0) {
+                    ConfirmationDialog.Show("Esta seguro que desea eliminar los Escalafones seleccionadas?",
+                        function () { ListadoEscalafones.EliminarSeleccionados(SelectedIds) });
+                }
+            },
+
+            EliminarSeleccionados: function (SelectedIds) {
+                var params = {
+                    url: '@Url.Action("Eliminar")',
+                    data: { Ids: SelectedIds },
+                    success: function (ret) {
+                        if (ret.Success) {
+                            $.each(SelectedIds, function (i, v) {
+                                $('#GridEscalafones').jqGrid('delRowData', v);
+                            });
+                            $('#SelectCount').html('0');
+                        }
+                    }
+                }
+                $.AjaxPost(params);
+            },
+
+            EliminarEscalafon: function () {
+                var Id = [$(this).closest('tr').attr('id')];
+                ConfirmationDialog.Show("Esta seguro que desea eliminar el Escalafon?",
+                    function () { ListadoEscalafones.EliminarSeleccionados(Id) });
+            },
+
+            EditarEscalafon: function () {
+                var Id = $(this).closest('tr').attr('id');
+                $.ShowLoader();
+                window.location = '@Url.Action("Editar")/' + Id;
+            }
+        }
+        $(document).ready(function () {
+            ListadoEscalafones.init();
+        });
+    </script>
+}

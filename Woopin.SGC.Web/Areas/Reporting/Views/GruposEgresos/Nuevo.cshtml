@@ -113,7 +113,13 @@
                 data: { GrupoEgreso: GrupoEgreso },
                 success: function (data) {
                     if (data.Success) {
-                        window.location = '@Url.Action("Index")';
+                        msg = "La operación fue existosa";
+                        typeMsg = "success";
+                        $.WarningDialog(msg, typeMsg, function () {
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")';
+                        });
                     }
                     else {
                         $('#BtnSubmit').removeAttr('disabled');

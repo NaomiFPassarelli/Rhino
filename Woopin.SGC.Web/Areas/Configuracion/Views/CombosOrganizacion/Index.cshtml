@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Listado de Desplegables";
+    ViewBag.SectionIcon = "list-alt";
+    ViewBag.SectionTitle = "Listado de Desplegables";
+}
+
+<div class="action-bar row">
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar combo..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridComboOrganizacion"></table>
+    <div id="GridComboOrganizacion_pager"></div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+        var ListadoCombosOrganizacion = {
+            init: function(){
+                /* Binding del boton de Refresh */
+                $('#BtnRefresh').bind('click', ListadoCombosOrganizacion.ReloadGrid);
+
+                /* Binding de los checkbox, contador de seleccionados */
+                //$.SetupSelectCount('GridComboOrganizacion');
+
+                /* Buscador de arriba */
+                $.SetupSearchTextbox('#GridComboOrganizacion', ["Nombre"]);
+
+                /* Armo la grilla del ABM */
+                $('#GridComboOrganizacion').CreateCommonGrid({
+                    url: '@Url.Action("GetAll", "CombosOrganizacion")',
+                    colNames: [''/*, '<input type="checkbox" id="SelectAll"/>'*/, 'Nombre del Listado', ''],
+                    colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    //{ name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'Nombre', index: 'Data', width: 80, sortable: true, align: "center" },
+                    { name: 'Actions', index: 'Actions', width: 10, sortable: false, formatter: ListadoCombosOrganizacion.formatterCombosList, align: "center" }
+                    ],
+                    sortname: 'Data',
+                    sortorder: "asc",
+                    pager: '#GridComboOrganizacion_pager'
+                });
+                $('#GridComboOrganizacion').trigger("reloadGrid");
+            },
+
+            ReloadGrid: function () {
+                $("#GridComboOrganizacion").setGridParam({ datatype: 'json' });
+                $('#GridComboOrganizacion').setGridParam({ page: 1 }).trigger("reloadGrid");
+            },
+
+            formatterCombosList: function(cellvalue, options, rowObject)
+            {
+                return '<a href="' + '@Url.Action("IndexCombo")/' + rowObject.Id + '" class="boton boton-i " title="Ver Items del listado"><i class="fa fa-search i-blue"></i></a>';
+            }
+
+        }
+
+        $(document).ready(function () {
+            ListadoCombosOrganizacion.init();
+        });
+
+        
+    </script>
+}

@@ -61,6 +61,22 @@
   <ItemGroup>
     <Compile Include="BaseSecuredRepository.cs" />
     <Compile Include="BaseRepository.cs" />
+    <Compile Include="Bolos\Implementacion\BoloRepository.cs" />
+    <Compile Include="Bolos\Implementacion\ConceptoBoloRepository.cs" />
+    <Compile Include="Bolos\Implementacion\DetalleLiquidadorRepository.cs" />
+    <Compile Include="Bolos\Implementacion\TrabajadorBoloEscalafonRepository.cs" />
+    <Compile Include="Bolos\Implementacion\EscalafonRepository.cs" />
+    <Compile Include="Bolos\Implementacion\EmpresaRepository.cs" />
+    <Compile Include="Bolos\Implementacion\LiquidadorRepository.cs" />
+    <Compile Include="Bolos\Interface\IDetalleLiquidadorRepository.cs" />
+    <Compile Include="Bolos\Interface\IConceptoBoloRepository.cs" />
+    <Compile Include="Bolos\Interface\IBoloRepository.cs" />
+    <Compile Include="Bolos\Interface\ITrabajadorBoloEscalafonRepository.cs" />
+    <Compile Include="Bolos\Interface\IEscalafonRepository.cs" />
+    <Compile Include="Bolos\Interface\IEmpresaRepository.cs" />
+    <Compile Include="Bolos\Interface\ILiquidadorRepository.cs" />
+    <Compile Include="Common\Implementacion\ComboItemOrganizacionRepository.cs" />
+    <Compile Include="Common\Implementacion\ComboOrganizacionRepository.cs" />
     <Compile Include="Common\Implementacion\DireccionRepository.cs" />
     <Compile Include="Common\Implementacion\ComboItemRepository.cs" />
     <Compile Include="Common\Implementacion\LocalizacionRepository.cs" />
@@ -75,6 +91,8 @@
     <Compile Include="Common\Implementacion\SucursalRepository.cs" />
     <Compile Include="Common\Implementacion\MonedaRepository.cs" />
     <Compile Include="Common\Implementacion\LocalidadRepository.cs" />
+    <Compile Include="Common\Interface\IComboItemOrganizacionRepository.cs" />
+    <Compile Include="Common\Interface\IComboOrganizacionRepository.cs" />
     <Compile Include="Common\Interface\IDireccionRepository.cs" />
     <Compile Include="Common\Interface\IComboItemRepository.cs" />
     <Compile Include="Common\Interface\ILocalidadRepository.cs" />
@@ -151,6 +169,8 @@
     <Compile Include="Reporting\Interface\IGrupoIngresoRepository.cs" />
     <Compile Include="Cooperativa\Implementacion\AsociadoRepository.cs" />
     <Compile Include="Cooperativa\Interface\IAsociadoRepository.cs" />
+    <Compile Include="Bolos\Implementacion\TrabajadorRepository.cs" />
+    <Compile Include="Bolos\Interface\ITrabajadorRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalAdicionalesRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalReciboRepository.cs" />
     <Compile Include="Sueldos\Implementacion\AdicionalRepository.cs" />

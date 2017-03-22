@@ -97,6 +97,7 @@ function Usuarios_Actions(cellvalue, options, rowObject) {
 
 function DireccionFormatter(cellvalue, options, rowObject) {
     var dir = rowObject.Direccion;
+    debugger;
     if (rowObject.Numero != "" && typeof rowObject.Numero != "undefined" && rowObject.Numero != null) dir += " " + rowObject.Numero;
     if (rowObject.Piso != "" && typeof rowObject.Piso != "undefined" && rowObject.Piso != null) dir += " " + rowObject.Piso;
     if (rowObject.Departamento != "" && typeof rowObject.Departamento != "undefined" && rowObject.Departamento != null) dir += rowObject.Departamento;

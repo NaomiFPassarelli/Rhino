@@ -1,0 +1,150 @@
+﻿@model Woopin.SGC.Model.Common.ComboOrganizacion
+@{
+    ViewBag.Title = "Listado de " + @Model.Nombre;
+    ViewBag.SectionIcon = "list-alt";
+    ViewBag.SectionTitle = "Listado de " + @Model.Nombre;
+}
+
+<div class="action-bar row">
+    <div class="select-count">
+        <span id="SelectCount">0</span>
+    </div>
+    <a class="boton place-left" id="BtnCreate" title="Crear">
+        <i class="fa fa-plus-circle i-green"></i>  Crear
+    </a>
+    <a class="boton place-left" id="BtnDeleteSelected" title="Eliminar Seleccionados">
+        <i class="fa fa-trash-o i-red"></i>  Eliminar Seleccionados
+    </a>
+    <div class="place-right search-box">
+        <input type="search" name="TbxSearch" id="TbxSearch" placeholder="Buscar Items..." />
+        <button type="submit" class="button-clear hide" title="Limpiar filtro" id="BtnClearSearch"></button>
+        <button type="submit" class="button-search" title="Buscar" id="BtnSearch"></button>
+    </div>
+    <a class="boton boton-i place-right" id="BtnRefresh" title="Actualizar">
+        <i class="fa fa-refresh i-blue"></i>
+    </a>
+    <a class="boton boton-i place-right" id="BtnExportXLS" title="Exportar a Excel" >
+        <span class="icon-xls"></span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="GridComboItemsOrganizacion"></table>
+    <div id="GridComboItemsOrganizacion_pager"></div>
+</div>
+<div id="create-dialog"></div>
+<div id="edit-dialog"></div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqgrid")
+    <script type="text/javascript">
+
+    var ListadoComboItemOrganizacion = {
+
+        ExportToExcel: function () {
+            JQGridExportExcel.Export('GridComboItemsOrganizacion', 'Listado de ComboOrganizacion Item');
+        },
+
+        ReloadGrid: function () {
+            $('#SelectCount').html('0');
+            $("#GridComboItemsOrganizacion").setGridParam({ datatype: 'json' });
+            $('#GridComboItemsOrganizacion').setGridParam({ page: 1 }).trigger("reloadGrid");
+        },
+
+        Nuevo: function () {
+            $('#create-dialog').OpenFormDialog('@Url.Action("NuevoItem", "CombosOrganizacion", new { ComboOrganizacionId = @Model.Id })', '<i class="fa fa-map-maker"></i> Crear', null);
+        },
+
+        EliminarItems: function (SelectedIds) {
+            var params = {
+                url: '@Url.Action("Eliminar")',
+                data: { Ids: SelectedIds },
+                success: function (ret) {
+                    if (ret.Success) {
+                        $.each(SelectedIds, function (i, v) {
+                            $('#GridComboItemsOrganizacion').jqGrid('delRowData', v);
+                        });
+                        $('#SelectCount').html('0');
+                        //TODO ver como arreglar esto para que no tenga que recargar todo de nuevo
+                        $("#GridComboItemsOrganizacion").jqGrid("clearGridData", true);
+                        ListadoComboItemOrganizacion.ReloadGrid();
+                    }
+                }
+            }
+            $.AjaxPost(params);
+        },
+
+        OnClickEliminarSeleccionados: function () {
+            var SelectedIds = $.GetSelectedRows('GridComboItemsOrganizacion');
+            if (SelectedIds.length > 0) {
+                ConfirmationDialog.Show("Esta seguro que desea eliminar los items seleccionados?",
+                        function () { ListadoComboItemOrganizacion.EliminarItems(SelectedIds) });
+            } else {
+                $.WarningDialog("No hay items seleccionados!");
+            }
+
+        },
+
+        OnClickEliminar: function () {
+            var Id = [$(this).closest('tr').attr('id')];
+            ConfirmationDialog.Show("Esta seguro que desea eliminar el item seleccionado?",
+                        function () { ListadoComboItemOrganizacion.EliminarItems(Id) });
+        },
+
+        Editar:function () {
+            var Id = $(this).closest('tr').attr('id');
+            $('#edit-dialog').OpenFormDialog('@Url.Action("EditarItem")?IdItem=' + Id, '<i class="fa fa-map-maker"></i> Editar', null);
+        },
+
+        init: function () {
+            $('#BtnExportXLS').click(ListadoComboItemOrganizacion.ExportToExcel);
+            /* Binding del boton de crear*/
+            $('#BtnCreate').bind('click', ListadoComboItemOrganizacion.Nuevo);
+
+            /* Binding del boton de Refresh */
+            $('#BtnRefresh').bind('click', ListadoComboItemOrganizacion.Refresh);
+
+            /* Binding de los checkbox, contador de seleccionados */
+            $.SetupSelectCount('GridComboItemsOrganizacion');
+            /* Binding del Boton para setear la moneda predeterminada */
+            $.SetupSetDefaulter('@Url.Action("SetDefault")')
+            /* Eliminar Seleccionados */
+            $('#BtnDeleteSelected').click(ListadoComboItemOrganizacion.OnClickEliminarSeleccionados);
+
+            /* Eliminar de Grilla */
+            $(document).on('click', '.BtnEliminar', ListadoComboItemOrganizacion.OnClickEliminar);
+            /* Editar de la grilla */
+            $(document).on('click', '.BtnEditar', ListadoComboItemOrganizacion.Editar);
+
+            /* Buscador de arriba */
+            $.SetupSearchTextbox('#GridComboItemsOrganizacion', ["Data"]);
+
+            /* Armo la grilla del ABM */
+            $('#GridComboItemsOrganizacion').CreateCommonGrid({
+                url: '@Url.Action("GetByComboOrganizacionId", "CombosOrganizacion", new { ComboOrganizacionId = @Model.Id })',
+                colNames: ['', '<input type="checkbox" id="SelectAll"/>', 'Valor', 'Valor Adicional', 'Valor Afip', ''],
+                colModel: [
+                    { name: 'Id', index: 'Id', width: 0, sortable: false, hidden: true, key: true },
+                    { name: 'Seleccionados', index: 'Seleccionados', width: 10, sortable: false, formatter: SelectCheckboxFormatter, align: "center" },
+                    { name: 'Data', index: 'Data', width: 80, sortable: true, align: "center" },
+                    { name: 'AdditionalData', index: 'AdditionalData', width: 30, align: "center", sortable: true },
+                    { name: 'AfipData', index: 'AfipData', width: 30, align: "center", sortable: true },
+                    { name: 'Acciones', index: 'Acciones', width: 10, sortable: false, formatter: ABM_EditarYEliminar, align: "center" }
+                ],
+                sortname: 'Data',
+                sortorder: "asc",
+                pager: '#GridComboItemsOrganizacion_pager'
+            });
+            $('#GridComboItemsOrganizacion').trigger("reloadGrid");
+        },
+
+        Refresh: function () {
+            ClearSelectedRows('GridComboItemsOrganizacion');
+            ListadoComboItemOrganizacion.ReloadGrid();
+        }
+
+    }
+    $(document).ready(function () {
+        ListadoComboItemOrganizacion.init();
+    });
+</script>
+}

@@ -57,6 +57,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bolos\ConceptoBoloMap.cs" />
+    <Compile Include="Bolos\BoloMap.cs" />
+    <Compile Include="Bolos\DetalleLiquidadorMap.cs" />
+    <Compile Include="Bolos\TrabajadorBoloEscalafonMap.cs" />
+    <Compile Include="Bolos\EscalafonMap.cs" />
+    <Compile Include="Bolos\EmpresaMap.cs" />
+    <Compile Include="Bolos\LiquidadorMap.cs" />
+    <Compile Include="Common\ComboItemOrganizacionMap.cs" />
+    <Compile Include="Common\ComboOrganizacionMap.cs" />
     <Compile Include="Common\DireccionMap.cs" />
     <Compile Include="Common\LocalidadMap.cs" />
     <Compile Include="Common\LogMap.cs" />
@@ -88,6 +97,7 @@
     <Compile Include="Reporting\GrupoEgresoMap.cs" />
     <Compile Include="Reporting\GrupoIngresoMap.cs" />
     <Compile Include="Cooperativa\AsociadoMap.cs" />
+    <Compile Include="Bolos\TrabajadorMap.cs" />
     <Compile Include="Sueldos\AdicionalAdicionalesMap.cs" />
     <Compile Include="Sueldos\AdicionalReciboMap.cs" />
     <Compile Include="Sueldos\AdicionalMap.cs" />

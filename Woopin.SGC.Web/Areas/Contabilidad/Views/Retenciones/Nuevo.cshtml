@@ -65,6 +65,9 @@
                     $('#GridRetenciones').jqGrid('addRowData', 'Id', data.Retencion);
                     $('#GridRetenciones').trigger("reloadGrid");
                     _OpenDialog.dialog('close');
+                    msg = "La operación fue existosa";
+                    typeMsg = "success";
+                    $.WarningDialog(msg, typeMsg);
                 }
                 else {
                     $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));

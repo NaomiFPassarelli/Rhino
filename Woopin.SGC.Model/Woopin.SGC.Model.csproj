@@ -89,6 +89,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
+    <Compile Include="Bolos\ConceptoBolo.cs" />
+    <Compile Include="Bolos\Bolo.cs" />
+    <Compile Include="Bolos\TrabajadorBoloEscalafon.cs" />
+    <Compile Include="Bolos\Liquidador.cs" />
+    <Compile Include="Bolos\DetalleLiquidador.cs" />
+    <Compile Include="Bolos\Escalafon.cs" />
+    <Compile Include="Bolos\Empresa.cs" />
+    <Compile Include="Common\ComboOrganizacion.cs" />
+    <Compile Include="Common\ComboItemOrganizacion.cs" />
     <Compile Include="Common\CuentaCorrienteItem.cs" />
     <Compile Include="Common\Dashboard.cs" />
     <Compile Include="Common\Enums.cs" />
@@ -146,6 +155,7 @@
     <Compile Include="Reporting\GrupoEgreso.cs" />
     <Compile Include="Reporting\GrupoIngreso.cs" />
     <Compile Include="Cooperativa\Asociado.cs" />
+    <Compile Include="Bolos\Trabajador.cs" />
     <Compile Include="Sueldos\AdicionalRecibo.cs" />
     <Compile Include="Sueldos\AdicionalAdicionales.cs" />
     <Compile Include="Sueldos\Adicional.cs" />

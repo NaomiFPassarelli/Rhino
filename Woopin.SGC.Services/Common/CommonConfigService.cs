@@ -20,10 +20,13 @@ namespace Woopin.SGC.Services
         private readonly IDireccionRepository DireccionRepository;
         private readonly IComboRepository comboRepository;
         private readonly IComboItemRepository comboItemRepository;
+        private readonly IComboOrganizacionRepository ComboOrganizacionRepository;
+        private readonly IComboItemOrganizacionRepository ComboItemOrganizacionRepository;
         public CommonConfigService(ISucursalRepository sucursalRepository, ILocalizacionRepository localizacionRepository, 
             IMonedaRepository monedaRepository, ICategoriaIVARepository categoriaIVARepository,
             IComboRepository comboRepository, IComboItemRepository comboItemRepository,
-            ILocalidadRepository localidadRepository, IDireccionRepository DireccionRepository)
+            ILocalidadRepository localidadRepository, IDireccionRepository DireccionRepository,
+            IComboOrganizacionRepository ComboOrganizacionRepository, IComboItemOrganizacionRepository ComboItemOrganizacionRepository)
         {
             this.sucursalRepository = sucursalRepository;
             this.localizacionRepository = localizacionRepository;
@@ -33,6 +36,8 @@ namespace Woopin.SGC.Services
             this.LocalidadRepository = localidadRepository;
             this.comboItemRepository = comboItemRepository;
             this.DireccionRepository = DireccionRepository;
+            this.ComboOrganizacionRepository = ComboOrganizacionRepository;
+            this.ComboItemOrganizacionRepository = ComboItemOrganizacionRepository;
         }
         #endregion
 
@@ -486,6 +491,110 @@ namespace Woopin.SGC.Services
                    }
                });
             
+            return SelectCombo;
+        }
+
+        #endregion
+
+
+
+        #region Combo Organizacion
+        public ComboOrganizacion GetComboOrganizacion(int Id)
+        {
+            ComboOrganizacion ComboOrganizacion = null;
+            this.ComboOrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                ComboOrganizacion = this.ComboOrganizacionRepository.Get(Id);
+            });
+            return ComboOrganizacion;
+        }
+
+        public IList<ComboOrganizacion> GetAllCombosOrganizacion()
+        {
+            IList<ComboOrganizacion> CombosOrganizacion = null;
+            this.ComboOrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                CombosOrganizacion = this.ComboOrganizacionRepository.GetAll();
+            });
+            return CombosOrganizacion;
+        }
+
+        #endregion
+
+        #region Combos Items Organizacion
+        public ComboItemOrganizacion GetComboItemOrganizacion(int Id)
+        {
+            ComboItemOrganizacion ComboItemOrganizacion = null;
+            this.ComboItemOrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                ComboItemOrganizacion = this.ComboItemOrganizacionRepository.Get(Id);
+            });
+            return ComboItemOrganizacion;
+        }
+
+        public IList<ComboItemOrganizacion> GetAllCombosItemsOrganizacion()
+        {
+            IList<ComboItemOrganizacion> CombosItemsOrganizacion = null;
+            this.ComboItemOrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                CombosItemsOrganizacion = this.ComboItemOrganizacionRepository.GetAll();
+            });
+            return CombosItemsOrganizacion;
+        }
+        public void AddComboItemOrganizacion(ComboItemOrganizacion ComboItemOrganizacion)
+        {
+            this.ComboItemOrganizacionRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.ComboItemOrganizacionRepository.Add(ComboItemOrganizacion);
+            });
+        }
+        public void UpdateComboItemOrganizacion(ComboItemOrganizacion ComboItemOrganizacion)
+        {
+            this.ComboItemOrganizacionRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                this.ComboItemOrganizacionRepository.Update(ComboItemOrganizacion);
+            });
+        }
+        public void DeleteCombosItemsOrganizacion(List<int> Ids)
+        {
+            this.ComboItemOrganizacionRepository.GetSessionFactory().TransactionalInterceptor(() =>
+            {
+                foreach (var Id in Ids)
+                {
+                    ComboItemOrganizacion ComboItemOrganizacion = this.ComboItemOrganizacionRepository.Get(Id);
+                    ComboItemOrganizacion.Activo = false;
+                    this.ComboItemOrganizacionRepository.Update(ComboItemOrganizacion);
+                }
+            });
+        }
+
+        public IList<ComboItemOrganizacion> GetItemsByComboOrganizacion(ComboOrganizacionType type)
+        {
+            IList<ComboItemOrganizacion> CombosItemsOrganizacion = null;
+            this.ComboOrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                CombosItemsOrganizacion = this.ComboItemOrganizacionRepository.GetItemsByComboId((int)type);
+            });
+            return CombosItemsOrganizacion;
+        }
+
+        public SelectCombo GetSelectItemsByComboOrganizacionId(ComboOrganizacionType type)
+        {
+            SelectCombo SelectCombo = new SelectCombo();
+            SelectCombo.Items = new List<SelectComboItem>();
+            this.ComboItemOrganizacionRepository.GetSessionFactory().SessionInterceptor(() =>
+            {
+                IList<ComboItemOrganizacion> CombosItemsOrganizacion = this.ComboItemOrganizacionRepository.GetItemsByComboId((int)type);
+                foreach (var ComboItemOrganizacion in CombosItemsOrganizacion)
+                {
+                    SelectComboItem SelectItem = new SelectComboItem();
+                    SelectItem.id = ComboItemOrganizacion.Id;
+                    SelectItem.text = ComboItemOrganizacion.Data;
+                    SelectItem.additionalData = ComboItemOrganizacion.AdditionalData;
+                    SelectCombo.Items.Add(SelectItem);
+                }
+            });
+
             return SelectCombo;
         }
 

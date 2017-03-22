@@ -232,7 +232,7 @@
             SaveAndStay: function (data) {
                 if (data.Success) {
                     $('form').ClearForm();
-                    $('#Alert-Container').NewAlert('success', 'Se ha realizado el movimiento con exito! ');
+                    $('#Alert-Container').NewAlert('success', 'La operación fue existosa ');
                 }
                 else {
                     $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage,data.Errors));
@@ -241,9 +241,13 @@
 
             Save: function (data) {
                 if (data.Success) {
-                    window.onbeforeunload = null;
-                    $.ShowLoader();
-                    window.location = '@Url.Action("Index")'
+                    msg = "La operación fue existosa";
+                    typeMsg = "success";
+                    $.WarningDialog(msg, typeMsg, function () {
+                        window.onbeforeunload = null;
+                        $.ShowLoader();
+                        window.location = '@Url.Action("Index")';
+                    });
                 }
                 else {
                     $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));

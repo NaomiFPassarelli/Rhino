@@ -104,30 +104,30 @@
     @Scripts.Render("~/Scripts/jquery.mask.min.js")
     <script type="text/javascript">
 
-        $(document).ready(function () {
-            AdicionalJs.init();
-        });
+    $(document).ready(function () {
+        AdicionalJs.init();
+    });
 
 
-        var AdicionalJs = {
+    var AdicionalJs = {
 
-            //SelectedRows: null,
+        //SelectedRows: null,
 
-            //OnCheckboxChange: function () {
-            //    if ($(this).is(":checked")) {
-            //        AdicionalJs.SelectedRows.push($(this).val());
-            //    }
-            //    else {
-            //        var indexDel = AdicionalJs.SelectedRows.indexOf($(this).val());
-            //        AdicionalJs.SelectedRows.splice(indexDel, 1);
-            //    }
-            //},
+        //OnCheckboxChange: function () {
+        //    if ($(this).is(":checked")) {
+        //        AdicionalJs.SelectedRows.push($(this).val());
+        //    }
+        //    else {
+        //        var indexDel = AdicionalJs.SelectedRows.indexOf($(this).val());
+        //        AdicionalJs.SelectedRows.splice(indexDel, 1);
+        //    }
+        //},
 
-            init: function () {
-                //$.SetupSearchTextbox('#GridAdicional', ["Descripcion"]);
-                AdicionalJs.SelectedRows = new Array();
+        init: function () {
+            //$.SetupSearchTextbox('#GridAdicional', ["Descripcion"]);
+            AdicionalJs.SelectedRows = new Array();
 
-                @*$('#GridAdicional').CreateCommonGrid({
+            @*$('#GridAdicional').CreateCommonGrid({
                     url: '@Url.Action("GetAll")',
                     colNames: ['', '', 'Descripcion', 'Porcentaje', 'Valor', 'Tipo', 'Suma'],
                     colModel: [
@@ -146,14 +146,14 @@
                     rowList: [15, 30, 50],
                     rowNum: 15
                 });*@
-                //$('#GridAdicional').trigger("reloadGrid");
-                //$(document).off('change', '#GridAdicional .SelectCheckboxes');
-                //$(document).on('change', '#GridAdicional .SelectCheckboxes', AdicionalJs.OnCheckboxChange);
+            //$('#GridAdicional').trigger("reloadGrid");
+            //$(document).off('change', '#GridAdicional .SelectCheckboxes');
+            //$(document).on('change', '#GridAdicional .SelectCheckboxes', AdicionalJs.OnCheckboxChange);
 
-                $('#Valor').attr('data-val-number', 'El Valor debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
-                //$('#Porcentaje').attr('data-val-number', 'El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
-                $('form').reParseForm();
-                @*$('#agregarAdicional').on("click",
+            $('#Valor').attr('data-val-number', 'El Valor debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+            //$('#Porcentaje').attr('data-val-number', 'El Porcentaje debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
+            $('form').reParseForm();
+            @*$('#agregarAdicional').on("click",
                     function () {
                         $('#Adicional-dialog').OpenFormDialog(
                             '@Url.Action("Adicional", "Adicionales")',
@@ -163,94 +163,86 @@
 
                     );*@
 
-                $('#BtnSubmit').on('click', AdicionalJs.Save);
-                //$('#Porcentaje').on('change', AdicionalJs.PorcentajeOrValor);
-                //$('#Valor').on('change', AdicionalJs.PorcentajeOrValor);
-            },
+            $('#BtnSubmit').on('click', AdicionalJs.Save);
+            //$('#Porcentaje').on('change', AdicionalJs.PorcentajeOrValor);
+            //$('#Valor').on('change', AdicionalJs.PorcentajeOrValor);
+        },
 
-            //PorcentajeOrValor: function () {
-            //    if ($(this).attr('id') == "Porcentaje" && ($('#Porcentaje').val() != "" || $('#Porcentaje').val() > 0)) {
-            //        $('#Valor').val("");
-            //    } else if ($(this).attr('id') == "Valor" && ($('#Valor').val() != "" || $('#Valor').val() > 0)) {
-            //        $('#Porcentaje').val("");
-            //    }
-            //},
+        //PorcentajeOrValor: function () {
+        //    if ($(this).attr('id') == "Porcentaje" && ($('#Porcentaje').val() != "" || $('#Porcentaje').val() > 0)) {
+        //        $('#Valor').val("");
+        //    } else if ($(this).attr('id') == "Valor" && ($('#Valor').val() != "" || $('#Valor').val() > 0)) {
+        //        $('#Porcentaje').val("");
+        //    }
+        //},
 
-            Save: function () {
-                if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
-                    return;
+        Save: function () {
+            if ($('#BtnSubmit').attr('disabled') == "disabled" || $('#BtnSubmit').attr('disabled') == true)
+                return;
 
-                $('#BtnSubmit').attr('disabled', 'disabled');
-                if (!$('form').valid())
-                {
-                    $('#BtnSubmit').removeAttr('disabled');
-                    return;
-                }
-                var Adicional = $('form').serializeFormJSON();
-                //Adicional["Tipo.Data"] = $('#Tipo_Id :selected').text();
+            $('#BtnSubmit').attr('disabled', 'disabled');
+            if (!$('form').valid()) {
+                $('#BtnSubmit').removeAttr('disabled');
+                return;
+            }
+            var Adicional = $('form').serializeFormJSON();
+            //Adicional["Tipo.Data"] = $('#Tipo_Id :selected').text();
 
-                //if (Adicional.ImputaComprobante != null) {
-                //    Comprobante["Imputacion[0].ComprobanteADescontar.Id"] = Adicional.ImputaComprobante.Id;
-                //}
+            //if (Adicional.ImputaComprobante != null) {
+            //    Comprobante["Imputacion[0].ComprobanteADescontar.Id"] = Adicional.ImputaComprobante.Id;
+            //}
 
-                //AdicionalAdicionales = new Array();
-                //for (var i = 0; i < AdicionalJs.SelectedRows.length; i++) {
-                //    var item = {
-                //        Id: AdicionalJs.SelectedRows[i]
-                //    };
-                //    AdicionalAdicionales.push(item);
-                //}
-                var postParams = {
-                    url: "@Url.Action("Nuevo", "Adicionales")",
-                    data: {
-                        Adicional: Adicional,
-                        //Adicionales: AdicionalAdicionales.length > 0 ? AdicionalAdicionales : null
-                    },
-                    success: function (data) {
-                        if (data.Success) {
-                            //if (data.NuevoNumero == null && data.NumeroRef == null) {
-                            //    AdicionalJs.OnFinishSave(data.Comprobante);
-                            //}
-                            //else {
-                            //    var msg = "";
-                            //    if (data.NuevoNumero != null) {
-                            //        msg += '<p>El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
-                            //    }
-                            //    if (data.NumeroRef != null) {
-                            //        msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
-                            //    }
-                            //    $.WarningDialog(msg, 'warning', function(){
-                            //        AdicionalJs.OnFinishSave(data.Comprobante)
-                            //    });
-                            //}
-
-                            window.onbeforeunload = null;
-                            $.ShowLoader();
-                            window.location = '@Url.Action("Index")';
-                        }
-                        else {
-                            $('#BtnSubmit').removeAttr('disabled');
-                            $('#Alert-Container').NewAlert('error', data.ErrorMessage);
-                        }
+            //AdicionalAdicionales = new Array();
+            //for (var i = 0; i < AdicionalJs.SelectedRows.length; i++) {
+            //    var item = {
+            //        Id: AdicionalJs.SelectedRows[i]
+            //    };
+            //    AdicionalAdicionales.push(item);
+            //}
+            var postParams = {
+                url: "@Url.Action("Nuevo", "Adicionales")",
+                data: {
+                    Adicional: Adicional,
+                    //Adicionales: AdicionalAdicionales.length > 0 ? AdicionalAdicionales : null
+                },
+                success: function (data) {
+                    if (data.Success) {
+                        //if (data.NuevoNumero == null && data.NumeroRef == null) {
+                        //    AdicionalJs.OnFinishSave(data.Comprobante);
+                        //}
+                        //else {
+                        //    var msg = "";
+                        //    if (data.NuevoNumero != null) {
+                        //        msg += '<p>El N° de Adicional ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                        //    }
+                        //    if (data.NumeroRef != null) {
+                        //        msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                        //    }
+                        //    $.WarningDialog(msg, 'warning', function(){
+                        //        AdicionalJs.OnFinishSave(data.Comprobante)
+                        //    });
+                        //}
+                        msg = "La operación fue existosa";
+                        typeMsg = "success";
+                        AdicionalJs.OnFinishSave(typeMsg, msg);
+                    }
+                    else {
+                        $('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
                     }
                 }
-                $.AjaxPost(postParams);
-            },
+            }
+            $.AjaxPost(postParams);
+        },
 
-            @*OnFinishSave: function (Comprobante) {
-                window.onbeforeunload = null;
-                $.ShowLoader();
-                window.location = '@Url.Action("Detalle")/' + Adicional.Id;
-            }*@
+        OnFinishSave: function (typeMsg, msg) {
+                            $.WarningDialog(msg, typeMsg, function () {
+                                window.onbeforeunload = null;
+                                $.ShowLoader();
+                                window.location = '@Url.Action("Index")';
+                            });
+            }
+    }
 
-
-        }
-
-            
-
-
-
-
-            
 </script>
     }

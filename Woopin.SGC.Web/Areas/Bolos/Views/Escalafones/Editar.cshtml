@@ -1,0 +1,95 @@
+﻿@model Woopin.SGC.Model.Bolos.Escalafon
+
+@{
+    ViewBag.Title = "Editar Escalafon";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Editar Escalafon";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-save i-green"></i> Guardar Cambios</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Descripcion"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group" id="SalarioDiv">
+            @Html.LabelFor(model => model.Salario, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Salario, "{0:0.00}", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Salario, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.Categoria, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Categoria.Id, (IEnumerable<SelectListItem>)ViewBag.Categorias, new { @class = "textinput" })
+            </div>
+        </div>*@
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.Tarea, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Tarea.Id, (IEnumerable<SelectListItem>)ViewBag.Tareas, new { @class = "textinput" })
+            </div>
+        </div>*@
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.VigenciaDesde, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de vigencia desde es requerida" id="VigenciaDesde" name="VigenciaDesde" type="text" value="@Model.VigenciaDesde.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.VigenciaDesde, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.VigenciaHasta, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de vigencia hasta es requerida" id="VigenciaHasta" name="VigenciaHasta" type="text" value="@Model.VigenciaHasta.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.VigenciaHasta, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
+    </fieldset>
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+@Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#VigenciaDesde").datepicker({ dateFormat: 'dd/mm/yy' });
+            $("#VigenciaHasta").datepicker({ dateFormat: 'dd/mm/yy' });
+
+            $('#BtnSubmit').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    if (data.Success) {
+                        $('#Alert-Container').NewAlert('success', 'Se han guardado los cambios con exito!');
+                    }
+                    else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+        });
+</script>
+}

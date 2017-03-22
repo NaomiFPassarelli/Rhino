@@ -315,13 +315,17 @@
                     success: function (data) {
                         if (data.Success) {
                             if (data.NuevoNumero == null) {
-                                Asiento.OnFinishSave(data.Asiento);
+                                msg = "La operación fue existosa";
+                                typeMsg = "success";
+                                Asiento.OnFinishSave(data.Asiento, typeMsg, msg);
                             }
                             else {
-                                $.WarningDialog('El N° de Asiento ha sido tomado, su nuevo N° es ' + data.NuevoNumero,'warning',
-                                    function () {
-                                        Asiento.OnFinishSave(data.Asiento)
-                                    });
+                                //$.WarningDialog('El N° de Asiento ha sido tomado, su nuevo N° es ' + data.NuevoNumero,'warning',
+                                    //function () {
+                                msg = 'El N° de Asiento ha sido tomado, su nuevo N° es ' + data.NuevoNumero;
+                                typeMsg = "warning";
+                                Asiento.OnFinishSave(data.Asiento, typeMsg, msg);
+                                    //});
                             }
                         }
                         else {
@@ -333,11 +337,13 @@
                 $.AjaxPost(postParams);
             },
 
-            OnFinishSave: function (Asiento) {
-                window.onbeforeunload = null;
-                $.ShowLoader();
-                window.location = '@Url.Action("Detalle")/' + Asiento.Id;
-            }
+            OnFinishSave: function (Asiento, typeMsg, msg) {
+                $.WarningDialog(msg, typeMsg, function () {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Detalle")/' + Asiento.Id;
+                });
+            },
         }
 </script>
 }

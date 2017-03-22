@@ -1,0 +1,175 @@
+﻿@model Woopin.SGC.Model.Bolos.Bolo
+
+@{
+    ViewBag.Title = "Editar Bolo";
+    ViewBag.SectionIcon = "building-o";
+    ViewBag.SectionTitle = "Editar Bolo";
+}
+@using (Html.BeginForm("Editar", "Bolos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+
+    <div id="Alert-Dialog-Container"></div>
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-save i-green"></i> Guardar Cambios</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.RazonSocial, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.RazonSocial, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.RazonSocial, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CUIT, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.CUIT, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CUIT, null, new { @class = "help-block" })
+            </div>
+        </div>*@
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DenominacionPelicula, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.DenominacionPelicula, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.DenominacionPelicula, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DenominacionProducto, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.DenominacionProducto, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.DenominacionProducto, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Domicilio, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Domicilio, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Domicilio, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodigoPostal, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-3 input-container">
+                @Html.TextBoxFor(model => model.CodigoPostal, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.CodigoPostal, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.Telefono, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Telefono, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Telefono, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Email, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "help-block" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Localizacion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.DropDownListFor(model => model.Localizacion.Id, (IEnumerable<SelectListItem>)ViewBag.Localizaciones, null, new { @class = "textinput", @data_val_required = false, @data_val_number = false })
+                @Html.ValidationMessageFor(model => model.Localizacion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FechaLiquidacion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.FechaLiquidacion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.FechaLiquidacion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        @*<div class="col-md-3">
+            @Html.LabelFor(model => model.FechaLiquidacion, new { @class = "col-md-4 horizontal-label" })
+            <div class="col-md-8 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha es requerida" id="FechaLiquidacion" name="FechaLiquidacion" type="text">
+                @Html.ValidationMessageFor(model => model.FechaLiquidacion, null, new { @class = "help-block" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TopeMinimo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.TopeMinimo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.TopeMinimo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TopeMaximo, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.TopeMaximo, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.TopeMaximo, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Agencia, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Agencia, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Agencia, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Anunciante, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Anunciante, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Anunciante, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+    @Scripts.Render("~/bundles/jqueryui")
+
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $("#FechaLiquidacion").datepicker({ dateFormat: 'dd/mm/yy' });
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Index")'
+                }
+                else {
+                    $('#Alert-Dialog-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                }
+            }
+
+        });
+    });
+    </script>
+}

@@ -78,8 +78,7 @@
         EliminarComprobanteCompleto: function () {
             var Id = $('.BtnEliminarCompleto').data("id");
             ConfirmationDialog.Show("Esta seguro que desea eliminar el comprobante? (Se habilitará el nro de comprobante eliminado)",
-                                    function () {  DetalleComprobanteCompra.EliminarComprobantePorCompleto(Id) });
-            window.location = '@Url.Action("Index")';
+                                    function () {  DetalleComprobanteVenta.EliminarComprobantePorCompleto(Id) });
         },
 
         EliminarComprobante: function (Id) {
@@ -113,7 +112,7 @@
                         @if (!ViewBag.OpensDialog)
                         {
                             @:$.ShowLoader();
-                            @:window.location.reload();
+                            @:window.location ='@Url.Action("Index")';
                         }
                     }
                     else {

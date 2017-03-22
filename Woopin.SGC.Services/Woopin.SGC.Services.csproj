@@ -96,6 +96,10 @@
     <Compile Include="Cooperativa\ICooperativaService.cs" />
     <Compile Include="Cooperativa\CooperativaConfigService.cs" />
     <Compile Include="Cooperativa\CooperativaService.cs" />
+    <Compile Include="Bolos\IBolosConfigService.cs" />
+    <Compile Include="Bolos\IBolosService.cs" />
+    <Compile Include="Bolos\BolosConfigService.cs" />
+    <Compile Include="Bolos\BolosService.cs" />
     <Compile Include="Sueldos\ISueldosConfigService.cs" />
     <Compile Include="Sueldos\ISueldosService.cs" />
     <Compile Include="Sueldos\SueldosConfigService.cs" />

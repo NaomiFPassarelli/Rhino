@@ -111,9 +111,13 @@
                 enter: true,
                 success: function (data) {
                     if (data.Success) {
-                        window.onbeforeunload = null;
-                        $.ShowLoader();
-                        window.location = '@Url.Action("Index")'
+                        msg = "La operación fue existosa";
+                        typeMsg = "success";
+                        $.WarningDialog(msg, typeMsg, function () {
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")';
+                        });
                     }
                     else {
                         $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
@@ -124,8 +128,9 @@
                 enter: true,
                 success: function (data) {
                     if (data.Success) {
+                        msg = "La operación fue existosa";
+                        $('#Alert-Container').NewAlert('success', msg);
                         $('form').ClearForm();
-                        $('#Alert-Container').NewAlert('success', 'Se ha creado la sucursal con exito');
                     }
                     else {
                         $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));

@@ -243,7 +243,7 @@
         },
 
         ValidarHayCheques: function () {
-           
+
             var postParams = {
                 url: '@Url.Action("GetAllChequesEnCartera")',
                 success: function (ret) {
@@ -289,10 +289,15 @@
                 success: function (data) {
                     if (data.Success) {
                         if (data.NumeroRef != null) {
-                            $.WarningDialog('El N° de Deposito ha sido tomado, su nuevo N° es ' + data.NumeroRef,null, Deposito.OnFinishSave(data.Deposito));
+                            //$.WarningDialog('El N° de Deposito ha sido tomado, su nuevo N° es ' + data.NumeroRef,null, Deposito.OnFinishSave(data.Deposito));
+                            typeMsg = "warning";
+                            msg = 'El N° de Deposito ha sido tomado, su nuevo N° es ' + data.NumeroRef;
+                            Deposito.OnFinishSave(data.Deposito, typeMsg, msg);
                         }
                         else {
-                            Deposito.OnFinishSave(data.Deposito);
+                            typeMsg = "success";
+                            msg = "La operación fue existosa";
+                            Deposito.OnFinishSave(data.Deposito, typeMsg, msg);
                         }
                     }
                     else {
@@ -338,10 +343,12 @@
             }
         },
 
-        OnFinishSave: function (Deposito) {
-            window.onbeforeunload = null;
-            $.ShowLoader();
-            window.location = '@Url.Action("Detalle")/' + Deposito.Id;
+        OnFinishSave: function (Deposito, typeMsg, msg) {
+            $.WarningDialog(msg, typeMsg, function () {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Detalle")/' + Deposito.Id;
+            });
         }
     }
 

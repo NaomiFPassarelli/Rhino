@@ -82,11 +82,12 @@
                 data: { Chequera: Chequera },
                 success: function (data) {
                     if (data.Success) {
-                        
                             data.Chequera["CuentaBancaria.Nombre"] = data.Chequera.CuentaBancaria.Nombre;
                             $('#GridChequeras').jqGrid('addRowData', 'Id', data.Chequera);
                             $('#GridChequeras').trigger("reloadGrid");
                             _OpenDialog.dialog('close');
+                            msg = "La operación fue existosa";
+                            $.WarningDialog(msg, "success");
                         }
                     else {
                         $('#BtnSubmitChequera').removeAttr('disabled');

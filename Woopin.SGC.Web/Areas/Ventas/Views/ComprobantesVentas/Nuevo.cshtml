@@ -392,7 +392,7 @@
                 $('#MesPrestacion').data('val', 'true');
                 $('#MesPrestacion').attr('data-val-required', 'Es Necesario un Mes - Año de prestación');
             }
-            
+
             $('#PrecioUnitario').attr('data-val-number', 'El precio unitario debe ser un número mayor a cero, puede contener el caracter punto (.) y con dos decimales');
             $('#comprobante-detalle').reParseForm();
             $('#BtnAddObservacion').on('click', ComprobanteVenta.AgregarObservacion);
@@ -442,7 +442,7 @@
                     tipo == '@ComprobanteVentaHelper.NotaCredito') {
                     $('#Tipo_Id').val('');
                 }
-                    
+
             } else {
                 // Pre Impreso.
                 $('#Tipo_Id option[value="@ComprobanteVentaHelper.FEFacturaC"]').hide();
@@ -470,7 +470,7 @@
                     $('#Tipo_Id').val('');
                 }
 
-                
+
             }
 
             ComprobanteVenta.CargarNumeroComprobante();
@@ -670,7 +670,7 @@
                     talonario = $('select#Talonario_Id option:selected')[0].value;
                 }
             }
-            
+
 
             if (letra == null || letra == "") {
                 return $.WarningDialog('Debe colocarle al cliente una letra');
@@ -761,11 +761,11 @@
             if (Descuento != null && (!$.isNumeric(Descuento) || Descuento <= 0)) {
                 // TODO Descuento invalido.
                 return;
-            } 
+            }
             if ($('#comprobante-detalle').valid()) {
 
                 var Descripcion = $('.detalle .select2-container a span.select2-chosen').html();
-                
+
                 var detalle = {
                     Id: ComprobanteDetalleId,
                     Cantidad: $('#CantidadArticulo').val(),
@@ -946,13 +946,17 @@
                     if (data.Success) {
 
                         if (data.NuevoNumero == null) {
-                            ComprobanteVenta.OnFinishSave(data.Comprobante);
+                            msg = "La operación fue existosa";
+                            typeMsg = "success";
+                            ComprobanteVenta.OnFinishSave(data.Comprobante, typeMsg, msg);
                         }
                         else {
-                            $.WarningDialog('El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero,
-                                'warning', function () {
-                                    ComprobanteVenta.OnFinishSave(data.Comprobante)
-                                });
+                            //$.WarningDialog('El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero,
+                                //'warning', function () {
+                            msg = 'El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero;
+                            typeMsg = "warning";
+                            ComprobanteVenta.OnFinishSave(data.Comprobante, typeMsg, msg);
+                                //});
                         }
                     }
                     else {
@@ -964,11 +968,14 @@
             $.AjaxPost(postParams);
         },
 
-        OnFinishSave: function (Comprobante) {
-            window.onbeforeunload = null;
-            $.ShowLoader();
-            window.location = '@Url.Action("Detalle")/' + Comprobante.Id;
+        OnFinishSave: function (Comprobante, typeMsg, msg) {
+            $.WarningDialog(msg, typeMsg, function () {
+                window.onbeforeunload = null;
+                $.ShowLoader();
+                window.location = '@Url.Action("Detalle")/' + Comprobante.Id;
+            });
         }
+
     }
 </script>
 }

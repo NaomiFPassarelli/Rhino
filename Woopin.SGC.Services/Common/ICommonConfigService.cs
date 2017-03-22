@@ -73,5 +73,21 @@ namespace Woopin.SGC.Services
         IList<ComboItem> GetItemsByCombo(ComboType type);
         SelectCombo GetSelectItemsByComboId(ComboType ComboId);
         #endregion
+
+        #region Combo Organizacion
+        ComboOrganizacion GetComboOrganizacion(int Id);
+        IList<ComboOrganizacion> GetAllCombosOrganizacion();
+
+        #endregion
+
+        #region ComboItemOrganizacion
+        void AddComboItemOrganizacion(ComboItemOrganizacion ComboItemOrganizacion);
+        void DeleteCombosItemsOrganizacion(List<int> Ids);
+        ComboItemOrganizacion GetComboItemOrganizacion(int Id);
+        void UpdateComboItemOrganizacion(ComboItemOrganizacion ComboItemOrganizacion);
+        IList<ComboItemOrganizacion> GetAllCombosItemsOrganizacion();
+        IList<ComboItemOrganizacion> GetItemsByComboOrganizacion(ComboOrganizacionType type);
+        SelectCombo GetSelectItemsByComboOrganizacionId(ComboOrganizacionType ComboId);
+        #endregion
     }
 }

@@ -373,10 +373,12 @@
 
             },
 
-            OnFinishSave: function () {
-                window.onbeforeunload = null;
-                $.ShowLoader();
-                window.location = '@Url.Action("Index")';
+            OnFinishSave: function (typeMsg, msg) {
+                $.WarningDialog(msg, typeMsg, function () {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Index")';
+                });
             },
 
             Save: function () {
@@ -440,7 +442,8 @@
                     data: { Cliente: ClienteForm },
                 success: function (data) {
                     if (data.Success) {
-                        Cliente.OnFinishSave();
+                        msg = "La operación fue existosa";
+                        Cliente.OnFinishSave("success", msg);
                     }
                     else {
                         $('#BtnSubmit').removeAttr('disabled');

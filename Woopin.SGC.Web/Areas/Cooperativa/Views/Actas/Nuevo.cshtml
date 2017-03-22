@@ -181,7 +181,7 @@
                         else {
                             var msg = "";
                             if (data.NuevoNumero != null) {
-                                msg += '<p>El N° de Factura ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                                msg += '<p>El N° de Acta ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
                             }
                             if (data.NumeroRef != null) {
                                 msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
@@ -212,22 +212,23 @@
                     },
                     success: function (ret) {
                         if (ret.Success) {
-                            
-                            console.log('se guardo');
-                            window.onbeforeunload = null;
-                            $.ShowLoader();
-                            window.location = '@Url.Action("Index")';
-                            console.log('termino ');
-
+                            msg = "La operación fue existosa";
+                            ActaNueva.OnFinishSave("success", msg);
                         } else {
-                            
-
                             $('#BtnSubmit').removeAttr('disabled');
                             $('#Alert-Container').NewAlert('error', ret.ErrorMessage);
                         }
                     }
                 }
                 $.AjaxPost(params);
+            },
+
+            OnFinishSave: function (typeMsg, msg) {
+                $.WarningDialog(msg, typeMsg, function () {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Index")';
+                });
             }
 
 

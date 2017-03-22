@@ -1,0 +1,154 @@
+﻿@model Woopin.SGC.Model.Bolos.Escalafon
+
+@{
+    ViewBag.Title = "Nuevo Escalafon";
+    ViewBag.SectionIcon = "truck";
+    ViewBag.SectionTitle = "Nuevo Escalafon";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+                <a class="boton place-left" id="BtnSubmit"><i class="fa fa-check i-green"></i> Crear Escalafon</a>
+                <a class="boton place-left " id="BtnSubmitAndBack"><i class="fa fa-plus-circle i-green"></i> Crear y Volver</a>
+                <a class="boton place-left" href="@Url.Action("Index")"><i class="fa fa-arrow-left i-red"></i> Volver al Listado</a>
+            </div>
+        </div>
+        <div class="form-group @if (!ViewData.ModelState.IsValidField("Descripcion"))
+                        { @Html.Raw("has-error");}">
+            @Html.LabelFor(model => model.Descripcion, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Descripcion, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            <label class="col-md-2 horizontal-label readonly-label">N° Referencia</label>
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.NumeroReferencia, new { @class = "textinput value-def", @id = "NumeroReferencia", @readonly = "readonly", @Value = ViewBag.NumeroRef.ToString() })
+            </div>
+        </div>*@
+
+        <div class="form-group" id="SalarioDiv">
+            @Html.LabelFor(model => model.Salario, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                @Html.TextBoxFor(model => model.Salario, "{0:0.00}", new { @class = "textinput" })
+                @Html.ValidationMessageFor(model => model.Salario, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.VigenciaDesde, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de vigencia desde es requerida" id="VigenciaDesde" name="VigenciaDesde" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.VigenciaDesde, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.VigenciaHasta, new { @class = "col-md-2 horizontal-label" })
+            <div class="col-md-6 input-container">
+                <input class="text-box single-line textinput" data-val="true" data-val-required="La Fecha de vigencia hasta es requerida" id="VigenciaHasta" name="VigenciaHasta" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                @Html.ValidationMessageFor(model => model.VigenciaHasta, null, new { @class = "help-block" })
+            </div>
+        </div>
+
+    </fieldset>
+}
+<input type="hidden" id="needrefresh" value="0">
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/select2")
+    @Styles.Render("~/Scripts/select2/select2.css")
+    @Scripts.Render("~/Scripts/jquery.mask.min.js")
+@Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+    $.SetupUniqueNonQuitableForm('Esta saliendo de la creacion de Escalafon. Si presiona Aceptar, todos los cambios realizados se perderan.');
+    $(document).ready(function () {
+        $("#VigenciaDesde").datepicker({ dateFormat: 'dd/mm/yy' });
+        $("#VigenciaHasta").datepicker({ dateFormat: 'dd/mm/yy' });
+
+        $('#BtnSubmit').FormSubmit({
+            enter: true,
+            success: function (data) {
+                if (data.Success) {
+                    //$.ShowLoader();
+                    if (data.NuevoNumero == null && data.NumeroRef == null) {
+                        msg = "La operación fue existosa";
+                        typeMsg = "success";
+                        $.WarningDialog(msg, typeMsg, function () {
+                                window.onbeforeunload = null;
+                                $.ShowLoader();
+                                window.location = '@Url.Action("Index")';
+                            });
+                        }
+                        else {
+                            var msg = "";
+                            if (data.NuevoNumero != null) {
+                                msg += '<p>El N° de Escalafon ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                            }
+                            if (data.NumeroRef != null) {
+                                msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                            }
+
+                        typeMsg = "warning";
+                            $.WarningDialog(msg, typeMsg, function () {
+                                window.onbeforeunload = null;
+                                $.ShowLoader();
+                                window.location = '@Url.Action("Index")';
+                            });
+
+                        }
+                    }
+                else {
+                    $('#BtnSubmit').removeAttr('disabled');
+                    $('#Alert-Container').NewAlert('error', data.ErrorMessage);
+                        //$('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                }
+            });
+            $('#BtnSubmitAndBack').FormSubmit({
+                enter: true,
+                success: function (data) {
+                    $.ShowLoader();
+                    if (data.Success) {
+                        if (data.NuevoNumero == null && data.NumeroRef == null) {
+                            $('form').ClearForm();
+                            $("#VigenciaDesde").datepicker({ dateFormat: 'dd/mm/yy' });
+                            $("#VigenciaHasta").datepicker({ dateFormat: 'dd/mm/yy' });
+                            today = new Date();
+                            $("#VigenciaDesde").val(today.toLocaleDateString());
+                            $("#VigenciaHasta").val(today.toLocaleDateString());
+                            $('#Alert-Container').NewAlert('success', 'La operación fue existosa ');
+                        }
+                        else {
+                            var msg = "";
+                            if (data.NuevoNumero != null) {
+                                msg += '<p>El N° de Escalafon ha sido tomado, su nuevo N° es ' + data.NuevoNumero + '</p>';
+                            }
+                            if (data.NumeroRef != null) {
+                                msg += '<p>El N° de Referencia ha sido tomado, su nuevo N° de Referencia es ' + data.NumeroRef + '</p>';
+                            }
+                            //$.WarningDialog(msg, 'warning', function () {
+                            //    ComprobanteCompra.OnFinishSave(data.Comprobante)
+                            //});
+                            $('form').ClearForm();
+                            $('#Alert-Container').NewAlert('warning', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                            //window.onbeforeunload = null;
+                            //window.location = 'Url.Action("Index")';
+                        }
+                    } else {
+                        $('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
+                    }
+                    
+                }
+            });
+        });
+
+    </script>
+}

@@ -393,13 +393,17 @@
                     success: function (data) {
                         if (data.Success) {
                             if (data.NuevoNumero != null) {
-                                $.WarningDialog('El N° de Cobranza ha sido tomado, su nuevo N° es ' + data.NuevoNumero, 'warning',
-                                    function () {
-                                        Cobranza.OnFinishSave(data.Cobranza)
-                                    });
+                                //$.WarningDialog('El N° de Cobranza ha sido tomado, su nuevo N° es ' + data.NuevoNumero, 'warning',
+                                    //function () {
+                                typeMsg = "warning";
+                                msg = 'El N° de Cobranza ha sido tomado, su nuevo N° es ' + data.NuevoNumero;
+                                Cobranza.OnFinishSave(data.Cobranza, typeMsg, msg);
+                                    //});
                             }
                             else {
-                                Cobranza.OnFinishSave(data.Cobranza);
+                                msg = "La operación fue existosa";
+                                typeMsg = "success";
+                                Cobranza.OnFinishSave(data.Cobranza, typeMsg, msg);
                             }
                         }
                         else {
@@ -424,10 +428,12 @@
                 Cobranza.CalcularTotal();
             },
 
-            OnFinishSave: function (Cobranza) {
-                window.onbeforeunload = null;
-                $.ShowLoader();
-                window.location = '@Url.Action("Detalle")/' + Cobranza.Id;
+            OnFinishSave: function (Cobranza, typeMsg, msg) {
+                $.WarningDialog(msg, typeMsg, function () {
+                    window.onbeforeunload = null;
+                    $.ShowLoader();
+                    window.location = '@Url.Action("Detalle")/' + Cobranza.Id;
+                });
             },
 
             OnAgregarValor: function () {

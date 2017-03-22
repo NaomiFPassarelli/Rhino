@@ -360,10 +360,15 @@
             enter: true,
             success: function (data) {
                 if (data.Success) {
-                    $.ShowLoader();
+                    //$.ShowLoader();
                     if (data.NuevoNumero == null && data.NumeroRef == null) {
-                        window.onbeforeunload = null;
-                        window.location = '@Url.Action("Index")';
+                        msg = "La operación fue existosa";
+                        typeMsg = "success";
+                        $.WarningDialog(msg, typeMsg, function () {
+                            window.onbeforeunload = null;
+                            $.ShowLoader();
+                            window.location = '@Url.Action("Index")';
+                        });
                     }
                     else {
                         var msg = "";
@@ -396,7 +401,7 @@
                         $.ShowLoader();
                         if (data.NuevoNumero == null && data.NumeroRef == null) {
                             $('form').ClearForm();
-                            $('#Alert-Container').NewAlert('success', 'Se ha creado el Asociado con exito! ');
+                            $('#Alert-Container').NewAlert('success', 'La operación fue existosa ');
                         }
                         else {
                             var msg = "";
@@ -416,6 +421,9 @@
                             //$('#Alert-Container').NewAlert('error', $.makeErrorMsgList(data.ErrorMessage, data.Errors));
 
                         }
+                    } else {
+                        //$('#BtnSubmit').removeAttr('disabled');
+                        $('#Alert-Container').NewAlert('error', data.ErrorMessage);
                     }
 
 
